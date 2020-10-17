@@ -3,10 +3,6 @@
  *
  * hunter.belanger@gmail.com
  *
- * Ce  logiciel  est  un  programme  informatique  servant  à  résoudre
- * l'équation de Boltzmann  pour les  neutrons, avec  des énergies continus,
- * en trois  dimensions  spatiales, utilisant la méthode  Monte Carlo.
- *
  * Ce logiciel est régi par la licence CeCILL soumise au droit français et
  * respectant les principes de diffusion des logiciels libres. Vous pouvez
  * utiliser, modifier et/ou redistribuer ce programme sous les conditions
