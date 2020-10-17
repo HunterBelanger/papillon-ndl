@@ -40,7 +40,6 @@
 
 #include <PapillonNDL/ace.hpp>
 #include <PapillonNDL/angle_law.hpp>
-
 #include <functional>
 #include <memory>
 

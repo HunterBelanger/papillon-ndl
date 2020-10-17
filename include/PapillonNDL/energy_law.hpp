@@ -50,7 +50,8 @@ class EnergyLaw {
   // a RNG of any type, we wrap it in an std::function<double()>. This
   // imposes the requirment that the true RNG object provide a function
   // that when called, returns a double, on the interval [0,1).
-  virtual double sample_energy(double E_in, std::function<double()> rng) const = 0;
+  virtual double sample_energy(double E_in,
+                               std::function<double()> rng) const = 0;
 };
 
 }  // namespace pndl

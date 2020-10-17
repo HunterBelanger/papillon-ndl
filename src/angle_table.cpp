@@ -36,7 +36,6 @@
  *
  * */
 #include <PapillonNDL/angle_table.hpp>
-
 #include <cmath>
 
 namespace pndl {

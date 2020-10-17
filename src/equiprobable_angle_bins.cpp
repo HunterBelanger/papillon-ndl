@@ -36,7 +36,6 @@
  *
  * */
 #include <PapillonNDL/equiprobable_angle_bins.hpp>
-
 #include <cmath>
 
 namespace pndl {

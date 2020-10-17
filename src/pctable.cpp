@@ -36,7 +36,6 @@
  *
  * */
 #include <PapillonNDL/pctable.hpp>
-
 #include <algorithm>
 #include <cmath>
 

@@ -48,7 +48,8 @@ class EquiprobableEnergyBins : public EnergyLaw {
   EquiprobableEnergyBins(const ACE& ace, size_t i);
   ~EquiprobableEnergyBins() = default;
 
-  double sample_energy(double E_in, std::function<double()> rng) const override final;
+  double sample_energy(double E_in,
+                       std::function<double()> rng) const override final;
 
  private:
   std::vector<double> incoming_energy_;

@@ -36,7 +36,6 @@
  *
  * */
 #include <PapillonNDL/multi_region_1d.hpp>
-
 #include <algorithm>
 #include <numeric>
 #include <stdexcept>

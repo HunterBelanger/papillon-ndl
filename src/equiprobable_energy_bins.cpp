@@ -37,9 +37,9 @@
  * */
 #include <PapillonNDL/equiprobable_energy_bins.hpp>
 #include <PapillonNDL/interpolation.hpp>
-#include "constants.hpp"
-
 #include <cmath>
+
+#include "constants.hpp"
 
 namespace pndl {
 

@@ -45,7 +45,8 @@ LevelInelasticScatter::LevelInelasticScatter(const ACE& ace, size_t i)
   C2_ = ace.xss(i + 1);
 }
 
-double LevelInelasticScatter::sample_energy(double E_in, std::function<double()>) const {
+double LevelInelasticScatter::sample_energy(double E_in,
+                                            std::function<double()>) const {
   return C2_ * (E_in - C1_);
 }
 

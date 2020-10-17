@@ -39,9 +39,9 @@
 #include <PapillonNDL/angle_table.hpp>
 #include <PapillonNDL/equiprobable_angle_bins.hpp>
 #include <PapillonNDL/isotropic.hpp>
-#include "constants.hpp"
-
 #include <stdexcept>
+
+#include "constants.hpp"
 
 namespace pndl {
 
@@ -49,8 +49,8 @@ AngleDistribution::AngleDistribution(const ACE& ace, int locb)
     : energy_grid_(), laws_() {
   // Locb must be >= 0! If locb == -1, it means that there is
   // no angular distribution for the reaction (must use product distribution)
-  if(locb < 0) {
-    throw std::runtime_error("AngleDistribution: Must have locb >= 0"); 
+  if (locb < 0) {
+    throw std::runtime_error("AngleDistribution: Must have locb >= 0");
   }
 
   if (locb > 0) {
@@ -81,7 +81,8 @@ AngleDistribution::AngleDistribution(const ACE& ace, int locb)
   }
 }
 
-double AngleDistribution::sample_angle(double E_in, std::function<double()> rng) const {
+double AngleDistribution::sample_angle(double E_in,
+                                       std::function<double()> rng) const {
   auto E_it = std::lower_bound(energy_grid_.begin(), energy_grid_.end(), E_in);
   if (E_it == energy_grid_.begin())
     return laws_.front()->sample_mu(rng());

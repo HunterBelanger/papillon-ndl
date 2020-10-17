@@ -38,9 +38,9 @@
 #include <PapillonNDL/evaporation.hpp>
 #include <PapillonNDL/multi_region_1d.hpp>
 #include <PapillonNDL/region_1d.hpp>
-#include "constants.hpp"
-
 #include <cmath>
+
+#include "constants.hpp"
 
 namespace pndl {
 
@@ -79,7 +79,8 @@ Evaporation::Evaporation(const ACE& ace, size_t i)
   }
 }
 
-double Evaporation::sample_energy(double E_in, std::function<double()> rng) const {
+double Evaporation::sample_energy(double E_in,
+                                  std::function<double()> rng) const {
   double T = (*temperature_)(E_in);
   double xi1 = 0.;
   double xi2 = 0.;

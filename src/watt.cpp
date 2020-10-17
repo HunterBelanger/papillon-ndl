@@ -38,9 +38,9 @@
 #include <PapillonNDL/multi_region_1d.hpp>
 #include <PapillonNDL/region_1d.hpp>
 #include <PapillonNDL/watt.hpp>
-#include "constants.hpp"
-
 #include <cmath>
+
+#include "constants.hpp"
 
 namespace pndl {
 

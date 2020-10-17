@@ -37,7 +37,6 @@
  * */
 #include <PapillonNDL/integration.hpp>
 #include <PapillonNDL/region_1d.hpp>
-
 #include <algorithm>
 #include <stdexcept>
 

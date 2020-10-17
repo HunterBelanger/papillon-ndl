@@ -36,7 +36,6 @@
  *
  * */
 #include <PapillonNDL/integration.hpp>
-
 #include <cmath>
 #include <stdexcept>
 
@@ -60,8 +59,9 @@ double log_linear_integrate(double x_low, double x_hi, double x1, double y1,
                             double x2, double y2) {
   // Here, y is linear in log(x)
   // log(y) = ((x - x1)/(x2 - x1))*log(y2/y1) + log(y1)
-  if(y2 / y1 <= 0.) {
-    throw std::runtime_error("Integration: log_linear: Must satisfy y2 / y1 > 0.");  
+  if (y2 / y1 <= 0.) {
+    throw std::runtime_error(
+        "Integration: log_linear: Must satisfy y2 / y1 > 0.");
   }
 
   double base = y2 / y1;
@@ -77,16 +77,19 @@ double linear_log_integrate(double x_low, double x_hi, double x1, double y1,
                             double x2, double y2) {
   // Here, y is linear in log(x)
   // y = (log(x/x1)/log(x2/x1))*(y2 - y1) + y1
-  if(x_hi / x1 <= 0.)  {
-    throw std::runtime_error("Integration: linear_log: Must satisfy x_hi / x1 > 0."); 
-  }
-  
-  if(x_low / x1 <= 0.)  {
-    throw std::runtime_error("Integration: linear_log: Must satisfy x_low / x1 > 0."); 
+  if (x_hi / x1 <= 0.) {
+    throw std::runtime_error(
+        "Integration: linear_log: Must satisfy x_hi / x1 > 0.");
   }
 
-  if(x2 / x1 <= 0.)  {
-    throw std::runtime_error("Integration: linear_log: Must satisfy x2 / x1 > 0."); 
+  if (x_low / x1 <= 0.) {
+    throw std::runtime_error(
+        "Integration: linear_log: Must satisfy x_low / x1 > 0.");
+  }
+
+  if (x2 / x1 <= 0.) {
+    throw std::runtime_error(
+        "Integration: linear_log: Must satisfy x2 / x1 > 0.");
   }
 
   double numerator_hi = x_hi * ((y2 - y1) * std::log(x_hi / x1) +
@@ -99,12 +102,12 @@ double linear_log_integrate(double x_low, double x_hi, double x1, double y1,
 
 double log_log_integrate(double x_low, double x_hi, double x1, double y1,
                          double x2, double y2) {
-  if(y2 / y1 <= 0.) {
-    throw std::runtime_error("Integration: log_log: Must satisfy y2 / y1 > 0.");  
+  if (y2 / y1 <= 0.) {
+    throw std::runtime_error("Integration: log_log: Must satisfy y2 / y1 > 0.");
   }
-  
-  if(x2 / x1 <= 0.) {
-    throw std::runtime_error("Integration: log_log: Must satisfy x2 / x1 > 0.");  
+
+  if (x2 / x1 <= 0.) {
+    throw std::runtime_error("Integration: log_log: Must satisfy x2 / x1 > 0.");
   }
 
   double y2_y1 = y2 / y1;
@@ -119,12 +122,12 @@ double log_log_integrate(double x_low, double x_hi, double x1, double y1,
 
 double integrate(double x_low, double x_hi, double x1, double y1, double x2,
                  double y2, Interpolation interp) {
-  if(x_low < x1 || x_low > x2) {
-    throw std::runtime_error("Integration: Must satisfy x1 <= x_low <= x2"); 
+  if (x_low < x1 || x_low > x2) {
+    throw std::runtime_error("Integration: Must satisfy x1 <= x_low <= x2");
   }
-  
-  if(x_hi < x1 || x_hi > x2) {
-    throw std::runtime_error("Integration: Must satisfy x1 <= x_hi <= x2"); 
+
+  if (x_hi < x1 || x_hi > x2) {
+    throw std::runtime_error("Integration: Must satisfy x1 <= x_hi <= x2");
   }
 
   switch (interp) {

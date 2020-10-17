@@ -36,7 +36,6 @@
  *
  * */
 #include <PapillonNDL/interpolation.hpp>
-
 #include <cmath>
 #include <stdexcept>
 
@@ -79,9 +78,9 @@ double interpolation_factor(double x, double x1, double x2) {
 
 double interpolate(double x, double x1, double y1, double x2, double y2,
                    Interpolation interp) {
-  if(x < x1) {
-    throw std::runtime_error("Interpolation: Must satisfy x >= x1");  
-  } else if(x > x2) {
+  if (x < x1) {
+    throw std::runtime_error("Interpolation: Must satisfy x >= x1");
+  } else if (x > x2) {
     throw std::runtime_error("Interpolation: Must satisfy x <= x2");
   }
 

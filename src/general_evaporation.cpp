@@ -38,9 +38,9 @@
 #include <PapillonNDL/general_evaporation.hpp>
 #include <PapillonNDL/multi_region_1d.hpp>
 #include <PapillonNDL/region_1d.hpp>
-#include "constants.hpp"
-
 #include <cmath>
+
+#include "constants.hpp"
 
 namespace pndl {
 
@@ -82,12 +82,14 @@ GeneralEvaporation::GeneralEvaporation(const ACE& ace, size_t i)
   }
 }
 
-double GeneralEvaporation::sample_energy(double E_in, std::function<double()> rng) const {
+double GeneralEvaporation::sample_energy(double E_in,
+                                         std::function<double()> rng) const {
   double T = (*temperature_)(E_in);
   double xi1 = rng();
   size_t bin = static_cast<size_t>(std::floor(bin_bounds_.size() * xi1));
   double xi2 = rng();
-  double Chi = (bin_bounds_[bin + 1] - bin_bounds_[bin]) * xi2 + bin_bounds_[bin];
+  double Chi =
+      (bin_bounds_[bin + 1] - bin_bounds_[bin]) * xi2 + bin_bounds_[bin];
   return Chi * T;
 }
 

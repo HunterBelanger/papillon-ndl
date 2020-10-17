@@ -50,7 +50,8 @@ class Maxwellian : public EnergyLaw {
   Maxwellian(const ACE& ace, size_t i);
   ~Maxwellian() = default;
 
-  double sample_energy(double E_in, std::function<double()> rng) const override final;
+  double sample_energy(double E_in,
+                       std::function<double()> rng) const override final;
 
  private:
   std::unique_ptr<Tabulated1D> temperature_;

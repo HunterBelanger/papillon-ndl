@@ -49,7 +49,8 @@ class TabularEnergy : public EnergyLaw {
   TabularEnergy(const ACE& ace, size_t i);
   ~TabularEnergy() = default;
 
-  double sample_energy(double E_in, std::function<double()> rng) const override final;
+  double sample_energy(double E_in,
+                       std::function<double()> rng) const override final;
 
  private:
   std::vector<double> incoming_energy_;

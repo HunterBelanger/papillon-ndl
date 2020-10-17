@@ -79,7 +79,8 @@ Maxwellian::Maxwellian(const ACE& ace, size_t i)
   }
 }
 
-double Maxwellian::sample_energy(double E_in, std::function<double()> rng) const {
+double Maxwellian::sample_energy(double E_in,
+                                 std::function<double()> rng) const {
   double T = (*temperature_)(E_in);
   double xi1 = 0.;
   double xi2 = 0.;
