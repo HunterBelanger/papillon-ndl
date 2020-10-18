@@ -5,18 +5,24 @@ The Papillon Nuclear Data Library (NDL) is used for reading, sampling,
 and interacting with continuous energy nuclear data, stored in the ACE
 nuclear data format.
 
+### Sampling
 To sample the angle and energy distributions, an instance of an
-```std::function<double()> ``` must be passed to the distributions.
+```std::function<double()>``` must be passed to the distributions.
 This function pointer is the library's access to a pseudo random
-number generator. Therefore, if ```rng``` such an instance, rng must meet
-the requirments that any call of ```rng()``` returns a random double over the
-interval [0,1), and it must be possible to call ```rng()``` an indefinite number
-of times. If the passed object does not meet these requirments, the behaviour of
-the library is undefined. Using this mechanism allows greater flexibility to the
-user, in choosing the random number generator of their choice, and allows the
-library to be completely disconnected from the random number generation process,
-allowing the distributions to know how to sample themselves, but not know or
-assume anything about random number generation.
+number generator. Therefore, if ```rng``` is such an instance, ```rng``` must
+meet the requirments that any call of ```rng()``` returns a random double over
+the interval [0,1), and it must be possible to call ```rng()``` an indefinite
+number of times. If the passed object does not meet these requirments, the
+behaviour of the library is undefined. Using this mechanism allows greater
+flexibility to the user, in choosing the random number generator of their
+choice, and allows the library to be completely disconnected from the random
+number generation process, allowing the distributions to know how to sample
+themselves, but not know or assume anything about random number generation.
+
+### Energies
+While the standard unit of energy in ACE files is the MeV, PapillonNDL uses the
+eV. As such, all incoming energies must be provided in eV, **NOT** MeV. All
+sampled outgoing energies are also provided to the user in eV as well.
 
 ## Dependencies
 To build and install the library, cmake >= 3.9 is required, along with a C++
