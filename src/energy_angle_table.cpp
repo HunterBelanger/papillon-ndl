@@ -33,78 +33,85 @@
  * */
 #include <PapillonNDL/energy_angle_table.hpp>
 #include <PapillonNDL/interpolation.hpp>
-#include "constants.hpp"
-
 #include <cmath>
 
+#include "constants.hpp"
+
 namespace pndl {
-  
-  EnergyAngleTable::EnergyAngleTable(const ACE& ace, size_t i): energy_(), pdf_(), cdf_(), angles_(), interp_() {
-    interp_ = ace.xss<Interpolation>(i);
-    if ((interp_ != Interpolation::Histogram) &&
-        (interp_ != Interpolation::LinLin)) {
-      throw std::runtime_error("EnergyAngleTable: Invalid interpolation");
-    }
-    uint32_t NP = ace.xss<uint32_t>(i + 1);
-    energy_ = ace.xss(i + 2, NP);
-    // Apply normalization to values
-    for (auto& v : energy_) v *= MEV_TO_EV;
 
-    pdf_ = ace.xss(i + 2 + NP, NP);
-    cdf_ = ace.xss(i + 2 + NP + NP, NP);
+EnergyAngleTable::EnergyAngleTable(const ACE& ace, size_t i)
+    : energy_(), pdf_(), cdf_(), angles_(), interp_() {
+  interp_ = ace.xss<Interpolation>(i);
+  if ((interp_ != Interpolation::Histogram) &&
+      (interp_ != Interpolation::LinLin)) {
+    throw std::runtime_error("EnergyAngleTable: Invalid interpolation");
+  }
+  uint32_t NP = ace.xss<uint32_t>(i + 1);
+  energy_ = ace.xss(i + 2, NP);
+  // Apply normalization to values
+  for (auto& v : energy_) v *= MEV_TO_EV;
 
-    if (!std::is_sorted(energy_.begin(), energy_.end())) {
-      throw std::runtime_error("EnergyAngleTable: Energies are not sorted");
-    }
+  pdf_ = ace.xss(i + 2 + NP, NP);
+  cdf_ = ace.xss(i + 2 + NP + NP, NP);
 
-    if (!std::is_sorted(cdf_.begin(), cdf_.end())) {
-      throw std::runtime_error("EnergyAngleTable: CDF is not sorted");
-    }
-
-    std::vector<int32_t> locs = ace.xss<int32_t>(i + 2 + NP + NP + NP, NP);
-    for(const auto& loc : locs) {
-      size_t l = ace.DLW() + std::abs(loc) - 1;;
-      angles_.emplace_back(ace, l); 
-    }
+  if (!std::is_sorted(energy_.begin(), energy_.end())) {
+    throw std::runtime_error("EnergyAngleTable: Energies are not sorted");
   }
 
-  AngleEnergyPacket EnergyAngleTable::sample_angle_energy(std::function<double()> rng) const {
-    double E_out, mu;
-    double xi = rng();
-    auto cdf_it = std::lower_bound(cdf_.begin(), cdf_.end(), xi);
-    size_t l = std::distance(cdf_.begin(), cdf_it) - 1;
+  if (!std::is_sorted(cdf_.begin(), cdf_.end())) {
+    throw std::runtime_error("EnergyAngleTable: CDF is not sorted");
+  }
 
-    if (interp_ == Interpolation::Histogram) {
-      E_out = histogram_interp_energy(xi, l);
-      mu = angles_[l].sample_value(rng());
-      if(std::abs(mu) > 1.) mu = std::copysign(1., mu);
-      return {mu, E_out};
-    }
-    
-    E_out = linear_interp_energy(xi, l);
+  std::vector<int32_t> locs = ace.xss<int32_t>(i + 2 + NP + NP + NP, NP);
+  for (const auto& loc : locs) {
+    size_t l = ace.DLW() + std::abs(loc) - 1;
+    ;
+    angles_.emplace_back(ace, l);
+  }
+}
 
-    double f = interpolation_factor(xi, cdf_[l], cdf_[l+1]);
-    if(f < 0.5) mu = angles_[l].sample_value(rng());
-    else mu = angles_[l+1].sample_value(rng());
-    
-    if(std::abs(mu) > 1.) mu = std::copysign(1., mu);
-    
+AngleEnergyPacket EnergyAngleTable::sample_angle_energy(
+    std::function<double()> rng) const {
+  double E_out, mu;
+  double xi = rng();
+  auto cdf_it = std::lower_bound(cdf_.begin(), cdf_.end(), xi);
+  size_t l = std::distance(cdf_.begin(), cdf_it) - 1;
+
+  if (interp_ == Interpolation::Histogram) {
+    E_out = histogram_interp_energy(xi, l);
+    mu = angles_[l].sample_value(rng());
+    if (std::abs(mu) > 1.) mu = std::copysign(1., mu);
     return {mu, E_out};
   }
 
-  double EnergyAngleTable::min_energy() const {return energy_.front();}
+  E_out = linear_interp_energy(xi, l);
 
-  double EnergyAngleTable::max_energy() const {return energy_.back();}
+  double f = interpolation_factor(xi, cdf_[l], cdf_[l + 1]);
+  if (f < 0.5)
+    mu = angles_[l].sample_value(rng());
+  else
+    mu = angles_[l + 1].sample_value(rng());
 
-  Interpolation EnergyAngleTable::interpolation() const {return interp_;}
+  if (std::abs(mu) > 1.) mu = std::copysign(1., mu);
 
-  double EnergyAngleTable::histogram_interp_energy(double xi, size_t l) const {
-    return energy_[l] + ((xi - cdf_[l]) / pdf_[l]);
-  }
-
-  double EnergyAngleTable::linear_interp_energy(double xi, size_t l) const {
-    double m = (pdf_[l + 1] - pdf_[l]) / (energy_[l + 1] - energy_[l]);
-    return energy_[l] + (1. / m) * (std::sqrt(pdf_[l] * pdf_[l] + 2. * m * (xi - cdf_[l])) - pdf_[l]);
-  }
-
+  return {mu, E_out};
 }
+
+double EnergyAngleTable::min_energy() const { return energy_.front(); }
+
+double EnergyAngleTable::max_energy() const { return energy_.back(); }
+
+Interpolation EnergyAngleTable::interpolation() const { return interp_; }
+
+double EnergyAngleTable::histogram_interp_energy(double xi, size_t l) const {
+  return energy_[l] + ((xi - cdf_[l]) / pdf_[l]);
+}
+
+double EnergyAngleTable::linear_interp_energy(double xi, size_t l) const {
+  double m = (pdf_[l + 1] - pdf_[l]) / (energy_[l + 1] - energy_[l]);
+  return energy_[l] +
+         (1. / m) *
+             (std::sqrt(pdf_[l] * pdf_[l] + 2. * m * (xi - cdf_[l])) - pdf_[l]);
+}
+
+}  // namespace pndl

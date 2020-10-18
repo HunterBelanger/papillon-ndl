@@ -32,88 +32,91 @@
  *
  * */
 #include <PapillonNDL/kalbach.hpp>
-#include "constants.hpp"
-
 #include <cmath>
+
+#include "constants.hpp"
 
 namespace pndl {
 
-  Kalbach::Kalbach(const ACE& ace, size_t i): incoming_energy_(), tables_() {
-    // Get number of interpolation points
-    uint32_t NR = ace.xss<uint32_t>(i);
-    // Get number of energy points
-    uint32_t NE = ace.xss<uint32_t>(i + 1 + 2 * NR);
+Kalbach::Kalbach(const ACE& ace, size_t i) : incoming_energy_(), tables_() {
+  // Get number of interpolation points
+  uint32_t NR = ace.xss<uint32_t>(i);
+  // Get number of energy points
+  uint32_t NE = ace.xss<uint32_t>(i + 1 + 2 * NR);
 
-    // Breakpoints and interpolations are not read, as linear-linear
-    // interpolation is always used between incoming energies.
+  // Breakpoints and interpolations are not read, as linear-linear
+  // interpolation is always used between incoming energies.
 
-    // Read incoming energies
-    incoming_energy_ = ace.xss(i + 2 + 2 * NR, NE);
-    for (auto& E : incoming_energy_) E *= MEV_TO_EV;
+  // Read incoming energies
+  incoming_energy_ = ace.xss(i + 2 + 2 * NR, NE);
+  for (auto& E : incoming_energy_) E *= MEV_TO_EV;
 
-    // Read outgoing energy tables
-    for (uint32_t j = 0; j < NE; j++) {
-      uint32_t loc = ace.DLW() + ace.xss<uint32_t>(i + 2 + 2 * NR + NE + j) - 1;
-      tables_.emplace_back(ace, loc);
-    } 
+  // Read outgoing energy tables
+  for (uint32_t j = 0; j < NE; j++) {
+    uint32_t loc = ace.DLW() + ace.xss<uint32_t>(i + 2 + 2 * NR + NE + j) - 1;
+    tables_.emplace_back(ace, loc);
   }
-
-  AngleEnergyPacket Kalbach::sample_angle_energy(double E_in, std::function<double()> rng) const {
-    // Determine the index of the bounding tabulated incoming energies
-    size_t l;
-    double f; // Interpolation factor
-    auto in_E_it = std::lower_bound(incoming_energy_.begin(), incoming_energy_.end(), E_in);
-    if (in_E_it == incoming_energy_.begin()) {
-      l = 0;
-      f = 0.;
-    } else if (in_E_it == incoming_energy_.end()) {
-      l = incoming_energy_.size() - 2;
-      f = 1.;
-    } else {
-      l = std::distance(incoming_energy_.begin(), in_E_it) - 1;
-      f = interpolation_factor(E_in, incoming_energy_[l], incoming_energy_[l + 1]);
-    }
-    
-    // Sample outgoing energy, and get R and A for mu
-    double E_i_1 = tables_[l].min_energy();
-    double E_i_M = tables_[l].max_energy();
-    double E_i_1_1 = tables_[l + 1].min_energy();
-    double E_i_1_M = tables_[l + 1].max_energy();
-    double Emin = E_i_1 + f * (E_i_1_1 - E_i_1);
-    double Emax = E_i_M + f * (E_i_1_M - E_i_M);
-
-    double E_hat = E_in;
-    double E_l_1, E_l_M;
-    double R, A;
-    if (rng() > f) {
-      E_hat = tables_[l].sample_energy(rng());
-      E_l_1 = E_i_1;
-      E_l_M = E_i_M;
-      R = tables_[l].R(E_hat);
-      A = tables_[l].A(E_hat);
-    } else {
-      E_hat = tables_[l + 1].sample_energy(rng());
-      E_l_1 = E_i_1_1;
-      E_l_M = E_i_1_M;
-      R = tables_[l+1].R(E_hat);
-      A = tables_[l+1].A(E_hat);
-    }
-    
-    double E_out = Emin + ((E_hat - E_l_1) / (E_l_M - E_l_1)) * (Emax - Emin);
-
-    // Sample mu
-    double mu;
-    if(rng() > R) {
-      double T = (2.*rng() - 1.) * std::sinh(A);
-      mu = (1./A)*std::log(T + std::sqrt(T*T + 1.));
-    } else {
-      double xi = rng();
-      mu = (1./A)*std::log(xi*std::exp(A) +(1. - xi)*std::exp(-A)); 
-    }
-
-    if(std::abs(mu) > 1.) mu = std::copysign(1., mu);
-
-    return {mu, E_out};
-  }
-
 }
+
+AngleEnergyPacket Kalbach::sample_angle_energy(
+    double E_in, std::function<double()> rng) const {
+  // Determine the index of the bounding tabulated incoming energies
+  size_t l;
+  double f;  // Interpolation factor
+  auto in_E_it =
+      std::lower_bound(incoming_energy_.begin(), incoming_energy_.end(), E_in);
+  if (in_E_it == incoming_energy_.begin()) {
+    l = 0;
+    f = 0.;
+  } else if (in_E_it == incoming_energy_.end()) {
+    l = incoming_energy_.size() - 2;
+    f = 1.;
+  } else {
+    l = std::distance(incoming_energy_.begin(), in_E_it) - 1;
+    f = interpolation_factor(E_in, incoming_energy_[l],
+                             incoming_energy_[l + 1]);
+  }
+
+  // Sample outgoing energy, and get R and A for mu
+  double E_i_1 = tables_[l].min_energy();
+  double E_i_M = tables_[l].max_energy();
+  double E_i_1_1 = tables_[l + 1].min_energy();
+  double E_i_1_M = tables_[l + 1].max_energy();
+  double Emin = E_i_1 + f * (E_i_1_1 - E_i_1);
+  double Emax = E_i_M + f * (E_i_1_M - E_i_M);
+
+  double E_hat = E_in;
+  double E_l_1, E_l_M;
+  double R, A;
+  if (rng() > f) {
+    E_hat = tables_[l].sample_energy(rng());
+    E_l_1 = E_i_1;
+    E_l_M = E_i_M;
+    R = tables_[l].R(E_hat);
+    A = tables_[l].A(E_hat);
+  } else {
+    E_hat = tables_[l + 1].sample_energy(rng());
+    E_l_1 = E_i_1_1;
+    E_l_M = E_i_1_M;
+    R = tables_[l + 1].R(E_hat);
+    A = tables_[l + 1].A(E_hat);
+  }
+
+  double E_out = Emin + ((E_hat - E_l_1) / (E_l_M - E_l_1)) * (Emax - Emin);
+
+  // Sample mu
+  double mu;
+  if (rng() > R) {
+    double T = (2. * rng() - 1.) * std::sinh(A);
+    mu = (1. / A) * std::log(T + std::sqrt(T * T + 1.));
+  } else {
+    double xi = rng();
+    mu = (1. / A) * std::log(xi * std::exp(A) + (1. - xi) * std::exp(-A));
+  }
+
+  if (std::abs(mu) > 1.) mu = std::copysign(1., mu);
+
+  return {mu, E_out};
+}
+
+}  // namespace pndl

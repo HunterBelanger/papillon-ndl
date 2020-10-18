@@ -32,58 +32,60 @@
  *
  * */
 #include <PapillonNDL/nbody.hpp>
-#include "constants.hpp"
-
 #include <cmath>
 
-namespace pndl {
-  
-  NBody::NBody(const ACE& ace, size_t i, double iQ): n_(), Ap_(), A_(), Q_(iQ) {
-   n_ = ace.xss<uint32_t>(i);
-   Ap_ = ace.xss(i+1); 
-   A_ = ace.awr();
-  }
+#include "constants.hpp"
 
-  AngleEnergyPacket NBody::sample_angle_energy(double E_in, std::function<double()> rng) const {
-   double Emax = ((Ap_ + 1.)/Ap_)*((A_/(A_ + 1.))*E_in + Q_);
-   double x = maxwellian_spectrum(rng);
-   double y = 0.;   
-   double xi1, xi2, xi3, xi4, xi5, xi6;
-   switch(n_) {
-     case 3:
+namespace pndl {
+
+NBody::NBody(const ACE& ace, size_t i, double iQ) : n_(), Ap_(), A_(), Q_(iQ) {
+  n_ = ace.xss<uint32_t>(i);
+  Ap_ = ace.xss(i + 1);
+  A_ = ace.awr();
+}
+
+AngleEnergyPacket NBody::sample_angle_energy(
+    double E_in, std::function<double()> rng) const {
+  double Emax = ((Ap_ + 1.) / Ap_) * ((A_ / (A_ + 1.)) * E_in + Q_);
+  double x = maxwellian_spectrum(rng);
+  double y = 0.;
+  double xi1, xi2, xi3, xi4, xi5, xi6;
+  switch (n_) {
+    case 3:
       y = maxwellian_spectrum(rng);
       break;
-     case 4:
+    case 4:
       xi1 = rng();
       xi2 = rng();
       xi3 = rng();
-      y = - std::log(xi1 * xi2 * xi3);
+      y = -std::log(xi1 * xi2 * xi3);
       break;
-     case 5:
+    case 5:
       xi1 = rng();
       xi2 = rng();
       xi3 = rng();
       xi4 = rng();
       xi5 = rng();
       xi6 = rng();
-      y = - std::log(xi1*xi2*xi3*xi4) - std::log(xi5)*std::pow(std::cos(0.5*PI*xi6),2.);
-      break; 
-   } 
-
-   double E_out = (x/(x+y)) * Emax;
-   double mu = 2.*rng() - 1.;
-
-   return {mu, E_out};
+      y = -std::log(xi1 * xi2 * xi3 * xi4) -
+          std::log(xi5) * std::pow(std::cos(0.5 * PI * xi6), 2.);
+      break;
   }
 
-  double NBody::maxwellian_spectrum(std::function<double()>& rng) const {
-    double xi1 = rng();
-    double xi2 = rng();
-    double xi3 = rng();
+  double E_out = (x / (x + y)) * Emax;
+  double mu = 2. * rng() - 1.;
 
-    double a = PI * xi3 / 2.;
-
-    return -(std::log(xi1) + std::log(xi2) * std::cos(a) * std::cos(a));  
-  }
-
+  return {mu, E_out};
 }
+
+double NBody::maxwellian_spectrum(std::function<double()>& rng) const {
+  double xi1 = rng();
+  double xi2 = rng();
+  double xi3 = rng();
+
+  double a = PI * xi3 / 2.;
+
+  return -(std::log(xi1) + std::log(xi2) * std::cos(a) * std::cos(a));
+}
+
+}  // namespace pndl

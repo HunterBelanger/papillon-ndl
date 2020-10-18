@@ -41,6 +41,6 @@ struct AngleEnergyPacket {
   double energy;
 };
 
-}
+}  // namespace pndl
 
 #endif

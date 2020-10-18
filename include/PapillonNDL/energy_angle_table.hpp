@@ -37,32 +37,31 @@
 #include <PapillonNDL/ace.hpp>
 #include <PapillonNDL/angle_energy_packet.hpp>
 #include <PapillonNDL/pctable.hpp>
-
 #include <functional>
 
 namespace pndl {
-  
-  class EnergyAngleTable {
-    public:
-      EnergyAngleTable(const ACE& ace, size_t i);
-      ~EnergyAngleTable() = default;
 
-      AngleEnergyPacket sample_angle_energy(std::function<double()> rng) const;
-      double min_energy() const;
-      double max_energy() const;
-      Interpolation interpolation() const;
+class EnergyAngleTable {
+ public:
+  EnergyAngleTable(const ACE& ace, size_t i);
+  ~EnergyAngleTable() = default;
 
-    private:
-      std::vector<double> energy_;
-      std::vector<double> pdf_;
-      std::vector<double> cdf_;
-      std::vector<PCTable> angles_;
-      Interpolation interp_;
+  AngleEnergyPacket sample_angle_energy(std::function<double()> rng) const;
+  double min_energy() const;
+  double max_energy() const;
+  Interpolation interpolation() const;
 
-      double histogram_interp_energy(double xi, size_t l) const;
-      double linear_interp_energy(double xi, size_t l) const;
-  };
+ private:
+  std::vector<double> energy_;
+  std::vector<double> pdf_;
+  std::vector<double> cdf_;
+  std::vector<PCTable> angles_;
+  Interpolation interp_;
 
-}
+  double histogram_interp_energy(double xi, size_t l) const;
+  double linear_interp_energy(double xi, size_t l) const;
+};
+
+}  // namespace pndl
 
 #endif

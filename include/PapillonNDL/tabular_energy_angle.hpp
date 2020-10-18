@@ -39,19 +39,20 @@
 #include <PapillonNDL/energy_angle_table.hpp>
 
 namespace pndl {
-  
-  class TabularEnergyAngle : public AngleEnergy {
-    public:
-      TabularEnergyAngle(const ACE& ace, size_t i);
-      ~TabularEnergyAngle() = default;
 
-      AngleEnergyPacket sample_angle_energy(double E_in, std::function<double()> rng) const override final;
+class TabularEnergyAngle : public AngleEnergy {
+ public:
+  TabularEnergyAngle(const ACE& ace, size_t i);
+  ~TabularEnergyAngle() = default;
 
-    private:
-      std::vector<double> incoming_energy_;
-      std::vector<EnergyAngleTable> tables_;
-  };
+  AngleEnergyPacket sample_angle_energy(
+      double E_in, std::function<double()> rng) const override final;
 
-}
+ private:
+  std::vector<double> incoming_energy_;
+  std::vector<EnergyAngleTable> tables_;
+};
+
+}  // namespace pndl
 
 #endif

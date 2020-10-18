@@ -37,7 +37,6 @@
 #include <PapillonNDL/ace.hpp>
 #include <PapillonNDL/angle_energy.hpp>
 #include <PapillonNDL/kalbach_table.hpp>
-
 #include <memory>
 
 namespace pndl {
@@ -47,7 +46,8 @@ class Kalbach : public AngleEnergy {
   Kalbach(const ACE& ace, size_t i);
   ~Kalbach() = default;
 
-  AngleEnergyPacket sample_angle_energy(double E_in, std::function<double()> rng) const override final;
+  AngleEnergyPacket sample_angle_energy(
+      double E_in, std::function<double()> rng) const override final;
 
  private:
   std::vector<double> incoming_energy_;

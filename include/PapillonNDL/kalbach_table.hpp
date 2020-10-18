@@ -38,30 +38,30 @@
 #include <PapillonNDL/interpolation.hpp>
 
 namespace pndl {
-  
-  class KalbachTable {
-    public:
-      KalbachTable(const ACE& ace, size_t i);
-      ~KalbachTable() = default;
 
-      double sample_energy(double xi) const;
-      double min_energy() const;
-      double max_energy() const;
-      double R(double E) const;
-      double A(double E) const;
+class KalbachTable {
+ public:
+  KalbachTable(const ACE& ace, size_t i);
+  ~KalbachTable() = default;
 
-    private:
-      std::vector<double> energy_;
-      std::vector<double> pdf_;
-      std::vector<double> cdf_;
-      std::vector<double> R_;
-      std::vector<double> A_;
-      Interpolation interp_;
+  double sample_energy(double xi) const;
+  double min_energy() const;
+  double max_energy() const;
+  double R(double E) const;
+  double A(double E) const;
 
-      double histogram_interp_energy(double xi, size_t l) const;
-      double linear_interp_energy(double xi, size_t l) const;
-  };
+ private:
+  std::vector<double> energy_;
+  std::vector<double> pdf_;
+  std::vector<double> cdf_;
+  std::vector<double> R_;
+  std::vector<double> A_;
+  Interpolation interp_;
 
-}
+  double histogram_interp_energy(double xi, size_t l) const;
+  double linear_interp_energy(double xi, size_t l) const;
+};
+
+}  // namespace pndl
 
 #endif
