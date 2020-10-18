@@ -29,6 +29,12 @@ add_library(PapillonNDL SHARED
   src/equiprobable_angle_bins.cpp
   src/isotropic.cpp
   src/angle_distribution.cpp
+  src/uncorrelated.cpp
+  src/nbody.cpp
+  src/kalbach_table.cpp
+  src/kalbach.cpp
+  src/energy_angle_table.cpp
+  src/tabular_energy_angle.cpp
 )
 
 # Add public interface includes directory

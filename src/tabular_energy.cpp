@@ -58,23 +58,23 @@ TabularEnergy::TabularEnergy(const ACE& ace, size_t i)
   }
 }
 
-double TabularEnergy::sample_energy(double E_in,
-                                    std::function<double()> rng) const {
+double TabularEnergy::sample_energy(double E_in, std::function<double()> rng) const {
   // Determine the index of the bounding tabulated incoming energies
-  auto in_E_it =
-      std::lower_bound(incoming_energy_.begin(), incoming_energy_.end(), E_in);
+  size_t l;
+  double f; // Interpolation factor
+  auto in_E_it = std::lower_bound(incoming_energy_.begin(), incoming_energy_.end(), E_in);
   if (in_E_it == incoming_energy_.begin()) {
-    return tables_.front().sample_value(rng());
+    l = 0;
+    f = 0.;
   } else if (in_E_it == incoming_energy_.end()) {
-    return tables_.back().sample_value(rng());
+    l = incoming_energy_.size() - 2;
+    f = 1.;
+  } else {
+    l = std::distance(incoming_energy_.begin(), in_E_it) - 1;
+    f = interpolation_factor(E_in, incoming_energy_[l], incoming_energy_[l + 1]);
   }
-
-  size_t l = std::distance(incoming_energy_.begin(), in_E_it);
-  l--;
-
-  // Get interpolation factor
-  double f =
-      interpolation_factor(E_in, incoming_energy_[l], incoming_energy_[l + 1]);
+  // Determine the index of the bounding tabulated incoming energies
+  
   double E_i_1 = tables_[l].min_value();
   double E_i_M = tables_[l].max_value();
   double E_i_1_1 = tables_[l + 1].min_value();

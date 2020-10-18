@@ -31,28 +31,38 @@
  * termes.
  *
  * */
-#ifndef PAPILLON_NDL_ANGLE_DISTRIBUTION_H
-#define PAPILLON_NDL_ANGLE_DISTRIBUTION_H
+#ifndef PAPILLON_NDL_ENERGY_ANGLE_TABLE_H
+#define PAPILLON_NDL_ENERGY_ANGLE_TABLE_H
 
 #include <PapillonNDL/ace.hpp>
-#include <PapillonNDL/angle_law.hpp>
+#include <PapillonNDL/angle_energy_packet.hpp>
+#include <PapillonNDL/pctable.hpp>
+
 #include <functional>
-#include <memory>
 
 namespace pndl {
+  
+  class EnergyAngleTable {
+    public:
+      EnergyAngleTable(const ACE& ace, size_t i);
+      ~EnergyAngleTable() = default;
 
-class AngleDistribution {
- public:
-  AngleDistribution(const ACE& ace, int locb);
-  ~AngleDistribution() = default;
+      AngleEnergyPacket sample_angle_energy(std::function<double()> rng) const;
+      double min_energy() const;
+      double max_energy() const;
+      Interpolation interpolation() const;
 
-  double sample_angle(double E_in, std::function<double()> rng) const;
+    private:
+      std::vector<double> energy_;
+      std::vector<double> pdf_;
+      std::vector<double> cdf_;
+      std::vector<PCTable> angles_;
+      Interpolation interp_;
 
- private:
-  std::vector<double> energy_grid_;
-  std::vector<std::shared_ptr<AngleLaw>> laws_;
-};
+      double histogram_interp_energy(double xi, size_t l) const;
+      double linear_interp_energy(double xi, size_t l) const;
+  };
 
-}  // namespace pndl
+}
 
 #endif

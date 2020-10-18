@@ -31,28 +31,59 @@
  * termes.
  *
  * */
-#ifndef PAPILLON_NDL_ANGLE_DISTRIBUTION_H
-#define PAPILLON_NDL_ANGLE_DISTRIBUTION_H
+#include <PapillonNDL/nbody.hpp>
+#include "constants.hpp"
 
-#include <PapillonNDL/ace.hpp>
-#include <PapillonNDL/angle_law.hpp>
-#include <functional>
-#include <memory>
+#include <cmath>
 
 namespace pndl {
+  
+  NBody::NBody(const ACE& ace, size_t i, double iQ): n_(), Ap_(), A_(), Q_(iQ) {
+   n_ = ace.xss<uint32_t>(i);
+   Ap_ = ace.xss(i+1); 
+   A_ = ace.awr();
+  }
 
-class AngleDistribution {
- public:
-  AngleDistribution(const ACE& ace, int locb);
-  ~AngleDistribution() = default;
+  AngleEnergyPacket NBody::sample_angle_energy(double E_in, std::function<double()> rng) const {
+   double Emax = ((Ap_ + 1.)/Ap_)*((A_/(A_ + 1.))*E_in + Q_);
+   double x = maxwellian_spectrum(rng);
+   double y = 0.;   
+   double xi1, xi2, xi3, xi4, xi5, xi6;
+   switch(n_) {
+     case 3:
+      y = maxwellian_spectrum(rng);
+      break;
+     case 4:
+      xi1 = rng();
+      xi2 = rng();
+      xi3 = rng();
+      y = - std::log(xi1 * xi2 * xi3);
+      break;
+     case 5:
+      xi1 = rng();
+      xi2 = rng();
+      xi3 = rng();
+      xi4 = rng();
+      xi5 = rng();
+      xi6 = rng();
+      y = - std::log(xi1*xi2*xi3*xi4) - std::log(xi5)*std::pow(std::cos(0.5*PI*xi6),2.);
+      break; 
+   } 
 
-  double sample_angle(double E_in, std::function<double()> rng) const;
+   double E_out = (x/(x+y)) * Emax;
+   double mu = 2.*rng() - 1.;
 
- private:
-  std::vector<double> energy_grid_;
-  std::vector<std::shared_ptr<AngleLaw>> laws_;
-};
+   return {mu, E_out};
+  }
 
-}  // namespace pndl
+  double NBody::maxwellian_spectrum(std::function<double()>& rng) const {
+    double xi1 = rng();
+    double xi2 = rng();
+    double xi3 = rng();
 
-#endif
+    double a = PI * xi3 / 2.;
+
+    return -(std::log(xi1) + std::log(xi2) * std::cos(a) * std::cos(a));  
+  }
+
+}

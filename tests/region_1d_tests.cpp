@@ -23,7 +23,7 @@ namespace {
 
     Region1D R(x,y,interp);
 
-    EXPECT_EQ(R.interpolation(), interp);
+    EXPECT_EQ(R.interpolation()[0], interp);
   }
 
   TEST(Region1D, EvaluationContinuous) {

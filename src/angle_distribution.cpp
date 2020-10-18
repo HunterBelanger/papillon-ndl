@@ -64,16 +64,16 @@ AngleDistribution::AngleDistribution(const ACE& ace, int locb)
       int l = ace.xss<int>(i + 1 + NE + j);
       uint32_t loc = ace.AND() + std::abs(l) - 1;
       if (l > 0) {
-        laws_.push_back(std::make_unique<EquiprobableAngleBins>(ace, loc));
+        laws_.push_back(std::make_shared<EquiprobableAngleBins>(ace, loc));
       } else if (l < 0) {
-        laws_.push_back(std::make_unique<AngleTable>(ace, loc));
+        laws_.push_back(std::make_shared<AngleTable>(ace, loc));
       } else {
-        laws_.push_back(std::make_unique<Isotropic>());
+        laws_.push_back(std::make_shared<Isotropic>());
       }
     }
   } else if (locb == 0) {
     energy_grid_.push_back(1.E-5);
-    laws_.push_back(std::make_unique<Isotropic>());
+    laws_.push_back(std::make_shared<Isotropic>());
   }
 }
 

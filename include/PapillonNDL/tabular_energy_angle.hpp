@@ -31,28 +31,27 @@
  * termes.
  *
  * */
-#ifndef PAPILLON_NDL_ANGLE_DISTRIBUTION_H
-#define PAPILLON_NDL_ANGLE_DISTRIBUTION_H
+#ifndef PAPILLON_NDL_TABULAR_ENERGY_ANGLE_H
+#define PAPILLON_NDL_TABULAR_ENERGY_ANGLE_H
 
 #include <PapillonNDL/ace.hpp>
-#include <PapillonNDL/angle_law.hpp>
-#include <functional>
-#include <memory>
+#include <PapillonNDL/angle_energy.hpp>
+#include <PapillonNDL/energy_angle_table.hpp>
 
 namespace pndl {
+  
+  class TabularEnergyAngle : public AngleEnergy {
+    public:
+      TabularEnergyAngle(const ACE& ace, size_t i);
+      ~TabularEnergyAngle() = default;
 
-class AngleDistribution {
- public:
-  AngleDistribution(const ACE& ace, int locb);
-  ~AngleDistribution() = default;
+      AngleEnergyPacket sample_angle_energy(double E_in, std::function<double()> rng) const override final;
 
-  double sample_angle(double E_in, std::function<double()> rng) const;
+    private:
+      std::vector<double> incoming_energy_;
+      std::vector<EnergyAngleTable> tables_;
+  };
 
- private:
-  std::vector<double> energy_grid_;
-  std::vector<std::shared_ptr<AngleLaw>> laws_;
-};
-
-}  // namespace pndl
+}
 
 #endif

@@ -31,26 +31,27 @@
  * termes.
  *
  * */
-#ifndef PAPILLON_NDL_ANGLE_DISTRIBUTION_H
-#define PAPILLON_NDL_ANGLE_DISTRIBUTION_H
+#ifndef PAPILLON_NDL_KALBACH_H
+#define PAPILLON_NDL_KALBACH_H
 
 #include <PapillonNDL/ace.hpp>
-#include <PapillonNDL/angle_law.hpp>
-#include <functional>
+#include <PapillonNDL/angle_energy.hpp>
+#include <PapillonNDL/kalbach_table.hpp>
+
 #include <memory>
 
 namespace pndl {
 
-class AngleDistribution {
+class Kalbach : public AngleEnergy {
  public:
-  AngleDistribution(const ACE& ace, int locb);
-  ~AngleDistribution() = default;
+  Kalbach(const ACE& ace, size_t i);
+  ~Kalbach() = default;
 
-  double sample_angle(double E_in, std::function<double()> rng) const;
+  AngleEnergyPacket sample_angle_energy(double E_in, std::function<double()> rng) const override final;
 
  private:
-  std::vector<double> energy_grid_;
-  std::vector<std::shared_ptr<AngleLaw>> laws_;
+  std::vector<double> incoming_energy_;
+  std::vector<KalbachTable> tables_;
 };
 
 }  // namespace pndl

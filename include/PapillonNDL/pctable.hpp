@@ -48,6 +48,12 @@ class PCTable {
   double sample_value(double xi) const;
   double min_value() const;
   double max_value() const;
+  
+  size_t size() const;
+  const std::vector<double>& values() const;
+  const std::vector<double>& pdf() const;
+  const std::vector<double>& cdf() const;  
+  Interpolation interpolation() const;
 
  private:
   std::vector<double> values_;

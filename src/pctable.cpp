@@ -81,6 +81,16 @@ double PCTable::min_value() const { return values_.front(); }
 
 double PCTable::max_value() const { return values_.back(); }
 
+size_t PCTable::size() const {return values_.size();}
+
+const std::vector<double>& PCTable::values() const {return values_;}
+
+const std::vector<double>& PCTable::pdf() const {return pdf_;}
+
+const std::vector<double>& PCTable::cdf() const {return cdf_;}
+
+Interpolation PCTable::interpolation() const {return interp_;}
+
 double PCTable::histogram_interp(double xi, size_t l) const {
   return values_[l] + ((xi - cdf_[l]) / pdf_[l]);
 }

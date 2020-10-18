@@ -31,26 +31,28 @@
  * termes.
  *
  * */
-#ifndef PAPILLON_NDL_ANGLE_DISTRIBUTION_H
-#define PAPILLON_NDL_ANGLE_DISTRIBUTION_H
+#ifndef PAPILLON_NDL_NBODY_H
+#define PAPILLON_NDL_NBODY_H
 
 #include <PapillonNDL/ace.hpp>
-#include <PapillonNDL/angle_law.hpp>
-#include <functional>
-#include <memory>
+#include <PapillonNDL/angle_energy.hpp>
 
 namespace pndl {
 
-class AngleDistribution {
+class NBody : public AngleEnergy {
  public:
-  AngleDistribution(const ACE& ace, int locb);
-  ~AngleDistribution() = default;
+  NBody(const ACE& ace, size_t i, double iQ);
+  ~NBody() = default;
 
-  double sample_angle(double E_in, std::function<double()> rng) const;
+  AngleEnergyPacket sample_angle_energy(double E_in, std::function<double()> rng) const override final;
 
  private:
-  std::vector<double> energy_grid_;
-  std::vector<std::shared_ptr<AngleLaw>> laws_;
+  uint32_t n_;
+  double Ap_;
+  double A_;
+  double Q_;
+
+  double maxwellian_spectrum(std::function<double()>& rng) const;
 };
 
 }  // namespace pndl
