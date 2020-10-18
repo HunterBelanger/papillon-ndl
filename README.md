@@ -3,7 +3,7 @@
 
 The Papillon Nuclear Data Library (NDL) is used for reading, sampling,
 and interacting with continuous energy nuclear data, stored in the ACE
-format.
+nuclear data format.
 
 ## Dependencies
 To build and install the library, cmake >= 3.9 is required, along with a C++
@@ -18,9 +18,9 @@ for most users.
 ## Install
 
 ## License
-Papillon-NDL is provided under the terms and conditions of the CeCILL v2.1
-license. This is a French equivalent of the GPL v3 license, and is explicitly
-compatible with both the GPL v2 and v3. The French version of this license is
-provided in the LICENSE file, while the equaly valid English version may be
-found in the LICENSE-ENGLISH file. The license is approved by the FSF. More
-information about this license may be found [here](https://cecill.info/).
+PapillonNDL is provided under the terms and conditions of the CeCILLv2.1
+license. This is a French equivalent of the GPLv3 license, and is explicitly
+compatible with both the GPLv2 and v3. The French version of this license is
+provided in the LICENSE file, along with the equaly valid English version, which
+may be found in the LICENSE-ENGLISH file. The CeCILLv2.1 is approved by the FSF.
+For more information about this license may be found [here](https://cecill.info/).
