@@ -31,84 +31,33 @@
  * termes.
  *
  * */
-#ifndef PAPILLON_NDL_ACE_H
-#define PAPILLON_NDL_ACE_H
+#ifndef PAPILLON_NDL_ENERGY_GRID_H
+#define PAPILLON_NDL_ENERGY_GRID_H
 
-#include <array>
-#include <string>
+#include <PapillonNDL/ace.hpp>
+#include <PapillonNDL/shared_span.hpp>
 #include <vector>
 
 namespace pndl {
-class ACE {
+
+class EnergyGrid {
  public:
-  ACE(std::string fname);
-  ~ACE() = default;
+  EnergyGrid(const ACE& ace, uint32_t NBINS = 8192);
+  ~EnergyGrid() = default;
 
-  // Basic nuclide data
-  int32_t zaid() const;
-  double temperature() const;
-  double awr() const;
-  bool fissile() const;
-
-  // Accessors to data arrays
-  std::pair<int32_t, double> izaw(size_t i) const;
-  int32_t nxs(size_t i) const;
-  int32_t jxs(size_t i) const;
-  double xss(size_t i) const;
-
-  template <class T>
-  T xss(size_t i) const {
-    return static_cast<T>(xss(i));
-  }
-
-  // Range accessors to data arrays
-  std::vector<std::pair<int32_t, double>> izaw(size_t i, size_t len) const;
-  std::vector<int32_t> nxs(size_t i, size_t len) const;
-  std::vector<int32_t> jxs(size_t i, size_t len) const;
-  std::vector<double> xss(size_t i, size_t len) const;
-
-  template <class T>
-  std::vector<T> xss(size_t i, size_t len) const {
-    std::vector<T> tmp(len);
-
-    for (size_t j = 0; j < len; j++) {
-      tmp[j] = static_cast<T>(xss<T>(i + j));
-    }
-
-    return tmp;
-  }
-
-  const double* xss_data() const;
-
-  // Locations for sections within XSS
-  int32_t ESZ() const;
-  int32_t NU() const;
-  int32_t MTR() const;
-  int32_t LQR() const;
-  int32_t TYR() const;
-  int32_t LSIG() const;
-  int32_t SIG() const;
-  int32_t LAND() const;
-  int32_t AND() const;
-  int32_t LDLW() const;
-  int32_t DLW() const;
-  //=======================================================================
+  double operator[](size_t i) const;
+  size_t size() const;
+  size_t get_lower_index(double E);
+  const shared_span<float>& grid() const;
+  double min_energy() const;
+  double max_energy() const;
 
  private:
-  int32_t zaid_;
-  double temperature_;
-  double awr_;
-  bool fissile_;
+  shared_span<float> energy_values_;
+  std::vector<uint32_t> bin_pointers_;
+  double u_min, du;
+};
 
-  std::array<std::pair<int32_t, double>, 16> izaw_;
-  std::array<int32_t, 16> nxs_;
-  std::array<int32_t, 32> jxs_;
-  std::vector<double> xss_;
-
-  // Locator constants
-  int32_t esz_, nu_, mtr_, lqr_, tyr_, lsig_, sig_, lan_, an_, ldlw_, dlw_;
-
-};  // ACE
 }  // namespace pndl
 
-#endif  // PAPILLON_NDL_ACE_H
+#endif

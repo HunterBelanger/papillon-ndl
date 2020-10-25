@@ -35,6 +35,8 @@ add_library(PapillonNDL SHARED
   src/kalbach.cpp
   src/energy_angle_table.cpp
   src/tabular_energy_angle.cpp
+  src/energy_grid.cpp
+  src/cross_section.cpp
 )
 
 # Add public interface includes directory
@@ -51,7 +53,7 @@ target_compile_features(PapillonNDL PRIVATE cxx_std_17)
 
 # Set compile options for library
 target_compile_options(PapillonNDL PRIVATE -W -Wall -Wextra -Wpedantic -Weffc++)
-target_compile_options(PapillonNDL PRIVATE $<$<CONFIG:DEBUG>:-g -fsanitizer=address,undefined>)
+target_compile_options(PapillonNDL PRIVATE $<$<CONFIG:DEBUG>:-g>)
 target_compile_options(PapillonNDL PRIVATE $<$<CONFIG:RELEASE>:-O2>)
 target_compile_options(PapillonNDL PRIVATE $<$<BOOL:PNDL_GO_FASTER>:-Ofast -ffast-math>)
 

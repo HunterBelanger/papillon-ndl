@@ -161,6 +161,8 @@ std::vector<double> ACE::xss(size_t i, size_t len) const {
   return {xss_.begin() + i, xss_.begin() + i + len};
 }
 
+const double* ACE::xss_data() const { return xss_.data(); }
+
 int32_t ACE::ESZ() const { return esz_; }
 int32_t ACE::NU() const { return nu_; }
 int32_t ACE::MTR() const { return mtr_; }
