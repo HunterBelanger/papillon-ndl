@@ -99,4 +99,8 @@ double Evaporation::sample_energy(double E_in,
   return E_out;
 }
 
+const Tabulated1D& Evaporation::temperature() const { return *temperature_; }
+
+double Evaporation::U() const { return restriction_energy_; }
+
 }  // namespace pndl

@@ -114,4 +114,16 @@ double EnergyAngleTable::linear_interp_energy(double xi, size_t l) const {
              (std::sqrt(pdf_[l] * pdf_[l] + 2. * m * (xi - cdf_[l])) - pdf_[l]);
 }
 
+const std::vector<double>& EnergyAngleTable::energy() const { return energy_; }
+
+const std::vector<double>& EnergyAngleTable::pdf() const { return pdf_; }
+
+const std::vector<double>& EnergyAngleTable::cdf() const { return cdf_; }
+
+const PCTable& EnergyAngleTable::angle_table(size_t i) const {
+  return angles_[i];
+}
+
+size_t EnergyAngleTable::size() const { return energy_.size(); }
+
 }  // namespace pndl

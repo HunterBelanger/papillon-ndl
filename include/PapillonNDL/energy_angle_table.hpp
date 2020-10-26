@@ -51,6 +51,12 @@ class EnergyAngleTable {
   double max_energy() const;
   Interpolation interpolation() const;
 
+  const std::vector<double>& energy() const;
+  const std::vector<double>& pdf() const;
+  const std::vector<double>& cdf() const;
+  const PCTable& angle_table(size_t i) const;
+  size_t size() const;
+
  private:
   std::vector<double> energy_;
   std::vector<double> pdf_;

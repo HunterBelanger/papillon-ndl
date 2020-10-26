@@ -76,7 +76,7 @@ double EnergyGrid::operator[](size_t i) const { return energy_values_[i]; }
 
 size_t EnergyGrid::size() const { return energy_values_.size(); }
 
-size_t EnergyGrid::get_lower_index(double E) {
+size_t EnergyGrid::get_lower_index(double E) const {
   if (E <= energy_values_.front()) {
     return 0;
   } else if (E >= energy_values_.back()) {

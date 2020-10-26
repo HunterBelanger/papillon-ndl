@@ -47,6 +47,9 @@ class EquiprobableAngleBins : public AngleLaw {
   // Must have xi in the range [0,1).
   double sample_mu(double xi) const override final;
 
+  size_t size() const;
+  const std::vector<double>& bin_bounds() const;
+
  private:
   std::vector<double> bounds_;
 

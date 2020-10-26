@@ -119,4 +119,12 @@ AngleEnergyPacket Kalbach::sample_angle_energy(
   return {mu, E_out};
 }
 
+const std::vector<double>& Kalbach::incoming_energy() const {
+  return incoming_energy_;
+}
+
+const KalbachTable& Kalbach::table(size_t i) const { return tables_[i]; }
+
+size_t Kalbach::size() const { return incoming_energy_.size(); }
+
 }  // namespace pndl

@@ -109,4 +109,14 @@ AngleEnergyPacket TabularEnergyAngle::sample_angle_energy(
   return {mu, E_out};
 }
 
+const std::vector<double>& TabularEnergyAngle::incoming_energy() const {
+  return incoming_energy_;
+}
+
+const EnergyAngleTable& TabularEnergyAngle::table(size_t i) const {
+  return tables_[i];
+}
+
+size_t TabularEnergyAngle::size() const { return incoming_energy_.size(); }
+
 }  // namespace pndl

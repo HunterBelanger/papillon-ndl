@@ -47,7 +47,7 @@ class EnergyGrid {
 
   double operator[](size_t i) const;
   size_t size() const;
-  size_t get_lower_index(double E);
+  size_t get_lower_index(double E) const;
   const shared_span<float>& grid() const;
   double min_energy() const;
   double max_energy() const;

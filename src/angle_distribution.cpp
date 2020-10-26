@@ -95,4 +95,15 @@ double AngleDistribution::sample_angle(double E_in,
   else
     return laws_[l + 1]->sample_mu(rng());
 }
+
+size_t AngleDistribution::size() const { return energy_grid_.size(); }
+
+const std::vector<double>& AngleDistribution::energy() const {
+  return energy_grid_;
+}
+
+const std::vector<std::shared_ptr<AngleLaw>>& AngleDistribution::laws() const {
+  return laws_;
+}
+
 }  // namespace pndl

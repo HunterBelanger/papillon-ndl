@@ -11,6 +11,7 @@ option(PNDL_TESTS "Build tests" OFF)
 
 # Create PapillonNDL library target
 add_library(PapillonNDL SHARED
+  src/frame.cpp
   src/interpolation.cpp
   src/integration.cpp
   src/region_1d.cpp
@@ -37,6 +38,8 @@ add_library(PapillonNDL SHARED
   src/tabular_energy_angle.cpp
   src/energy_grid.cpp
   src/cross_section.cpp
+  src/reaction.cpp
+  src/nuclide.cpp
 )
 
 # Add public interface includes directory

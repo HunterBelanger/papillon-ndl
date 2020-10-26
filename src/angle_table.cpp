@@ -44,4 +44,22 @@ double AngleTable::sample_mu(double xi) const {
   return mu;
 }
 
+size_t AngleTable::size() const { return distribution_.size(); }
+
+const std::vector<double>& AngleTable::cosines() const {
+  return distribution_.values();
+}
+
+const std::vector<double>& AngleTable::pdf() const {
+  return distribution_.pdf();
+}
+
+const std::vector<double>& AngleTable::cdf() const {
+  return distribution_.cdf();
+}
+
+Interpolation AngleTable::interpolation() const {
+  return distribution_.interpolation();
+}
+
 }  // namespace pndl

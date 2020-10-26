@@ -96,4 +96,14 @@ double EquiprobableEnergyBins::sample_bins(
   return (bounds[bin + 1] - bounds[bin]) * xi2 + bounds[bin];
 }
 
+const std::vector<double>& EquiprobableEnergyBins::incoming_energy() const {
+  return incoming_energy_;
+}
+
+const std::vector<double>& EquiprobableEnergyBins::bin_bounds(size_t i) const {
+  return bin_sets_[i];
+}
+
+size_t EquiprobableEnergyBins::size() const { return incoming_energy_.size(); }
+
 }  // namespace pndl

@@ -31,30 +31,46 @@
  * termes.
  *
  * */
-#ifndef PAPILLON_NDL_EVAPORATION_H
-#define PAPILLON_NDL_EVAPORATION_H
+#ifndef PAPILLON_NDL_REACTION_H
+#define PAPILLON_NDL_REACTION_H
 
 #include <PapillonNDL/ace.hpp>
-#include <PapillonNDL/energy_law.hpp>
-#include <PapillonNDL/tabulated_1d.hpp>
+#include <PapillonNDL/angle_energy.hpp>
+#include <PapillonNDL/cross_section.hpp>
+#include <PapillonNDL/frame.hpp>
+#include <PapillonNDL/function_1d.hpp>
 #include <memory>
 
 namespace pndl {
 
-class Evaporation : public EnergyLaw {
+class Reaction {
  public:
-  Evaporation(const ACE& ace, size_t i);
-  ~Evaporation() = default;
+  Reaction(const ACE& ace, size_t indx, const EnergyGrid& egrid);
+  ~Reaction() = default;
 
-  double sample_energy(double E_in,
-                       std::function<double()> rng) const override final;
+  uint32_t MT() const;
+  double Q() const;
+  double yield(double E) const;
+  double threshold() const;
+  Frame frame() const;
+  double xs(double E) const;
+  double xs(double E, size_t i) const;
+  AngleEnergyPacket sample_angle_energy(double E_in,
+                                        std::function<double()> rng) const;
 
-  const Tabulated1D& temperature() const;
-  double U() const;
+  const CrossSection& cross_section() const;
+  const AngleEnergy& angle_energy() const;
+  const Function1D& yield() const;
 
  private:
-  std::unique_ptr<Tabulated1D> temperature_;
-  double restriction_energy_;
+  uint32_t mt_;
+  double q_;
+  double awr_;
+  double threshold_;
+  Frame frame_;
+  CrossSection xs_;
+  std::shared_ptr<AngleEnergy> angle_energy_;
+  std::shared_ptr<Function1D> yield_;
 };
 
 }  // namespace pndl

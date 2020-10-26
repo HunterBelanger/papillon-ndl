@@ -34,6 +34,7 @@
 #ifndef PAPILLON_NDL_FRAME_H
 #define PAPILLON_NDL_FRAME_H
 
+#include <PapillonNDL/angle_energy_packet.hpp>
 #include <cstdint>
 
 namespace pndl {
@@ -42,6 +43,8 @@ enum class Frame : uint32_t {
   Lab = 1,
   CM = 2,
 };
+
+void cm_to_lab(double E, double A, AngleEnergyPacket& ae);
 
 }  // namespace pndl
 

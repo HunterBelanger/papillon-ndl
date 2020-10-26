@@ -99,4 +99,8 @@ double Maxwellian::sample_energy(double E_in,
   return E_out;
 }
 
+const Tabulated1D& Maxwellian::temperature() const { return *temperature_; }
+
+double Maxwellian::U() const { return restriction_energy_; }
+
 }  // namespace pndl

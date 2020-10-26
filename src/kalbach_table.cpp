@@ -124,4 +124,16 @@ double KalbachTable::linear_interp_energy(double xi, size_t l) const {
              (std::sqrt(pdf_[l] * pdf_[l] + 2. * m * (xi - cdf_[l])) - pdf_[l]);
 }
 
+const std::vector<double>& KalbachTable::energy() const { return energy_; }
+
+const std::vector<double>& KalbachTable::pdf() const { return pdf_; }
+
+const std::vector<double>& KalbachTable::cdf() const { return cdf_; }
+
+const std::vector<double>& KalbachTable::R() const { return R_; }
+
+const std::vector<double>& KalbachTable::A() const { return A_; }
+
+Interpolation KalbachTable::interpolation() const { return interp_; }
+
 }  // namespace pndl

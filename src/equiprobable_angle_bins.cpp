@@ -48,4 +48,10 @@ double EquiprobableAngleBins::sample_mu(double xi) const {
   return ((xi - C_b) / P_BIN) + mu_low;
 }
 
+size_t EquiprobableAngleBins::size() const { return NBOUNDS; }
+
+const std::vector<double>& EquiprobableAngleBins::bin_bounds() const {
+  return bounds_;
+}
+
 }  // namespace pndl

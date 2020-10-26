@@ -88,4 +88,12 @@ double NBody::maxwellian_spectrum(std::function<double()>& rng) const {
   return -(std::log(xi1) + std::log(xi2) * std::cos(a) * std::cos(a));
 }
 
+uint32_t NBody::n() const { return n_; }
+
+double NBody::Ap() const { return Ap_; }
+
+double NBody::A() const { return A_; }
+
+double NBody::Q() const { return Q_; }
+
 }  // namespace pndl

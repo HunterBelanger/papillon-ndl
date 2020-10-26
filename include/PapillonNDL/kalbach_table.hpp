@@ -50,6 +50,13 @@ class KalbachTable {
   double R(double E) const;
   double A(double E) const;
 
+  const std::vector<double>& energy() const;
+  const std::vector<double>& pdf() const;
+  const std::vector<double>& cdf() const;
+  const std::vector<double>& R() const;
+  const std::vector<double>& A() const;
+  Interpolation interpolation() const;
+
  private:
   std::vector<double> energy_;
   std::vector<double> pdf_;

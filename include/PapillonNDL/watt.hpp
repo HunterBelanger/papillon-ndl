@@ -49,6 +49,10 @@ class Watt : public EnergyLaw {
   double sample_energy(double E_in,
                        std::function<double()> rng) const override final;
 
+  const Tabulated1D& a() const;
+  const Tabulated1D& b() const;
+  double U() const;
+
  private:
   std::unique_ptr<Tabulated1D> a_;
   std::unique_ptr<Tabulated1D> b_;

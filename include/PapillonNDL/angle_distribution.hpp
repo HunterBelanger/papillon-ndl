@@ -48,6 +48,10 @@ class AngleDistribution {
 
   double sample_angle(double E_in, std::function<double()> rng) const;
 
+  size_t size() const;
+  const std::vector<double>& energy() const;
+  const std::vector<std::shared_ptr<AngleLaw>>& laws() const;
+
  private:
   std::vector<double> energy_grid_;
   std::vector<std::shared_ptr<AngleLaw>> laws_;

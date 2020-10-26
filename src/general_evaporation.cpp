@@ -89,4 +89,12 @@ double GeneralEvaporation::sample_energy(double E_in,
   return Chi * T;
 }
 
+const Tabulated1D& GeneralEvaporation::temperature() const {
+  return *temperature_;
+}
+
+const std::vector<double>& GeneralEvaporation::bin_bounds() const {
+  return bin_bounds_;
+}
+
 }  // namespace pndl

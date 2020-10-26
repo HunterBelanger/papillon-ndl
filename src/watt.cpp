@@ -134,4 +134,10 @@ double Watt::sample_energy(double E_in, std::function<double()> rng) const {
   return E_out;
 }
 
+const Tabulated1D& Watt::a() const { return *a_; }
+
+const Tabulated1D& Watt::b() const { return *b_; }
+
+double Watt::U() const { return restriction_energy_; }
+
 }  // namespace pndl

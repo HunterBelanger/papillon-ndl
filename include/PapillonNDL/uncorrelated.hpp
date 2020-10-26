@@ -50,6 +50,10 @@ class Uncorrelated : public AngleEnergy {
   AngleEnergyPacket sample_angle_energy(
       double E_in, std::function<double()> rng) const override final;
 
+  const AngleDistribution& angle() const;
+
+  const EnergyLaw& energy() const;
+
  private:
   AngleDistribution angle_;
   std::unique_ptr<EnergyLaw> energy_;

@@ -31,32 +31,23 @@
  * termes.
  *
  * */
-#ifndef PAPILLON_NDL_EVAPORATION_H
-#define PAPILLON_NDL_EVAPORATION_H
-
-#include <PapillonNDL/ace.hpp>
-#include <PapillonNDL/energy_law.hpp>
-#include <PapillonNDL/tabulated_1d.hpp>
-#include <memory>
+#include <PapillonNDL/frame.hpp>
+#include <cmath>
 
 namespace pndl {
 
-class Evaporation : public EnergyLaw {
- public:
-  Evaporation(const ACE& ace, size_t i);
-  ~Evaporation() = default;
+void cm_to_lab(double E, double A, AngleEnergyPacket& ae) {
+  double E_cm = ae.energy;
+  double mu_cm = ae.angle;
 
-  double sample_energy(double E_in,
-                       std::function<double()> rng) const override final;
+  double E_lab = E_cm + (E + 2. * mu_cm * (A + 1.) * std::sqrt(E * E_cm)) /
+                            std::pow(A + 1., 2.);
 
-  const Tabulated1D& temperature() const;
-  double U() const;
+  double mu_lab =
+      mu_cm * std::sqrt(E_cm / E_lab) + (1. / (A + 1.)) * std::sqrt(E / E_lab);
 
- private:
-  std::unique_ptr<Tabulated1D> temperature_;
-  double restriction_energy_;
-};
+  ae.angle = mu_lab;
+  ae.energy = E_lab;
+}
 
 }  // namespace pndl
-
-#endif

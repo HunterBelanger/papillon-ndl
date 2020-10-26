@@ -31,30 +31,63 @@
  * termes.
  *
  * */
-#ifndef PAPILLON_NDL_EVAPORATION_H
-#define PAPILLON_NDL_EVAPORATION_H
+#ifndef PAPILLON_NDL_NUCLIDE_H
+#define PAPILLON_NDL_NUCLIDE_H
 
 #include <PapillonNDL/ace.hpp>
-#include <PapillonNDL/energy_law.hpp>
-#include <PapillonNDL/tabulated_1d.hpp>
-#include <memory>
+#include <PapillonNDL/angle_distribution.hpp>
+#include <PapillonNDL/reaction.hpp>
+#include <unordered_map>
 
 namespace pndl {
 
-class Evaporation : public EnergyLaw {
+class Nuclide {
  public:
-  Evaporation(const ACE& ace, size_t i);
-  ~Evaporation() = default;
+  Nuclide(const ACE& ace);
+  ~Nuclide() = default;
 
-  double sample_energy(double E_in,
-                       std::function<double()> rng) const override final;
+  uint32_t ZAID() const;
+  double AWR() const;
+  double temperature() const;
+  bool fissile() const;
 
-  const Tabulated1D& temperature() const;
-  double U() const;
+  const EnergyGrid& energy_grid() const;
+  const CrossSection& total_cross_section() const;
+  const CrossSection& elastic_cross_section() const;
+  const CrossSection& absorption_cross_section() const;
+  const AngleDistribution& elastic_angle_distribution() const;
+
+  size_t energy_grid_index(double E) const;
+  double total_xs(double E) const;
+  double total_xs(double E, size_t i) const;
+  double elastic_xs(double E) const;
+  double elstic_xs(double E, size_t i) const;
+  double absorption_xs(double E) const;
+  double absorption_xs(double E, size_t i) const;
+  double sample_elastic_angle(double E, std::function<double()> rng) const;
+
+  bool has_reaction(uint32_t mt) const;
+  const Reaction& reaction(uint32_t mt) const;
+  double reaction_xs(uint32_t mt, double E) const;
+  double reaction_xs(uint32_t mt, double E, size_t i) const;
 
  private:
-  std::unique_ptr<Tabulated1D> temperature_;
-  double restriction_energy_;
+  uint32_t zaid_;
+  double awr_;
+  double temperature_;
+  bool fissile_;
+
+  EnergyGrid energy_grid_;
+
+  CrossSection total_xs_;
+  CrossSection absorption_xs_;
+  CrossSection elastic_xs_;
+
+  AngleDistribution elastic_angle_;
+
+  // TODO fission data
+
+  std::unordered_map<uint32_t, Reaction> reactions_;
 };
 
 }  // namespace pndl

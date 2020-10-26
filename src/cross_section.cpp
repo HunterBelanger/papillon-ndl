@@ -52,6 +52,15 @@ CrossSection::CrossSection(const ACE& ace, size_t i, const EnergyGrid& E_grid,
   values_ = ace.xss<float>(i, NE);
 }
 
+double CrossSection::operator[](size_t i) const {
+  if (i < index_)
+    return values_.front();
+  else if (i >= index_ + values_.size())
+    return values_.back();
+
+  return values_[i - index_];
+}
+
 double CrossSection::operator()(double E) const {
   if (E <= energy_values_.front())
     return values_.front();
@@ -90,5 +99,7 @@ size_t CrossSection::size() const { return values_.size(); }
 double CrossSection::value(size_t i) const { return values_[i]; }
 
 double CrossSection::energy(size_t i) const { return energy_values_[i]; }
+
+uint32_t CrossSection::index() const { return index_; }
 
 }  // namespace pndl

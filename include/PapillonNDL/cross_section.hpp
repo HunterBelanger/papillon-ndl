@@ -42,12 +42,16 @@ namespace pndl {
 
 class CrossSection {
  public:
+  CrossSection() : energy_values_({0.}), values_(), index_(0) {}
   CrossSection(const ACE& ace, size_t i, const EnergyGrid& E_grid,
                bool get_index = true);
   ~CrossSection() = default;
 
+  double operator[](size_t i) const;
   double operator()(double E) const;
   double operator()(double E, size_t i) const;
+  uint32_t index() const;
+
   size_t size() const;
   double value(size_t i) const;
   double energy(size_t i) const;

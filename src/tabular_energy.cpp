@@ -102,4 +102,12 @@ double TabularEnergy::sample_energy(double E_in,
   return E_out;
 }
 
+const std::vector<double>& TabularEnergy::incoming_energy() const {
+  return incoming_energy_;
+}
+
+const PCTable& TabularEnergy::table(size_t i) const { return tables_[i]; }
+
+size_t TabularEnergy::size() const { return incoming_energy_.size(); }
+
 }  // namespace pndl

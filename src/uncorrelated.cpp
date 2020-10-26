@@ -46,4 +46,8 @@ AngleEnergyPacket Uncorrelated::sample_angle_energy(
   return {mu, E_out};
 }
 
+const AngleDistribution& Uncorrelated::angle() const { return angle_; }
+
+const EnergyLaw& Uncorrelated::energy() const { return *energy_; }
+
 }  // namespace pndl

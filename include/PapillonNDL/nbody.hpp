@@ -47,6 +47,11 @@ class NBody : public AngleEnergy {
   AngleEnergyPacket sample_angle_energy(
       double E_in, std::function<double()> rng) const override final;
 
+  uint32_t n() const;
+  double Ap() const;
+  double A() const;
+  double Q() const;
+
  private:
   uint32_t n_;
   double Ap_;

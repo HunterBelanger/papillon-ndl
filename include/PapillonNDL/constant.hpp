@@ -31,30 +31,25 @@
  * termes.
  *
  * */
-#ifndef PAPILLON_NDL_EVAPORATION_H
-#define PAPILLON_NDL_EVAPORATION_H
+#ifndef PAPILLON_NDL_CONSTANT_H
+#define PAPILLON_NDL_CONSTANT_H
 
-#include <PapillonNDL/ace.hpp>
-#include <PapillonNDL/energy_law.hpp>
-#include <PapillonNDL/tabulated_1d.hpp>
-#include <memory>
+#include <PapillonNDL/function_1d.hpp>
 
 namespace pndl {
 
-class Evaporation : public EnergyLaw {
+class Constant : public Function1D {
  public:
-  Evaporation(const ACE& ace, size_t i);
-  ~Evaporation() = default;
+  Constant(double value) : value_(value) {}
+  ~Constant() = default;
 
-  double sample_energy(double E_in,
-                       std::function<double()> rng) const override final;
-
-  const Tabulated1D& temperature() const;
-  double U() const;
+  double operator()(double /*x*/) const override final { return value_; }
+  double integrate(double x_low, double x_hi) const override final {
+    return value_ * (x_hi - x_low);
+  }
 
  private:
-  std::unique_ptr<Tabulated1D> temperature_;
-  double restriction_energy_;
+  double value_;
 };
 
 }  // namespace pndl
