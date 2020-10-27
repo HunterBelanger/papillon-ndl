@@ -32,8 +32,6 @@
  *
  * */
 #include <PapillonNDL/energy_grid.hpp>
-#include <algorithm>
-#include <cmath>
 
 #include "constants.hpp"
 
@@ -48,56 +46,34 @@ EnergyGrid::EnergyGrid(const ACE& ace, uint32_t NBINS)
   // Generate pointers for lethargy bins
   u_min = std::log(energy_values_.front());
   double u_max = std::log(energy_values_.back());
-  du = static_cast<double>(NBINS) / (u_max - u_min);
+  du = (u_max - u_min) / static_cast<double>(NBINS);
 
-  bin_pointers_.reserve(NBINS);
+  bin_pointers_.reserve(NBINS+1);
 
+  double E = energy_values_.front();
+  size_t i = 0;
+  
   // Start by storing index to u_min which is 0
   bin_pointers_.push_back(0);
 
   // Get energy index for each lethargy bin bound
-  size_t i = 0;
-  for (size_t b = 1; b < NBINS; b++) {
-    double u = u_min + b * du;
-    double E = std::exp(u);
+  for (size_t b = 1; b < NBINS+1; b++) {
+    E *= std::exp(du);
 
-    auto it =
-        std::lower_bound(energy_values_.begin() + i, energy_values_.end(), E);
-    i = std::distance(energy_values_.begin(), it) - 1;
+    i = std::distance(energy_values_.begin(), std::lower_bound(energy_values_.begin(), energy_values_.end(), E)) - 1;
 
     bin_pointers_.push_back(i);
   }
 
-  // Save pointer for last energy
-  bin_pointers_.push_back(energy_values_.size() - 1);
+  double size_sum = 0.;
+  for(size_t b = 0; b < bin_pointers_.size() - 1; b++) {
+    size_sum += static_cast<double>(bin_pointers_[b+1] - bin_pointers_[b]); 
+  }
 }
 
 double EnergyGrid::operator[](size_t i) const { return energy_values_[i]; }
 
 size_t EnergyGrid::size() const { return energy_values_.size(); }
-
-size_t EnergyGrid::get_lower_index(double E) const {
-  if (E <= energy_values_.front()) {
-    return 0;
-  } else if (E >= energy_values_.back()) {
-    return energy_values_.size() - 1;
-  }
-
-  // Get current bin
-  uint32_t bin = std::floor((std::log(E) - u_min) / du);
-
-  // lower search index
-  uint32_t low_indx = bin_pointers_[bin];
-  uint32_t hi_indx = bin_pointers_[bin + 1] + 1;
-  if (hi_indx > energy_values_.size() - 1) hi_indx = energy_values_.size() - 1;
-
-  auto E_it = std::lower_bound(energy_values_.begin() + low_indx,
-                               energy_values_.begin() + hi_indx, E);
-  size_t ind = std::distance(energy_values_.begin(), E_it);
-  if (*E_it != E) ind--;
-
-  return ind;
-}
 
 const shared_span<float>& EnergyGrid::grid() const { return energy_values_; }
 

@@ -36,6 +36,7 @@
 
 #include <PapillonNDL/ace.hpp>
 #include <PapillonNDL/shared_span.hpp>
+#include <cmath>
 #include <vector>
 
 namespace pndl {
@@ -47,10 +48,29 @@ class EnergyGrid {
 
   double operator[](size_t i) const;
   size_t size() const;
-  size_t get_lower_index(double E) const;
   const shared_span<float>& grid() const;
   double min_energy() const;
   double max_energy() const;
+
+  size_t get_lower_index(double E) const {
+    if (E <= energy_values_.front()) {
+      return 0;
+    } else if (E >= energy_values_.back()) {
+      return energy_values_.size() - 1;
+    }
+
+    // Get current bin
+    uint32_t bin = static_cast<uint32_t>((std::log(E) - u_min) / du);
+
+    // lower search index
+    uint32_t low_indx = bin_pointers_[bin];
+    uint32_t hi_indx = bin_pointers_[bin + 1] + 1;
+    
+    size_t ind = std::lower_bound(energy_values_.begin() + low_indx,
+                                 energy_values_.begin() + hi_indx, E) - energy_values_.begin() - 1;
+    
+    return ind;
+  }
 
  private:
   shared_span<float> energy_values_;

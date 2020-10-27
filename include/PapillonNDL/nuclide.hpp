@@ -46,10 +46,10 @@ class Nuclide {
   Nuclide(const ACE& ace);
   ~Nuclide() = default;
 
-  uint32_t ZAID() const;
-  double AWR() const;
-  double temperature() const;
-  bool fissile() const;
+  uint32_t ZAID() const { return zaid_; }
+  double AWR() const { return awr_; }
+  double temperature() const { return temperature_; }
+  bool fissile() const { return fissile_; }
 
   const EnergyGrid& energy_grid() const;
   const CrossSection& total_cross_section() const;
@@ -57,19 +57,46 @@ class Nuclide {
   const CrossSection& absorption_cross_section() const;
   const AngleDistribution& elastic_angle_distribution() const;
 
-  size_t energy_grid_index(double E) const;
-  double total_xs(double E) const;
-  double total_xs(double E, size_t i) const;
-  double elastic_xs(double E) const;
-  double elstic_xs(double E, size_t i) const;
-  double absorption_xs(double E) const;
-  double absorption_xs(double E, size_t i) const;
-  double sample_elastic_angle(double E, std::function<double()> rng) const;
+  size_t energy_grid_index(double E) const {
+    return energy_grid_.get_lower_index(E);
+  }
 
-  bool has_reaction(uint32_t mt) const;
-  const Reaction& reaction(uint32_t mt) const;
-  double reaction_xs(uint32_t mt, double E) const;
-  double reaction_xs(uint32_t mt, double E, size_t i) const;
+  double total_xs(double E) const { return total_xs_(E); }
+
+  double total_xs(double E, size_t i) const { return total_xs_(E, i); }
+
+  double elastic_xs(double E) const { return elastic_xs_(E); }
+
+  double elstic_xs(double E, size_t i) const { return elastic_xs_(E, i); }
+
+  double absorption_xs(double E) const { return absorption_xs_(E); }
+
+  double absorption_xs(double E, size_t i) const { return absorption_xs_(E, i); }
+
+  double sample_elastic_angle(double E, std::function<double()> rng) const {
+    return elastic_angle_.sample_angle(E, rng);
+  }
+  
+  bool has_reaction(uint32_t mt) const {
+    if (reactions_.find(mt) == reactions_.end()) return false;
+    return true;
+  }
+
+  const Reaction& reaction(uint32_t mt) const {
+    return reactions_.find(mt)->second;
+  }
+
+  double reaction_xs(uint32_t mt, double E) const {
+    if (!has_reaction(mt)) return 0.;
+
+    return reactions_.find(mt)->second.xs(E);
+  }
+
+  double reaction_xs(uint32_t mt, double E, size_t i) const {
+    if (!has_reaction(mt)) return 0.;
+
+    return reactions_.find(mt)->second.xs(E, i);
+  }
 
  private:
   uint32_t zaid_;

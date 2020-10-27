@@ -52,48 +52,6 @@ CrossSection::CrossSection(const ACE& ace, size_t i, const EnergyGrid& E_grid,
   values_ = ace.xss<float>(i, NE);
 }
 
-double CrossSection::operator[](size_t i) const {
-  if (i < index_)
-    return values_.front();
-  else if (i >= index_ + values_.size())
-    return values_.back();
-
-  return values_[i - index_];
-}
-
-double CrossSection::operator()(double E) const {
-  if (E <= energy_values_.front())
-    return values_.front();
-  else if (E >= energy_values_.back())
-    return values_.back();
-
-  auto E_it = std::lower_bound(energy_values_.begin(), energy_values_.end(), E);
-  size_t indx = std::distance(energy_values_.begin(), E_it) - 1;
-
-  double sig_low = values_[indx];
-  double sig_hi = values_[indx + 1];
-  double E_low = energy_values_[indx];
-  double E_hi = energy_values_[indx + 1];
-
-  return ((E - E_low) / (E_hi - E_low)) * (sig_hi - sig_low) + sig_low;
-}
-
-double CrossSection::operator()(double E, size_t i) const {
-  // Transform index from global grid to local grid
-  i -= index_;
-  if (i >= energy_values_.size()) return operator()(E);
-
-  // Ensure provided index is valid
-  if (energy_values_[i] > E || energy_values_[i + 1] < E) return operator()(E);
-
-  double sig_low = values_[i];
-  double sig_hi = values_[i + 1];
-  double E_low = energy_values_[i];
-  double E_hi = energy_values_[i + 1];
-
-  return ((E - E_low) / (E_hi - E_low)) * (sig_hi - sig_low) + sig_low;
-}
-
 size_t CrossSection::size() const { return values_.size(); }
 
 double CrossSection::value(size_t i) const { return values_[i]; }

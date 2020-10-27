@@ -66,14 +66,6 @@ Nuclide::Nuclide(const ACE& ace)
   // TODO read fission data
 }
 
-uint32_t Nuclide::ZAID() const { return zaid_; }
-
-double Nuclide::AWR() const { return awr_; }
-
-double Nuclide::temperature() const { return temperature_; }
-
-bool Nuclide::fissile() const { return fissile_; }
-
 const EnergyGrid& Nuclide::energy_grid() const { return energy_grid_; }
 
 const CrossSection& Nuclide::total_cross_section() const { return total_xs_; }
@@ -88,52 +80,6 @@ const CrossSection& Nuclide::absorption_cross_section() const {
 
 const AngleDistribution& Nuclide::elastic_angle_distribution() const {
   return elastic_angle_;
-}
-
-size_t Nuclide::energy_grid_index(double E) const {
-  return energy_grid_.get_lower_index(E);
-}
-
-double Nuclide::total_xs(double E) const { return total_xs_(E); }
-
-double Nuclide::total_xs(double E, size_t i) const { return total_xs_(E, i); }
-
-double Nuclide::elastic_xs(double E) const { return elastic_xs_(E); }
-
-double Nuclide::elstic_xs(double E, size_t i) const {
-  return elastic_xs_(E, i);
-}
-
-double Nuclide::absorption_xs(double E) const { return absorption_xs_(E); }
-
-double Nuclide::absorption_xs(double E, size_t i) const {
-  return absorption_xs_(E, i);
-}
-
-double Nuclide::sample_elastic_angle(double E,
-                                     std::function<double()> rng) const {
-  return elastic_angle_.sample_angle(E, rng);
-}
-
-bool Nuclide::has_reaction(uint32_t mt) const {
-  if (reactions_.find(mt) == reactions_.end()) return false;
-  return true;
-}
-
-const Reaction& Nuclide::reaction(uint32_t mt) const {
-  return reactions_.find(mt)->second;
-}
-
-double Nuclide::reaction_xs(uint32_t mt, double E) const {
-  if (!has_reaction(mt)) return 0.;
-
-  return reactions_.find(mt)->second.xs(E);
-}
-
-double Nuclide::reaction_xs(uint32_t mt, double E, size_t i) const {
-  if (!has_reaction(mt)) return 0.;
-
-  return reactions_.find(mt)->second.xs(E, i);
 }
 
 }  // namespace pndl
