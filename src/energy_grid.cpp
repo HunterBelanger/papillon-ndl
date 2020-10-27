@@ -48,26 +48,29 @@ EnergyGrid::EnergyGrid(const ACE& ace, uint32_t NBINS)
   double u_max = std::log(energy_values_.back());
   du = (u_max - u_min) / static_cast<double>(NBINS);
 
-  bin_pointers_.reserve(NBINS+1);
+  bin_pointers_.reserve(NBINS + 1);
 
   double E = energy_values_.front();
   size_t i = 0;
-  
+
   // Start by storing index to u_min which is 0
   bin_pointers_.push_back(0);
 
   // Get energy index for each lethargy bin bound
-  for (size_t b = 1; b < NBINS+1; b++) {
+  for (size_t b = 1; b < NBINS + 1; b++) {
     E *= std::exp(du);
 
-    i = std::distance(energy_values_.begin(), std::lower_bound(energy_values_.begin(), energy_values_.end(), E)) - 1;
+    i = std::distance(
+            energy_values_.begin(),
+            std::lower_bound(energy_values_.begin(), energy_values_.end(), E)) -
+        1;
 
     bin_pointers_.push_back(i);
   }
 
   double size_sum = 0.;
-  for(size_t b = 0; b < bin_pointers_.size() - 1; b++) {
-    size_sum += static_cast<double>(bin_pointers_[b+1] - bin_pointers_[b]); 
+  for (size_t b = 0; b < bin_pointers_.size() - 1; b++) {
+    size_sum += static_cast<double>(bin_pointers_[b + 1] - bin_pointers_[b]);
   }
 }
 

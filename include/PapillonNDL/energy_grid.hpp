@@ -65,10 +65,11 @@ class EnergyGrid {
     // lower search index
     uint32_t low_indx = bin_pointers_[bin];
     uint32_t hi_indx = bin_pointers_[bin + 1] + 1;
-    
+
     size_t ind = std::lower_bound(energy_values_.begin() + low_indx,
-                                 energy_values_.begin() + hi_indx, E) - energy_values_.begin() - 1;
-    
+                                  energy_values_.begin() + hi_indx, E) -
+                 energy_values_.begin() - 1;
+
     return ind;
   }
 

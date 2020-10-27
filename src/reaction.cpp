@@ -212,43 +212,10 @@ Reaction::Reaction(const ACE& ace, size_t indx, const EnergyGrid& egrid)
   }
 }
 
-uint32_t Reaction::MT() const { return mt_; }
-
-double Reaction::Q() const { return q_; }
-
-double Reaction::yield(double E) const { return (*yield_)(E); }
-
-double Reaction::threshold() const { return threshold_; }
-
-Frame Reaction::frame() const { return frame_; }
-
 const CrossSection& Reaction::cross_section() const { return xs_; }
 
 const AngleEnergy& Reaction::angle_energy() const { return *angle_energy_; }
 
 const Function1D& Reaction::yield() const { return *yield_; }
-
-double Reaction::xs(double E) const {
-  if (E < threshold_) return 0.;
-
-  return xs_(E);
-}
-
-double Reaction::xs(double E, size_t i) const {
-  if (E < threshold_) return 0.;
-
-  return xs_(E, i);
-}
-
-AngleEnergyPacket Reaction::sample_angle_energy(
-    double E_in, std::function<double()> rng) const {
-  if (!angle_energy_) return {0., 0.};
-
-  AngleEnergyPacket out = angle_energy_->sample_angle_energy(E_in, rng);
-
-  if (frame_ == Frame::CM) cm_to_lab(E_in, awr_, out);
-
-  return out;
-}
 
 }  // namespace pndl

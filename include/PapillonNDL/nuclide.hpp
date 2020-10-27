@@ -71,12 +71,14 @@ class Nuclide {
 
   double absorption_xs(double E) const { return absorption_xs_(E); }
 
-  double absorption_xs(double E, size_t i) const { return absorption_xs_(E, i); }
+  double absorption_xs(double E, size_t i) const {
+    return absorption_xs_(E, i);
+  }
 
   double sample_elastic_angle(double E, std::function<double()> rng) const {
     return elastic_angle_.sample_angle(E, rng);
   }
-  
+
   bool has_reaction(uint32_t mt) const {
     if (reactions_.find(mt) == reactions_.end()) return false;
     return true;

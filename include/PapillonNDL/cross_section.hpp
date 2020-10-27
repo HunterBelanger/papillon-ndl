@@ -62,7 +62,8 @@ class CrossSection {
     else if (E >= energy_values_.back())
       return values_.back();
 
-    auto E_it = std::lower_bound(energy_values_.begin(), energy_values_.end(), E);
+    auto E_it =
+        std::lower_bound(energy_values_.begin(), energy_values_.end(), E);
     size_t indx = std::distance(energy_values_.begin(), E_it) - 1;
 
     double sig_low = values_[indx];
@@ -78,7 +79,7 @@ class CrossSection {
       return values_.front();
     else if (E >= energy_values_.back())
       return values_.back();
-    
+
     // Transform index from global grid to local grid
     i -= index_;
 
