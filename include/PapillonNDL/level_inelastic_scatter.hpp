@@ -48,6 +48,9 @@ class LevelInelasticScatter : public EnergyLaw {
   double sample_energy(double E_in,
                        std::function<double()> rng) const override final;
 
+  double C1() const;
+  double C2() const;
+
  private:
   double C1_;
   double C2_;

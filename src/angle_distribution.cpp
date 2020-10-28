@@ -102,8 +102,8 @@ const std::vector<double>& AngleDistribution::energy() const {
   return energy_grid_;
 }
 
-const std::vector<std::shared_ptr<AngleLaw>>& AngleDistribution::laws() const {
-  return laws_;
+const AngleLaw& AngleDistribution::law(size_t i) const {
+  return *laws_[i];
 }
 
 }  // namespace pndl

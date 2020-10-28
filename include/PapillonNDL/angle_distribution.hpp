@@ -50,7 +50,7 @@ class AngleDistribution {
 
   size_t size() const;
   const std::vector<double>& energy() const;
-  const std::vector<std::shared_ptr<AngleLaw>>& laws() const;
+  const AngleLaw& law(size_t i) const;
 
  private:
   std::vector<double> energy_grid_;
