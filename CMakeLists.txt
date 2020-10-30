@@ -7,6 +7,7 @@ project(PapillonNDL
 
 # Add options
 option(PNDL_GO_FASTER "Enable -Ofast -ffast-math compiler optimizations" OFF)
+option(PNDL_PYTHON "Enable Python interface to PapillonNDL" OFF)
 option(PNDL_TESTS "Build tests" OFF)
 
 # Create PapillonNDL library target
@@ -62,6 +63,53 @@ target_compile_options(PapillonNDL PRIVATE $<$<BOOL:PNDL_GO_FASTER>:-Ofast -ffas
 
 if(PNDL_TESTS)
   add_subdirectory(tests)
+endif()
+
+if(PNDL_PYTHON)
+  find_package(pybind11 REQUIRED)
+
+  pybind11_add_module(pyPapillonNDL src/python/pyPapillonNDL.cpp
+                                    src/python/interpolation.cpp
+                                    src/python/ace.cpp
+                                    src/python/function_1d.cpp
+                                    src/python/constant.cpp
+                                    src/python/polynomial_1d.cpp
+                                    src/python/tabulated_1d.cpp
+                                    src/python/region_1d.cpp
+                                    src/python/multi_region_1d.cpp
+                                    src/python/frame.cpp
+                                    src/python/angle_law.cpp
+                                    src/python/isotropic.cpp
+                                    src/python/equiprobable_angle_bins.cpp
+                                    src/python/angle_table.cpp
+                                    src/python/angle_distribution.cpp
+                                    src/python/energy_law.cpp
+                                    src/python/tabular_energy.cpp
+                                    src/python/general_evaporation.cpp
+                                    src/python/equiprobable_energy_bins.cpp
+                                    src/python/level_inelastic_scatter.cpp
+                                    src/python/evaporation.cpp
+                                    src/python/maxwellian.cpp
+                                    src/python/watt.cpp
+                                    src/python/angle_energy_packet.cpp 
+                                    src/python/angle_energy.cpp
+                                    src/python/uncorrelated.cpp
+                                    src/python/nbody.cpp
+                                    src/python/kalbach_table.cpp
+                                    src/python/kalbach.cpp
+                                    src/python/pctable.cpp
+                                    src/python/energy_angle_table.cpp
+                                    src/python/tabular_energy_angle.cpp
+                                    src/python/shared_span.cpp
+                                    src/python/energy_grid.cpp
+                                    src/python/cross_section.cpp
+                                    src/python/reaction.cpp
+                                    src/python/nuclide.cpp)
+
+  target_link_libraries(pyPapillonNDL PRIVATE PapillonNDL)
+
+  # TODO install pyPapillonNDL
+
 endif()
 
 # Install
