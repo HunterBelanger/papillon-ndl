@@ -104,7 +104,8 @@ if(PNDL_PYTHON)
                                     src/python/energy_grid.cpp
                                     src/python/cross_section.cpp
                                     src/python/reaction.cpp
-                                    src/python/nuclide.cpp)
+                                    src/python/nuclide.cpp
+                                    src/python/prng.cpp)
 
   target_link_libraries(pyPapillonNDL PRIVATE PapillonNDL)
 
