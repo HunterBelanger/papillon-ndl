@@ -44,19 +44,19 @@ namespace pndl {
 class Uncorrelated : public AngleEnergy {
  public:
   Uncorrelated(const AngleDistribution& angle,
-               std::unique_ptr<EnergyLaw> energy);
+               std::shared_ptr<EnergyLaw> energy);
   ~Uncorrelated() = default;
 
   AngleEnergyPacket sample_angle_energy(
       double E_in, std::function<double()> rng) const override final;
 
-  const AngleDistribution& angle() const;
+  AngleDistribution angle() const;
 
-  const EnergyLaw& energy() const;
+  std::shared_ptr<EnergyLaw> energy() const;
 
  private:
   AngleDistribution angle_;
-  std::unique_ptr<EnergyLaw> energy_;
+  std::shared_ptr<EnergyLaw> energy_;
 };
 
 }  // namespace pndl

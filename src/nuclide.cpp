@@ -66,19 +66,19 @@ Nuclide::Nuclide(const ACE& ace)
   // TODO read fission data
 }
 
-const EnergyGrid& Nuclide::energy_grid() const { return energy_grid_; }
+EnergyGrid Nuclide::energy_grid() const { return energy_grid_; }
 
-const CrossSection& Nuclide::total_cross_section() const { return total_xs_; }
+CrossSection Nuclide::total_cross_section() const { return total_xs_; }
 
-const CrossSection& Nuclide::elastic_cross_section() const {
+CrossSection Nuclide::elastic_cross_section() const {
   return elastic_xs_;
 }
 
-const CrossSection& Nuclide::absorption_cross_section() const {
+CrossSection Nuclide::absorption_cross_section() const {
   return absorption_xs_;
 }
 
-const AngleDistribution& Nuclide::elastic_angle_distribution() const {
+AngleDistribution Nuclide::elastic_angle_distribution() const {
   return elastic_angle_;
 }
 

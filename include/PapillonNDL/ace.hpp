@@ -58,7 +58,7 @@ class ACE {
 
   template <class T>
   T xss(size_t i) const {
-    return static_cast<T>(xss(i));
+    return static_cast<T>(xss_[i]);
   }
 
   // Range accessors to data arrays

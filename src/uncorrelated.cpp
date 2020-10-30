@@ -36,8 +36,8 @@
 namespace pndl {
 
 Uncorrelated::Uncorrelated(const AngleDistribution& angle,
-                           std::unique_ptr<EnergyLaw> energy)
-    : angle_(angle), energy_(std::move(energy)) {}
+                           std::shared_ptr<EnergyLaw> energy)
+    : angle_(angle), energy_(energy) {}
 
 AngleEnergyPacket Uncorrelated::sample_angle_energy(
     double E_in, std::function<double()> rng) const {
@@ -46,8 +46,8 @@ AngleEnergyPacket Uncorrelated::sample_angle_energy(
   return {mu, E_out};
 }
 
-const AngleDistribution& Uncorrelated::angle() const { return angle_; }
+AngleDistribution Uncorrelated::angle() const { return angle_; }
 
-const EnergyLaw& Uncorrelated::energy() const { return *energy_; }
+std::shared_ptr<EnergyLaw> Uncorrelated::energy() const { return energy_; }
 
 }  // namespace pndl

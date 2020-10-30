@@ -77,9 +77,9 @@ class Reaction {
     return out;
   }
 
-  const CrossSection& cross_section() const;
-  const AngleEnergy& angle_energy() const;
-  const Function1D& yield() const;
+  CrossSection cross_section() const;
+  std::shared_ptr<AngleEnergy> angle_energy() const;
+  std::shared_ptr<Function1D> yield() const;
 
  private:
   uint32_t mt_;

@@ -51,11 +51,11 @@ class Nuclide {
   double temperature() const { return temperature_; }
   bool fissile() const { return fissile_; }
 
-  const EnergyGrid& energy_grid() const;
-  const CrossSection& total_cross_section() const;
-  const CrossSection& elastic_cross_section() const;
-  const CrossSection& absorption_cross_section() const;
-  const AngleDistribution& elastic_angle_distribution() const;
+  EnergyGrid energy_grid() const;
+  CrossSection total_cross_section() const;
+  CrossSection elastic_cross_section() const;
+  CrossSection absorption_cross_section() const;
+  AngleDistribution elastic_angle_distribution() const;
 
   size_t energy_grid_index(double E) const {
     return energy_grid_.get_lower_index(E);
@@ -67,7 +67,7 @@ class Nuclide {
 
   double elastic_xs(double E) const { return elastic_xs_(E); }
 
-  double elstic_xs(double E, size_t i) const { return elastic_xs_(E, i); }
+  double elastic_xs(double E, size_t i) const { return elastic_xs_(E, i); }
 
   double absorption_xs(double E) const { return absorption_xs_(E); }
 
@@ -84,7 +84,7 @@ class Nuclide {
     return true;
   }
 
-  const Reaction& reaction(uint32_t mt) const {
+  Reaction reaction(uint32_t mt) const {
     return reactions_.find(mt)->second;
   }
 

@@ -75,7 +75,6 @@ Reaction::Reaction(const ACE& ace, size_t indx, const EnergyGrid& egrid)
 
   // Get the yield for the reaction
   double yld = std::abs(ace.xss(ace.TYR() + indx));
-  if (yld == 19.) yld = 0.;
   if (yld < 100.)
     yield_ = std::make_shared<Constant>(yld);
   else {
@@ -132,31 +131,31 @@ Reaction::Reaction(const ACE& ace, size_t indx, const EnergyGrid& egrid)
 
       if (law == 1) {  // Equiprobable Energy Bins
         angle_energy_ = std::make_shared<Uncorrelated>(
-            angle, std::make_unique<EquiprobableEnergyBins>(ace, j));
+            angle, std::make_shared<EquiprobableEnergyBins>(ace, j));
 
       } else if (law == 3) {  // Level Inelastic Scatter
         angle_energy_ = std::make_shared<Uncorrelated>(
-            angle, std::make_unique<LevelInelasticScatter>(ace, j));
+            angle, std::make_shared<LevelInelasticScatter>(ace, j));
 
       } else if (law == 4) {  // Tabular Energy
         angle_energy_ = std::make_shared<Uncorrelated>(
-            angle, std::make_unique<TabularEnergy>(ace, j));
+            angle, std::make_shared<TabularEnergy>(ace, j));
 
       } else if (law == 5) {  // General Evaporation
         angle_energy_ = std::make_shared<Uncorrelated>(
-            angle, std::make_unique<GeneralEvaporation>(ace, j));
+            angle, std::make_shared<GeneralEvaporation>(ace, j));
 
       } else if (law == 7) {  // Maxwellian
         angle_energy_ = std::make_shared<Uncorrelated>(
-            angle, std::make_unique<Maxwellian>(ace, j));
+            angle, std::make_shared<Maxwellian>(ace, j));
 
       } else if (law == 9) {  // Evaporation
         angle_energy_ = std::make_shared<Uncorrelated>(
-            angle, std::make_unique<Evaporation>(ace, j));
+            angle, std::make_shared<Evaporation>(ace, j));
 
       } else if (law == 11) {  // Watt
         angle_energy_ = std::make_shared<Uncorrelated>(
-            angle, std::make_unique<Watt>(ace, j));
+            angle, std::make_shared<Watt>(ace, j));
 
       } else if (law == 44) {  // Kalbach
         angle_energy_ = std::make_shared<Kalbach>(ace, j);
@@ -212,10 +211,10 @@ Reaction::Reaction(const ACE& ace, size_t indx, const EnergyGrid& egrid)
   }
 }
 
-const CrossSection& Reaction::cross_section() const { return xs_; }
+CrossSection Reaction::cross_section() const { return xs_; }
 
-const AngleEnergy& Reaction::angle_energy() const { return *angle_energy_; }
+std::shared_ptr<AngleEnergy> Reaction::angle_energy() const { return angle_energy_; }
 
-const Function1D& Reaction::yield() const { return *yield_; }
+std::shared_ptr<Function1D> Reaction::yield() const { return yield_; }
 
 }  // namespace pndl
