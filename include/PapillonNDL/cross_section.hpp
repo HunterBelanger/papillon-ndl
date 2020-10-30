@@ -97,6 +97,9 @@ class CrossSection {
   double value(size_t i) const;
   double energy(size_t i) const;
 
+  const std::vector<float>& values() const;
+  std::vector<float> energies() const;
+
  private:
   shared_span<float> energy_values_;
   std::vector<float> values_;

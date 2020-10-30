@@ -67,18 +67,13 @@ EnergyGrid::EnergyGrid(const ACE& ace, uint32_t NBINS)
 
     bin_pointers_.push_back(i);
   }
-
-  double size_sum = 0.;
-  for (size_t b = 0; b < bin_pointers_.size() - 1; b++) {
-    size_sum += static_cast<double>(bin_pointers_[b + 1] - bin_pointers_[b]);
-  }
 }
 
 double EnergyGrid::operator[](size_t i) const { return energy_values_[i]; }
 
 size_t EnergyGrid::size() const { return energy_values_.size(); }
 
-const shared_span<float>& EnergyGrid::grid() const { return energy_values_; }
+shared_span<float> EnergyGrid::grid() const { return energy_values_; }
 
 double EnergyGrid::min_energy() const { return energy_values_.front(); }
 

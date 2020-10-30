@@ -60,4 +60,10 @@ double CrossSection::energy(size_t i) const { return energy_values_[i]; }
 
 uint32_t CrossSection::index() const { return index_; }
 
+const std::vector<float>& CrossSection::values() const {return values_;}
+
+std::vector<float> CrossSection::energies() const {
+  return {energy_values_.begin(), energy_values_.end()};
+}
+
 }  // namespace pndl
