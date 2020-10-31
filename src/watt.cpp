@@ -61,9 +61,9 @@ Watt::Watt(const ACE& ace, size_t i) : a_(), b_(), restriction_energy_() {
 
   // Create Function1D pointer
   if (NBT_a.size() == 1) {
-    a_ = std::make_unique<Region1D>(energy_a, a, INT_a[0]);
+    a_ = std::make_shared<Region1D>(energy_a, a, INT_a[0]);
   } else {
-    a_ = std::make_unique<MultiRegion1D>(NBT_a, INT_a, energy_a, a);
+    a_ = std::make_shared<MultiRegion1D>(NBT_a, INT_a, energy_a, a);
   }
 
   // Reset i for b
@@ -89,9 +89,9 @@ Watt::Watt(const ACE& ace, size_t i) : a_(), b_(), restriction_energy_() {
 
   // Create Function1D pointer
   if (NBT_b.size() == 1) {
-    b_ = std::make_unique<Region1D>(energy_b, b, INT_b[0]);
+    b_ = std::make_shared<Region1D>(energy_b, b, INT_b[0]);
   } else {
-    b_ = std::make_unique<MultiRegion1D>(NBT_b, INT_b, energy_b, b);
+    b_ = std::make_shared<MultiRegion1D>(NBT_b, INT_b, energy_b, b);
   }
 
   // Get restriction energy
@@ -126,9 +126,9 @@ double Watt::sample_energy(double E_in, std::function<double()> rng) const {
   return E_out;
 }
 
-const Tabulated1D& Watt::a() const { return *a_; }
+std::shared_ptr<Tabulated1D> Watt::a() const { return a_; }
 
-const Tabulated1D& Watt::b() const { return *b_; }
+std::shared_ptr<Tabulated1D> Watt::b() const { return b_; }
 
 double Watt::U() const { return restriction_energy_; }
 

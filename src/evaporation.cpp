@@ -63,10 +63,10 @@ Evaporation::Evaporation(const ACE& ace, size_t i)
 
   // Create Function1D pointer
   if (NBT.size() == 1) {
-    temperature_ = std::make_unique<Region1D>(energy, temperature, INT[0]);
+    temperature_ = std::make_shared<Region1D>(energy, temperature, INT[0]);
   } else {
     temperature_ =
-        std::make_unique<MultiRegion1D>(NBT, INT, energy, temperature);
+        std::make_shared<MultiRegion1D>(NBT, INT, energy, temperature);
   }
 }
 
@@ -94,7 +94,7 @@ double Evaporation::sample_energy(double E_in,
   return E_out;
 }
 
-const Tabulated1D& Evaporation::temperature() const { return *temperature_; }
+std::shared_ptr<Tabulated1D> Evaporation::temperature() const { return temperature_; }
 
 double Evaporation::U() const { return restriction_energy_; }
 

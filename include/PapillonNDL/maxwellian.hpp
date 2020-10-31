@@ -49,11 +49,11 @@ class Maxwellian : public EnergyLaw {
   double sample_energy(double E_in,
                        std::function<double()> rng) const override final;
 
-  const Tabulated1D& temperature() const;
+  std::shared_ptr<Tabulated1D> temperature() const;
   double U() const;
 
  private:
-  std::unique_ptr<Tabulated1D> temperature_;
+  std::shared_ptr<Tabulated1D> temperature_;
   double restriction_energy_;
 };
 

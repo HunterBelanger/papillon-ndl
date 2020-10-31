@@ -27,7 +27,6 @@ add_library(PapillonNDL SHARED
   src/watt.cpp
   src/tabular_energy.cpp
   src/pctable.cpp
-  src/equiprobable_angle_bins.cpp
   src/angle_distribution.cpp
   src/uncorrelated.cpp
   src/nbody.cpp

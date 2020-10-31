@@ -96,7 +96,7 @@ double Maxwellian::sample_energy(double E_in,
   return E_out;
 }
 
-const Tabulated1D& Maxwellian::temperature() const { return *temperature_; }
+std::shared_ptr<Tabulated1D> Maxwellian::temperature() const { return temperature_; }
 
 double Maxwellian::U() const { return restriction_energy_; }
 

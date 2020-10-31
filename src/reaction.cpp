@@ -208,7 +208,7 @@ Reaction::Reaction(const ACE& ace, size_t indx, const EnergyGrid& egrid)
   }
 }
 
-CrossSection Reaction::cross_section() const { return xs_; }
+const CrossSection& Reaction::cross_section() const { return xs_; }
 
 std::shared_ptr<AngleEnergy> Reaction::angle_energy() const { return angle_energy_; }
 

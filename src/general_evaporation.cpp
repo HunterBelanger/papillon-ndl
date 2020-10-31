@@ -66,10 +66,10 @@ GeneralEvaporation::GeneralEvaporation(const ACE& ace, size_t i)
 
   // Create Function1D pointer
   if (NBT.size() == 1) {
-    temperature_ = std::make_unique<Region1D>(energy, temperature, INT[0]);
+    temperature_ = std::make_shared<Region1D>(energy, temperature, INT[0]);
   } else {
     temperature_ =
-        std::make_unique<MultiRegion1D>(NBT, INT, energy, temperature);
+        std::make_shared<MultiRegion1D>(NBT, INT, energy, temperature);
   }
 }
 
@@ -84,8 +84,8 @@ double GeneralEvaporation::sample_energy(double E_in,
   return Chi * T;
 }
 
-const Tabulated1D& GeneralEvaporation::temperature() const {
-  return *temperature_;
+std::shared_ptr<Tabulated1D> GeneralEvaporation::temperature() const {
+  return temperature_;
 }
 
 const std::vector<double>& GeneralEvaporation::bin_bounds() const {
