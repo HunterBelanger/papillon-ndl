@@ -41,16 +41,32 @@ namespace pndl {
 
 class AngleTable : public AngleLaw {
  public:
-  AngleTable(const ACE& ace, size_t i);
+  AngleTable(const ACE& ace, size_t i) : distribution_(ace, i) {}
   ~AngleTable() = default;
 
-  double sample_mu(double xi) const override final;
+  double sample_mu(double xi) const {
+    double mu = distribution_.sample_value(xi);
+    if (std::abs(mu) > 1.) mu = std::copysign(1., mu);
+    return mu;
+  }
 
-  size_t size() const;
-  const std::vector<double>& cosines() const;
-  const std::vector<double>& pdf() const;
-  const std::vector<double>& cdf() const;
-  Interpolation interpolation() const;
+  size_t size() const { return distribution_.size(); }
+
+  const std::vector<double>& cosines() const {
+    return distribution_.values();
+  }
+
+  const std::vector<double>& pdf() const {
+    return distribution_.pdf();
+  }
+
+  const std::vector<double>& cdf() const {
+    return distribution_.cdf();
+  }
+
+  Interpolation interpolation() const {
+    return distribution_.interpolation();
+  }
 
  private:
   PCTable distribution_;

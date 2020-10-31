@@ -35,15 +35,21 @@
 #define PAPILLON_NDL_ISOTROPIC_H
 
 #include <PapillonNDL/angle_law.hpp>
+#include <cmath>
 
 namespace pndl {
 
 class Isotropic : public AngleLaw {
  public:
-  Isotropic();
+  Isotropic() {}
   ~Isotropic() = default;
 
-  double sample_mu(double xi) const override final;
+  double sample_mu(double xi) const override final {
+    double mu = 2. * xi - 1.;
+    if (std::abs(mu) > 1.) mu = std::copysign(1., mu);
+    return mu;
+  }
+
 };
 
 }  // namespace pndl

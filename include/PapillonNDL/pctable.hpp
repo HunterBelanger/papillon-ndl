@@ -36,6 +36,7 @@
 
 #include <PapillonNDL/ace.hpp>
 #include <PapillonNDL/interpolation.hpp>
+#include <cmath>
 #include <vector>
 
 namespace pndl {
@@ -45,15 +46,30 @@ class PCTable {
   PCTable(const ACE& ace, size_t i, double normalization = 1.);
   ~PCTable() = default;
 
-  double sample_value(double xi) const;
-  double min_value() const;
-  double max_value() const;
+  double sample_value(double xi) const {
+    if (xi < 0. || xi > 1.) {
+      throw std::runtime_error("PCTable: Invalid value for xi provided");
+    }
 
-  size_t size() const;
-  const std::vector<double>& values() const;
-  const std::vector<double>& pdf() const;
-  const std::vector<double>& cdf() const;
-  Interpolation interpolation() const;
+    auto cdf_it = std::lower_bound(cdf_.begin(), cdf_.end(), xi);
+    size_t l = std::distance(cdf_.begin(), cdf_it);
+    if (xi == *cdf_it) return values_[l];
+
+    l--;
+
+    if (interp_ == Interpolation::Histogram) return histogram_interp(xi, l);
+
+    return linear_interp(xi, l);
+  }
+
+  double min_value() const {return values_.front();}
+  double max_value() const {return values_.back();}
+  
+  size_t size() const {return values_.size();}
+  const std::vector<double>& values() const { return values_; }
+  const std::vector<double>& pdf() const { return pdf_; }
+  const std::vector<double>& cdf() const { return cdf_; }
+  Interpolation interpolation() const { return interp_; }
 
  private:
   std::vector<double> values_;
@@ -61,8 +77,16 @@ class PCTable {
   std::vector<double> cdf_;
   Interpolation interp_;
 
-  double histogram_interp(double xi, size_t l) const;
-  double linear_interp(double xi, size_t l) const;
+  double histogram_interp(double xi, size_t l) const {
+    return values_[l] + ((xi - cdf_[l]) / pdf_[l]);
+  }
+
+  double linear_interp(double xi, size_t l) const {
+    double m = (pdf_[l + 1] - pdf_[l]) / (values_[l + 1] - values_[l]);
+    return values_[l] +
+           (1. / m) *
+               (std::sqrt(pdf_[l] * pdf_[l] + 2. * m * (xi - cdf_[l])) - pdf_[l]);
+  }
 };
 
 }  // namespace pndl
