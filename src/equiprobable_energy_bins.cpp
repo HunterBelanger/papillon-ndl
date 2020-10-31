@@ -35,8 +35,6 @@
 #include <PapillonNDL/interpolation.hpp>
 #include <cmath>
 
-#include "constants.hpp"
-
 namespace pndl {
 
 EquiprobableEnergyBins::EquiprobableEnergyBins(const ACE& ace, size_t i)
@@ -51,18 +49,12 @@ EquiprobableEnergyBins::EquiprobableEnergyBins(const ACE& ace, size_t i)
 
   // Read energies
   incoming_energy_ = ace.xss(i + 2 + 2 * NR, NE);
-  for (auto& E : incoming_energy_) E *= MEV_TO_EV;
 
   uint32_t NET = ace.xss<uint32_t>(i + 2 + 2 * NR + NE);
 
   // Read energy bins
   for (size_t j = 0; j < NE; j++) {
     bin_sets_.push_back(ace.xss(i + 3 + 2 * NR + NE + j * NET, NET));
-  }
-
-  // Change all energies from MeV to eV
-  for (size_t j = 0; j < NE; j++) {
-    for (auto& E : bin_sets_[j]) E *= MEV_TO_EV;
   }
 }
 

@@ -56,11 +56,8 @@ Watt::Watt(const ACE& ace, size_t i) : a_(), b_(), restriction_energy_() {
 
   // Get energy grid, convert from MeV to eV
   std::vector<double> energy_a = ace.xss(i + 2 + 2 * NR, NE);
-  for (auto& E : energy_a) E *= MEV_TO_EV;
 
   std::vector<double> a = ace.xss(i + 2 + 2 * NR + NE, NE);
-  // Change a from MeV to eV
-  for (auto& a_val : a) a_val *= MEV_TO_EV;
 
   // Create Function1D pointer
   if (NBT_a.size() == 1) {
@@ -87,13 +84,8 @@ Watt::Watt(const ACE& ace, size_t i) : a_(), b_(), restriction_energy_() {
 
   // Get energy grid, convert from MeV to eV
   std::vector<double> energy_b = ace.xss(i + 2 + 2 * NR, NE);
-  for (auto& E : energy_b) E *= MEV_TO_EV;
 
   std::vector<double> b = ace.xss(i + 2 + 2 * NR + NE, NE);
-  // Change from MeV to eV, not that for Watt spectrum, there is a
-  // sinh(sqrt(b*E_in)) term, so must divide b by MEV_TO_EV as E_in
-  // is in eV for Papillon
-  for (auto& b_val : b) b_val /= MEV_TO_EV;
 
   // Create Function1D pointer
   if (NBT_b.size() == 1) {

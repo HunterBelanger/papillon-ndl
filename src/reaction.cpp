@@ -51,8 +51,6 @@
 #include <iostream>
 #include <stdexcept>
 
-#include "constants.hpp"
-
 namespace pndl {
 
 Reaction::Reaction(const ACE& ace, size_t indx, const EnergyGrid& egrid)
@@ -82,7 +80,6 @@ Reaction::Reaction(const ACE& ace, size_t indx, const EnergyGrid& egrid)
     uint32_t NR = ace.xss<uint32_t>(i);
     uint32_t NE = ace.xss<uint32_t>(i + 1 + 2 * NR);
     std::vector<double> energy = ace.xss(i + 2 + 2 * NR, NE);
-    for (auto& E : energy) E *= MEV_TO_EV;
     std::vector<double> y = ace.xss(i + 2 + 2 * NR + NE, NE);
 
     if (NR == 0 || NR == 1) {

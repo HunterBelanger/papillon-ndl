@@ -33,8 +33,6 @@
  * */
 #include <PapillonNDL/tabular_energy.hpp>
 
-#include "constants.hpp"
-
 namespace pndl {
 
 TabularEnergy::TabularEnergy(const ACE& ace, size_t i)
@@ -49,12 +47,11 @@ TabularEnergy::TabularEnergy(const ACE& ace, size_t i)
 
   // Read energies
   incoming_energy_ = ace.xss(i + 2 + 2 * NR, NE);
-  for (auto& E : incoming_energy_) E *= MEV_TO_EV;
 
   // Read tables
   for (uint32_t j = 0; j < NE; j++) {
     uint32_t loc = ace.DLW() + ace.xss<uint32_t>(i + 2 + 2 * NR + NE + j) - 1;
-    tables_.emplace_back(ace, loc, MEV_TO_EV);
+    tables_.emplace_back(ace, loc);
   }
 }
 

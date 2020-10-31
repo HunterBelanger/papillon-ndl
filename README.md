@@ -19,11 +19,6 @@ choice, and allows the library to be completely disconnected from the random
 number generation process, allowing the distributions to know how to sample
 themselves, but not know or assume anything about random number generation.
 
-### Energies
-While the standard unit of energy in ACE files is the MeV, PapillonNDL uses the
-eV. As such, all incoming energies must be provided in eV, **NOT** MeV. All
-sampled outgoing energies are also provided to the user in eV as well.
-
 ## Dependencies
 To build and install the library, cmake >= 3.9 is required, along with a C++
 compiler which supports the C++17 standard. The recommended compiler is

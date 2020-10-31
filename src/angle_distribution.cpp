@@ -37,8 +37,6 @@
 #include <PapillonNDL/isotropic.hpp>
 #include <stdexcept>
 
-#include "constants.hpp"
-
 namespace pndl {
 
 AngleDistribution::AngleDistribution(const ACE& ace, int locb)
@@ -56,7 +54,7 @@ AngleDistribution::AngleDistribution(const ACE& ace, int locb)
     // Get number of energies
     uint32_t NE = ace.xss<uint32_t>(i);
 
-    // Read in energies as eV
+    // Read in energies
     energy_grid_ = ace.xss(i + 1, NE);
 
     // Get each table

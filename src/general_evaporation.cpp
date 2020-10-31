@@ -36,8 +36,6 @@
 #include <PapillonNDL/region_1d.hpp>
 #include <cmath>
 
-#include "constants.hpp"
-
 namespace pndl {
 
 GeneralEvaporation::GeneralEvaporation(const ACE& ace, size_t i)
@@ -57,11 +55,8 @@ GeneralEvaporation::GeneralEvaporation(const ACE& ace, size_t i)
 
   // Get energy grid, convert from MeV to eV
   std::vector<double> energy = ace.xss(i + 2 + 2 * NR, NE);
-  for (auto& E : energy) E *= MEV_TO_EV;
 
   std::vector<double> temperature = ace.xss(i + 2 + 2 * NR + NE, NE);
-  // Change temperatures from MeV to eV
-  for (auto& T : temperature) T *= MEV_TO_EV;
 
   // Get number of bins
   uint32_t NX = ace.xss<uint32_t>(i + 2 + 2 * NR + 2 * NE);

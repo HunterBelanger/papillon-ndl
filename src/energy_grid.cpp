@@ -33,14 +33,12 @@
  * */
 #include <PapillonNDL/energy_grid.hpp>
 
-#include "constants.hpp"
-
 namespace pndl {
 
 EnergyGrid::EnergyGrid(const ACE& ace, uint32_t NBINS)
     : energy_values_({0.}), bin_pointers_(), u_min(), du() {
   std::vector<float> raw_egrid = ace.xss<float>(ace.ESZ(), ace.nxs(2));
-  for (auto& E : raw_egrid) E *= MEV_TO_EV;
+  
   energy_values_ = shared_span<float>(raw_egrid.begin(), raw_egrid.end());
 
   // Generate pointers for lethargy bins

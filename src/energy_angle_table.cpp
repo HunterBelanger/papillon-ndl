@@ -35,8 +35,6 @@
 #include <PapillonNDL/interpolation.hpp>
 #include <cmath>
 
-#include "constants.hpp"
-
 namespace pndl {
 
 EnergyAngleTable::EnergyAngleTable(const ACE& ace, size_t i)
@@ -48,8 +46,6 @@ EnergyAngleTable::EnergyAngleTable(const ACE& ace, size_t i)
   }
   uint32_t NP = ace.xss<uint32_t>(i + 1);
   energy_ = ace.xss(i + 2, NP);
-  // Apply normalization to values
-  for (auto& v : energy_) v *= MEV_TO_EV;
 
   pdf_ = ace.xss(i + 2 + NP, NP);
   cdf_ = ace.xss(i + 2 + NP + NP, NP);

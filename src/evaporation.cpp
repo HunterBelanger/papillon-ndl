@@ -36,8 +36,6 @@
 #include <PapillonNDL/region_1d.hpp>
 #include <cmath>
 
-#include "constants.hpp"
-
 namespace pndl {
 
 Evaporation::Evaporation(const ACE& ace, size_t i)
@@ -57,11 +55,8 @@ Evaporation::Evaporation(const ACE& ace, size_t i)
 
   // Get energy grid, convert from MeV to eV
   std::vector<double> energy = ace.xss(i + 2 + 2 * NR, NE);
-  for (auto& E : energy) E *= MEV_TO_EV;
 
   std::vector<double> temperature = ace.xss(i + 2 + 2 * NR + NE, NE);
-  // Change temperatures from MeV to eV
-  for (auto& T : temperature) T *= MEV_TO_EV;
 
   // Get restriction energy
   restriction_energy_ = ace.xss(i + 2 + 2 * NR + 2 * NE);

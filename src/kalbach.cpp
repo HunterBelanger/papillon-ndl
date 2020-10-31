@@ -34,8 +34,6 @@
 #include <PapillonNDL/kalbach.hpp>
 #include <cmath>
 
-#include "constants.hpp"
-
 namespace pndl {
 
 Kalbach::Kalbach(const ACE& ace, size_t i) : incoming_energy_(), tables_() {
@@ -49,7 +47,6 @@ Kalbach::Kalbach(const ACE& ace, size_t i) : incoming_energy_(), tables_() {
 
   // Read incoming energies
   incoming_energy_ = ace.xss(i + 2 + 2 * NR, NE);
-  for (auto& E : incoming_energy_) E *= MEV_TO_EV;
 
   // Read outgoing energy tables
   for (uint32_t j = 0; j < NE; j++) {
