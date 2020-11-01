@@ -42,7 +42,7 @@ namespace pndl {
 
 class TabularEnergy : public EnergyLaw {
  public:
-  TabularEnergy(const ACE& ace, size_t i);
+  TabularEnergy(const ACE& ace, size_t i, size_t JED);
   ~TabularEnergy() = default;
 
   double sample_energy(double E_in,

@@ -42,12 +42,11 @@ using namespace pndl;
 
 void init_Interpolation(py::module& m) {
   py::enum_<Interpolation>(m, "Interpolation")
-    .value("Histogram", Interpolation::Histogram)
-    .value("LinLin", Interpolation::LinLin)
-    .value("LinLog", Interpolation::LinLog)
-    .value("LogLin", Interpolation::LogLin)
-    .value("LogLog", Interpolation::LogLog)
-  ;
+      .value("Histogram", Interpolation::Histogram)
+      .value("LinLin", Interpolation::LinLin)
+      .value("LinLog", Interpolation::LinLog)
+      .value("LogLin", Interpolation::LogLin)
+      .value("LogLog", Interpolation::LogLog);
 
   m.def("interpolate", &interpolate);
 }

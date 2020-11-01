@@ -41,10 +41,7 @@ namespace py = pybind11;
 using namespace pndl;
 
 void init_Frame(py::module& m) {
-  py::enum_<Frame>(m, "Frame")
-    .value("Lab", Frame::Lab)
-    .value("CM", Frame::CM)
-  ;
+  py::enum_<Frame>(m, "Frame").value("Lab", Frame::Lab).value("CM", Frame::CM);
 
   m.def("cm_to_lab", &cm_to_lab);
 }

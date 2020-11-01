@@ -46,8 +46,8 @@ double LevelInelasticScatter::sample_energy(double E_in,
   return C2_ * (E_in - C1_);
 }
 
-double LevelInelasticScatter::C1() const {return C1_;}
+double LevelInelasticScatter::C1() const { return C1_; }
 
-double LevelInelasticScatter::C2() const {return C2_;}
+double LevelInelasticScatter::C2() const { return C2_; }
 
 }  // namespace pndl

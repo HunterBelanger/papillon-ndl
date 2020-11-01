@@ -42,14 +42,13 @@ using namespace pndl;
 
 void init_SharedSpanFloat(py::module& m) {
   py::class_<shared_span<double>>(m, "SharedSpanDouble")
-    .def("__getitem__", &shared_span<double>::operator[])
-    .def("size", &shared_span<double>::size)
-    .def("__len__", &shared_span<double>::size)
-    .def("first", &shared_span<double>::first)
-    .def("last", &shared_span<double>::last)
-    .def("subspan", &shared_span<double>::subspan)
-    .def("use_count", &shared_span<double>::use_count)
-    .def("empty", &shared_span<double>::empty)
-    .def("size_bytes", &shared_span<double>::size_bytes)
-  ;
+      .def("__getitem__", &shared_span<double>::operator[])
+      .def("size", &shared_span<double>::size)
+      .def("__len__", &shared_span<double>::size)
+      .def("first", &shared_span<double>::first)
+      .def("last", &shared_span<double>::last)
+      .def("subspan", &shared_span<double>::subspan)
+      .def("use_count", &shared_span<double>::use_count)
+      .def("empty", &shared_span<double>::empty)
+      .def("size_bytes", &shared_span<double>::size_bytes);
 }

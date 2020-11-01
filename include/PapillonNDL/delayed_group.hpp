@@ -31,62 +31,40 @@
  * termes.
  *
  * */
-#ifndef PAPILLON_NDL_PCTABLE_H
-#define PAPILLON_NDL_PCTABLE_H
+#ifndef PAPILLON_NDL_DELAYED_GROUP_H
+#define PAPILLON_NDL_DELAYED_GROUP_H
 
 #include <PapillonNDL/ace.hpp>
-#include <PapillonNDL/interpolation.hpp>
-#include <cmath>
-#include <vector>
+#include <PapillonNDL/energy_law.hpp>
+#include <PapillonNDL/tabulated_1d.hpp>
+#include <memory>
+
+// The delayed group numbers start at g = 1, and go up !
+// g = 0 would be the prompt neutorns.
 
 namespace pndl {
 
-class PCTable {
+class DelayedGroup {
  public:
-  PCTable(const ACE& ace, size_t i, double normalization = 1.);
-  ~PCTable() = default;
+  DelayedGroup(const ACE& ace, size_t i, size_t g);
+  ~DelayedGroup() = default;
 
-  double sample_value(double xi) const {
-    if (xi < 0. || xi > 1.) {
-      throw std::runtime_error("PCTable: Invalid value for xi provided");
-    }
+  double decay_constant() const { return decay_constant_; }
 
-    auto cdf_it = std::lower_bound(cdf_.begin(), cdf_.end(), xi);
-    size_t l = std::distance(cdf_.begin(), cdf_it);
-    if (xi == *cdf_it) return values_[l];
+  std::shared_ptr<Tabulated1D> probability() const { return probability_; }
 
-    l--;
+  double probability(double E) const { return (*probability_)(E); }
 
-    if (interp_ == Interpolation::Histogram) return histogram_interp(xi, l);
-
-    return linear_interp(xi, l);
+  double sample_energy(double E, std::function<double()> rng) const {
+    return energy_->sample_energy(E, rng);
   }
 
-  double min_value() const { return values_.front(); }
-  double max_value() const { return values_.back(); }
-
-  size_t size() const { return values_.size(); }
-  const std::vector<double>& values() const { return values_; }
-  const std::vector<double>& pdf() const { return pdf_; }
-  const std::vector<double>& cdf() const { return cdf_; }
-  Interpolation interpolation() const { return interp_; }
+  std::shared_ptr<EnergyLaw> energy() const { return energy_; }
 
  private:
-  std::vector<double> values_;
-  std::vector<double> pdf_;
-  std::vector<double> cdf_;
-  Interpolation interp_;
-
-  double histogram_interp(double xi, size_t l) const {
-    return values_[l] + ((xi - cdf_[l]) / pdf_[l]);
-  }
-
-  double linear_interp(double xi, size_t l) const {
-    double m = (pdf_[l + 1] - pdf_[l]) / (values_[l + 1] - values_[l]);
-    return values_[l] +
-           (1. / m) * (std::sqrt(pdf_[l] * pdf_[l] + 2. * m * (xi - cdf_[l])) -
-                       pdf_[l]);
-  }
+  double decay_constant_;
+  std::shared_ptr<Tabulated1D> probability_;
+  std::shared_ptr<EnergyLaw> energy_;
 };
 
 }  // namespace pndl

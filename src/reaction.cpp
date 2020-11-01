@@ -136,7 +136,7 @@ Reaction::Reaction(const ACE& ace, size_t indx, const EnergyGrid& egrid)
 
       } else if (law == 4) {  // Tabular Energy
         angle_energy_ = std::make_shared<Uncorrelated>(
-            angle, std::make_shared<TabularEnergy>(ace, j));
+            angle, std::make_shared<TabularEnergy>(ace, j, ace.DLW()));
 
       } else if (law == 5) {  // General Evaporation
         angle_energy_ = std::make_shared<Uncorrelated>(
@@ -210,7 +210,9 @@ Reaction::Reaction(const ACE& ace, size_t indx, const EnergyGrid& egrid)
 
 const CrossSection& Reaction::cross_section() const { return xs_; }
 
-std::shared_ptr<AngleEnergy> Reaction::angle_energy() const { return angle_energy_; }
+std::shared_ptr<AngleEnergy> Reaction::angle_energy() const {
+  return angle_energy_;
+}
 
 std::shared_ptr<Function1D> Reaction::yield() const { return yield_; }
 

@@ -69,12 +69,14 @@ extern void init_TabularEnergyAngle(py::module&);
 extern void init_SharedSpanFloat(py::module&);
 extern void init_EnergyGrid(py::module&);
 extern void init_CrossSection(py::module&);
+extern void init_DelayedGroup(py::module&);
+extern void init_FissionData(py::module&);
 extern void init_Reaction(py::module&);
 extern void init_Nuclide(py::module&);
 extern void init_PRNG(py::module&);
 
-PYBIND11_MODULE(pyPapillonNDL, m){
-  init_ACE(m); 
+PYBIND11_MODULE(pyPapillonNDL, m) {
+  init_ACE(m);
   init_Interpolation(m);
   init_Frame(m);
   init_Function1D(m);
@@ -109,6 +111,8 @@ PYBIND11_MODULE(pyPapillonNDL, m){
   init_EnergyGrid(m);
   init_CrossSection(m);
   init_Reaction(m);
+  init_DelayedGroup(m);
+  init_FissionData(m);
   init_Nuclide(m);
   init_PRNG(m);
 }

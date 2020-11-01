@@ -42,14 +42,13 @@ using namespace pndl;
 
 void init_PCTable(py::module& m) {
   py::class_<PCTable>(m, "PCTable")
-    .def(py::init<const ACE&, size_t, double>())
-    .def("sample_value", &PCTable::sample_value)
-    .def("min_value", &PCTable::min_value)
-    .def("max_value", &PCTable::max_value)
-    .def("interpolation", &PCTable::interpolation)
-    .def("values", &PCTable::values)
-    .def("pdf", &PCTable::pdf)
-    .def("cdf", &PCTable::cdf)
-    .def("size", &PCTable::size)
-  ;
+      .def(py::init<const ACE&, size_t, double>())
+      .def("sample_value", &PCTable::sample_value)
+      .def("min_value", &PCTable::min_value)
+      .def("max_value", &PCTable::max_value)
+      .def("interpolation", &PCTable::interpolation)
+      .def("values", &PCTable::values)
+      .def("pdf", &PCTable::pdf)
+      .def("cdf", &PCTable::cdf)
+      .def("size", &PCTable::size);
 }

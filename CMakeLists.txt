@@ -37,6 +37,8 @@ add_library(PapillonNDL SHARED
   src/energy_grid.cpp
   src/cross_section.cpp
   src/reaction.cpp
+  src/delayed_group.cpp
+  src/fission_data.cpp
   src/nuclide.cpp
 )
 
@@ -79,6 +81,8 @@ if(PNDL_PYTHON)
                                     src/python/energy_grid.cpp
                                     src/python/cross_section.cpp
                                     src/python/reaction.cpp
+                                    src/python/delayed_group.cpp
+                                    src/python/fission_data.cpp
                                     src/python/nuclide.cpp
                                     src/python/prng.cpp)
 

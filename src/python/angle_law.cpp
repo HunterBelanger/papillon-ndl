@@ -34,9 +34,9 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
-#include <PapillonNDL/isotropic.hpp>
-#include <PapillonNDL/equiprobable_angle_bins.hpp>
 #include <PapillonNDL/angle_table.hpp>
+#include <PapillonNDL/equiprobable_angle_bins.hpp>
+#include <PapillonNDL/isotropic.hpp>
 
 namespace py = pybind11;
 
@@ -44,45 +44,42 @@ using namespace pndl;
 
 // Trampoline class for abstract pndl::AngleLaw
 class PyAngleLaw : public AngleLaw {
-  public:
-    using AngleLaw::AngleLaw;
+ public:
+  using AngleLaw::AngleLaw;
 
-    double sample_mu(double xi) const override {
-      PYBIND11_OVERRIDE_PURE(double, AngleLaw, sample_mu, xi); 
-    }
+  double sample_mu(double xi) const override {
+    PYBIND11_OVERRIDE_PURE(double, AngleLaw, sample_mu, xi);
+  }
 };
 
 void init_AngleLaw(py::module& m) {
   py::class_<AngleLaw, PyAngleLaw, std::shared_ptr<AngleLaw>>(m, "AngleLaw")
-    .def(py::init<>())
-    .def("sample_mu", &AngleLaw::sample_mu)
-  ;
+      .def(py::init<>())
+      .def("sample_mu", &AngleLaw::sample_mu);
 }
 
 void init_Isotropic(py::module& m) {
   py::class_<Isotropic, AngleLaw, std::shared_ptr<Isotropic>>(m, "Isotropic")
-    .def(py::init<>())
-    .def("sample_mu", &Isotropic::sample_mu)
-  ;
+      .def(py::init<>())
+      .def("sample_mu", &Isotropic::sample_mu);
 }
 
 void init_EquiprobableAngleBins(py::module& m) {
-  py::class_<EquiprobableAngleBins, AngleLaw, std::shared_ptr<EquiprobableAngleBins>>(m, "EquiprobableAngleBins")
-    .def(py::init<const ACE&, size_t>())
-    .def("sample_mu", &EquiprobableAngleBins::sample_mu)
-    .def("size", &EquiprobableAngleBins::size)
-    .def("bin_bounds", &EquiprobableAngleBins::bin_bounds)
-  ;
+  py::class_<EquiprobableAngleBins, AngleLaw,
+             std::shared_ptr<EquiprobableAngleBins>>(m, "EquiprobableAngleBins")
+      .def(py::init<const ACE&, size_t>())
+      .def("sample_mu", &EquiprobableAngleBins::sample_mu)
+      .def("size", &EquiprobableAngleBins::size)
+      .def("bin_bounds", &EquiprobableAngleBins::bin_bounds);
 }
 
 void init_AngleTable(py::module& m) {
   py::class_<AngleTable, AngleLaw, std::shared_ptr<AngleTable>>(m, "AngleTable")
-    .def(py::init<const ACE&, size_t>())
-    .def("sample_mu", &AngleTable::sample_mu)
-    .def("size", &AngleTable::size)
-    .def("cosines", &AngleTable::cosines)
-    .def("pdf", &AngleTable::pdf)
-    .def("cdf", &AngleTable::cdf)
-    .def("interpolate", &AngleTable::interpolation)
-  ;
+      .def(py::init<const ACE&, size_t>())
+      .def("sample_mu", &AngleTable::sample_mu)
+      .def("size", &AngleTable::size)
+      .def("cosines", &AngleTable::cosines)
+      .def("pdf", &AngleTable::pdf)
+      .def("cdf", &AngleTable::cdf)
+      .def("interpolate", &AngleTable::interpolation);
 }

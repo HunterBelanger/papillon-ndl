@@ -59,7 +59,11 @@ ACE::ACE(std::string fname)
       lan_(),
       an_(),
       ldlw_(),
-      dlw_() {
+      dlw_(),
+      dnedl_(),
+      dned_(),
+      dnu_(),
+      bdd_() {
   // Open ACE file
   std::ifstream file(fname);
 
@@ -133,6 +137,10 @@ ACE::ACE(std::string fname)
   an_ = jxs_[8] - 1;
   ldlw_ = jxs_[9] - 1;
   dlw_ = jxs_[10] - 1;
+  dnu_ = jxs_[23] - 1;
+  bdd_ = jxs_[24] - 1;
+  dnedl_ = jxs_[25] - 1;
+  dned_ = jxs_[26] - 1;
 }
 
 int32_t ACE::zaid() const { return zaid_; }
@@ -174,6 +182,10 @@ int32_t ACE::LAND() const { return lan_; }
 int32_t ACE::AND() const { return an_; }
 int32_t ACE::LDLW() const { return ldlw_; }
 int32_t ACE::DLW() const { return dlw_; }
+int32_t ACE::DNEDL() const { return dnedl_; }
+int32_t ACE::DNED() const { return dned_; }
+int32_t ACE::DNU() const { return dnu_; }
+int32_t ACE::BDD() const { return bdd_; }
 
 static std::vector<std::string> split_line(std::string line) {
   std::vector<std::string> out;

@@ -114,9 +114,9 @@ double Watt::sample_energy(double E_in, std::function<double()> rng) const {
     xi2 = rng();
     xi3 = rng();
 
-    c = PI * xi3 / 2.;
+    c = std::cos(PI * xi3 / 2.);
 
-    w = -a * (std::log(xi1) + std::log(xi2) * std::cos(c) * std::cos(c));
+    w = -a * (std::log(xi1) + std::log(xi2) * c * c);
 
     E_out = w + 0.25 * a * a * b + (2. * rng() - 1.) * std::sqrt(a * a * b * w);
 

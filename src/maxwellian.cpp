@@ -78,7 +78,7 @@ double Maxwellian::sample_energy(double E_in,
   double xi1 = 0.;
   double xi2 = 0.;
   double xi3 = 0.;
-  double a = 0.;
+  double c = 0.;
   double E_out = E_in;
   bool sampled = false;
   while (!sampled) {
@@ -86,9 +86,9 @@ double Maxwellian::sample_energy(double E_in,
     xi2 = rng();
     xi3 = rng();
 
-    a = PI * xi3 / 2.;
+    c = std::cos(PI * xi3 / 2.);
 
-    E_out = -T * (std::log(xi1) + std::log(xi2) * std::cos(a) * std::cos(a));
+    E_out = -T * (std::log(xi1) + std::log(xi2) * c * c);
 
     if (E_out >= 0. && E_out <= (E_in - restriction_energy_)) sampled = true;
   }
@@ -96,7 +96,9 @@ double Maxwellian::sample_energy(double E_in,
   return E_out;
 }
 
-std::shared_ptr<Tabulated1D> Maxwellian::temperature() const { return temperature_; }
+std::shared_ptr<Tabulated1D> Maxwellian::temperature() const {
+  return temperature_;
+}
 
 double Maxwellian::U() const { return restriction_energy_; }
 

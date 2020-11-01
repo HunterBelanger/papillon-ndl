@@ -41,12 +41,11 @@ using namespace pndl;
 
 void init_EnergyGrid(py::module& m) {
   py::class_<EnergyGrid>(m, "EnergyGrid")
-    .def(py::init<const ACE&, uint32_t>())
-    .def("__getitem__", &EnergyGrid::operator[])
-    .def("grid", &EnergyGrid::grid)
-    .def("size", &EnergyGrid::size)
-    .def("min_energy", &EnergyGrid::min_energy)
-    .def("max_energy", &EnergyGrid::max_energy)
-    .def("get_lower_index", &EnergyGrid::get_lower_index)
-  ;
+      .def(py::init<const ACE&, uint32_t>())
+      .def("__getitem__", &EnergyGrid::operator[])
+      .def("grid", &EnergyGrid::grid)
+      .def("size", &EnergyGrid::size)
+      .def("min_energy", &EnergyGrid::min_energy)
+      .def("max_energy", &EnergyGrid::max_energy)
+      .def("get_lower_index", &EnergyGrid::get_lower_index);
 }

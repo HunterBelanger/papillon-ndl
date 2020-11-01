@@ -31,8 +31,8 @@
  * termes.
  *
  * */
-#include <pybind11/pybind11.h>
 #include <pybind11/functional.h>
+#include <pybind11/pybind11.h>
 
 #include <PapillonNDL/reaction.hpp>
 
@@ -42,17 +42,17 @@ using namespace pndl;
 
 void init_Reaction(py::module& m) {
   py::class_<Reaction>(m, "Reaction")
-    .def(py::init<const ACE&, size_t, const EnergyGrid&>())
-    .def("MT", &Reaction::MT)
-    .def("Q", &Reaction::Q)
-    .def("multiplicity", py::overload_cast<double>(&Reaction::yield,py::const_))
-    .def("multiplicity", py::overload_cast<>(&Reaction::yield,py::const_))
-    .def("threshold", &Reaction::threshold)
-    .def("frame", &Reaction::frame)
-    .def("xs", py::overload_cast<double>(&Reaction::xs,py::const_))
-    .def("xs", py::overload_cast<double,size_t>(&Reaction::xs,py::const_))
-    .def("sample_angle_energy", &Reaction::sample_angle_energy)
-    .def("cross_section", &Reaction::cross_section)
-    .def("angle_energy", &Reaction::angle_energy)
-  ;
+      .def(py::init<const ACE&, size_t, const EnergyGrid&>())
+      .def("MT", &Reaction::MT)
+      .def("Q", &Reaction::Q)
+      .def("multiplicity",
+           py::overload_cast<double>(&Reaction::yield, py::const_))
+      .def("multiplicity", py::overload_cast<>(&Reaction::yield, py::const_))
+      .def("threshold", &Reaction::threshold)
+      .def("frame", &Reaction::frame)
+      .def("xs", py::overload_cast<double>(&Reaction::xs, py::const_))
+      .def("xs", py::overload_cast<double, size_t>(&Reaction::xs, py::const_))
+      .def("sample_angle_energy", &Reaction::sample_angle_energy)
+      .def("cross_section", &Reaction::cross_section)
+      .def("angle_energy", &Reaction::angle_energy);
 }

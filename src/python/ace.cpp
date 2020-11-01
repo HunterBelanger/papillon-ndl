@@ -42,34 +42,38 @@ using namespace pndl;
 
 void init_ACE(py::module& m) {
   py::class_<ACE>(m, "ACE")
-    .def(py::init<std::string>())
-    .def("zaid", &ACE::zaid)
-    .def("temperature", &ACE::temperature)
-    .def("awr", &ACE::awr)
-    .def("fissile", &ACE::fissile)
+      .def(py::init<std::string>())
+      .def("zaid", &ACE::zaid)
+      .def("temperature", &ACE::temperature)
+      .def("awr", &ACE::awr)
+      .def("fissile", &ACE::fissile)
 
-    .def("izaw", py::overload_cast<size_t>(&ACE::izaw, py::const_))
-    .def("izaw", py::overload_cast<size_t,size_t>(&ACE::izaw, py::const_))
-    
-    .def("nxs", py::overload_cast<size_t>(&ACE::nxs, py::const_))
-    .def("nxs", py::overload_cast<size_t,size_t>(&ACE::nxs, py::const_))
+      .def("izaw", py::overload_cast<size_t>(&ACE::izaw, py::const_))
+      .def("izaw", py::overload_cast<size_t, size_t>(&ACE::izaw, py::const_))
 
-    .def("jxs", py::overload_cast<size_t>(&ACE::jxs, py::const_))
-    .def("jxs", py::overload_cast<size_t,size_t>(&ACE::jxs, py::const_))
+      .def("nxs", py::overload_cast<size_t>(&ACE::nxs, py::const_))
+      .def("nxs", py::overload_cast<size_t, size_t>(&ACE::nxs, py::const_))
 
-    .def("xss", py::overload_cast<size_t>(&ACE::xss<double>, py::const_))
-    .def("xss", py::overload_cast<size_t,size_t>(&ACE::xss<double>, py::const_))
-    
-    .def("ESZ", &ACE::ESZ)
-    .def("NU", &ACE::NU)
-    .def("MTR", &ACE::MTR)
-    .def("LQR", &ACE::LQR)
-    .def("TYR", &ACE::TYR)
-    .def("LSIG", &ACE::LSIG)
-    .def("SIG", &ACE::SIG)
-    .def("LAND", &ACE::LAND)
-    .def("AND", &ACE::AND)
-    .def("LDLW", &ACE::LDLW)
-    .def("DLW", &ACE::DLW)
-  ;
+      .def("jxs", py::overload_cast<size_t>(&ACE::jxs, py::const_))
+      .def("jxs", py::overload_cast<size_t, size_t>(&ACE::jxs, py::const_))
+
+      .def("xss", py::overload_cast<size_t>(&ACE::xss<double>, py::const_))
+      .def("xss",
+           py::overload_cast<size_t, size_t>(&ACE::xss<double>, py::const_))
+
+      .def("ESZ", &ACE::ESZ)
+      .def("NU", &ACE::NU)
+      .def("MTR", &ACE::MTR)
+      .def("LQR", &ACE::LQR)
+      .def("TYR", &ACE::TYR)
+      .def("LSIG", &ACE::LSIG)
+      .def("SIG", &ACE::SIG)
+      .def("LAND", &ACE::LAND)
+      .def("AND", &ACE::AND)
+      .def("LDLW", &ACE::LDLW)
+      .def("DLW", &ACE::DLW)
+      .def("DNEDL", &ACE::DNEDL)
+      .def("DNED", &ACE::DNED)
+      .def("DNU", &ACE::DNU)
+      .def("BDD", &ACE::BDD);
 }

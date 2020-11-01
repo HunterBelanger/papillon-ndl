@@ -42,16 +42,17 @@ using namespace pndl;
 
 void init_CrossSection(py::module& m) {
   py::class_<CrossSection>(m, "CrossSection")
-    .def(py::init<>())
-    .def(py::init<const ACE&, size_t, const EnergyGrid&, bool>())
-    .def("__getitem__", &CrossSection::operator[])
-    .def("__call__", py::overload_cast<double>(&CrossSection::operator(),py::const_))
-    .def("__call__", py::overload_cast<double,size_t>(&CrossSection::operator(),py::const_))
-    .def("size", &CrossSection::size)
-    .def("index", &CrossSection::index)
-    .def("value", &CrossSection::value)
-    .def("energy", &CrossSection::energy)
-    .def("values", &CrossSection::values)
-    .def("energies", &CrossSection::energies)
-  ;
+      .def(py::init<>())
+      .def(py::init<const ACE&, size_t, const EnergyGrid&, bool>())
+      .def("__getitem__", &CrossSection::operator[])
+      .def("__call__",
+           py::overload_cast<double>(&CrossSection::operator(), py::const_))
+      .def("__call__", py::overload_cast<double, size_t>(
+                           &CrossSection::operator(), py::const_))
+      .def("size", &CrossSection::size)
+      .def("index", &CrossSection::index)
+      .def("value", &CrossSection::value)
+      .def("energy", &CrossSection::energy)
+      .def("values", &CrossSection::values)
+      .def("energies", &CrossSection::energies);
 }

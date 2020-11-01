@@ -35,7 +35,7 @@
 
 namespace pndl {
 
-TabularEnergy::TabularEnergy(const ACE& ace, size_t i)
+TabularEnergy::TabularEnergy(const ACE& ace, size_t i, size_t JED)
     : incoming_energy_(), tables_() {
   // Get number of interpolation points
   uint32_t NR = ace.xss<uint32_t>(i);
@@ -50,7 +50,7 @@ TabularEnergy::TabularEnergy(const ACE& ace, size_t i)
 
   // Read tables
   for (uint32_t j = 0; j < NE; j++) {
-    uint32_t loc = ace.DLW() + ace.xss<uint32_t>(i + 2 + 2 * NR + NE + j) - 1;
+    uint32_t loc = JED + ace.xss<uint32_t>(i + 2 + 2 * NR + NE + j) - 1;
     tables_.emplace_back(ace, loc);
   }
 }

@@ -94,7 +94,9 @@ double Evaporation::sample_energy(double E_in,
   return E_out;
 }
 
-std::shared_ptr<Tabulated1D> Evaporation::temperature() const { return temperature_; }
+std::shared_ptr<Tabulated1D> Evaporation::temperature() const {
+  return temperature_;
+}
 
 double Evaporation::U() const { return restriction_energy_; }
 

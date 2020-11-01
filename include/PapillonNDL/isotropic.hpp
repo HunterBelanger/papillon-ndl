@@ -49,7 +49,6 @@ class Isotropic : public AngleLaw {
     if (std::abs(mu) > 1.) mu = std::copysign(1., mu);
     return mu;
   }
-
 };
 
 }  // namespace pndl

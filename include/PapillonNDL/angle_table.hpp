@@ -52,21 +52,13 @@ class AngleTable : public AngleLaw {
 
   size_t size() const { return distribution_.size(); }
 
-  const std::vector<double>& cosines() const {
-    return distribution_.values();
-  }
+  const std::vector<double>& cosines() const { return distribution_.values(); }
 
-  const std::vector<double>& pdf() const {
-    return distribution_.pdf();
-  }
+  const std::vector<double>& pdf() const { return distribution_.pdf(); }
 
-  const std::vector<double>& cdf() const {
-    return distribution_.cdf();
-  }
+  const std::vector<double>& cdf() const { return distribution_.cdf(); }
 
-  Interpolation interpolation() const {
-    return distribution_.interpolation();
-  }
+  Interpolation interpolation() const { return distribution_.interpolation(); }
 
  private:
   PCTable distribution_;

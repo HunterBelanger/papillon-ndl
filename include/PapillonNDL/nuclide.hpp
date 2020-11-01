@@ -36,6 +36,7 @@
 
 #include <PapillonNDL/ace.hpp>
 #include <PapillonNDL/angle_distribution.hpp>
+#include <PapillonNDL/fission_data.hpp>
 #include <PapillonNDL/reaction.hpp>
 #include <unordered_map>
 
@@ -100,6 +101,8 @@ class Nuclide {
     return reactions_.find(mt)->second.xs(E, i);
   }
 
+  const FissionData& fission_data() const { return fission_data_; }
+
  private:
   uint32_t zaid_;
   double awr_;
@@ -114,7 +117,7 @@ class Nuclide {
 
   AngleDistribution elastic_angle_;
 
-  // TODO fission data
+  FissionData fission_data_;
 
   std::unordered_map<uint32_t, Reaction> reactions_;
 };

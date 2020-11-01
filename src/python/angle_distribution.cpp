@@ -31,8 +31,8 @@
  * termes.
  *
  * */
-#include <pybind11/pybind11.h>
 #include <pybind11/functional.h>
+#include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
 #include <PapillonNDL/angle_distribution.hpp>
@@ -43,10 +43,9 @@ using namespace pndl;
 
 void init_AngleDistribution(py::module& m) {
   py::class_<AngleDistribution>(m, "AngleDistribution")
-    .def(py::init<const ACE&, int>())
-    .def("sample_angle", &AngleDistribution::sample_angle)
-    .def("size", &AngleDistribution::size)
-    .def("energy", &AngleDistribution::energy)
-    .def("law", &AngleDistribution::law)
-  ;
+      .def(py::init<const ACE&, int>())
+      .def("sample_angle", &AngleDistribution::sample_angle)
+      .def("size", &AngleDistribution::size)
+      .def("energy", &AngleDistribution::energy)
+      .def("law", &AngleDistribution::law);
 }

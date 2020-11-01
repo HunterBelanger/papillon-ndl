@@ -92,6 +92,10 @@ class ACE {
   int32_t AND() const;
   int32_t LDLW() const;
   int32_t DLW() const;
+  int32_t DNEDL() const;
+  int32_t DNED() const;
+  int32_t DNU() const;
+  int32_t BDD() const;
   //=======================================================================
 
  private:
@@ -107,6 +111,7 @@ class ACE {
 
   // Locator constants
   int32_t esz_, nu_, mtr_, lqr_, tyr_, lsig_, sig_, lan_, an_, ldlw_, dlw_;
+  int32_t dnedl_, dned_, dnu_, bdd_;
 
 };  // ACE
 }  // namespace pndl

@@ -31,16 +31,16 @@
  * termes.
  *
  * */
-#include <pybind11/pybind11.h>
 #include <pybind11/functional.h>
+#include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
 #include <PapillonNDL/equiprobable_energy_bins.hpp>
-#include <PapillonNDL/level_inelastic_scatter.hpp>
-#include <PapillonNDL/tabular_energy.hpp>
-#include <PapillonNDL/general_evaporation.hpp>
 #include <PapillonNDL/evaporation.hpp>
+#include <PapillonNDL/general_evaporation.hpp>
+#include <PapillonNDL/level_inelastic_scatter.hpp>
 #include <PapillonNDL/maxwellian.hpp>
+#include <PapillonNDL/tabular_energy.hpp>
 #include <PapillonNDL/watt.hpp>
 
 namespace py = pybind11;
@@ -49,83 +49,83 @@ using namespace pndl;
 
 // Trampoline class for abstract pndl::EnergyLaw
 class PyEnergyLaw : public EnergyLaw {
-  public:
-    using EnergyLaw::EnergyLaw;
+ public:
+  using EnergyLaw::EnergyLaw;
 
-    double sample_energy(double E_in, std::function<double()> rng) const override {
-      PYBIND11_OVERRIDE_PURE(double, EnergyLaw, sample_energy, E_in, rng); 
-    }
+  double sample_energy(double E_in,
+                       std::function<double()> rng) const override {
+    PYBIND11_OVERRIDE_PURE(double, EnergyLaw, sample_energy, E_in, rng);
+  }
 };
 
 void init_EnergyLaw(py::module& m) {
   py::class_<EnergyLaw, PyEnergyLaw, std::shared_ptr<EnergyLaw>>(m, "EnergyLaw")
-    .def(py::init<>())
-    .def("sample_energy", &EnergyLaw::sample_energy)
-  ;
+      .def(py::init<>())
+      .def("sample_energy", &EnergyLaw::sample_energy);
 }
 
 void init_EquiprobableEnergyBins(py::module& m) {
-  py::class_<EquiprobableEnergyBins, EnergyLaw, std::shared_ptr<EquiprobableEnergyBins>>(m, "EquiprobableEnergyBins")
-    .def(py::init<const ACE&, size_t>())
-    .def("sample_energy", &EquiprobableEnergyBins::sample_energy)
-    .def("size", &EquiprobableEnergyBins::size)
-    .def("incoming_energy", &EquiprobableEnergyBins::incoming_energy)
-    .def("bin_bounds", &EquiprobableEnergyBins::bin_bounds)
-  ;
+  py::class_<EquiprobableEnergyBins, EnergyLaw,
+             std::shared_ptr<EquiprobableEnergyBins>>(m,
+                                                      "EquiprobableEnergyBins")
+      .def(py::init<const ACE&, size_t>())
+      .def("sample_energy", &EquiprobableEnergyBins::sample_energy)
+      .def("size", &EquiprobableEnergyBins::size)
+      .def("incoming_energy", &EquiprobableEnergyBins::incoming_energy)
+      .def("bin_bounds", &EquiprobableEnergyBins::bin_bounds);
 }
 
 void init_LevelInelasticScatter(py::module& m) {
-  py::class_<LevelInelasticScatter, EnergyLaw, std::shared_ptr<LevelInelasticScatter>>(m, "LevelInelasticScatter")
-    .def(py::init<const ACE&, size_t>())
-    .def("sample_energy", &LevelInelasticScatter::sample_energy)
-    .def("C2", &LevelInelasticScatter::C1)
-    .def("C1", &LevelInelasticScatter::C2)
-  ;
+  py::class_<LevelInelasticScatter, EnergyLaw,
+             std::shared_ptr<LevelInelasticScatter>>(m, "LevelInelasticScatter")
+      .def(py::init<const ACE&, size_t>())
+      .def("sample_energy", &LevelInelasticScatter::sample_energy)
+      .def("C2", &LevelInelasticScatter::C1)
+      .def("C1", &LevelInelasticScatter::C2);
 }
 
 void init_TabularEnergy(py::module& m) {
-  py::class_<TabularEnergy, EnergyLaw, std::shared_ptr<TabularEnergy>>(m, "TabularEnergy")
-    .def(py::init<const ACE&, size_t>())
-    .def("sample_energy", &TabularEnergy::sample_energy)
-    .def("incoming_energy", &TabularEnergy::incoming_energy)
-    .def("table", &TabularEnergy::table)
-    .def("size", &TabularEnergy::size)
-  ;
+  py::class_<TabularEnergy, EnergyLaw, std::shared_ptr<TabularEnergy>>(
+      m, "TabularEnergy")
+      .def(py::init<const ACE&, size_t, size_t>())
+      .def("sample_energy", &TabularEnergy::sample_energy)
+      .def("incoming_energy", &TabularEnergy::incoming_energy)
+      .def("table", &TabularEnergy::table)
+      .def("size", &TabularEnergy::size);
 }
 
 void init_GeneralEvaporation(py::module& m) {
-  py::class_<GeneralEvaporation, EnergyLaw, std::shared_ptr<GeneralEvaporation>>(m, "GeneralEvaporation")
-    .def(py::init<const ACE&, size_t>())
-    .def("sample_energy", &GeneralEvaporation::sample_energy)
-    .def("temperature", &GeneralEvaporation::temperature)
-    .def("bin_bounds", &GeneralEvaporation::bin_bounds)
-  ;
+  py::class_<GeneralEvaporation, EnergyLaw,
+             std::shared_ptr<GeneralEvaporation>>(m, "GeneralEvaporation")
+      .def(py::init<const ACE&, size_t>())
+      .def("sample_energy", &GeneralEvaporation::sample_energy)
+      .def("temperature", &GeneralEvaporation::temperature)
+      .def("bin_bounds", &GeneralEvaporation::bin_bounds);
 }
 
 void init_Evaporation(py::module& m) {
-  py::class_<Evaporation, EnergyLaw, std::shared_ptr<Evaporation>>(m, "Evaporation")
-    .def(py::init<const ACE&, size_t>())
-    .def("sample_energy", &Evaporation::sample_energy)
-    .def("temperature", &Evaporation::temperature)
-    .def("U", &Evaporation::U)
-  ;
+  py::class_<Evaporation, EnergyLaw, std::shared_ptr<Evaporation>>(
+      m, "Evaporation")
+      .def(py::init<const ACE&, size_t>())
+      .def("sample_energy", &Evaporation::sample_energy)
+      .def("temperature", &Evaporation::temperature)
+      .def("U", &Evaporation::U);
 }
 
 void init_Maxwellian(py::module& m) {
-  py::class_<Maxwellian, EnergyLaw, std::shared_ptr<Maxwellian>>(m, "Maxwellian")
-    .def(py::init<const ACE&, size_t>())
-    .def("sample_energy", &Maxwellian::sample_energy)
-    .def("temperature", &Maxwellian::temperature)
-    .def("U", &Maxwellian::U)
-  ;
+  py::class_<Maxwellian, EnergyLaw, std::shared_ptr<Maxwellian>>(m,
+                                                                 "Maxwellian")
+      .def(py::init<const ACE&, size_t>())
+      .def("sample_energy", &Maxwellian::sample_energy)
+      .def("temperature", &Maxwellian::temperature)
+      .def("U", &Maxwellian::U);
 }
 
 void init_Watt(py::module& m) {
   py::class_<Watt, EnergyLaw, std::shared_ptr<Watt>>(m, "Watt")
-    .def(py::init<const ACE&, size_t>())
-    .def("sample_energy", &Watt::sample_energy)
-    .def("a", &Watt::a)
-    .def("b", &Watt::b)
-    .def("U", &Watt::U)
-  ;
+      .def(py::init<const ACE&, size_t>())
+      .def("sample_energy", &Watt::sample_energy)
+      .def("a", &Watt::a)
+      .def("b", &Watt::b)
+      .def("U", &Watt::U);
 }

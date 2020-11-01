@@ -32,6 +32,7 @@
  *
  * */
 #include <PapillonNDL/nuclide.hpp>
+#include <PapillonNDL/uncorrelated.hpp>
 
 namespace pndl {
 
@@ -45,6 +46,7 @@ Nuclide::Nuclide(const ACE& ace)
       absorption_xs_(),
       elastic_xs_(),
       elastic_angle_(ace, ace.xss<int>(ace.LAND())),
+      fission_data_(),
       reactions_() {
   // Number of energy points
   uint32_t NE = ace.nxs(2);
@@ -63,7 +65,14 @@ Nuclide::Nuclide(const ACE& ace)
     reactions_.emplace(tmp_pair);
   }
 
-  // TODO read fission data
+  if (fissile()) {
+    auto Fiss = reaction(18);
+    auto AE = Fiss.angle_energy();
+    std::shared_ptr<Uncorrelated> uncorr =
+        std::dynamic_pointer_cast<Uncorrelated>(AE);
+    auto prompt_spectrum = uncorr->energy();
+    fission_data_ = FissionData(ace, prompt_spectrum);
+  }
 }
 
 const EnergyGrid& Nuclide::energy_grid() const { return energy_grid_; }

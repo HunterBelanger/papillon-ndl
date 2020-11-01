@@ -31,8 +31,8 @@
  * termes.
  *
  * */
-#include <pybind11/pybind11.h>
 #include <pybind11/functional.h>
+#include <pybind11/pybind11.h>
 
 #include <PapillonNDL/nuclide.hpp>
 
@@ -42,27 +42,35 @@ using namespace pndl;
 
 void init_Nuclide(py::module& m) {
   py::class_<Nuclide>(m, "Nuclide")
-    .def(py::init<const ACE&>())
-    .def("ZAID", &Nuclide::ZAID)
-    .def("AWR", &Nuclide::AWR)
-    .def("temperature", &Nuclide::temperature)
-    .def("fissile", &Nuclide::fissile)
-    .def("energy_grid", &Nuclide::energy_grid)
-    .def("total_cross_section", &Nuclide::total_cross_section)
-    .def("elastic_cross_section", &Nuclide::elastic_cross_section)
-    .def("absorption_cross_section", &Nuclide::absorption_cross_section)
-    .def("elastic_angle_distribution", &Nuclide::elastic_angle_distribution)
-    .def("energy_grid_index", &Nuclide::energy_grid_index)
-    .def("total_xs", py::overload_cast<double>(&Nuclide::total_xs, py::const_))
-    .def("total_xs", py::overload_cast<double,size_t>(&Nuclide::total_xs, py::const_))
-    .def("elastic_xs", py::overload_cast<double>(&Nuclide::elastic_xs, py::const_))
-    .def("elastic_xs", py::overload_cast<double,size_t>(&Nuclide::elastic_xs, py::const_))
-    .def("absorption_xs", py::overload_cast<double>(&Nuclide::absorption_xs, py::const_))
-    .def("absorption_xs", py::overload_cast<double,size_t>(&Nuclide::absorption_xs, py::const_))
-    .def("sample_elastic_angle", &Nuclide::sample_elastic_angle)
-    .def("has_reaction", &Nuclide::has_reaction)
-    .def("reaction", &Nuclide::reaction)
-    .def("reaction_xs", py::overload_cast<uint32_t,double>(&Nuclide::reaction_xs, py::const_))
-    .def("reaction_xs", py::overload_cast<uint32_t,double,size_t>(&Nuclide::reaction_xs, py::const_))
-  ;
+      .def(py::init<const ACE&>())
+      .def("ZAID", &Nuclide::ZAID)
+      .def("AWR", &Nuclide::AWR)
+      .def("temperature", &Nuclide::temperature)
+      .def("fissile", &Nuclide::fissile)
+      .def("energy_grid", &Nuclide::energy_grid)
+      .def("total_cross_section", &Nuclide::total_cross_section)
+      .def("elastic_cross_section", &Nuclide::elastic_cross_section)
+      .def("absorption_cross_section", &Nuclide::absorption_cross_section)
+      .def("elastic_angle_distribution", &Nuclide::elastic_angle_distribution)
+      .def("energy_grid_index", &Nuclide::energy_grid_index)
+      .def("total_xs",
+           py::overload_cast<double>(&Nuclide::total_xs, py::const_))
+      .def("total_xs",
+           py::overload_cast<double, size_t>(&Nuclide::total_xs, py::const_))
+      .def("elastic_xs",
+           py::overload_cast<double>(&Nuclide::elastic_xs, py::const_))
+      .def("elastic_xs",
+           py::overload_cast<double, size_t>(&Nuclide::elastic_xs, py::const_))
+      .def("absorption_xs",
+           py::overload_cast<double>(&Nuclide::absorption_xs, py::const_))
+      .def("absorption_xs", py::overload_cast<double, size_t>(
+                                &Nuclide::absorption_xs, py::const_))
+      .def("sample_elastic_angle", &Nuclide::sample_elastic_angle)
+      .def("has_reaction", &Nuclide::has_reaction)
+      .def("reaction", &Nuclide::reaction)
+      .def("reaction_xs", py::overload_cast<uint32_t, double>(
+                              &Nuclide::reaction_xs, py::const_))
+      .def("reaction_xs", py::overload_cast<uint32_t, double, size_t>(
+                              &Nuclide::reaction_xs, py::const_))
+      .def("fission_data", &Nuclide::fission_data);
 }

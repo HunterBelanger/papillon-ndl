@@ -36,14 +36,14 @@
 
 #include <PapillonNDL/ace.hpp>
 #include <PapillonNDL/angle_law.hpp>
-
 #include <cmath>
 
 namespace pndl {
 
 class EquiprobableAngleBins : public AngleLaw {
  public:
-  EquiprobableAngleBins(const ACE& ace, size_t i): bounds_(ace.xss(i, NBOUNDS)) {}
+  EquiprobableAngleBins(const ACE& ace, size_t i)
+      : bounds_(ace.xss(i, NBOUNDS)) {}
   ~EquiprobableAngleBins() = default;
 
   // Must have xi in the range [0,1).
@@ -54,8 +54,8 @@ class EquiprobableAngleBins : public AngleLaw {
     return ((xi - C_b) / P_BIN) + mu_low;
   }
 
-  size_t size() const {return NBOUNDS;}
-  const std::vector<double>& bin_bounds() const {return bounds_;}
+  size_t size() const { return NBOUNDS; }
+  const std::vector<double>& bin_bounds() const { return bounds_; }
 
  private:
   std::vector<double> bounds_;

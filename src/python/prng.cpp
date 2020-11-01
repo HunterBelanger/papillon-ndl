@@ -31,26 +31,22 @@
  * termes.
  *
  * */
-#include <pybind11/pybind11.h>
 #include <pybind11/functional.h>
+#include <pybind11/pybind11.h>
 
 namespace py = pybind11;
 
 // LCG parameters
-constexpr uint64_t g   {2806196910506780709LL};   // multiplication
-constexpr uint64_t c    {1};                       // additive factor, c
-constexpr uint64_t M    {0x8000000000000000};      // 2^63
-constexpr uint64_t mask   {0x7fffffffffffffff};      // 2^63 - 1
-constexpr double   normalization   {1.0 / M};           // 2^-63
+constexpr uint64_t g{2806196910506780709LL};  // multiplication
+constexpr uint64_t c{1};                      // additive factor, c
+constexpr uint64_t M{0x8000000000000000};     // 2^63
+constexpr uint64_t mask{0x7fffffffffffffff};  // 2^63 - 1
+constexpr double normalization{1.0 / M};      // 2^-63
 uint64_t rng_seed_ = 1;
 
-void seed(uint64_t s) {
-  rng_seed_ = s;
-}
+void seed(uint64_t s) { rng_seed_ = s; }
 
-uint32_t get_current_seed() {
-  return rng_seed_;
-}
+uint32_t get_current_seed() { return rng_seed_; }
 
 void advance_seed(uint64_t n) {
   n &= mask;
@@ -75,7 +71,7 @@ void advance_seed(uint64_t n) {
 }
 
 double rang() {
-  rng_seed_ = (g*rng_seed_ + c) & mask;
+  rng_seed_ = (g * rng_seed_ + c) & mask;
 
   return rng_seed_ * normalization;
 }
