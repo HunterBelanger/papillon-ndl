@@ -43,14 +43,14 @@ FissionData::FissionData()
     : nu_total_(nullptr),
       nu_prompt_(nullptr),
       nu_delayed_(nullptr),
-      prompt_energy_(nullptr),
+      prompt_spectrum_(nullptr),
       delayed_groups_() {}
 
-FissionData::FissionData(const ACE& ace, std::shared_ptr<EnergyLaw> prmpt)
+FissionData::FissionData(const ACE& ace, std::shared_ptr<AngleEnergy> prmpt)
     : nu_total_(nullptr),
       nu_prompt_(nullptr),
       nu_delayed_(nullptr),
-      prompt_energy_(prmpt),
+      prompt_spectrum_(prmpt),
       delayed_groups_() {
   if (ace.fissile()) {
     if (ace.xss(ace.NU()) > 0.) {

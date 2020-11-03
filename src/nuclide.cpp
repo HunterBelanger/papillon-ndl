@@ -67,11 +67,8 @@ Nuclide::Nuclide(const ACE& ace)
 
   if (fissile()) {
     auto Fiss = reaction(18);
-    auto AE = Fiss.angle_energy();
-    std::shared_ptr<Uncorrelated> uncorr =
-        std::dynamic_pointer_cast<Uncorrelated>(AE);
-    auto prompt_spectrum = uncorr->energy();
-    fission_data_ = FissionData(ace, prompt_spectrum);
+    auto prompt_angle_energy = Fiss.angle_energy();
+    fission_data_ = FissionData(ace, prompt_angle_energy);
   }
 }
 

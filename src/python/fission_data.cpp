@@ -42,7 +42,7 @@ using namespace pndl;
 
 void init_FissionData(py::module& m) {
   py::class_<FissionData>(m, "FissionData")
-      .def(py::init<const ACE&, std::shared_ptr<EnergyLaw>>())
+      .def(py::init<const ACE&, std::shared_ptr<AngleEnergy>>())
       .def("nu_total", py::overload_cast<>(&FissionData::nu_total, py::const_))
       .def("nu_total",
            py::overload_cast<double>(&FissionData::nu_total, py::const_))
@@ -56,6 +56,6 @@ void init_FissionData(py::module& m) {
            py::overload_cast<double>(&FissionData::nu_delayed, py::const_))
       .def("ngroups", &FissionData::ngroups)
       .def("delayed_group", &FissionData::delayed_group)
-      .def("prompt_energy_law", &FissionData::prompt_energy_law)
-      .def("sample_prompt_energy", &FissionData::sample_prompt_energy);
+      .def("prompt_angle_energy", &FissionData::prompt_angle_energy)
+      .def("sample_prompt_angle_energy", &FissionData::sample_prompt_angle_energy);
 }

@@ -37,6 +37,7 @@
 #include <PapillonNDL/ace.hpp>
 #include <PapillonNDL/delayed_group.hpp>
 #include <PapillonNDL/function_1d.hpp>
+#include <PapillonNDL/angle_energy.hpp>
 #include <memory>
 
 namespace pndl {
@@ -44,7 +45,7 @@ namespace pndl {
 class FissionData {
  public:
   FissionData();
-  FissionData(const ACE& ace, std::shared_ptr<EnergyLaw> prmpt);
+  FissionData(const ACE& ace, std::shared_ptr<AngleEnergy> prmpt);
   ~FissionData() = default;
 
   std::shared_ptr<Function1D> nu_total() const { return nu_total_; }
@@ -81,12 +82,12 @@ class FissionData {
     return delayed_groups_[i];
   }
 
-  std::shared_ptr<EnergyLaw> prompt_energy_law() const {
-    return prompt_energy_;
+  std::shared_ptr<AngleEnergy> prompt_angle_energy() const {
+    return prompt_spectrum_;
   }
 
-  double sample_prompt_energy(double E_in, std::function<double()> rng) const {
-    return prompt_energy_->sample_energy(E_in, rng);
+  AngleEnergyPacket sample_prompt_angle_energy(double E_in, std::function<double()> rng) const {
+    return prompt_spectrum_->sample_angle_energy(E_in, rng);
   }
 
  private:
@@ -94,7 +95,7 @@ class FissionData {
   std::shared_ptr<Function1D> nu_prompt_;
   std::shared_ptr<Function1D> nu_delayed_;
 
-  std::shared_ptr<EnergyLaw> prompt_energy_;
+  std::shared_ptr<AngleEnergy> prompt_spectrum_;
 
   std::vector<DelayedGroup> delayed_groups_;
 
