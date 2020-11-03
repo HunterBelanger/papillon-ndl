@@ -35,9 +35,9 @@
 #define PAPILLON_NDL_FISSION_DATA_H
 
 #include <PapillonNDL/ace.hpp>
+#include <PapillonNDL/angle_energy.hpp>
 #include <PapillonNDL/delayed_group.hpp>
 #include <PapillonNDL/function_1d.hpp>
-#include <PapillonNDL/angle_energy.hpp>
 #include <memory>
 
 namespace pndl {
@@ -86,7 +86,8 @@ class FissionData {
     return prompt_spectrum_;
   }
 
-  AngleEnergyPacket sample_prompt_angle_energy(double E_in, std::function<double()> rng) const {
+  AngleEnergyPacket sample_prompt_angle_energy(
+      double E_in, std::function<double()> rng) const {
     return prompt_spectrum_->sample_angle_energy(E_in, rng);
   }
 

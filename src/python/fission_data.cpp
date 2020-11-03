@@ -57,5 +57,6 @@ void init_FissionData(py::module& m) {
       .def("ngroups", &FissionData::ngroups)
       .def("delayed_group", &FissionData::delayed_group)
       .def("prompt_angle_energy", &FissionData::prompt_angle_energy)
-      .def("sample_prompt_angle_energy", &FissionData::sample_prompt_angle_energy);
+      .def("sample_prompt_angle_energy",
+           &FissionData::sample_prompt_angle_energy);
 }
