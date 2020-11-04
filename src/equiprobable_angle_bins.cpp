@@ -31,35 +31,25 @@
  * termes.
  *
  * */
-#ifndef PAPILLON_NDL_ANGLE_TABLE_H
-#define PAPILLON_NDL_ANGLE_TABLE_H
-
-#include <PapillonNDL/angle_law.hpp>
-#include <PapillonNDL/pctable.hpp>
+#include <PapillonNDL/equiprobable_angle_bins.hpp>
+#include <cmath>
 
 namespace pndl {
 
-class AngleTable : public AngleLaw {
- public:
-  AngleTable(const ACE& ace, size_t i);
-  ~AngleTable() = default;
+EquiprobableAngleBins::EquiprobableAngleBins(const ACE& ace, size_t i)
+    : bounds_(ace.xss(i, NBOUNDS)) {}
 
-  double sample_mu(double xi) const override final;
+double EquiprobableAngleBins::sample_mu(double xi) const {
+  size_t bin = static_cast<double>(std::floor(NBOUNDS * xi));
+  double C_b = bin * P_BIN;
+  double mu_low = bounds_[bin];
+  return ((xi - C_b) / P_BIN) + mu_low;
+}
 
-  size_t size() const;
+size_t EquiprobableAngleBins::size() const { return NBOUNDS; }
 
-  const std::vector<double>& cosines() const;
-
-  const std::vector<double>& pdf() const;
-
-  const std::vector<double>& cdf() const;
-
-  Interpolation interpolation() const;
-
- private:
-  PCTable distribution_;
-};
+const std::vector<double>& EquiprobableAngleBins::bin_bounds() const {
+  return bounds_;
+}
 
 }  // namespace pndl
-
-#endif

@@ -31,35 +31,15 @@
  * termes.
  *
  * */
-#ifndef PAPILLON_NDL_ANGLE_TABLE_H
-#define PAPILLON_NDL_ANGLE_TABLE_H
-
-#include <PapillonNDL/angle_law.hpp>
-#include <PapillonNDL/pctable.hpp>
+#include <PapillonNDL/isotropic.hpp>
+#include <cmath>
 
 namespace pndl {
 
-class AngleTable : public AngleLaw {
- public:
-  AngleTable(const ACE& ace, size_t i);
-  ~AngleTable() = default;
-
-  double sample_mu(double xi) const override final;
-
-  size_t size() const;
-
-  const std::vector<double>& cosines() const;
-
-  const std::vector<double>& pdf() const;
-
-  const std::vector<double>& cdf() const;
-
-  Interpolation interpolation() const;
-
- private:
-  PCTable distribution_;
-};
+double Isotropic::sample_mu(double xi) const {
+  double mu = 2. * xi - 1.;
+  if (std::abs(mu) > 1.) mu = std::copysign(1., mu);
+  return mu;
+}
 
 }  // namespace pndl
-
-#endif

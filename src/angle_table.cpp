@@ -31,35 +31,34 @@
  * termes.
  *
  * */
-#ifndef PAPILLON_NDL_ANGLE_TABLE_H
-#define PAPILLON_NDL_ANGLE_TABLE_H
-
-#include <PapillonNDL/angle_law.hpp>
-#include <PapillonNDL/pctable.hpp>
+#include <PapillonNDL/angle_table.hpp>
 
 namespace pndl {
 
-class AngleTable : public AngleLaw {
- public:
-  AngleTable(const ACE& ace, size_t i);
-  ~AngleTable() = default;
+AngleTable::AngleTable(const ACE& ace, size_t i) : distribution_(ace, i) {}
 
-  double sample_mu(double xi) const override final;
+double AngleTable::sample_mu(double xi) const {
+  double mu = distribution_.sample_value(xi);
+  if (std::abs(mu) > 1.) mu = std::copysign(1., mu);
+  return mu;
+}
 
-  size_t size() const;
+size_t AngleTable::size() const { return distribution_.size(); }
 
-  const std::vector<double>& cosines() const;
+const std::vector<double>& AngleTable::cosines() const {
+  return distribution_.values();
+}
 
-  const std::vector<double>& pdf() const;
+const std::vector<double>& AngleTable::pdf() const {
+  return distribution_.pdf();
+}
 
-  const std::vector<double>& cdf() const;
+const std::vector<double>& AngleTable::cdf() const {
+  return distribution_.cdf();
+}
 
-  Interpolation interpolation() const;
-
- private:
-  PCTable distribution_;
-};
+Interpolation AngleTable::interpolation() const {
+  return distribution_.interpolation();
+}
 
 }  // namespace pndl
-
-#endif

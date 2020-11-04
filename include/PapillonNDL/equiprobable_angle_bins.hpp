@@ -36,26 +36,19 @@
 
 #include <PapillonNDL/ace.hpp>
 #include <PapillonNDL/angle_law.hpp>
-#include <cmath>
 
 namespace pndl {
 
 class EquiprobableAngleBins : public AngleLaw {
  public:
-  EquiprobableAngleBins(const ACE& ace, size_t i)
-      : bounds_(ace.xss(i, NBOUNDS)) {}
+  EquiprobableAngleBins(const ACE& ace, size_t i);
   ~EquiprobableAngleBins() = default;
 
   // Must have xi in the range [0,1).
-  double sample_mu(double xi) const override final {
-    size_t bin = static_cast<double>(std::floor(NBOUNDS * xi));
-    double C_b = bin * P_BIN;
-    double mu_low = bounds_[bin];
-    return ((xi - C_b) / P_BIN) + mu_low;
-  }
+  double sample_mu(double xi) const override final;
 
-  size_t size() const { return NBOUNDS; }
-  const std::vector<double>& bin_bounds() const { return bounds_; }
+  size_t size() const;
+  const std::vector<double>& bin_bounds() const;
 
  private:
   std::vector<double> bounds_;

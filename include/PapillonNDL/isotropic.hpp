@@ -44,11 +44,7 @@ class Isotropic : public AngleLaw {
   Isotropic() {}
   ~Isotropic() = default;
 
-  double sample_mu(double xi) const override final {
-    double mu = 2. * xi - 1.;
-    if (std::abs(mu) > 1.) mu = std::copysign(1., mu);
-    return mu;
-  }
+  double sample_mu(double xi) const override final;
 };
 
 }  // namespace pndl

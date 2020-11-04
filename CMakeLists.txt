@@ -19,6 +19,9 @@ add_library(PapillonNDL SHARED
   src/multi_region_1d.cpp
   src/polynomial_1d.cpp
   src/ace.cpp
+  src/isotropic.cpp
+  src/equiprobable_angle_bins.cpp
+  src/angle_table.cpp
   src/equiprobable_energy_bins.cpp
   src/level_inelastic_scatter.cpp
   src/general_evaporation.cpp
