@@ -66,7 +66,6 @@ extern void init_Kalbach(py::module&);
 extern void init_PCTable(py::module&);
 extern void init_EnergyAngleTable(py::module&);
 extern void init_TabularEnergyAngle(py::module&);
-extern void init_SharedSpanFloat(py::module&);
 extern void init_EnergyGrid(py::module&);
 extern void init_CrossSection(py::module&);
 extern void init_DelayedGroup(py::module&);
@@ -107,7 +106,6 @@ PYBIND11_MODULE(pyPapillonNDL, m) {
   init_PCTable(m);
   init_EnergyAngleTable(m);
   init_TabularEnergyAngle(m);
-  init_SharedSpanFloat(m);
   init_EnergyGrid(m);
   init_CrossSection(m);
   init_Reaction(m);

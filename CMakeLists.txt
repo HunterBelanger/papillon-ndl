@@ -80,7 +80,6 @@ if(PNDL_PYTHON)
                                     src/python/energy_law.cpp
                                     src/python/angle_energy.cpp
                                     src/python/pctable.cpp
-                                    src/python/shared_span.cpp
                                     src/python/energy_grid.cpp
                                     src/python/cross_section.cpp
                                     src/python/reaction.cpp

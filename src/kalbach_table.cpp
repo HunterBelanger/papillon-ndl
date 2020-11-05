@@ -32,8 +32,6 @@
  *
  * */
 #include <PapillonNDL/kalbach_table.hpp>
-#include <algorithm>
-#include <cmath>
 
 namespace pndl {
 
@@ -60,76 +58,5 @@ KalbachTable::KalbachTable(const ACE& ace, size_t i)
     throw std::runtime_error("KalbachTable: CDF is not sorted");
   }
 }
-
-double KalbachTable::sample_energy(double xi) const {
-  if (xi < 0. || xi > 1.) {
-    throw std::runtime_error("KalbachTable: Invalid value for xi provided");
-  }
-
-  auto cdf_it = std::lower_bound(cdf_.begin(), cdf_.end(), xi);
-  size_t l = std::distance(cdf_.begin(), cdf_it);
-  if (xi == *cdf_it) return energy_[l];
-  l--;
-
-  if (interp_ == Interpolation::Histogram)
-    return histogram_interp_energy(xi, l);
-
-  return linear_interp_energy(xi, l);
-}
-
-double KalbachTable::min_energy() const { return energy_.front(); }
-
-double KalbachTable::max_energy() const { return energy_.back(); }
-
-double KalbachTable::R(double E) const {
-  if (E <= energy_.front())
-    return R_.front();
-  else if (E >= energy_.back())
-    return R_.back();
-  else {
-    auto E_it = std::lower_bound(energy_.begin(), energy_.end(), E);
-    size_t l = std::distance(energy_.begin(), E_it) - 1;
-
-    return interpolate(E, energy_[l], R_[l], energy_[l + 1], R_[l + 1],
-                       interp_);
-  }
-}
-
-double KalbachTable::A(double E) const {
-  if (E <= energy_.front())
-    return A_.front();
-  else if (E >= energy_.back())
-    return A_.back();
-  else {
-    auto E_it = std::lower_bound(energy_.begin(), energy_.end(), E);
-    size_t l = std::distance(energy_.begin(), E_it) - 1;
-
-    return interpolate(E, energy_[l], A_[l], energy_[l + 1], A_[l + 1],
-                       interp_);
-  }
-}
-
-double KalbachTable::histogram_interp_energy(double xi, size_t l) const {
-  return energy_[l] + ((xi - cdf_[l]) / pdf_[l]);
-}
-
-double KalbachTable::linear_interp_energy(double xi, size_t l) const {
-  double m = (pdf_[l + 1] - pdf_[l]) / (energy_[l + 1] - energy_[l]);
-  return energy_[l] +
-         (1. / m) *
-             (std::sqrt(pdf_[l] * pdf_[l] + 2. * m * (xi - cdf_[l])) - pdf_[l]);
-}
-
-const std::vector<double>& KalbachTable::energy() const { return energy_; }
-
-const std::vector<double>& KalbachTable::pdf() const { return pdf_; }
-
-const std::vector<double>& KalbachTable::cdf() const { return cdf_; }
-
-const std::vector<double>& KalbachTable::R() const { return R_; }
-
-const std::vector<double>& KalbachTable::A() const { return A_; }
-
-Interpolation KalbachTable::interpolation() const { return interp_; }
 
 }  // namespace pndl

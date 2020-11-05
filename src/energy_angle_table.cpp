@@ -33,7 +33,6 @@
  * */
 #include <PapillonNDL/energy_angle_table.hpp>
 #include <PapillonNDL/interpolation.hpp>
-#include <cmath>
 
 namespace pndl {
 
@@ -65,61 +64,5 @@ EnergyAngleTable::EnergyAngleTable(const ACE& ace, size_t i)
     angles_.emplace_back(ace, l);
   }
 }
-
-AngleEnergyPacket EnergyAngleTable::sample_angle_energy(
-    std::function<double()> rng) const {
-  double E_out, mu;
-  double xi = rng();
-  auto cdf_it = std::lower_bound(cdf_.begin(), cdf_.end(), xi);
-  size_t l = std::distance(cdf_.begin(), cdf_it) - 1;
-
-  if (interp_ == Interpolation::Histogram) {
-    E_out = histogram_interp_energy(xi, l);
-    mu = angles_[l].sample_value(rng());
-    if (std::abs(mu) > 1.) mu = std::copysign(1., mu);
-    return {mu, E_out};
-  }
-
-  E_out = linear_interp_energy(xi, l);
-
-  double f = interpolation_factor(xi, cdf_[l], cdf_[l + 1]);
-  if (f < 0.5)
-    mu = angles_[l].sample_value(rng());
-  else
-    mu = angles_[l + 1].sample_value(rng());
-
-  if (std::abs(mu) > 1.) mu = std::copysign(1., mu);
-
-  return {mu, E_out};
-}
-
-double EnergyAngleTable::min_energy() const { return energy_.front(); }
-
-double EnergyAngleTable::max_energy() const { return energy_.back(); }
-
-Interpolation EnergyAngleTable::interpolation() const { return interp_; }
-
-double EnergyAngleTable::histogram_interp_energy(double xi, size_t l) const {
-  return energy_[l] + ((xi - cdf_[l]) / pdf_[l]);
-}
-
-double EnergyAngleTable::linear_interp_energy(double xi, size_t l) const {
-  double m = (pdf_[l + 1] - pdf_[l]) / (energy_[l + 1] - energy_[l]);
-  return energy_[l] +
-         (1. / m) *
-             (std::sqrt(pdf_[l] * pdf_[l] + 2. * m * (xi - cdf_[l])) - pdf_[l]);
-}
-
-const std::vector<double>& EnergyAngleTable::energy() const { return energy_; }
-
-const std::vector<double>& EnergyAngleTable::pdf() const { return pdf_; }
-
-const std::vector<double>& EnergyAngleTable::cdf() const { return cdf_; }
-
-const PCTable& EnergyAngleTable::angle_table(size_t i) const {
-  return angles_[i];
-}
-
-size_t EnergyAngleTable::size() const { return energy_.size(); }
 
 }  // namespace pndl

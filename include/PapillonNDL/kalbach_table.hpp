@@ -36,6 +36,8 @@
 
 #include <PapillonNDL/ace.hpp>
 #include <PapillonNDL/interpolation.hpp>
+#include <algorithm>
+#include <cmath>
 
 namespace pndl {
 
@@ -44,18 +46,60 @@ class KalbachTable {
   KalbachTable(const ACE& ace, size_t i);
   ~KalbachTable() = default;
 
-  double sample_energy(double xi) const;
-  double min_energy() const;
-  double max_energy() const;
-  double R(double E) const;
-  double A(double E) const;
+  double sample_energy(double xi) const {
+    if (xi < 0. || xi > 1.) {
+      throw std::runtime_error("KalbachTable: Invalid value for xi provided");
+    }
 
-  const std::vector<double>& energy() const;
-  const std::vector<double>& pdf() const;
-  const std::vector<double>& cdf() const;
-  const std::vector<double>& R() const;
-  const std::vector<double>& A() const;
-  Interpolation interpolation() const;
+    auto cdf_it = std::lower_bound(cdf_.begin(), cdf_.end(), xi);
+    size_t l = std::distance(cdf_.begin(), cdf_it);
+    if (xi == *cdf_it) return energy_[l];
+    l--;
+
+    if (interp_ == Interpolation::Histogram)
+      return histogram_interp_energy(xi, l);
+
+    return linear_interp_energy(xi, l);
+  }
+
+  double min_energy() const { return energy_.front(); }
+
+  double max_energy() const { return energy_.back(); }
+
+  double R(double E) const {
+    if (E <= energy_.front())
+      return R_.front();
+    else if (E >= energy_.back())
+      return R_.back();
+    else {
+      auto E_it = std::lower_bound(energy_.begin(), energy_.end(), E);
+      size_t l = std::distance(energy_.begin(), E_it) - 1;
+
+      return interpolate(E, energy_[l], R_[l], energy_[l + 1], R_[l + 1],
+                         interp_);
+    }
+  }
+
+  double A(double E) const {
+    if (E <= energy_.front())
+      return A_.front();
+    else if (E >= energy_.back())
+      return A_.back();
+    else {
+      auto E_it = std::lower_bound(energy_.begin(), energy_.end(), E);
+      size_t l = std::distance(energy_.begin(), E_it) - 1;
+
+      return interpolate(E, energy_[l], A_[l], energy_[l + 1], A_[l + 1],
+                         interp_);
+    }
+  }
+
+  const std::vector<double>& energy() const { return energy_; }
+  const std::vector<double>& pdf() const { return pdf_; }
+  const std::vector<double>& cdf() const { return cdf_; }
+  const std::vector<double>& R() const { return R_; }
+  const std::vector<double>& A() const { return A_; }
+  Interpolation interpolation() const { return interp_; }
 
  private:
   std::vector<double> energy_;
@@ -65,8 +109,17 @@ class KalbachTable {
   std::vector<double> A_;
   Interpolation interp_;
 
-  double histogram_interp_energy(double xi, size_t l) const;
-  double linear_interp_energy(double xi, size_t l) const;
+  double histogram_interp_energy(double xi, size_t l) const {
+    return energy_[l] + ((xi - cdf_[l]) / pdf_[l]);
+  }
+
+  double linear_interp_energy(double xi, size_t l) const {
+    double m = (pdf_[l + 1] - pdf_[l]) / (energy_[l + 1] - energy_[l]);
+    return energy_[l] +
+           (1. / m) *
+               (std::sqrt(pdf_[l] * pdf_[l] + 2. * m * (xi - cdf_[l])) - pdf_[l]);
+  }
+
 };
 
 }  // namespace pndl
