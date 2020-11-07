@@ -54,15 +54,15 @@ CrossSection::CrossSection(const ACE& ace, size_t i, const EnergyGrid& E_grid,
 
 size_t CrossSection::size() const { return values_.size(); }
 
-double CrossSection::value(size_t i) const { return values_[i]; }
+double CrossSection::xs(size_t i) const { return values_[i]; }
 
 double CrossSection::energy(size_t i) const { return energy_values_[i]; }
 
 uint32_t CrossSection::index() const { return index_; }
 
-const std::vector<float>& CrossSection::values() const { return values_; }
+const std::vector<float>& CrossSection::xs() const { return values_; }
 
-std::vector<float> CrossSection::energies() const {
+std::vector<float> CrossSection::energy() const {
   return {energy_values_.begin(), energy_values_.end()};
 }
 
