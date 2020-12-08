@@ -120,6 +120,8 @@ const std::vector<double>& Kalbach::incoming_energy() const {
   return incoming_energy_;
 }
 
+double Kalbach::incoming_energy(size_t i) const { return incoming_energy_[i]; }
+
 const KalbachTable& Kalbach::table(size_t i) const { return tables_[i]; }
 
 size_t Kalbach::size() const { return incoming_energy_.size(); }

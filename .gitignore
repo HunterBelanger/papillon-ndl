@@ -1,3 +1,4 @@
 build
 *.swp
 compile_commands.json
+.vscode

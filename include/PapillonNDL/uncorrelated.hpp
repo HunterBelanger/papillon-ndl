@@ -51,7 +51,6 @@ class Uncorrelated : public AngleEnergy {
       double E_in, std::function<double()> rng) const override final;
 
   AngleDistribution angle() const;
-
   std::shared_ptr<EnergyLaw> energy() const;
 
  private:

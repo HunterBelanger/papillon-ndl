@@ -80,7 +80,7 @@ class EnergyAngleTable {
   const std::vector<double>& pdf() const { return pdf_; }
   const std::vector<double>& cdf() const { return cdf_; }
   const PCTable& angle_table(size_t i) const { return angles_[i]; }
-  size_t size() const {return energy_.size(); }
+  size_t size() const { return energy_.size(); }
 
  private:
   std::vector<double> energy_;
@@ -96,10 +96,9 @@ class EnergyAngleTable {
   double linear_interp_energy(double xi, size_t l) const {
     double m = (pdf_[l + 1] - pdf_[l]) / (energy_[l + 1] - energy_[l]);
     return energy_[l] +
-           (1. / m) *
-               (std::sqrt(pdf_[l] * pdf_[l] + 2. * m * (xi - cdf_[l])) - pdf_[l]);
+           (1. / m) * (std::sqrt(pdf_[l] * pdf_[l] + 2. * m * (xi - cdf_[l])) -
+                       pdf_[l]);
   }
-
 };
 
 }  // namespace pndl

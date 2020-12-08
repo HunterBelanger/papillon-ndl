@@ -116,10 +116,9 @@ class KalbachTable {
   double linear_interp_energy(double xi, size_t l) const {
     double m = (pdf_[l + 1] - pdf_[l]) / (energy_[l + 1] - energy_[l]);
     return energy_[l] +
-           (1. / m) *
-               (std::sqrt(pdf_[l] * pdf_[l] + 2. * m * (xi - cdf_[l])) - pdf_[l]);
+           (1. / m) * (std::sqrt(pdf_[l] * pdf_[l] + 2. * m * (xi - cdf_[l])) -
+                       pdf_[l]);
   }
-
 };
 
 }  // namespace pndl

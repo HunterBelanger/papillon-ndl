@@ -107,7 +107,10 @@ void init_KalbachTable(py::module& m) {
 void init_Kalbach(py::module& m) {
   py::class_<Kalbach, AngleEnergy, std::shared_ptr<Kalbach>>(m, "Kalbach")
       .def("sample_angle_energy", &Kalbach::sample_angle_energy)
-      .def("incoming_energy", &Kalbach::incoming_energy)
+      .def("incoming_energy",
+           py::overload_cast<>(&Kalbach::incoming_energy, py::const_))
+      .def("incoming_energy",
+           py::overload_cast<size_t>(&Kalbach::incoming_energy, py::const_))
       .def("table", &Kalbach::table)
       .def("size", &Kalbach::size);
 }
@@ -130,7 +133,12 @@ void init_TabularEnergyAngle(py::module& m) {
   py::class_<TabularEnergyAngle, AngleEnergy,
              std::shared_ptr<TabularEnergyAngle>>(m, "TabularEnergyAngle")
       .def("sample_angle_energy", &TabularEnergyAngle::sample_angle_energy)
-      .def("incoming_energy", &TabularEnergyAngle::incoming_energy)
+      .def(
+          "incoming_energy",
+          py::overload_cast<>(&TabularEnergyAngle::incoming_energy, py::const_))
+      .def("incoming_energy",
+           py::overload_cast<size_t>(&TabularEnergyAngle::incoming_energy,
+                                     py::const_))
       .def("table", &TabularEnergyAngle::table)
       .def("size", &TabularEnergyAngle::size);
 }

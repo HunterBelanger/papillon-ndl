@@ -110,6 +110,10 @@ const std::vector<double>& TabularEnergyAngle::incoming_energy() const {
   return incoming_energy_;
 }
 
+double TabularEnergyAngle::incoming_energy(size_t i) const {
+  return incoming_energy_[i];
+}
+
 const EnergyAngleTable& TabularEnergyAngle::table(size_t i) const {
   return tables_[i];
 }

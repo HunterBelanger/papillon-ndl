@@ -46,6 +46,9 @@ void init_AngleDistribution(py::module& m) {
       .def(py::init<const ACE&, int>())
       .def("sample_angle", &AngleDistribution::sample_angle)
       .def("size", &AngleDistribution::size)
-      .def("energy", &AngleDistribution::energy)
+      .def("energy",
+           py::overload_cast<>(&AngleDistribution::energy, py::const_))
+      .def("energy",
+           py::overload_cast<size_t>(&AngleDistribution::energy, py::const_))
       .def("law", &AngleDistribution::law);
 }

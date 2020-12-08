@@ -81,5 +81,5 @@ void init_AngleTable(py::module& m) {
       .def("cosines", &AngleTable::cosines)
       .def("pdf", &AngleTable::pdf)
       .def("cdf", &AngleTable::cdf)
-      .def("interpolate", &AngleTable::interpolation);
+      .def("interpolation", &AngleTable::interpolation);
 }

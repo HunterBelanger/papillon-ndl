@@ -53,6 +53,7 @@ void init_CrossSection(py::module& m) {
       .def("index", &CrossSection::index)
       .def("xs", py::overload_cast<size_t>(&CrossSection::xs, py::const_))
       .def("xs", py::overload_cast<>(&CrossSection::xs, py::const_))
-      .def("energy", py::overload_cast<size_t>(&CrossSection::energy, py::const_))
+      .def("energy",
+           py::overload_cast<size_t>(&CrossSection::energy, py::const_))
       .def("energy", py::overload_cast<>(&CrossSection::energy, py::const_));
 }

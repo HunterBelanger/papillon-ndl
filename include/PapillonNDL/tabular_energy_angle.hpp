@@ -49,6 +49,7 @@ class TabularEnergyAngle : public AngleEnergy {
       double E_in, std::function<double()> rng) const override final;
 
   const std::vector<double>& incoming_energy() const;
+  double incoming_energy(size_t i) const;
   const EnergyAngleTable& table(size_t i) const;
   size_t size() const;
 

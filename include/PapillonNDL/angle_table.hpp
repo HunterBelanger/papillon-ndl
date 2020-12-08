@@ -47,13 +47,9 @@ class AngleTable : public AngleLaw {
   double sample_mu(double xi) const override final;
 
   size_t size() const;
-
   const std::vector<double>& cosines() const;
-
   const std::vector<double>& pdf() const;
-
   const std::vector<double>& cdf() const;
-
   Interpolation interpolation() const;
 
  private:
