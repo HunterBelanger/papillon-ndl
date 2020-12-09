@@ -1,19 +1,19 @@
 cmake_minimum_required(VERSION 3.9)
 
 # Library version
-set(MAJOR 0)
-set(MINOR 0)
-set(PATCH 1)
+set(PNDL_MAJOR 0)
+set(PNDL_MINOR 0)
+set(PNDL_PATCH 1)
 
 project(PapillonNDL
-  VERSION "${MAJOR}.${MINOR}.${PATCH}"
+  VERSION "${PNDL_MAJOR}.${PNDL_MINOR}.${PNDL_PATCH}"
   DESCRIPTION "Library to interact with ACE nuclear data"
   LANGUAGES CXX
 )
 
 # Add options
 option(PNDL_GO_FASTER "Enable -Ofast -ffast-math compiler optimizations" OFF)
-option(PNDL_PYTHON "Enable Python interface to PapillonNDL" OFF)
+option(PNDL_PYTHON "Enable Python interface to PapillonNDL" ON)
 option(PNDL_TESTS "Build tests" OFF)
 
 # Create PapillonNDL library target
@@ -70,16 +70,16 @@ target_compile_options(PapillonNDL PRIVATE $<$<CONFIG:RELEASE>:-O2>)
 target_compile_options(PapillonNDL PRIVATE $<$<BOOL:PNDL_GO_FASTER>:-Ofast -ffast-math>)
 
 # Defines for library version
-target_compile_definitions(PapillonNDL PUBLIC PNDL_VERSION_MAJOR=${MAJOR})
-target_compile_definitions(PapillonNDL PUBLIC PNDL_VERSION_MINOR=${MINOR})
-target_compile_definitions(PapillonNDL PUBLIC PNDL_VERSION_PATCH=${PATCH})
+target_compile_definitions(PapillonNDL PUBLIC PNDL_VERSION_MAJOR=${PNDL_MAJOR})
+target_compile_definitions(PapillonNDL PUBLIC PNDL_VERSION_MINOR=${PNDL_MINOR})
+target_compile_definitions(PapillonNDL PUBLIC PNDL_VERSION_PATCH=${PNDL_PATCH})
 
 if(PNDL_TESTS)
   add_subdirectory(tests)
 endif()
 
 if(PNDL_PYTHON)
-  find_package(pybind11 REQUIRED)
+  add_subdirectory(pybind11)
   find_package(Python REQUIRED)
 
   pybind11_add_module(pyPapillonNDL src/python/pyPapillonNDL.cpp
@@ -116,7 +116,7 @@ if(PNDL_PYTHON)
           "\nEnsure this directory is included in your PYTHONPATH environment variable !\n")
 
   # Install python lib
-  install(TARGETS pyPapillonNDL EXPORT pyPapillonNDL DESTINATION ${PNDL_PYTHON_DEFAULT_RELATIVE_PATH})
+  install(TARGETS pyPapillonNDL EXPORT pyPapillonNDL DESTINATION ${CMAKE_INSTALL_PREFIX}/${PNDL_PYTHON_DEFAULT_RELATIVE_PATH})
   install(EXPORT pyPapillonNDL FILE pyPapillonNDL-config.cmake DESTINATION share/cmake/pyPapillonNDL)
 endif()
 
