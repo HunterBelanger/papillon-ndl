@@ -33,6 +33,9 @@
  * */
 #include <pybind11/pybind11.h>
 
+#define STRINGIFY(x) #x
+#define MACRO_STRINGIFY(x) STRINGIFY(x)
+
 namespace py = pybind11;
 
 extern void init_ACE(py::module&);
@@ -113,4 +116,12 @@ PYBIND11_MODULE(pyPapillonNDL, m) {
   init_FissionData(m);
   init_Nuclide(m);
   init_PRNG(m);
+
+  m.attr("__author__") = "Hunter Belanger";
+  m.attr("__copyright__") = "Copyright 2020, Hunter Belanger";
+  m.attr("__license__") = "CECILL-2.1";
+  m.attr("__maintainer__") = "Hunter Belanger";
+  m.attr("__email__") = "hunter.belanger@gmail.com";
+  m.attr("__version__") =
+      MACRO_STRINGIFY(PNDL_VERSION_MAJOR.PNDL_VERSION_MINOR.PNDL_VERSION_PATCH);
 }

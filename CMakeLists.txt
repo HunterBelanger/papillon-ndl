@@ -1,7 +1,13 @@
 cmake_minimum_required(VERSION 3.9)
+
+# Library version
+set(MAJOR 0)
+set(MINOR 0)
+set(PATCH 1)
+
 project(PapillonNDL
-  #VERSION 0.0.1
-  DESCRIPTION "Library access ACE nuclear data"
+  VERSION "${MAJOR}.${MINOR}.${PATCH}"
+  DESCRIPTION "Library to interact with ACE nuclear data"
   LANGUAGES CXX
 )
 
@@ -54,8 +60,8 @@ target_include_directories(PapillonNDL PUBLIC
 # Require C++17 standard
 target_compile_features(PapillonNDL PRIVATE cxx_std_17)
 
-# Get compiler info
-# TODO, for now, only support Clang or GNU
+# Get compiler info (MSVC/Clang/GCC)
+# TODO, for now, only support Clang or GCC
 
 # Set compile options for library
 target_compile_options(PapillonNDL PRIVATE -W -Wall -Wextra -Wpedantic -Weffc++)
@@ -63,12 +69,18 @@ target_compile_options(PapillonNDL PRIVATE $<$<CONFIG:DEBUG>:-g>)
 target_compile_options(PapillonNDL PRIVATE $<$<CONFIG:RELEASE>:-O2>)
 target_compile_options(PapillonNDL PRIVATE $<$<BOOL:PNDL_GO_FASTER>:-Ofast -ffast-math>)
 
+# Defines for library version
+target_compile_definitions(PapillonNDL PUBLIC PNDL_VERSION_MAJOR=${MAJOR})
+target_compile_definitions(PapillonNDL PUBLIC PNDL_VERSION_MINOR=${MINOR})
+target_compile_definitions(PapillonNDL PUBLIC PNDL_VERSION_PATCH=${PATCH})
+
 if(PNDL_TESTS)
   add_subdirectory(tests)
 endif()
 
 if(PNDL_PYTHON)
   find_package(pybind11 REQUIRED)
+  find_package(Python REQUIRED)
 
   pybind11_add_module(pyPapillonNDL src/python/pyPapillonNDL.cpp
                                     src/python/interpolation.cpp
@@ -86,12 +98,26 @@ if(PNDL_PYTHON)
                                     src/python/delayed_group.cpp
                                     src/python/fission_data.cpp
                                     src/python/nuclide.cpp
-                                    src/python/prng.cpp)
+                                    src/python/prng.cpp
+  )
 
   target_link_libraries(pyPapillonNDL PRIVATE PapillonNDL)
 
-  # TODO install pyPapillonNDL
+  # Get location for python lib
+  execute_process(
+    COMMAND ${Python_EXECUTABLE}
+        -c "import distutils.sysconfig; print(distutils.sysconfig.get_python_lib(True, False, ''))"
+    OUTPUT_VARIABLE PNDL_PYTHON_DEFAULT_RELATIVE_PATH
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+  )
 
+  #Inform user where python lib will be going
+  message(NOTICE "\nInstalling pyPapillonNDL to " ${CMAKE_INSTALL_PREFIX}/${PNDL_PYTHON_DEFAULT_RELATIVE_PATH}
+          "\nEnsure this directory is included in your PYTHONPATH environment variable !\n")
+
+  # Install python lib
+  install(TARGETS pyPapillonNDL EXPORT pyPapillonNDL DESTINATION ${PNDL_PYTHON_DEFAULT_RELATIVE_PATH})
+  install(EXPORT pyPapillonNDL FILE pyPapillonNDL-config.cmake DESTINATION share/cmake/pyPapillonNDL)
 endif()
 
 # Install
