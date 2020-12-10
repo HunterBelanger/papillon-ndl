@@ -32,9 +32,7 @@
  *
  * */
 #include <pybind11/pybind11.h>
-
-#define STRINGIFY(x) #x
-#define MACRO_STRINGIFY(x) STRINGIFY(x)
+#include <PapillonNDL/version.hpp>
 
 namespace py = pybind11;
 
@@ -122,6 +120,5 @@ PYBIND11_MODULE(pyPapillonNDL, m) {
   m.attr("__license__") = "CECILL-2.1";
   m.attr("__maintainer__") = "Hunter Belanger";
   m.attr("__email__") = "hunter.belanger@gmail.com";
-  m.attr("__version__") =
-      MACRO_STRINGIFY(PNDL_VERSION_MAJOR.PNDL_VERSION_MINOR.PNDL_VERSION_PATCH);
+  m.attr("__version__") = pndl::VERSION_STRING;
 }

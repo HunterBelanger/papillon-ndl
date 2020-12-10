@@ -1,12 +1,7 @@
 cmake_minimum_required(VERSION 3.9)
 
-# Library version
-set(PNDL_MAJOR 0)
-set(PNDL_MINOR 1)
-set(PNDL_PATCH 0)
-
 project(PapillonNDL
-  VERSION "${PNDL_MAJOR}.${PNDL_MINOR}.${PNDL_PATCH}"
+  VERSION "0.1.0"
   DESCRIPTION "Library to interact with ACE nuclear data"
   LANGUAGES CXX
 )
@@ -49,6 +44,7 @@ add_library(PapillonNDL SHARED
   src/delayed_group.cpp
   src/fission_data.cpp
   src/nuclide.cpp
+  src/version.cpp
 )
 
 # Add public interface includes directory
@@ -68,11 +64,6 @@ target_compile_options(PapillonNDL PRIVATE -W -Wall -Wextra -Wpedantic -Weffc++)
 target_compile_options(PapillonNDL PRIVATE $<$<CONFIG:DEBUG>:-g>)
 target_compile_options(PapillonNDL PRIVATE $<$<CONFIG:RELEASE>:-O2>)
 target_compile_options(PapillonNDL PRIVATE $<$<BOOL:PNDL_GO_FASTER>:-Ofast -ffast-math>)
-
-# Defines for library version
-target_compile_definitions(PapillonNDL PUBLIC PNDL_VERSION_MAJOR=${PNDL_MAJOR})
-target_compile_definitions(PapillonNDL PUBLIC PNDL_VERSION_MINOR=${PNDL_MINOR})
-target_compile_definitions(PapillonNDL PUBLIC PNDL_VERSION_PATCH=${PNDL_PATCH})
 
 if(PNDL_TESTS)
   add_subdirectory(tests)
@@ -111,7 +102,7 @@ if(PNDL_PYTHON)
     OUTPUT_STRIP_TRAILING_WHITESPACE
   )
 
-  #Inform user where python lib will be going
+  # Inform user where python lib will be going
   message(NOTICE "\nInstalling pyPapillonNDL to " ${CMAKE_INSTALL_PREFIX}/${PNDL_PYTHON_DEFAULT_RELATIVE_PATH}
           "\nEnsure this directory is included in your PYTHONPATH environment variable !\n")
 
