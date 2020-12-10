@@ -10,20 +10,28 @@ To sample the angle and energy distributions, an instance of an
 ```std::function<double()>``` must be passed to the distributions.
 This function pointer is the library's access to a pseudo random
 number generator. Therefore, if ```rng``` is such an instance, ```rng``` must
-meet the requirments that any call of ```rng()``` returns a random double over
+meet the requirements that any call of ```rng()``` returns a random double over
 the interval [0,1), and it must be possible to call ```rng()``` an indefinite
-number of times. If the passed object does not meet these requirments, the
-behaviour of the library is undefined. Using this mechanism allows greater
+number of times. If the passed object does not meet these requirements, the
+behavior of the library is undefined. Using this mechanism allows greater
 flexibility to the user, in choosing the random number generator of their
 choice, and allows the library to be completely disconnected from the random
 number generation process, allowing the distributions to know how to sample
 themselves, but not know or assume anything about random number generation.
 
 ## Dependencies
-To build and install the library, cmake >= 3.9 is required, along with a C++
-compiler which supports the C++17 standard. The recommended compiler is
-Clang >= 5, though GCC >= 6 should suffice. Inorder to build the Python
-interface, Python >= 3.5 should be installed on your system as well.
+To build and install the library a UNIX-like operating system with cmake >= 3.9
+is required, along with a C++ compiler which supports the C++17 standard. The
+recommended compiler is Clang >= 5, though GCC >= 6 should suffice. In order to
+build the Python interface, Python >= 3.5 should be installed on your system, in
+addition to the Python development libraries and header files.
+
+Building the C++ library on Windows is in theory possible (and likely quite
+straight forward), though not currently supported. Building the Python bindings
+would likely be less trivial however with a standard Python installation for
+Windows. If you are a Windows user, I recommend that you take a look at the
+Windows Subsystem for Linux, which will allow you to build the library on your
+Windows machine, using the standard Linux build instructions.
 
 Building the unit tests (using ```-DPNDL_TESTS=ON``` when calling cmake)
 requires that Google test already be installed on the system, and is not
@@ -50,6 +58,6 @@ add the flag ```-DPNDL_PYTHON=OFF``` to the cmake command.
 PapillonNDL is provided under the terms and conditions of the CeCILLv2.1
 license. This is a French equivalent of the GPLv3 license, and is explicitly
 compatible with both the GPLv2 and v3. The French version of this license is
-provided in the LICENSE file, along with the equaly valid English version, which
+provided in the LICENSE file, along with the equally valid English version, which
 may be found in the LICENSE-ENGLISH file. The CeCILLv2.1 is approved by the FSF.
 More information about this license may be found [here](https://cecill.info/).

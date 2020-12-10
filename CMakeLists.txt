@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 3.9)
 
 # Library version
 set(PNDL_MAJOR 0)
-set(PNDL_MINOR 0)
-set(PNDL_PATCH 1)
+set(PNDL_MINOR 1)
+set(PNDL_PATCH 0)
 
 project(PapillonNDL
   VERSION "${PNDL_MAJOR}.${PNDL_MINOR}.${PNDL_PATCH}"
@@ -79,7 +79,7 @@ if(PNDL_TESTS)
 endif()
 
 if(PNDL_PYTHON)
-  add_subdirectory(pybind11)
+  add_subdirectory(vendor/pybind11)
   find_package(Python REQUIRED)
 
   pybind11_add_module(pyPapillonNDL src/python/pyPapillonNDL.cpp
