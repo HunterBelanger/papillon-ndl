@@ -32,6 +32,7 @@
  *
  * */
 #include <PapillonNDL/ace.hpp>
+#include <PapillonNDL/pndl_exception.hpp>
 #include <fstream>
 
 #include "constants.hpp"
@@ -117,8 +118,18 @@ ACE::ACE(std::string fname)
 
   // Parse XSS
   xss_.resize(nxs_[0]);
-  for (int i = 0; i < nxs_[0]; i++) {
+  int i = 0;
+  while(!file.eof()) {
     file >> xss_[i];
+    i++;
+  }
+
+  if(i-1 != nxs_[0]) {
+    std::string mssg = "Found incorrect number of entries in XSS array while reading\n";
+    mssg += "the \"" + fname + "\" ACE file.\n";
+    mssg += "This is likely due to a numerical entry which is missing the \"E\".";
+    mssg += "\nPlease correct the ACE file.";
+    throw PNDLException(mssg, __FILE__, __LINE__);
   }
 
   zaid_ = static_cast<uint32_t>(nxs_[1]);
