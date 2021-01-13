@@ -33,15 +33,17 @@
  * */
 #include <PapillonNDL/energy_angle_table.hpp>
 #include <PapillonNDL/interpolation.hpp>
+#include <PapillonNDL/pndl_exception.hpp>
 
 namespace pndl {
 
 EnergyAngleTable::EnergyAngleTable(const ACE& ace, size_t i)
     : energy_(), pdf_(), cdf_(), angles_(), interp_() {
   interp_ = ace.xss<Interpolation>(i);
-  if ((interp_ != Interpolation::Histogram) &&
-      (interp_ != Interpolation::LinLin)) {
-    throw std::runtime_error("EnergyAngleTable: Invalid interpolation");
+  if ((interp_ != Interpolation::Histogram) && (interp_ != Interpolation::LinLin)) {
+    std::string mssg = "EnergyAngleTable: Invalid interpolation of ";
+    mssg += std::to_string(static_cast<int>(interp_)) + ".";
+    throw PNDLException(mssg, __FILE__, __LINE__);
   }
   uint32_t NP = ace.xss<uint32_t>(i + 1);
   energy_ = ace.xss(i + 2, NP);
@@ -50,11 +52,13 @@ EnergyAngleTable::EnergyAngleTable(const ACE& ace, size_t i)
   cdf_ = ace.xss(i + 2 + NP + NP, NP);
 
   if (!std::is_sorted(energy_.begin(), energy_.end())) {
-    throw std::runtime_error("EnergyAngleTable: Energies are not sorted");
+    std::string mssg = "EnergyAngleTable: Energies are not sorted";
+    throw PNDLException(mssg, __FILE__, __LINE__);
   }
 
   if (!std::is_sorted(cdf_.begin(), cdf_.end())) {
-    throw std::runtime_error("EnergyAngleTable: CDF is not sorted");
+    std::string mssg = "EnergyAngleTable: CDF is not sorted";
+    throw PNDLException(mssg, __FILE__, __LINE__);
   }
 
   std::vector<int32_t> locs = ace.xss<int32_t>(i + 2 + NP + NP + NP, NP);

@@ -32,6 +32,7 @@
  *
  * */
 #include <PapillonNDL/interpolation.hpp>
+#include <PapillonNDL/pndl_exception.hpp>
 #include <cmath>
 #include <stdexcept>
 
@@ -75,9 +76,13 @@ double interpolation_factor(double x, double x1, double x2) {
 double interpolate(double x, double x1, double y1, double x2, double y2,
                    Interpolation interp) {
   if (x < x1) {
-    throw std::runtime_error("Interpolation: Must satisfy x >= x1");
+    std::string mssg = "Interpolation requires x >= x1. Provided with x = ";
+    mssg += std::to_string(x) + " and x1 = " + std::to_string(x1) + ".";
+    throw PNDLException(mssg, __FILE__, __LINE__);
   } else if (x > x2) {
-    throw std::runtime_error("Interpolation: Must satisfy x <= x2");
+    std::string mssg = "Interpolation requires x <= x2. Provided with x = ";
+    mssg += std::to_string(x) + " and x2 = " + std::to_string(x2) + ".";
+    throw PNDLException(mssg, __FILE__, __LINE__);
   }
 
   switch (interp) {

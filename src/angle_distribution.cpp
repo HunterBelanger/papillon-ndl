@@ -35,7 +35,7 @@
 #include <PapillonNDL/angle_table.hpp>
 #include <PapillonNDL/equiprobable_angle_bins.hpp>
 #include <PapillonNDL/isotropic.hpp>
-#include <stdexcept>
+#include <PapillonNDL/pndl_exception.hpp>
 
 namespace pndl {
 
@@ -44,7 +44,8 @@ AngleDistribution::AngleDistribution(const ACE& ace, int locb)
   // Locb must be >= 0! If locb == -1, it means that there is
   // no angular distribution for the reaction (must use product distribution)
   if (locb < 0) {
-    throw std::runtime_error("AngleDistribution: Must have locb >= 0");
+    std::string mssg = "Must have locb >= 0. Was provided with locb = " + std::to_string(locb) + ".";
+    throw PNDLException(mssg, __FILE__, __LINE__);
   }
 
   if (locb > 0) {

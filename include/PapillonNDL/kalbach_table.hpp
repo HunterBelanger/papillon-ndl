@@ -48,7 +48,7 @@ class KalbachTable {
 
   double sample_energy(double xi) const {
     if (xi < 0. || xi > 1.) {
-      throw std::runtime_error("KalbachTable: Invalid value for xi provided");
+      throw PNDLException("KalbachTable: Invalid value for xi provided.", __FILE__, __LINE__);
     }
 
     auto cdf_it = std::lower_bound(cdf_.begin(), cdf_.end(), xi);

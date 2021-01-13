@@ -48,7 +48,7 @@ class PCTable {
 
   double sample_value(double xi) const {
     if (xi < 0. || xi > 1.) {
-      throw std::runtime_error("PCTable: Invalid value for xi provided");
+      throw PNDLException("PCTable: Invalid value for xi provided.", __FILE__, __LINE__);
     }
 
     auto cdf_it = std::lower_bound(cdf_.begin(), cdf_.end(), xi);

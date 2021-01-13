@@ -32,6 +32,7 @@
  *
  * */
 #include <PapillonNDL/pctable.hpp>
+#include <PapillonNDL/pndl_exception.hpp>
 #include <algorithm>
 #include <cmath>
 
@@ -40,9 +41,10 @@ namespace pndl {
 PCTable::PCTable(const ACE& ace, size_t i, double normalization)
     : values_(), pdf_(), cdf_(), interp_() {
   interp_ = ace.xss<Interpolation>(i);
-  if ((interp_ != Interpolation::Histogram) &&
-      (interp_ != Interpolation::LinLin)) {
-    throw std::runtime_error("PCTable: Invalid interpolation");
+  if ((interp_ != Interpolation::Histogram) && (interp_ != Interpolation::LinLin)) {
+    std::string mssg = "PCTable: Invalid interpolation of ";
+    mssg += std::to_string(static_cast<int>(interp_)) + ".";
+    throw PNDLException(mssg, __FILE__, __LINE__);
   }
   uint32_t NP = ace.xss<uint32_t>(i + 1);
   values_ = ace.xss(i + 2, NP);
@@ -53,11 +55,11 @@ PCTable::PCTable(const ACE& ace, size_t i, double normalization)
   cdf_ = ace.xss(i + 2 + NP + NP, NP);
 
   if (!std::is_sorted(values_.begin(), values_.end())) {
-    throw std::runtime_error("PCTable: Values are not sorted");
+    throw PNDLException("PCTable: Values are not sorted", __FILE__, __LINE__);
   }
 
   if (!std::is_sorted(cdf_.begin(), cdf_.end())) {
-    throw std::runtime_error("PCTable: CDF is not sorted");
+    throw PNDLException("PCTable: CDF is not sorted", __FILE__, __LINE__);
   }
 }
 

@@ -39,6 +39,7 @@
 #include <PapillonNDL/multi_region_1d.hpp>
 #include <PapillonNDL/tabular_energy.hpp>
 #include <PapillonNDL/watt.hpp>
+#include <PapillonNDL/pndl_exception.hpp>
 #include <iostream>
 
 #include "constants.hpp"
@@ -108,8 +109,8 @@ DelayedGroup::DelayedGroup(const ACE& ace, size_t i, size_t g)
   } else {
     // Unknown or unsuported law
     std::string mssg = "DelayedGroup: Group " + std::to_string(g);
-    mssg += "has unkown energy law " + std::to_string(law);
-    throw std::runtime_error(mssg);
+    mssg += "has unkown energy law " + std::to_string(law) + ".";
+    throw PNDLException(mssg, __FILE__, __LINE__);
   }
 }
 

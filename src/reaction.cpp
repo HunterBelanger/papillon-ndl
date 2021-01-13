@@ -47,9 +47,9 @@
 #include <PapillonNDL/tabular_energy_angle.hpp>
 #include <PapillonNDL/uncorrelated.hpp>
 #include <PapillonNDL/watt.hpp>
+#include <PapillonNDL/pndl_exception.hpp>
 #include <cmath>
 #include <iostream>
-#include <stdexcept>
 
 namespace pndl {
 
@@ -168,7 +168,7 @@ Reaction::Reaction(const ACE& ace, size_t indx, const EnergyGrid& egrid)
         std::string mssg = "Reaction: Unkown energy law " + std::to_string(law);
         mssg += " in reaction MT=" + std::to_string(mt_) + " in ZAID=";
         mssg += std::to_string(ace.zaid());
-        throw std::runtime_error(mssg);
+        throw PNDLException(mssg, __FILE__, __LINE__);
       }
     } else {  // locb < 0, no angle distribution
       // Get energy distribution location
@@ -202,7 +202,7 @@ Reaction::Reaction(const ACE& ace, size_t indx, const EnergyGrid& egrid)
         std::string mssg = "Reaction: Unkown energy law " + std::to_string(law);
         mssg += " in reaction MT=" + std::to_string(mt_) + " in ZAID=";
         mssg += std::to_string(ace.zaid());
-        throw std::runtime_error(mssg);
+        throw PNDLException(mssg, __FILE__, __LINE__);
       }
     }
   }

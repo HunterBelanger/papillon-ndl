@@ -36,7 +36,6 @@
 
 #include <string>
 #include <exception>
-#include <stdexcept> // TO BE REMOVED ONCE EVERYTHING USES PNDLException
 
 namespace pndl {
 

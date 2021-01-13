@@ -32,15 +32,17 @@
  *
  * */
 #include <PapillonNDL/kalbach_table.hpp>
+#include <PapillonNDL/pndl_exception.hpp>
 
 namespace pndl {
 
 KalbachTable::KalbachTable(const ACE& ace, size_t i)
     : energy_(), pdf_(), cdf_(), R_(), A_(), interp_() {
   interp_ = ace.xss<Interpolation>(i);
-  if ((interp_ != Interpolation::Histogram) &&
-      (interp_ != Interpolation::LinLin)) {
-    throw std::runtime_error("KalbachTable: Invalid interpolation");
+  if ((interp_ != Interpolation::Histogram) && (interp_ != Interpolation::LinLin)) {
+    std::string mssg = "KalbachTable: Invalid interpolation of ";
+    mssg += std::to_string(static_cast<int>(interp_)) + ".";
+    throw PNDLException(mssg, __FILE__, __LINE__);
   }
   uint32_t NP = ace.xss<uint32_t>(i + 1);
   energy_ = ace.xss(i + 2, NP);
@@ -51,11 +53,11 @@ KalbachTable::KalbachTable(const ACE& ace, size_t i)
   A_ = ace.xss(i + 2 + NP + NP + NP + NP, NP);
 
   if (!std::is_sorted(energy_.begin(), energy_.end())) {
-    throw std::runtime_error("KalbachTable: Energies are not sorted");
+    throw PNDLException("KalbachTable: Energies are not sorted", __FILE__, __LINE__);
   }
 
   if (!std::is_sorted(cdf_.begin(), cdf_.end())) {
-    throw std::runtime_error("KalbachTable: CDF is not sorted");
+    throw PNDLException("KalbachTable: CDF is not sorted", __FILE__, __LINE__);
   }
 }
 
