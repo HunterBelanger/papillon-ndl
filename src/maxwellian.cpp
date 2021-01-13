@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, Hunter Belanger
+ * Copyright 2021, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -65,7 +65,7 @@ Maxwellian::Maxwellian(const ACE& ace, size_t i)
 
   // Create Function1D pointer
   if (NBT.size() == 1) {
-    temperature_ = std::make_unique<Region1D>(energy, temperature, INT[0]);
+    temperature_ = build_Region1D(energy, temperature, INT[0]);
   } else {
     temperature_ =
         std::make_unique<MultiRegion1D>(NBT, INT, energy, temperature);

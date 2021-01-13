@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, Hunter Belanger
+ * Copyright 2021, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -31,7 +31,6 @@
  * termes.
  *
  * */
-#include <PapillonNDL/integration.hpp>
 #include <PapillonNDL/region_1d.hpp>
 #include <algorithm>
 #include <stdexcept>
@@ -39,8 +38,8 @@
 namespace pndl {
 
 Region1D::Region1D(const std::vector<double>& i_x,
-                   const std::vector<double>& i_y, Interpolation interp)
-    : interpolation_(interp), x_(i_x), y_(i_y) {
+                   const std::vector<double>& i_y)
+    : x_(i_x), y_(i_y) {
   if (x_.size() != y_.size())
     throw std::length_error("Region1D: x and y have different lengths");
 
@@ -49,96 +48,26 @@ Region1D::Region1D(const std::vector<double>& i_x,
     throw std::runtime_error("Region1D: x is not sorted");
 }
 
-double Region1D::operator()(double x) const {
-  if (x <= min_x())
-    return y_.front();
-  else if (x >= max_x())
-    return y_.back();
-
-  // Get bounding x1 < x < x2
-  auto low_it = std::lower_bound(x_.begin(), x_.end(), x);
-  low_it--;
-
-  auto hi_it = low_it;
-  hi_it++;
-
-  size_t i = low_it - x_.begin();
-
-  double x1 = *low_it;
-  double x2 = *hi_it;
-  double y1 = y_[i];
-  double y2 = y_[i + 1];
-
-  return interpolate(x, x1, y1, x2, y2, interpolation_);
-}
-
-double Region1D::integrate(double x_low, double x_hi) const {
-  // Integration may only be carried out over the function's valid domain
-  if (x_low <= min_x())
-    x_low = min_x();
-  else if (x_low >= max_x())
-    x_low = max_x();
-
-  if (x_hi >= max_x())
-    x_hi = max_x();
-  else if (x_hi <= min_x())
-    x_hi = min_x();
-
-  // Get iterator for lower bound of first interval
-  auto low_it = std::lower_bound(x_.begin(), x_.end(), x_low);
-  if (*low_it > x_low) low_it--;
-
-  double integral = 0.;
-  double x_low_lim = x_low;
-  double x_upp_lim = x_hi;
-  bool integrating = true;
-  while (integrating) {
-    auto hi_it = low_it;
-    hi_it++;
-
-    size_t i = low_it - x_.begin();
-
-    double x1 = *low_it;
-    double x2 = *hi_it;
-    double y1 = y_[i];
-    double y2 = y_[i + 1];
-
-    if (x_low_lim < x1) x_low_lim = x1;
-    if (x_upp_lim > x2) x_upp_lim = x2;
-
-    integral +=
-        ::pndl::integrate(x_low_lim, x_upp_lim, x1, y1, x2, y2, interpolation_);
-
-    if (x_upp_lim == x_hi)
-      integrating = false;
-    else {
-      x_low_lim = x_upp_lim;
-      x_upp_lim = x_hi;
-      low_it++;
-    }
-  }
-
-  return integral;
-}
-
 std::vector<uint32_t> Region1D::breakpoints() const {
   return {static_cast<uint32_t>(x_.size())};
 }
 
-std::vector<Interpolation> Region1D::interpolation() const {
-  return {interpolation_};
+std::shared_ptr<Region1D> build_Region1D(const std::vector<double>& x, const std::vector<double>& y, Interpolation interp) {
+  if(interp == Interpolation::Histogram) {
+    return std::make_shared<Interp1D<Histogram>>(x, y);
+  } else if(interp == Interpolation::LinLin) {
+    return std::make_shared<Interp1D<LinLin>>(x, y);
+  } else if(interp == Interpolation::LinLog) {
+    return std::make_shared<Interp1D<LinLog>>(x, y);
+  } else if(interp == Interpolation::LogLin) {
+    return std::make_shared<Interp1D<LogLin>>(x, y);
+  } else {
+    return std::make_shared<Interp1D<LogLog>>(x, y);
+  }
 }
 
-std::vector<double> Region1D::x() const { return x_; }
-
-std::vector<double> Region1D::y() const { return y_; }
-
-size_t Region1D::size() const { return x_.size(); }
-
-double Region1D::min_x() const { return x_.front(); }
-
-double Region1D::max_x() const { return x_.back(); }
-
 bool operator<(const Region1D& R, const double& X) { return R.min_x() < X; }
+
+bool operator<(const std::shared_ptr<Region1D>& R, const double& X) { return R->min_x() < X; }
 
 }  // namespace pndl

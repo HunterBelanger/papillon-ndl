@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, Hunter Belanger
+ * Copyright 2021, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -36,40 +36,130 @@
 
 #include <PapillonNDL/interpolation.hpp>
 #include <PapillonNDL/tabulated_1d.hpp>
-#include <vector>
+#include <memory>
 
 namespace pndl {
 
 class Region1D : public Tabulated1D {
  public:
-  Region1D(const std::vector<double>& i_x, const std::vector<double>& i_y,
-           Interpolation interp = Interpolation::LinLin);
-  ~Region1D() = default;
+  Region1D(const std::vector<double>& i_x, const std::vector<double>& i_y);
+  virtual ~Region1D() = default;
 
   // Methods required by Function1D
-  double operator()(double x) const override final;
-  double integrate(double x_low, double x_hi) const override final;
+  virtual double operator()(double x) const override = 0;
+  virtual double integrate(double x_low, double x_hi) const override = 0;
 
   // Methods required by Tabulated1D
   std::vector<uint32_t> breakpoints() const override final;
-  std::vector<Interpolation> interpolation() const override final;
-  std::vector<double> x() const override final;
-  std::vector<double> y() const override final;
+  std::vector<Interpolation> interpolation() const override = 0;
+  std::vector<double> x() const override final { return x_; }
+  std::vector<double> y() const override final { return y_; }
 
   // Extra Methods
-  size_t size() const;
-  double min_x() const;
-  double max_x() const;
+  size_t size() const { return x_.size(); }
+  double min_x() const { return x_.front(); }
+  double max_x() const { return x_.back(); }
 
- private:
-  Interpolation interpolation_;
+ protected:
   std::vector<double> x_;
   std::vector<double> y_;
 };
 
+template<class I>
+class Interp1D : public Region1D {
+ public:
+  Interp1D(const std::vector<double>& i_x, const std::vector<double>& i_y): Region1D(i_x, i_y), interpolator() {
+    // Ensure x and y grids are valid
+    interpolator.verify_x_grid(x_.cbegin(), x_.cend());
+    interpolator.verify_y_grid(y_.cbegin(), y_.cend());
+  }
+  ~Interp1D() = default;
+
+  double operator()(double x) const override final {
+    if (x <= min_x())
+      return y_.front();
+    else if (x >= max_x())
+      return y_.back();
+
+    // Get bounding x1 < x < x2
+    auto low_it = std::lower_bound(x_.begin(), x_.end(), x);
+    low_it--;
+
+    auto hi_it = low_it;
+    hi_it++;
+
+    size_t i = low_it - x_.begin();
+
+    double x1 = *low_it;
+    double x2 = *hi_it;
+    double y1 = y_[i];
+    double y2 = y_[i + 1];
+
+    return interpolator.interpolate(x, x1, y1, x2, y2);
+  }
+
+  double integrate(double x_low, double x_hi) const override final {
+    // Integration may only be carried out over the function's valid domain
+    if (x_low <= min_x())
+      x_low = min_x();
+    else if (x_low >= max_x())
+      x_low = max_x();
+
+    if (x_hi >= max_x())
+      x_hi = max_x();
+    else if (x_hi <= min_x())
+      x_hi = min_x();
+
+    // Get iterator for lower bound of first interval
+    auto low_it = std::lower_bound(x_.begin(), x_.end(), x_low);
+    if (*low_it > x_low) low_it--;
+
+    double integral = 0.;
+    double x_low_lim = x_low;
+    double x_upp_lim = x_hi;
+    bool integrating = true;
+    while (integrating) {
+      auto hi_it = low_it;
+      hi_it++;
+
+      size_t i = low_it - x_.begin();
+
+      double x1 = *low_it;
+      double x2 = *hi_it;
+      double y1 = y_[i];
+      double y2 = y_[i + 1];
+
+      if (x_low_lim < x1) x_low_lim = x1;
+      if (x_upp_lim > x2) x_upp_lim = x2;
+
+      integral += interpolator.integrate(x_low_lim, x_upp_lim, x1, y1, x2, y2);
+
+      if (x_upp_lim == x_hi)
+        integrating = false;
+      else {
+        x_low_lim = x_upp_lim;
+        x_upp_lim = x_hi;
+        low_it++;
+      }
+    }
+
+    return integral;
+  }
+
+  std::vector<Interpolation> interpolation() const override final {
+    return {interpolator.interpolation};
+  }
+
+ private:
+  I interpolator;
+};
+
+std::shared_ptr<Region1D> build_Region1D(const std::vector<double>& x, const std::vector<double>& y, Interpolation interp);
+
 // This operator overload is provided only to accomodate the
 // std::lower_bound algorithm, in the MultiRegion1D class
 bool operator<(const Region1D& R, const double& X);
+bool operator<(const std::shared_ptr<Region1D>& R, const double& X);
 
 }  // namespace pndl
 

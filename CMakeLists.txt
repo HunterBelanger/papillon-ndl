@@ -15,7 +15,6 @@ option(PNDL_TESTS "Build tests" OFF)
 add_library(PapillonNDL SHARED
   src/frame.cpp
   src/interpolation.cpp
-  src/integration.cpp
   src/region_1d.cpp
   src/multi_region_1d.cpp
   src/polynomial_1d.cpp

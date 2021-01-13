@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, Hunter Belanger
+ * Copyright 2021, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -43,8 +43,8 @@ extern void init_Function1D(py::module&);
 extern void init_Constant(py::module&);
 extern void init_Polynomial1D(py::module&);
 extern void init_Tabulated1D(py::module&);
-extern void init_Region1D(py::module&);
-extern void init_MultiRegion1D(py::module&);
+//extern void init_Region1D(py::module&);
+//extern void init_MultiRegion1D(py::module&);
 extern void init_AngleLaw(py::module&);
 extern void init_Isotropic(py::module&);
 extern void init_EquiprobableAngleBins(py::module&);
@@ -83,8 +83,8 @@ PYBIND11_MODULE(pyPapillonNDL, m) {
   init_Constant(m);
   init_Polynomial1D(m);
   init_Tabulated1D(m);
-  init_Region1D(m);
-  init_MultiRegion1D(m);
+  //init_Region1D(m);
+  //init_MultiRegion1D(m);
   init_AngleLaw(m);
   init_Isotropic(m);
   init_EquiprobableAngleBins(m);
@@ -116,7 +116,7 @@ PYBIND11_MODULE(pyPapillonNDL, m) {
   init_PRNG(m);
 
   m.attr("__author__") = "Hunter Belanger";
-  m.attr("__copyright__") = "Copyright 2020, Hunter Belanger";
+  m.attr("__copyright__") = "Copyright 2021, Hunter Belanger";
   m.attr("__license__") = "CECILL-2.1";
   m.attr("__maintainer__") = "Hunter Belanger";
   m.attr("__email__") = "hunter.belanger@gmail.com";
