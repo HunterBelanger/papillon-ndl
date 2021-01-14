@@ -87,7 +87,7 @@ double AngleDistribution::sample_angle(double E_in,
 
   // Get index of low energy
   size_t l = std::distance(energy_grid_.begin(), E_it);
-  double f = interpolation_factor(E_in, energy_grid_[l], energy_grid_[l + 1]);
+  double f = (E_in - energy_grid_[l]) / (energy_grid_[l + 1] - energy_grid_[l]);
 
   if (rng() > f)
     return laws_[l]->sample_mu(rng());

@@ -51,7 +51,7 @@ class Region1D : public Tabulated1D {
 
   // Methods required by Tabulated1D
   std::vector<uint32_t> breakpoints() const override final;
-  std::vector<Interpolation> interpolation() const override = 0;
+  virtual std::vector<Interpolation> interpolation() const override = 0;
   std::vector<double> x() const override final { return x_; }
   std::vector<double> y() const override final { return y_; }
 

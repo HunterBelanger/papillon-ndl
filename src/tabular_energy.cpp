@@ -70,8 +70,7 @@ double TabularEnergy::sample_energy(double E_in,
     f = 1.;
   } else {
     l = std::distance(incoming_energy_.begin(), in_E_it) - 1;
-    f = interpolation_factor(E_in, incoming_energy_[l],
-                             incoming_energy_[l + 1]);
+    f = (E_in - incoming_energy_[l]) / (incoming_energy_[l+1] - incoming_energy_[l]);
   }
   // Determine the index of the bounding tabulated incoming energies
 

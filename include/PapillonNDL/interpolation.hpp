@@ -42,7 +42,7 @@
 namespace pndl {
 
 //==============================================================================
-// Initial Implementation
+// Interpolation Identifiers
 enum class Interpolation : uint32_t {
   Histogram = 1,
   LinLin = 2,
@@ -51,13 +51,6 @@ enum class Interpolation : uint32_t {
   LogLog = 5
 };
 
-double interpolate(double x, double x1, double y1, double x2, double y2,
-                   Interpolation interp);
-
-double interpolation_factor(double x, double x1, double x2);
-
-//==============================================================================
-// New Implementation
 //==============================================================================
 // Helper function to test if values in an interval change sign. Used to
 // validate grids for LinLog, LogLin, and LogLog interpolations.

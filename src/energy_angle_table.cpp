@@ -32,7 +32,6 @@
  *
  * */
 #include <PapillonNDL/energy_angle_table.hpp>
-#include <PapillonNDL/interpolation.hpp>
 #include <PapillonNDL/pndl_exception.hpp>
 
 namespace pndl {

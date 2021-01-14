@@ -70,8 +70,7 @@ AngleEnergyPacket Kalbach::sample_angle_energy(
     f = 1.;
   } else {
     l = std::distance(incoming_energy_.begin(), in_E_it) - 1;
-    f = interpolation_factor(E_in, incoming_energy_[l],
-                             incoming_energy_[l + 1]);
+    f = (E_in - incoming_energy_[l]) / (incoming_energy_[l + 1] - incoming_energy_[l]);
   }
 
   // Sample outgoing energy, and get R and A for mu

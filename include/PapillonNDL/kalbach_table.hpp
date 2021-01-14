@@ -75,8 +75,11 @@ class KalbachTable {
       auto E_it = std::lower_bound(energy_.begin(), energy_.end(), E);
       size_t l = std::distance(energy_.begin(), E_it) - 1;
 
-      return interpolate(E, energy_[l], R_[l], energy_[l + 1], R_[l + 1],
-                         interp_);
+      if(interp_ == Interpolation::Histogram) {
+        return Histogram::interpolate(E, energy_[l], R_[l], energy_[l+1], R_[l+1]);
+      } else {
+        return LinLin::interpolate(E, energy_[l], R_[l], energy_[l+1], R_[l+1]);
+      }
     }
   }
 
@@ -89,8 +92,11 @@ class KalbachTable {
       auto E_it = std::lower_bound(energy_.begin(), energy_.end(), E);
       size_t l = std::distance(energy_.begin(), E_it) - 1;
 
-      return interpolate(E, energy_[l], A_[l], energy_[l + 1], A_[l + 1],
-                         interp_);
+      if(interp_ == Interpolation::Histogram) {
+        return Histogram::interpolate(E, energy_[l], A_[l], energy_[l+1], A_[l+1]);
+      } else {
+        return LinLin::interpolate(E, energy_[l], A_[l], energy_[l+1], A_[l+1]);
+      }
     }
   }
 

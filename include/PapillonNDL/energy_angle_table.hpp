@@ -61,7 +61,7 @@ class EnergyAngleTable {
 
     E_out = linear_interp_energy(xi, l);
 
-    double f = interpolation_factor(xi, cdf_[l], cdf_[l + 1]);
+    double f = (xi - cdf_[l]) / (cdf_[l+1] - cdf_[l]);
     if (f < 0.5)
       mu = angles_[l].sample_value(rng());
     else
