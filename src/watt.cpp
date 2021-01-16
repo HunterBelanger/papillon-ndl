@@ -61,7 +61,7 @@ Watt::Watt(const ACE& ace, size_t i) : a_(), b_(), restriction_energy_() {
 
   // Create Function1D pointer
   if (NBT_a.size() == 1) {
-    a_ = build_Region1D(energy_a, a, INT_a[0]);
+    a_ = std::make_shared<Region1D>(energy_a, a, INT_a[0]);
   } else {
     a_ = std::make_shared<MultiRegion1D>(NBT_a, INT_a, energy_a, a);
   }
@@ -89,7 +89,7 @@ Watt::Watt(const ACE& ace, size_t i) : a_(), b_(), restriction_energy_() {
 
   // Create Function1D pointer
   if (NBT_b.size() == 1) {
-    b_ = build_Region1D(energy_b, b, INT_b[0]);
+    b_ = std::make_shared<Region1D>(energy_b, b, INT_b[0]);
   } else {
     b_ = std::make_shared<MultiRegion1D>(NBT_b, INT_b, energy_b, b);
   }

@@ -40,7 +40,7 @@ namespace pndl {
 
 class MultiRegion1D : public Tabulated1D {
  public:
-  MultiRegion1D(const std::vector<std::shared_ptr<Region1D>>& regions);
+  MultiRegion1D(const std::vector<Region1D>& regions);
   MultiRegion1D(const std::vector<uint32_t>& NBT,
                 const std::vector<Interpolation>& INT,
                 const std::vector<double>& x, const std::vector<double>& y);
@@ -63,7 +63,7 @@ class MultiRegion1D : public Tabulated1D {
   double max_x() const;
 
  private:
-  std::vector<std::shared_ptr<Region1D>> regions_;
+  std::vector<Region1D> regions_;
 };
 
 }  // namespace pndl

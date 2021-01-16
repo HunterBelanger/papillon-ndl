@@ -66,7 +66,7 @@ GeneralEvaporation::GeneralEvaporation(const ACE& ace, size_t i)
 
   // Create Function1D pointer
   if (NBT.size() == 1) {
-    temperature_ = build_Region1D(energy, temperature, INT[0]);
+    temperature_ = std::make_shared<Region1D>(energy, temperature, INT[0]);
   } else {
     temperature_ =
         std::make_shared<MultiRegion1D>(NBT, INT, energy, temperature);

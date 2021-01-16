@@ -89,7 +89,10 @@ if(PNDL_PYTHON)
                                     src/python/nuclide.cpp
                                     src/python/prng.cpp
   )
-
+  
+  # Require C++17 standard
+  target_compile_features(pyPapillonNDL PRIVATE cxx_std_17)
+  
   target_link_libraries(pyPapillonNDL PRIVATE PapillonNDL)
 
   # Get location for python lib

@@ -125,7 +125,7 @@ void init_Tabulated1D(py::module& m) {
       .def("y", &Tabulated1D::y);
 }
 
-/*void init_Region1D(py::module& m) {
+void init_Region1D(py::module& m) {
   py::class_<Region1D, Tabulated1D, std::shared_ptr<Region1D>>(m, "Region1D")
       .def(py::init<const std::vector<double>&, const std::vector<double>&,
                     Interpolation>())
@@ -156,4 +156,4 @@ void init_MultiRegion1D(py::module& m) {
       .def("size", &MultiRegion1D::size)
       .def("min_x", &MultiRegion1D::min_x)
       .def("max_x", &MultiRegion1D::max_x);
-}*/
+}

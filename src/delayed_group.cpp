@@ -63,7 +63,7 @@ DelayedGroup::DelayedGroup(const ACE& ace, size_t i, size_t g)
     Interpolation interp = Interpolation::LinLin;
     if (NR == 1) interp = ace.xss<Interpolation>(i + 2);
 
-    probability_ = build_Region1D(energy, y, interp);
+    probability_ = std::make_shared<Region1D>(energy, y, interp);
   } else {
     std::vector<uint32_t> breaks = ace.xss<uint32_t>(i + 1, NR);
     std::vector<Interpolation> interps = ace.xss<Interpolation>(i + 1 + NR, NR);

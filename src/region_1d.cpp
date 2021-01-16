@@ -38,8 +38,9 @@
 namespace pndl {
 
 Region1D::Region1D(const std::vector<double>& i_x,
-                   const std::vector<double>& i_y)
-    : x_(i_x), y_(i_y) {
+                   const std::vector<double>& i_y,
+                   Interpolation interp)
+    : x_(i_x), y_(i_y), interpolation_(interp), interpolator() {
   if (x_.size() != y_.size()) {
     std::string mssg = "x and y have different sizes. x.size() = " + std::to_string(x_.size());
     mssg += "\nand y.size() = " + std::to_string(y_.size()) + ".";
@@ -50,28 +51,21 @@ Region1D::Region1D(const std::vector<double>& i_x,
   if (!std::is_sorted(x_.begin(), x_.end())) {
     throw PNDLException("x is not sorted.", __FILE__, __LINE__);
   }
-}
 
-std::vector<uint32_t> Region1D::breakpoints() const {
-  return {static_cast<uint32_t>(x_.size())};
-}
-
-std::shared_ptr<Region1D> build_Region1D(const std::vector<double>& x, const std::vector<double>& y, Interpolation interp) {
-  if(interp == Interpolation::Histogram) {
-    return std::make_shared<Interp1D<Histogram>>(x, y);
-  } else if(interp == Interpolation::LinLin) {
-    return std::make_shared<Interp1D<LinLin>>(x, y);
-  } else if(interp == Interpolation::LinLog) {
-    return std::make_shared<Interp1D<LinLog>>(x, y);
-  } else if(interp == Interpolation::LogLin) {
-    return std::make_shared<Interp1D<LogLin>>(x, y);
-  } else {
-    return std::make_shared<Interp1D<LogLog>>(x, y);
+  // Set interpolator
+  if(interpolation_ == Interpolation::Histogram) {
+    interpolator = Histogram();
+  } else if(interpolation_ == Interpolation::LinLin) {
+    interpolator = LinLin();
+  } else if(interpolation_ == Interpolation::LinLog) {
+    interpolator = LinLog();
+  } else if(interpolation_ == Interpolation::LogLin) {
+    interpolator = LogLin();
+  } else if(interpolation_ == Interpolation::LogLog) {
+    interpolator = LogLog();
   }
 }
 
 bool operator<(const Region1D& R, const double& X) { return R.min_x() < X; }
-
-bool operator<(const std::shared_ptr<Region1D>& R, const double& X) { return R->min_x() < X; }
 
 }  // namespace pndl

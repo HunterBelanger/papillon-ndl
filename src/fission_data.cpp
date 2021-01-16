@@ -123,7 +123,7 @@ std::shared_ptr<Function1D> FissionData::read_tabular_nu(const ACE& ace,
     Interpolation interp = Interpolation::LinLin;
     if (NR == 1) interp = ace.xss<Interpolation>(i + 2);
 
-    return build_Region1D(energy, y, interp);
+    return std::make_shared<Region1D>(energy, y, interp);
   } else {
     std::vector<uint32_t> breaks = ace.xss<uint32_t>(i + 1, NR);
     std::vector<Interpolation> interps = ace.xss<Interpolation>(i + 1 + NR, NR);

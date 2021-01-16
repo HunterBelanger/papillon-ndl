@@ -37,44 +37,15 @@
 #include <PapillonNDL/interpolation.hpp>
 #include <PapillonNDL/tabulated_1d.hpp>
 #include <memory>
+#include <variant>
 
 namespace pndl {
 
 class Region1D : public Tabulated1D {
  public:
-  Region1D(const std::vector<double>& i_x, const std::vector<double>& i_y);
-  virtual ~Region1D() = default;
+  Region1D(const std::vector<double>& i_x, const std::vector<double>& i_y, Interpolation interp);
 
   // Methods required by Function1D
-  virtual double operator()(double x) const override = 0;
-  virtual double integrate(double x_low, double x_hi) const override = 0;
-
-  // Methods required by Tabulated1D
-  std::vector<uint32_t> breakpoints() const override final;
-  virtual std::vector<Interpolation> interpolation() const override = 0;
-  std::vector<double> x() const override final { return x_; }
-  std::vector<double> y() const override final { return y_; }
-
-  // Extra Methods
-  size_t size() const { return x_.size(); }
-  double min_x() const { return x_.front(); }
-  double max_x() const { return x_.back(); }
-
- protected:
-  std::vector<double> x_;
-  std::vector<double> y_;
-};
-
-template<class I>
-class Interp1D : public Region1D {
- public:
-  Interp1D(const std::vector<double>& i_x, const std::vector<double>& i_y): Region1D(i_x, i_y), interpolator() {
-    // Ensure x and y grids are valid
-    interpolator.verify_x_grid(x_.cbegin(), x_.cend());
-    interpolator.verify_y_grid(y_.cbegin(), y_.cend());
-  }
-  ~Interp1D() = default;
-
   double operator()(double x) const override final {
     if (x <= min_x())
       return y_.front();
@@ -95,9 +66,10 @@ class Interp1D : public Region1D {
     double y1 = y_[i];
     double y2 = y_[i + 1];
 
-    return interpolator.interpolate(x, x1, y1, x2, y2);
+    auto doInterp = [&x,&x1,&x2,&y1,&y2](auto& interp){return interp.interpolate(x, x1, y1, x2, y2);};
+    return std::visit(doInterp, interpolator);
   }
-
+  
   double integrate(double x_low, double x_hi) const override final {
     // Integration may only be carried out over the function's valid domain
     if (x_low <= min_x())
@@ -132,7 +104,10 @@ class Interp1D : public Region1D {
       if (x_low_lim < x1) x_low_lim = x1;
       if (x_upp_lim > x2) x_upp_lim = x2;
 
-      integral += interpolator.integrate(x_low_lim, x_upp_lim, x1, y1, x2, y2);
+      auto doIntegrl = [&x_low_lim,&x_upp_lim,&x1,&x2,&y1,&y2](auto& interp){return interp.integrate(x_low_lim, x_upp_lim, x1, y1, x2, y2);};
+      integral += std::visit(doIntegrl, interpolator);
+
+      //integral += interpolator.integrate(x_low_lim, x_upp_lim, x1, y1, x2, y2);
 
       if (x_upp_lim == x_hi)
         integrating = false;
@@ -146,20 +121,31 @@ class Interp1D : public Region1D {
     return integral;
   }
 
-  std::vector<Interpolation> interpolation() const override final {
-    return {interpolator.interpolation};
+  // Methods required by Tabulated1D
+  std::vector<uint32_t> breakpoints() const override final {
+    return {static_cast<uint32_t>(x_.size())};
   }
+  std::vector<Interpolation> interpolation() const override final {
+    return {interpolation_};
+  }
+  std::vector<double> x() const override final { return x_; }
+  std::vector<double> y() const override final { return y_; }
+
+  // Extra Methods
+  size_t size() const { return x_.size(); }
+  double min_x() const { return x_.front(); }
+  double max_x() const { return x_.back(); }
 
  private:
-  I interpolator;
+  std::vector<double> x_;
+  std::vector<double> y_;
+  Interpolation interpolation_;
+  std::variant<Histogram,LinLin,LinLog,LogLin,LogLog> interpolator;
 };
-
-std::shared_ptr<Region1D> build_Region1D(const std::vector<double>& x, const std::vector<double>& y, Interpolation interp);
 
 // This operator overload is provided only to accomodate the
 // std::lower_bound algorithm, in the MultiRegion1D class
 bool operator<(const Region1D& R, const double& X);
-bool operator<(const std::shared_ptr<Region1D>& R, const double& X);
 
 }  // namespace pndl
 
