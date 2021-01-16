@@ -245,6 +245,7 @@ struct LogLog {
     const auto log_x2_x1 = std::log(x2_x1);
     const auto exponent = log_y2_y1 / log_x2_x1;
     const auto denominator = exponent + 1.0;
+    if(std::abs(denominator) <= 1.E-12) {return y1*x1*std::log(x_hi/x_low);}
     return (y1 / denominator) * (x_hi * std::pow(x_hi / x1, exponent) -
                                 x_low * std::pow(x_low / x1, exponent));
   }
