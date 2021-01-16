@@ -44,7 +44,8 @@ AngleDistribution::AngleDistribution(const ACE& ace, int locb)
   // Locb must be >= 0! If locb == -1, it means that there is
   // no angular distribution for the reaction (must use product distribution)
   if (locb < 0) {
-    std::string mssg = "Must have locb >= 0. Was provided with locb = " + std::to_string(locb) + ".";
+    std::string mssg = "AngleDistribution::AngleDistribution: Must have locb >= 0.\n";
+    mssg +=            "Was provided with locb = " + std::to_string(locb) + ".";
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
 

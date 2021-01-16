@@ -42,7 +42,7 @@ PCTable::PCTable(const ACE& ace, size_t i, double normalization)
     : values_(), pdf_(), cdf_(), interp_() {
   interp_ = ace.xss<Interpolation>(i);
   if ((interp_ != Interpolation::Histogram) && (interp_ != Interpolation::LinLin)) {
-    std::string mssg = "PCTable: Invalid interpolation of ";
+    std::string mssg = "PCTable::PCTable: Invalid interpolation of ";
     mssg += std::to_string(static_cast<int>(interp_)) + ".";
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
@@ -55,11 +55,11 @@ PCTable::PCTable(const ACE& ace, size_t i, double normalization)
   cdf_ = ace.xss(i + 2 + NP + NP, NP);
 
   if (!std::is_sorted(values_.begin(), values_.end())) {
-    throw PNDLException("PCTable: Values are not sorted", __FILE__, __LINE__);
+    throw PNDLException("PCTable::PCTable: Values are not sorted.", __FILE__, __LINE__);
   }
 
   if (!std::is_sorted(cdf_.begin(), cdf_.end())) {
-    throw PNDLException("PCTable: CDF is not sorted", __FILE__, __LINE__);
+    throw PNDLException("PCTable::PCTable: CDF is not sorted.", __FILE__, __LINE__);
   }
 }
 

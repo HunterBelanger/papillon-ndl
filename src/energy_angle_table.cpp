@@ -40,7 +40,7 @@ EnergyAngleTable::EnergyAngleTable(const ACE& ace, size_t i)
     : energy_(), pdf_(), cdf_(), angles_(), interp_() {
   interp_ = ace.xss<Interpolation>(i);
   if ((interp_ != Interpolation::Histogram) && (interp_ != Interpolation::LinLin)) {
-    std::string mssg = "EnergyAngleTable: Invalid interpolation of ";
+    std::string mssg = "EnergyAngleTable::EnergyAngleTable: Invalid interpolation of ";
     mssg += std::to_string(static_cast<int>(interp_)) + ".";
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
@@ -51,12 +51,12 @@ EnergyAngleTable::EnergyAngleTable(const ACE& ace, size_t i)
   cdf_ = ace.xss(i + 2 + NP + NP, NP);
 
   if (!std::is_sorted(energy_.begin(), energy_.end())) {
-    std::string mssg = "EnergyAngleTable: Energies are not sorted";
+    std::string mssg = "EnergyAngleTable::EnergyAngleTable: Energies are not sorted";
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
 
   if (!std::is_sorted(cdf_.begin(), cdf_.end())) {
-    std::string mssg = "EnergyAngleTable: CDF is not sorted";
+    std::string mssg = "EnergyAngleTable::EnergyAngleTable: CDF is not sorted";
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
 

@@ -91,7 +91,8 @@ struct Histogram {
     if(it != last) {
       // Grid has repeated elements which are not allowed !
       auto ind = std::distance(first, it);
-      std::string mssg = "Repeated values found in x-grid values of Histogram interpolation at index " + std::to_string(ind) + ".";
+      std::string mssg = "Histogram::verify_x_grid: Repeated values found in x-grid values\n";
+      mssg +=            "of Histogram interpolation at index " + std::to_string(ind) + ".";
       throw PNDLException(mssg, __FILE__, __LINE__);
     }
   }
@@ -128,7 +129,8 @@ struct LinLin {
   static void verify_x_grid(ForwardIt first, ForwardIt last) {
     if(!std::is_sorted(first, last)) {
       // Grid elements aren't increasing, which isn't allowed for LinLin
-      std::string mssg = "Non-increasing x-grid values in LinLin interpolation.";
+      std::string mssg = "LinLin::verify_x_grid: Non-increasing x-grid values in LinLin\n";
+      mssg +=            "interpolation.";
       throw PNDLException(mssg, __FILE__, __LINE__);
     }
   }
@@ -168,7 +170,8 @@ struct LinLog {
   static void verify_x_grid(ForwardIt first, ForwardIt last) {
     // Make sure ther are no sign changes
     if(has_sign_change(first, last)) {
-      std::string mssg = "Sign change occurs in x-grid values of LinLog interpolation.";
+      std::string mssg = "LinLog::verify_x_grid: Sign change occurs in x-grid values of LinLog\n";
+      mssg +=            "interpolation.";
       throw PNDLException(mssg, __FILE__, __LINE__);
     }
   }
@@ -214,7 +217,8 @@ struct LogLin {
   static void verify_y_grid(ForwardIt first, ForwardIt last) {
     // Make sure ther are no sign changes
     if(has_sign_change(first, last)) {
-      std::string mssg = "Sign change occurs in y-grid values of LogLin interpolation.";
+      std::string mssg = "LogLin::verify_y_grid: Sign change occurs in y-grid values of LogLin\n";
+      mssg +=            "interpolation.";
       throw PNDLException(mssg, __FILE__, __LINE__);
     }
   }
@@ -254,7 +258,8 @@ struct LogLog {
   static void verify_x_grid(ForwardIt first, ForwardIt last) {
     // Make sure ther are no sign changes
     if(has_sign_change(first, last)) {
-      std::string mssg = "Sign change occurs in x-grid values of LogLog interpolation.";
+      std::string mssg = "LogLog::verify_x_grid: Sign change occurs in x-grid values of LogLog\n";
+      mssg +=            "interpolation.";
       throw PNDLException(mssg, __FILE__, __LINE__);
     }
   }
@@ -263,7 +268,8 @@ struct LogLog {
   static void verify_y_grid(ForwardIt first, ForwardIt last) {
     // Make sure ther are no sign changes
     if(has_sign_change(first, last)) {
-      std::string mssg = "Sign change occurs in y-grid values of LogLog interpolation.";
+      std::string mssg = "LogLog::verify_y_grid: Sign change occurs in y-grid values of LogLog\n";
+      mssg +=            "interpolation.";
       throw PNDLException(mssg, __FILE__, __LINE__);
     }
   }

@@ -165,9 +165,8 @@ Reaction::Reaction(const ACE& ace, size_t indx, const EnergyGrid& egrid)
 
       } else {
         // Unknown or unsuported law
-        std::string mssg = "Reaction: Unkown energy law " + std::to_string(law);
-        mssg += " in reaction MT=" + std::to_string(mt_) + " in ZAID=";
-        mssg += std::to_string(ace.zaid());
+        std::string mssg = "Reaction::Reaction: Unkown energy law " + std::to_string(law) + " in reaction \n";
+        mssg +=            "MT=" + std::to_string(mt_) + " in ZAID=" + std::to_string(ace.zaid()) + ".";
         throw PNDLException(mssg, __FILE__, __LINE__);
       }
     } else {  // locb < 0, no angle distribution
@@ -199,9 +198,8 @@ Reaction::Reaction(const ACE& ace, size_t indx, const EnergyGrid& egrid)
 
       } else {
         // Unknown or unsuported law
-        std::string mssg = "Reaction: Unkown energy law " + std::to_string(law);
-        mssg += " in reaction MT=" + std::to_string(mt_) + " in ZAID=";
-        mssg += std::to_string(ace.zaid());
+        std::string mssg = "Reaction::Reaction: Unkown energy law " + std::to_string(law) + " in reaction \n";
+        mssg +=            "MT=" + std::to_string(mt_) + " in ZAID=" + std::to_string(ace.zaid()) + ".";
         throw PNDLException(mssg, __FILE__, __LINE__);
       }
     }

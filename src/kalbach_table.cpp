@@ -40,7 +40,7 @@ KalbachTable::KalbachTable(const ACE& ace, size_t i)
     : energy_(), pdf_(), cdf_(), R_(), A_(), interp_() {
   interp_ = ace.xss<Interpolation>(i);
   if ((interp_ != Interpolation::Histogram) && (interp_ != Interpolation::LinLin)) {
-    std::string mssg = "KalbachTable: Invalid interpolation of ";
+    std::string mssg = "KalbachTable::KalbackTable: Invalid interpolation of ";
     mssg += std::to_string(static_cast<int>(interp_)) + ".";
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
@@ -53,11 +53,11 @@ KalbachTable::KalbachTable(const ACE& ace, size_t i)
   A_ = ace.xss(i + 2 + NP + NP + NP + NP, NP);
 
   if (!std::is_sorted(energy_.begin(), energy_.end())) {
-    throw PNDLException("KalbachTable: Energies are not sorted", __FILE__, __LINE__);
+    throw PNDLException("KalbachTable::KalbackTable: Energies are not sorted.", __FILE__, __LINE__);
   }
 
   if (!std::is_sorted(cdf_.begin(), cdf_.end())) {
-    throw PNDLException("KalbachTable: CDF is not sorted", __FILE__, __LINE__);
+    throw PNDLException("KalbachTable::KalbackTable: CDF is not sorted.", __FILE__, __LINE__);
   }
 }
 
