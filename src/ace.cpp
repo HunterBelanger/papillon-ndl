@@ -81,7 +81,7 @@ ACE::ACE(std::string fname)
   if (legacy_header) {
     split = split_line(line);
     awr_ = std::stod(split[1]);
-    temperature_ = std::stod(split[2]) * EV_TO_K;
+    temperature_ = std::stod(split[2]) * MEV_TO_EV * EV_TO_K;
 
     // Skip next line
     std::getline(file, line);
@@ -90,7 +90,7 @@ ACE::ACE(std::string fname)
     std::getline(file, line);
     split = split_line(line);
     awr_ = std::stod(split[0]);
-    temperature_ = std::stod(split[1]) * EV_TO_K;
+    temperature_ = std::stod(split[1]) * MEV_TO_EV * EV_TO_K;
     int n_skip = std::stoi(split[3]);
 
     // Skip comment lines
