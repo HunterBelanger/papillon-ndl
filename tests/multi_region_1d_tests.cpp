@@ -192,6 +192,9 @@ namespace {
     x_hi = 5.;
     double i = 5.25;
     EXPECT_DOUBLE_EQ(i, R.integrate(x_low, x_hi));
+
+    // Ensure integration with inverted limits produces negative
+    EXPECT_DOUBLE_EQ(-i, R.integrate(x_hi, x_low));
   }
 
 }

@@ -71,6 +71,13 @@ class Region1D : public Tabulated1D {
   }
   
   double integrate(double x_low, double x_hi) const override final {
+    bool inverted = x_low > x_hi;
+    if(inverted) {
+      double x_low_tmp = x_low;
+      x_low = x_hi;
+      x_hi = x_low_tmp;
+    }
+
     // Integration may only be carried out over the function's valid domain
     if (x_low <= min_x())
       x_low = min_x();
@@ -117,6 +124,8 @@ class Region1D : public Tabulated1D {
         low_it++;
       }
     }
+
+    if(inverted) integral *= -1.;
 
     return integral;
   }
