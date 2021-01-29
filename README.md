@@ -20,18 +20,19 @@ number generation process, allowing the distributions to know how to sample
 themselves, but not know or assume anything about random number generation.
 
 ## Dependencies
-To build and install the library a UNIX-like operating system with cmake >= 3.9
+To build and install the library a Unix-like operating system with cmake >= 3.9
 is required, along with a C++ compiler which supports the C++17 standard. The
 recommended compiler is Clang >= 5, though GCC >= 6 should suffice. In order to
 build the Python interface, Python >= 3.5 should be installed on your system, in
 addition to the Python development libraries and header files.
 
-Building the C++ library on Windows is in theory possible (and likely quite
-straight forward), though not currently supported. Building the Python bindings
-would likely be less trivial however with a standard Python installation for
-Windows. If you are a Windows user, I recommend that you take a look at the
-Windows Subsystem for Linux, which will allow you to build the library on your
-Windows machine, using the standard Linux build instructions.
+There are two posibilities for building the library on Windows. The first is to use
+the Windows Subsytem for Linux (WSL), where the library may be installed by following
+the simple Linux build instructions, typically without problem. The second option
+is to build the library to run natively on Windows. This requires having Visual
+Studio installed to compile the library. In addition, if you want to build the
+Python bindings for Windows, you need to ensure the Python development kit has been
+installed in Visual Studio as well.
 
 Building the unit tests (using ```-DPNDL_TESTS=ON``` when calling cmake)
 requires that Google test already be installed on the system, and is not
@@ -39,8 +40,8 @@ provided. Tests are not built by default, and should only be needed for
 developers, therefore this is not required for most users.
 
 ## Install
-To build PapillonNDL, navigate to the directory where you would like to keep
-the source files, and then run the following commands:
+To build PapillonNDL on a Unix-like system, navigate to the directory where you
+would like to keep the source files, and then run the following commands:
 ```
 $ git clone https://github.com/HunterBelanger/papillon-ndl.git
 $ cd papillon-ndl

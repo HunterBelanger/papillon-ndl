@@ -11,39 +11,46 @@ option(PNDL_GO_FASTER "Enable -Ofast -ffast-math compiler optimizations" OFF)
 option(PNDL_PYTHON "Enable Python interface to PapillonNDL" ON)
 option(PNDL_TESTS "Build tests" OFF)
 
-# Create PapillonNDL library target
-add_library(PapillonNDL SHARED
-  src/frame.cpp
-  src/region_1d.cpp
-  src/multi_region_1d.cpp
-  src/polynomial_1d.cpp
-  src/ace.cpp
-  src/isotropic.cpp
-  src/equiprobable_angle_bins.cpp
-  src/angle_table.cpp
-  src/equiprobable_energy_bins.cpp
-  src/level_inelastic_scatter.cpp
-  src/general_evaporation.cpp
-  src/evaporation.cpp
-  src/maxwellian.cpp
-  src/watt.cpp
-  src/tabular_energy.cpp
-  src/pctable.cpp
-  src/angle_distribution.cpp
-  src/uncorrelated.cpp
-  src/nbody.cpp
-  src/kalbach_table.cpp
-  src/kalbach.cpp
-  src/energy_angle_table.cpp
-  src/tabular_energy_angle.cpp
-  src/energy_grid.cpp
-  src/cross_section.cpp
-  src/reaction.cpp
-  src/delayed_group.cpp
-  src/fission_data.cpp
-  src/nuclide.cpp
-  src/version.cpp
+set(PNDL_SOURCE_LIST src/frame.cpp
+                     src/region_1d.cpp
+                     src/multi_region_1d.cpp
+                     src/polynomial_1d.cpp
+                     src/ace.cpp
+                     src/isotropic.cpp
+                     src/equiprobable_angle_bins.cpp
+                     src/angle_table.cpp
+                     src/equiprobable_energy_bins.cpp
+                     src/level_inelastic_scatter.cpp
+                     src/general_evaporation.cpp
+                     src/evaporation.cpp
+                     src/maxwellian.cpp
+                     src/watt.cpp
+                     src/tabular_energy.cpp
+                     src/pctable.cpp
+                     src/angle_distribution.cpp
+                     src/uncorrelated.cpp
+                     src/nbody.cpp
+                     src/kalbach_table.cpp
+                     src/kalbach.cpp
+                     src/energy_angle_table.cpp
+                     src/tabular_energy_angle.cpp
+                     src/energy_grid.cpp
+                     src/cross_section.cpp
+                     src/reaction.cpp
+                     src/delayed_group.cpp
+                     src/fission_data.cpp
+                     src/nuclide.cpp
+                     src/version.cpp
 )
+
+# Create PapillonNDL library target
+if(WIN32)
+  # On windows, make a static lib to avoid errors using cmake
+  add_library(PapillonNDL STATIC ${PNDL_SOURCE_LIST})
+else()
+  # On Unix-like systems, use a shared lib
+  add_library(PapillonNDL SHARED ${PNDL_SOURCE_LIST})
+endif()
 
 # Add public interface includes directory
 target_include_directories(PapillonNDL PUBLIC 
@@ -54,14 +61,17 @@ target_include_directories(PapillonNDL PUBLIC
 # Require C++17 standard
 target_compile_features(PapillonNDL PRIVATE cxx_std_17)
 
-# Get compiler info (MSVC/Clang/GCC)
-# TODO, for now, only support Clang or GCC
-
-# Set compile options for library
-target_compile_options(PapillonNDL PRIVATE -W -Wall -Wextra -Wpedantic -Weffc++)
-target_compile_options(PapillonNDL PRIVATE $<$<CONFIG:DEBUG>:-g>)
-target_compile_options(PapillonNDL PRIVATE $<$<CONFIG:RELEASE>:-O2>)
-target_compile_options(PapillonNDL PRIVATE $<$<BOOL:PNDL_GO_FASTER>:-Ofast -ffast-math>)
+if(WIN32) # Comile options for Windows
+  target_compile_options(PapillonNDL PRIVATE /W4)
+  target_compile_options(PapillonNDL PRIVATE $<$<CONFIG:DEBUG>:/DEBUG>)
+  target_compile_options(PapillonNDL PRIVATE $<$<CONFIG:RELEASE>:/O2>)
+  target_compile_options(PapillonNDL PRIVATE $<$<BOOL:PNDL_GO_FASTER>:/O2>)
+else() # Compile options for GCC and Clang on Unix-like systems
+  target_compile_options(PapillonNDL PRIVATE -W -Wall -Wextra -Wpedantic -Weffc++)
+  target_compile_options(PapillonNDL PRIVATE $<$<CONFIG:DEBUG>:-g>)
+  target_compile_options(PapillonNDL PRIVATE $<$<CONFIG:RELEASE>:-O2>)
+  target_compile_options(PapillonNDL PRIVATE $<$<BOOL:PNDL_GO_FASTER>:-Ofast -ffast-math>)
+endif()
 
 if(PNDL_TESTS)
   add_subdirectory(tests)

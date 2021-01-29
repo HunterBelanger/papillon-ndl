@@ -63,7 +63,7 @@ EnergyGrid::EnergyGrid(const ACE& ace, uint32_t NBINS)
             std::lower_bound(energy_values_.begin(), energy_values_.end(), E)) -
         1;
 
-    bin_pointers_.push_back(i);
+    bin_pointers_.push_back(static_cast<uint32_t>(i));
   }
 }
 

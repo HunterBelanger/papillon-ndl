@@ -21,7 +21,14 @@ target_compile_features(PapillonNDL-Tests PRIVATE cxx_std_17)
 # Need to "link" agains cereal (this includes it's header files)
 target_link_libraries(PapillonNDL-Tests PUBLIC PapillonNDL gtest)
 
-# Set compile options for library
-target_compile_options(PapillonNDL-Tests PRIVATE -W -Wall -Wextra -Wpedantic -Weffc++)
-target_compile_options(PapillonNDL-Tests PRIVATE $<$<CONFIG:DEBUG>:-g -fsanitizer=address,undefined>)
-target_compile_options(PapillonNDL-Tests PRIVATE $<$<CONFIG:RELEASE>:-O2>)
+if(WIN32) # Comile options for Windows
+  target_compile_options(PapillonNDL-Tests PRIVATE /W4)
+  target_compile_options(PapillonNDL-Tests PRIVATE $<$<CONFIG:DEBUG>:/DEBUG>)
+  target_compile_options(PapillonNDL-Tests PRIVATE $<$<CONFIG:RELEASE>:/O2>)
+  target_compile_options(PapillonNDL-Tests PRIVATE $<$<BOOL:PNDL_GO_FASTER>:/O2>)
+else() # Compile options for GCC and Clang on Unix-like systems
+  target_compile_options(PapillonNDL-Tests PRIVATE -W -Wall -Wextra -Wpedantic -Weffc++)
+  target_compile_options(PapillonNDL-Tests PRIVATE $<$<CONFIG:DEBUG>:-g>)
+  target_compile_options(PapillonNDL-Tests PRIVATE $<$<CONFIG:RELEASE>:-O2>)
+  target_compile_options(PapillonNDL-Tests PRIVATE $<$<BOOL:PNDL_GO_FASTER>:-Ofast -ffast-math>)
+endif()

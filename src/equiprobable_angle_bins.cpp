@@ -40,7 +40,7 @@ EquiprobableAngleBins::EquiprobableAngleBins(const ACE& ace, size_t i)
     : bounds_(ace.xss(i, NBOUNDS)) {}
 
 double EquiprobableAngleBins::sample_mu(double xi) const {
-  size_t bin = static_cast<double>(std::floor(NBOUNDS * xi));
+  size_t bin = static_cast<size_t>(std::floor(static_cast<double>(NBOUNDS) * xi));
   double C_b = bin * P_BIN;
   double mu_low = bounds_[bin];
   return ((xi - C_b) / P_BIN) + mu_low;
