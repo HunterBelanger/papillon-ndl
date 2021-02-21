@@ -34,6 +34,11 @@
 #ifndef PAPILLON_NDL_NUCLIDE_H
 #define PAPILLON_NDL_NUCLIDE_H
 
+/**
+ * @file
+ * @author Hunter Belanger
+ */
+
 #include <PapillonNDL/ace.hpp>
 #include <PapillonNDL/angle_distribution.hpp>
 #include <PapillonNDL/fission_data.hpp>
@@ -42,65 +47,167 @@
 
 namespace pndl {
 
+/**
+ * @brief Holds all continuous energy neutron data for a single nuclide
+ *        and at a single temperature.
+ */
 class Nuclide {
  public:
+  /**
+   * @param ace ACE file from which to construct the nuclide.
+   */
   Nuclide(const ACE& ace);
   ~Nuclide() = default;
 
+  /**
+   * @brief Returns the nuclide ZAID.
+   */
   uint32_t ZAID() const { return zaid_; }
+
+  /**
+   * @brief Returns the nuclide Atomic Weight Ratio.
+   */
   double AWR() const { return awr_; }
+
+  /**
+   * @brief Returns the temperature at which the data has been prepared.
+   */
   double temperature() const { return temperature_; }
+
+  /**
+   * @brief Returns true if the nuclide is fissile, and false otherwise.
+   */
   bool fissile() const { return fissile_; }
 
+  /**
+   * @brief Returns the energy grid for the nuclide.
+   */
   const EnergyGrid& energy_grid() const;
+
+  /**
+   * @brief Returns the total CrossSection for the nuclide.
+   */
   const CrossSection& total_cross_section() const;
+
+  /**
+   * @brief Returns the elastic scattering CrossSection for the nuclide.
+   */
   const CrossSection& elastic_cross_section() const;
+
+  /**
+   * @brief Returns the absorption CrossSection for the nuclide.
+   */
   const CrossSection& absorption_cross_section() const;
+
+  /**
+   * @brief Returns the AngleDistribution for elastic scattering.
+   */
   const AngleDistribution& elastic_angle_distribution() const;
 
+  /**
+   * @brief Retrieves the index in the energy grid for an energy.
+   * @param E Energy to find in the energy grid.
+   */
   size_t energy_grid_index(double E) const {
     return energy_grid_.get_lower_index(E);
   }
 
+  /**
+   * @brief Evaluates the total cross section at E using bisection search.
+   * @param E Energy.
+   */
   double total_xs(double E) const { return total_xs_(E); }
 
+  /**
+   * @brief Evaluates the total cross section at energy E and index i.
+   * @param E Energy.
+   * @param i Index to the energy grid.
+   */
   double total_xs(double E, size_t i) const { return total_xs_(E, i); }
 
+  /**
+   * @brief Evaluates the elastic scattering cross section at E using bisection search.
+   * @param E Energy.
+   */
   double elastic_xs(double E) const { return elastic_xs_(E); }
 
+  /**
+   * @brief Evaluates the elastic scattering cross section at energy E and index i.
+   * @param E Energy.
+   * @param i Index to the energy grid.
+   */
   double elastic_xs(double E, size_t i) const { return elastic_xs_(E, i); }
 
+  /**
+   * @brief Evaluates the absorption cross section at E using bisection search.
+   * @param E Energy.
+   */
   double absorption_xs(double E) const { return absorption_xs_(E); }
 
+  /**
+   * @brief Evaluates the absorption cross section at energy E and index i.
+   * @param E Energy.
+   * @param i Index to the energy grid.
+   */
   double absorption_xs(double E, size_t i) const {
     return absorption_xs_(E, i);
   }
 
+  /**
+   * @brief Samples a scattering angle from the elastic scattering angular
+   *        distribution.
+   * @param E Incident energy.
+   * @param rng Random number generation function.
+   */
   double sample_elastic_angle(double E, std::function<double()> rng) const {
     return elastic_angle_.sample_angle(E, rng);
   }
 
+  /**
+   * @brief Checks to see if a nucldie has a given reaction.
+   * @param mt MT reaction to search for.
+   */
   bool has_reaction(uint32_t mt) const {
     if (reactions_.find(mt) == reactions_.end()) return false;
     return true;
   }
 
+  /**
+   * @brief Retrieved a given MT reaction.
+   * @param mt MT reaction to return.
+   */
   const Reaction& reaction(uint32_t mt) const {
     return reactions_.find(mt)->second;
   }
 
+  /**
+   * @brief Returns the cross section for a perscriped reaction at a
+   *        provided energy. Uses bisection search.
+   * @param mt MT value of the reaction.
+   * @param E Energy to evaluate cross section at.
+   */
   double reaction_xs(uint32_t mt, double E) const {
     if (!has_reaction(mt)) return 0.;
 
     return reactions_.find(mt)->second.xs(E);
   }
 
+  /**
+   * @brief Returns the cross section for a perscriped reaction at a
+   *        provided energy, and energy grid index.
+   * @param mt MT value of the reaction.
+   * @param E Energy to evaluate cross section at.
+   * @param i Index to the energy grid for energy E.
+   */
   double reaction_xs(uint32_t mt, double E, size_t i) const {
     if (!has_reaction(mt)) return 0.;
 
     return reactions_.find(mt)->second.xs(E, i);
   }
 
+  /**
+   * @brief Returns the fission data for the nuclide.
+   */
   const FissionData& fission_data() const { return fission_data_; }
 
  private:

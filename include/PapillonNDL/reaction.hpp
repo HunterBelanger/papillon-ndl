@@ -34,6 +34,11 @@
 #ifndef PAPILLON_NDL_REACTION_H
 #define PAPILLON_NDL_REACTION_H
 
+/**
+ * @file
+ * @author Hunter Belanger
+ */
+
 #include <PapillonNDL/ace.hpp>
 #include <PapillonNDL/angle_energy.hpp>
 #include <PapillonNDL/cross_section.hpp>
@@ -43,29 +48,74 @@
 
 namespace pndl {
 
+/**
+ * @brief Holds the cross section and product distributions for a single MT.
+ */
 class Reaction {
  public:
+  /**
+   * @param ace ACE file to take reaction from.
+   * @param indx Reaction index in the MT array.
+   * @param egrid EnergyGrid for the nuclide.
+   */
   Reaction(const ACE& ace, size_t indx, const EnergyGrid& egrid);
   ~Reaction() = default;
 
+  /**
+   * @brief Returns the MT of the reaction.
+   */
   uint32_t MT() const { return mt_; }
+
+  /**
+   * @brief Returns the Q-value of the reaction.
+   */
   double Q() const { return q_; }
+
+  /**
+   * @brief Returns the reaction yield for an incident energy.
+   * @param E incident energy in MeV.
+   */
   double yield(double E) const { return (*yield_)(E); }
+
+  /**
+   * @brief Returns the threshold energy for the reaction.
+   */
   double threshold() const { return threshold_; }
+
+  /**
+   * @brief Returns the frame of referece of the product
+   *        distribution data.
+   */
   Frame frame() const { return frame_; }
 
+  /**
+   * @brief Returns the reaction cross section for a given energy.
+   *        Used bisection search.
+   * @param E Energy to evaluate the cross section at.
+   */
   double xs(double E) const {
     if (E < threshold_) return 0.;
 
     return xs_(E);
   }
 
+  /**
+   * @brief Returns the reaction cross section for a given energy.
+   * @param E Energy to evaluate the cross section at.
+   * @param i Index for the energy grid.
+   */
   double xs(double E, size_t i) const {
     if (E < threshold_) return 0.;
 
     return xs_(E, i);
   }
 
+  /**
+   * @brief Samples and angle and energy from the reactions product
+   *        distribution.
+   * @param E_in Incident energy in MeV.
+   * @param rng Random number generation function. 
+   */
   AngleEnergyPacket sample_angle_energy(double E_in,
                                         std::function<double()> rng) const {
     if (!angle_energy_) return {0., 0.};
@@ -77,8 +127,20 @@ class Reaction {
     return out;
   }
 
+  /**
+   * @brief Returns the CrossSection for the reaction.
+   */
   const CrossSection& cross_section() const;
+
+  /**
+   * @brief Returns a pointer to the AngleEnergy distribution for
+   *        the reaction.
+   */
   std::shared_ptr<AngleEnergy> angle_energy() const;
+
+  /**
+   * @brief Returns a pointer to the function for the reaction yield.
+   */
   std::shared_ptr<Function1D> yield() const;
 
  private:

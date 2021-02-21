@@ -34,6 +34,11 @@
 #ifndef PAPILLON_NDL_ENERGY_ANGLE_TABLE_H
 #define PAPILLON_NDL_ENERGY_ANGLE_TABLE_H
 
+/**
+ * @file
+ * @author Hunter Belanger
+ */
+
 #include <PapillonNDL/ace.hpp>
 #include <PapillonNDL/angle_energy_packet.hpp>
 #include <PapillonNDL/pctable.hpp>
@@ -41,8 +46,16 @@
 
 namespace pndl {
 
+/**
+ * @brief Contains the product Angle-Energy distribution for a single
+ *        incident energy.
+ */
 class EnergyAngleTable {
  public:
+  /**
+   * @param ace ACE file to take data from.
+   * @param i Starting index of distribution in the XSS array.
+   */
   EnergyAngleTable(const ACE& ace, size_t i);
   ~EnergyAngleTable() = default;
 
@@ -72,14 +85,49 @@ class EnergyAngleTable {
     return {mu, E_out};
   }
 
+  /**
+   * @brief Returns the lowest possible outgoing energy in MeV.
+   */
   double min_energy() const { return energy_.front(); }
+
+  /**
+   *  @brief Returns the highest possible outgoing energy in MeV.
+   */
   double max_energy() const { return energy_.back(); }
+
+  /**
+   * @brief Returns the method of interpolation used for the energy
+   *        PDF and CDF.
+   */
   Interpolation interpolation() const { return interp_; }
 
+  /**
+   * @brief Returns a vector of the outgoing energy points.
+   */
   const std::vector<double>& energy() const { return energy_; }
+
+  /**
+   * @brief Returns a vector for the PDF points corresponding to the
+   *        outgoing energy grid.
+   */
   const std::vector<double>& pdf() const { return pdf_; }
+
+  /**
+   * @brief Returns a vector for the CDF points corresponding to the
+   *        outgoing energy grid.
+   */
   const std::vector<double>& cdf() const { return cdf_; }
+
+  /**
+   * @brief Returns the ith AngleTable which contains the angular
+   *        distribution for the ith outgoing energy.
+   * @param i Index to the outgoing energy grid.
+   */
   const PCTable& angle_table(size_t i) const { return angles_[i]; }
+
+  /**
+   * @brief Returns the number of outgoing energy points / AngleTables.
+   */
   size_t size() const { return energy_.size(); }
 
  private:

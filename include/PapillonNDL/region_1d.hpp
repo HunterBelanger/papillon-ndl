@@ -34,6 +34,11 @@
 #ifndef PAPILLON_NDL_REGION_1D_H
 #define PAPILLON_NDL_REGION_1D_H
 
+/**
+ * @file
+ * @author Hunter Belanger
+ */
+
 #include <PapillonNDL/interpolation.hpp>
 #include <PapillonNDL/tabulated_1d.hpp>
 #include <memory>
@@ -41,8 +46,17 @@
 
 namespace pndl {
 
+/**
+ * @brief Implementation of a Tabulated1D which has only one interpolation
+ *        retion.
+ */
 class Region1D : public Tabulated1D {
  public:
+  /**
+   * @param i_x Vector of all x points.
+   * @param i_y Vector of all y points.
+   * @param interp Interpolation method used for all points.
+   */
   Region1D(const std::vector<double>& i_x, const std::vector<double>& i_y, Interpolation interp);
 
   // Methods required by Function1D
@@ -140,9 +154,19 @@ class Region1D : public Tabulated1D {
   std::vector<double> x() const override final { return x_; }
   std::vector<double> y() const override final { return y_; }
 
-  // Extra Methods
+  /**
+   * @brief Returns the number of (x,y) pairs.
+   */ 
   size_t size() const { return x_.size(); }
+
+  /**
+   * @brief Returns the lowest x value.
+   */
   double min_x() const { return x_.front(); }
+
+  /**
+   * @brief Returns the highest x value.
+   */
   double max_x() const { return x_.back(); }
 
  private:

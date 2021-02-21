@@ -34,19 +34,45 @@
 #ifndef PAPILLON_NDL_TABULATED_1D_H
 #define PAPILLON_NDL_TABULATED_1D_H
 
+/**
+ * @file
+ * @author Hunter Belanger
+ */
+
 #include <PapillonNDL/function_1d.hpp>
 #include <PapillonNDL/interpolation.hpp>
 #include <vector>
 
 namespace pndl {
 
+/**
+ * @brief Interface to represent functions of a single variable which
+ *        are represented by a tabulation (TAB1 in ENDF).
+ */
 class Tabulated1D : public Function1D {
  public:
   virtual ~Tabulated1D() = default;
 
+  /**
+   * @brief Returns a vector of the locations in the grid where the
+   *        interpolation method changes.
+   */
   virtual std::vector<uint32_t> breakpoints() const = 0;
+
+  /**
+   * @brief Returns a vector of the interpolation methods for each
+   *        segment of the grid.
+   */
   virtual std::vector<Interpolation> interpolation() const = 0;
+
+  /**
+   * @brief Returns a vector of all x points.
+   */
   virtual std::vector<double> x() const = 0;
+
+  /**
+   * @brief Returns a vector of all y points.
+   */
   virtual std::vector<double> y() const = 0;
 };
 

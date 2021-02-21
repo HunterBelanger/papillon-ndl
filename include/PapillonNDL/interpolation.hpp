@@ -34,6 +34,11 @@
 #ifndef PAPILLON_NDL_INTERPOLATION_H
 #define PAPILLON_NDL_INTERPOLATION_H
 
+/**
+ * @file
+ * @author Hunter Belanger
+ */
+
 #include <PapillonNDL/pndl_exception.hpp>
 #include <cmath>
 #include <cstdint>
@@ -41,19 +46,24 @@
 
 namespace pndl {
 
-//==============================================================================
-// Interpolation Identifiers
+/**
+ * @brief Enum to indicate the type of interpolation to use when evaluating
+ *        tabulated data.
+ */
 enum class Interpolation : uint32_t {
-  Histogram = 1,
-  LinLin = 2,
-  LinLog = 3,
-  LogLin = 4,
-  LogLog = 5
+  Histogram = 1, /**< y is constant in x */
+  LinLin = 2, /**< y is linear in x */
+  LinLog = 3, /**< y is linear in ln(x) */
+  LogLin = 4, /**< ln(y) is linear in x */
+  LogLog = 5 /**< ln(y) is linear in ln(x) */
 };
 
-//==============================================================================
-// Helper function to test if values in an interval change sign. Used to
-// validate grids for LinLog, LogLin, and LogLog interpolations.
+/**
+ * @brief Returns true if a range of data has a sign change from positive to
+ *        negative or negative to positive.
+ * @param first Forward iterator to the first element in the range.
+ * @param last Forward iterator to the end of the range.
+ */
 template<class ForwardIt>
 bool has_sign_change(ForwardIt first, ForwardIt last) {
   // Get initial sign of array
@@ -67,8 +77,9 @@ bool has_sign_change(ForwardIt first, ForwardIt last) {
   return false;
 }
 
-//==============================================================================
-// Histogram Interpolation
+/**
+ * @brief Struct to perform Histogram interpolation, integration, etc.
+ */
 struct Histogram {
   template<class T>
   static T interpolate(T /*x*/, T /*x1*/, T y1, T /*x2*/, T /*y2*/) {
@@ -105,8 +116,9 @@ struct Histogram {
   static const Interpolation interpolation = Interpolation::Histogram;
 };
 
-//==============================================================================
-// LinLin Interpolation
+/**
+ * @brief Struct to perform LinLin interpolation, integration, etc.
+ */
 struct LinLin {
   template<class T>
   static T interpolate(T x, T x1, T y1, T x2, T y2) {
@@ -143,8 +155,9 @@ struct LinLin {
   static const Interpolation interpolation = Interpolation::LinLin;
 };
 
-//==============================================================================
-// LinLog Interpolation
+/**
+ * @brief Struct to perform LinLog interpolation, integration, etc.
+ */
 struct LinLog {
   template<class T>
   static T interpolate(T x, T x1, T y1, T x2, T y2) {
@@ -184,8 +197,9 @@ struct LinLog {
   static const Interpolation interpolation = Interpolation::LinLog;
 };
 
-//==============================================================================
-// LogLin Interpolation
+/**
+ * @brief Struct to perform LogLin interpolation, integration, etc.
+ */
 struct LogLin {
   template<class T>
   static T interpolate(T x, T x1, T y1, T x2, T y2) {
@@ -226,8 +240,9 @@ struct LogLin {
   static const Interpolation interpolation = Interpolation::LogLin;
 };
 
-//==============================================================================
-// LogLog Interpolation
+/**
+ * @brief Struct to perform LogLog interpolation, integration, etc.
+ */
 struct LogLog {
   template<class T>
   static T interpolate(T x, T x1, T y1, T x2, T y2) {

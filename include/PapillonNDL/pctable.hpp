@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, Hunter Belanger
+ * Copyright 2021, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -34,6 +34,11 @@
 #ifndef PAPILLON_NDL_PCTABLE_H
 #define PAPILLON_NDL_PCTABLE_H
 
+/**
+ * @file
+ * @author Hunter Belanger
+ */
+
 #include <PapillonNDL/ace.hpp>
 #include <PapillonNDL/interpolation.hpp>
 #include <cmath>
@@ -41,11 +46,24 @@
 
 namespace pndl {
 
+/**
+ * @brief Contains a tabulated PDF and CDF for any quantity.
+ */
 class PCTable {
  public:
+  /**
+   * @param ace ACE file to take data from.
+   * @param i Starting index of distribution in the XSS array.
+   * @param normalization Value by which all y-grid points will be divided.
+   *                      Default value is 1.
+   */
   PCTable(const ACE& ace, size_t i, double normalization = 1.);
   ~PCTable() = default;
 
+  /**
+   * @brief Samples a value from the distribution.
+   * @param xi Random value on the interval [0,1).
+   */
   double sample_value(double xi) const {
     if (xi < 0. || xi > 1.) {
       throw PNDLException("PCTable: Invalid value for xi provided.", __FILE__, __LINE__);
@@ -62,13 +80,39 @@ class PCTable {
     return linear_interp(xi, l);
   }
 
+  /**
+   * @brief Returns the lowest possible value that can be sampled.
+   */
   double min_value() const { return values_.front(); }
+
+  /**
+   * @brief Returns the highest possible value that can be sampled.
+   */
   double max_value() const { return values_.back(); }
 
+  /**
+   * @brief Returns the number of grid points.
+   */
   size_t size() const { return values_.size(); }
+
+  /**
+   * @brief Returns a vector of the value grid points.
+   */
   const std::vector<double>& values() const { return values_; }
+
+  /**
+   * @brief Returns a vector of the PDF grid points.
+   */
   const std::vector<double>& pdf() const { return pdf_; }
+
+  /**
+   * @brief Returns a vector of the CDF grid points.
+   */
   const std::vector<double>& cdf() const { return cdf_; }
+
+  /**
+   * @brief Returns the method of interpolation used for the distribution.
+   */
   Interpolation interpolation() const { return interp_; }
 
  private:

@@ -34,11 +34,19 @@
 #ifndef PAPILLON_NDL_ANGLE_ENERGY_PACKET_H
 #define PAPILLON_NDL_ANGLE_ENERGY_PACKET_H
 
+/**
+ * @file
+ * @author Hunter Belanger
+ */
+
 namespace pndl {
 
+/**
+ * @brief A struct to hold a sampled angle and energy.
+ */
 struct AngleEnergyPacket {
-  double angle;
-  double energy;
+  double angle; /**< Sampled cosine of scattering angle */
+  double energy; /**<  Sampled outgoing energy in MeV */
 };
 
 }  // namespace pndl

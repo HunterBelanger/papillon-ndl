@@ -34,22 +34,51 @@
 #ifndef PAPILLON_NDL_NBODY_H
 #define PAPILLON_NDL_NBODY_H
 
+/**
+ * @file
+ * @author Hunter Belanger
+ */
+
 #include <PapillonNDL/ace.hpp>
 #include <PapillonNDL/angle_energy.hpp>
 
 namespace pndl {
 
+/**
+ * @brief Implements product Angle-Energy law which follows an N-body phase
+ *        space distribution.
+ */
 class NBody : public AngleEnergy {
  public:
+  /**
+   * @param ace ACE file to take data from.
+   * @param i Starting index of distribution in the XSS array.
+   * @param iQ Q-value for the reaction.
+   */
   NBody(const ACE& ace, size_t i, double iQ);
   ~NBody() = default;
 
   AngleEnergyPacket sample_angle_energy(
       double E_in, std::function<double()> rng) const override final;
 
+  /**
+   * @brief Returns the number of bodies.
+   */
   uint32_t n() const;
+
+  /**
+   * @brief Returns the total AWR for all of the particles.
+   */
   double Ap() const;
+
+  /**
+   * @brief Returns the AWR of the nuclide in question.
+   */
   double A() const;
+
+  /**
+   * @brief Returns the Q-value for the reaction in MeV.
+   */
   double Q() const;
 
  private:

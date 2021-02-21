@@ -34,19 +34,41 @@
 #ifndef PAPILLON_NDL_CROSS_SECTION_H
 #define PAPILLON_NDL_CROSS_SECTION_H
 
+/**
+ * @file
+ * @author Hunter Belanger
+ */
+
 #include <PapillonNDL/ace.hpp>
 #include <PapillonNDL/energy_grid.hpp>
 #include <PapillonNDL/shared_span.hpp>
 
 namespace pndl {
 
+/**
+ * @brief Contains the linearly interpolable cross section data for
+ *        a single MT.
+ */
 class CrossSection {
  public:
   CrossSection() : energy_values_({0.}), values_(), index_(0) {}
+  /**
+   * @param ace ACE file to take the data from.
+   * @param i Index in the XSS block where the cross section starts.
+   * @param E_grid Energy grid associated with the cross section values.
+   * @param get_index Flag to indicate wether the cross section values begin
+   *                  at i, or if the energy grid index is at i. Default
+   *                  value is true.
+   */
   CrossSection(const ACE& ace, size_t i, const EnergyGrid& E_grid,
                bool get_index = true);
   ~CrossSection() = default;
 
+  /**
+   * @brief Returns value of the cross section at index relative to
+   *        the associated energy grid.
+   * @param i Index from associated energy grid.
+   */
   double operator[](size_t i) const {
     if (i < index_)
       return values_.front();
@@ -56,6 +78,11 @@ class CrossSection {
     return values_[i - index_];
   }
 
+  /**
+   * @brief Evaluates the cross section at a given energy. Uses
+   *        bisection search.
+   * @param E Energy to evaluate the cross section at.
+   */
   double operator()(double E) const {
     if (E <= energy_values_.front())
       return values_.front();
@@ -74,6 +101,13 @@ class CrossSection {
     return ((E - E_low) / (E_hi - E_low)) * (sig_hi - sig_low) + sig_low;
   }
 
+  /**
+   * @brief Evaluates the cross section at a given energy, with the
+   *        grid point already provided.
+   * @param E Energy to evaluate the cross section at.
+   * @param i Index of the points for interpolation in the frame of
+   *          the energy grid.
+   */
   double operator()(double E, size_t i) const {
     if (E <= energy_values_.front())
       return values_.front();
@@ -91,13 +125,37 @@ class CrossSection {
     return ((E - E_low) / (E_hi - E_low)) * (sig_hi - sig_low) + sig_low;
   }
 
+  /**
+   * @brief Returns index in the energy grid at which the cross section
+   *        values begin.
+   */
   uint32_t index() const;
 
+  /**
+   * @brief Number of points in the cross section.
+   */
   size_t size() const;
+
+  /**
+   * @brief Returns the ith cross section value.
+   */
   double xs(size_t i) const;
+
+  /**
+   * @brief Returns the ith energy value, which corresponds with
+   *        the ith cross section value.
+   */
   double energy(size_t i) const;
 
+  /**
+   * @brief Returns the cross section values as a vector of floats.
+   */
   const std::vector<float>& xs() const;
+
+  /**
+   * @brief Returns a copy of the energy grid points for the cross section
+   *        as a vector of floats.
+   */
   std::vector<float> energy() const;
 
  private:

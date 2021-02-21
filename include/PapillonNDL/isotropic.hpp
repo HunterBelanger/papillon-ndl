@@ -34,11 +34,19 @@
 #ifndef PAPILLON_NDL_ISOTROPIC_H
 #define PAPILLON_NDL_ISOTROPIC_H
 
+/**
+ * @file
+ * @author Hunter Belanger
+ */
+
 #include <PapillonNDL/angle_law.hpp>
 #include <cmath>
 
 namespace pndl {
 
+/**
+ * @brief Isotropic angular distribution.
+ */
 class Isotropic : public AngleLaw {
  public:
   Isotropic() {}

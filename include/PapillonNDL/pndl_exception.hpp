@@ -34,23 +34,42 @@
 #ifndef PAPILLON_NDL_EXCEPTION_H
 #define PAPILLON_NDL_EXCEPTION_H
 
+/**
+ * @file
+ * @author Hunter Belanger
+ */
+
 #include <string>
 #include <exception>
 
 namespace pndl {
 
+  /**
+   * @brief Class used for exceptions by the library.
+   */
   class PNDLException : public std::exception {
     public:
       PNDLException(): message("\n") {}
+      /**
+       * @param mssg Error message.
+       * @param file File in which the error was thrown.
+       * @param line Line number where error was thrown.
+       */
       PNDLException(const std::string& mssg, const std::string& file, int line): message("\n") {
         add_to_error_message(mssg, file, line); 
       }
       ~PNDLException() = default;
 
+      /**
+       * @brief Adds details to the exception message as it is passed up the stack.
+       * @param mssg Error message.
+       * @param file File in which the error was thrown.
+       * @param line Line number where error was thrown.
+       */
       void add_to_exception(const std::string& mssg, const std::string& file, int line) {
         add_to_error_message(mssg, file, line);
       }
-
+      
       const char* what() const noexcept override {
         return message.c_str();
       }

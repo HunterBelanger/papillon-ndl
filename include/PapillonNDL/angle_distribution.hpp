@@ -34,6 +34,11 @@
 #ifndef PAPILLON_NDL_ANGLE_DISTRIBUTION_H
 #define PAPILLON_NDL_ANGLE_DISTRIBUTION_H
 
+/**
+ * @file
+ * @author Hunter Belanger
+ */
+
 #include <PapillonNDL/ace.hpp>
 #include <PapillonNDL/angle_law.hpp>
 #include <functional>
@@ -41,16 +46,47 @@
 
 namespace pndl {
 
+/**
+ *  @brief Holds all of the angular distributions at all provided energies
+ *         for a single reaction.
+ */
 class AngleDistribution {
  public:
+  /**
+   * @param ace ACE file to take data from.
+   * @param locb Index in the XSS array to start reading angular distribution.
+   */
   AngleDistribution(const ACE& ace, int locb);
   ~AngleDistribution() = default;
 
+  /**
+   * @brief Samples a scattering cosine for the given energy.
+   * @param E_in Incident energy before scatter, in MeV.
+   * @param rng Random number generator function.
+   */
   double sample_angle(double E_in, std::function<double()> rng) const;
 
+  /**
+   * @brief Returns the number of energies/angular distributions stored.
+   */
   size_t size() const;
+
+  /**
+   * @brief Reference to the vector of energy values (in MeV)
+   *        which have an angular distribution.
+   */
   const std::vector<double>& energy() const;
+
+  /**
+   * @brief Gets the ith energy point (in MeV) which has an angular distribution.
+   * @param i Index in the energy grid.
+   */
   double energy(size_t i) const;
+
+  /**
+   * @brief Gets a pointer to the angular distribution for the ith energy point.
+   * @param i Index in the energy grid.
+   */
   std::shared_ptr<AngleLaw> law(size_t i) const;
 
  private:

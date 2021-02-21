@@ -34,21 +34,40 @@
 #ifndef PAPILLON_NDL_LEVEL_INELASTIC_SCATTER_H
 #define PAPILLON_NDL_LEVEL_INELASTIC_SCATTER_H
 
+/**
+ * @file
+ * @author Hunter Belanger
+ */
+
 #include <PapillonNDL/ace.hpp>
 #include <PapillonNDL/energy_law.hpp>
 #include <memory>
 
 namespace pndl {
 
+/**
+ * @brief Energy distribution for inelastic scatter.
+ */
 class LevelInelasticScatter : public EnergyLaw {
  public:
+  /**
+   * @param ace ACE file to take data from.
+   * @param i Starting index of distribution in the XSS array.
+   */
   LevelInelasticScatter(const ACE& ace, size_t i);
   ~LevelInelasticScatter() = default;
 
   double sample_energy(double E_in,
                        std::function<double()> rng) const override final;
 
+  /**
+   * @brief Returns first parameter which is (A+1)/(A*abs(Q)).
+   */
   double C1() const;
+
+  /**
+   * @brief Returns second parameter which is (A/(A+1))^2.
+   */
   double C2() const;
 
  private:

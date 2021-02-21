@@ -34,20 +34,38 @@
 #ifndef PAPILLON_NDL_EQUIPROBABLE_ANGLE_BINS_H
 #define PAPILLON_NDL_EQUIPROBABLE_ANGLE_BINS_H
 
+/**
+ * @file
+ * @author Hunter Belanger
+ */
+
 #include <PapillonNDL/ace.hpp>
 #include <PapillonNDL/angle_law.hpp>
 
 namespace pndl {
 
+/**
+ * @brief Angular distribution represented as equiprobable cosine bins.
+ */
 class EquiprobableAngleBins : public AngleLaw {
  public:
+  /**
+   * @param ace ACE file to take data from.
+   * @param i Starting index of distribution in the XSS array.
+   */
   EquiprobableAngleBins(const ACE& ace, size_t i);
   ~EquiprobableAngleBins() = default;
 
-  // Must have xi in the range [0,1).
   double sample_mu(double xi) const override final;
 
+  /**
+   * @brief Returns the number of bin boundaries (number of bins + 1);
+   */
   size_t size() const;
+
+  /**
+   * @brief Returns the vector with the bin boundaries.
+   */
   const std::vector<double>& bin_bounds() const;
 
  private:

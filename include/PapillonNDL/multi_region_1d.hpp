@@ -34,13 +34,33 @@
 #ifndef PAPILLON_NDL_MULTI_REGION_1D_H
 #define PAPILLON_NDL_MULTI_REGION_1D_H
 
+/**
+ * @file
+ * @author Hunter Belanger
+ */
+
 #include <PapillonNDL/region_1d.hpp>
 
 namespace pndl {
 
+/**
+ * @brief Implementation of a Tabulated1D which is comprised of several
+ *        interpolation regions.
+ */
 class MultiRegion1D : public Tabulated1D {
  public:
+  /**
+   * @param regions Vector of Region1D objects, one for each interpolation
+   *                region.
+   */
   MultiRegion1D(const std::vector<Region1D>& regions);
+  
+  /**
+   * @param NBT Vector of the breakpoint location.
+   * @param INT Vector of the interpolations for each segment.
+   * @param x   Vector containing the x grid.
+   * @param y   Vector contianing the y grid.
+   */
   MultiRegion1D(const std::vector<uint32_t>& NBT,
                 const std::vector<Interpolation>& INT,
                 const std::vector<double>& x, const std::vector<double>& y);
@@ -57,9 +77,26 @@ class MultiRegion1D : public Tabulated1D {
   std::vector<double> y() const override final;
 
   // Extra methods
+  /**
+   * @brief Returns reference to one of the interpolation segments,
+   *        which are stored as Region1D objects.
+   * @param i Index to the interpolation segment.
+   */
   const Region1D& operator[](size_t i) const;
+
+  /**
+   * @brief Returns the number of interpolation regions.
+   */
   size_t size() const;
+
+  /**
+   * @brief Returns the lowest x value.
+   */
   double min_x() const;
+
+  /**
+   * @brief Returns the highest x value.
+   */
   double max_x() const;
 
  private:
