@@ -1,4 +1,4 @@
-.. _use_cpp:
+.. _usage_cpp:
 
 ===
 C++

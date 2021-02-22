@@ -34,9 +34,9 @@ change in the future, once certain things have been setup.
    :maxdepth: 2
 
    install/index
-   use/index
+   usage/index
    api/index
-   licens/index
+   license/index
 
 
 Indices and tables

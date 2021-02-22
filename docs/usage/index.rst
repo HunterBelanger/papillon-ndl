@@ -1,5 +1,3 @@
-.. _use:
-
 =====
 Usage
 =====
@@ -8,4 +6,4 @@ Usage
    :maxdepth: 2
 
    cpp.rst
-   py.rst
+   python.rst

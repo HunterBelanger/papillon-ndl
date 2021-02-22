@@ -1,4 +1,4 @@
-.. _use_py:
+.. _usage_python:
 
 ======
 Python
