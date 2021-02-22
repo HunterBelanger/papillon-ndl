@@ -65,7 +65,10 @@ class EnergyAngleTable {
     auto cdf_it = std::lower_bound(cdf_.begin(), cdf_.end(), xi);
     size_t l = std::distance(cdf_.begin(), cdf_it) - 1;
 
-    if (interp_ == Interpolation::Histogram) {
+    // Must account for case where pdf_[l] = pdf_[l+1], which means  that
+    // the slope is zero, and m=0. This results in nan for the linear alg.
+    // To avoid this, must use histogram for that segment.
+    if (interp_ == Interpolation::Histogram || pdf_[l] == pdf_[l+1]) {
       E_out = histogram_interp_energy(xi, l);
       mu = angles_[l].sample_value(rng());
       if (std::abs(mu) > 1.) mu = std::copysign(1., mu);
@@ -143,6 +146,7 @@ class EnergyAngleTable {
 
   double linear_interp_energy(double xi, size_t l) const {
     double m = (pdf_[l + 1] - pdf_[l]) / (energy_[l + 1] - energy_[l]);
+
     return energy_[l] +
            (1. / m) * (std::sqrt(pdf_[l] * pdf_[l] + 2. * m * (xi - cdf_[l])) -
                        pdf_[l]);

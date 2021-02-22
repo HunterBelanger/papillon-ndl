@@ -69,7 +69,10 @@ class KalbachTable {
     if (xi == *cdf_it) return energy_[l];
     l--;
 
-    if (interp_ == Interpolation::Histogram)
+    // Must account for case where pdf_[l] = pdf_[l+1], which means  that
+    // the slope is zero, and m=0. This results in nan for the linear alg.
+    // To avoid this, must use histogram for that segment.
+    if (interp_ == Interpolation::Histogram || pdf_[l] == pdf_[l+1])
       return histogram_interp_energy(xi, l);
 
     return linear_interp_energy(xi, l);
