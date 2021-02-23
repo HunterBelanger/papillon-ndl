@@ -61,7 +61,7 @@ class LevelInelasticScatter : public EnergyLaw {
                        std::function<double()> rng) const override final;
 
   /**
-   * @brief Returns first parameter which is (A+1)/(A*abs(Q)).
+   * @brief Returns first parameter which is (A+1)*abs(Q)/A.
    */
   double C1() const;
 

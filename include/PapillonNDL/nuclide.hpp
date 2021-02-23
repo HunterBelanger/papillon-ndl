@@ -57,6 +57,15 @@ class Nuclide {
    * @param ace ACE file from which to construct the nuclide.
    */
   Nuclide(const ACE& ace);
+
+  /**
+   * @param ace ACE file from which to take the new cross sections.
+   * @param nuclide Nuclide containing another instance of the desired
+   *                nuclide. Secondary distributions and fission data
+   *                will be shared between the two nuclide.
+   */
+  Nuclide(const ACE& ace, const Nuclide& nuclide);
+
   ~Nuclide() = default;
 
   /**
@@ -160,7 +169,7 @@ class Nuclide {
    * @param rng Random number generation function.
    */
   double sample_elastic_angle(double E, std::function<double()> rng) const {
-    return elastic_angle_.sample_angle(E, rng);
+    return elastic_angle_->sample_angle(E, rng);
   }
 
   /**
@@ -222,7 +231,7 @@ class Nuclide {
   CrossSection absorption_xs_;
   CrossSection elastic_xs_;
 
-  AngleDistribution elastic_angle_;
+  std::shared_ptr<AngleDistribution> elastic_angle_;
 
   FissionData fission_data_;
 

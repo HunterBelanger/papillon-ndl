@@ -43,6 +43,7 @@ using namespace pndl;
 void init_Nuclide(py::module& m) {
   py::class_<Nuclide>(m, "Nuclide")
       .def(py::init<const ACE&>())
+      .def(py::init<const ACE&, const Nuclide&>())
       .def("ZAID", &Nuclide::ZAID)
       .def("AWR", &Nuclide::AWR)
       .def("temperature", &Nuclide::temperature)

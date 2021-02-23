@@ -71,7 +71,8 @@ double EquiprobableEnergyBins::sample_energy(
   size_t l = std::distance(incoming_energy_.begin(), in_E_it);
   l--;
 
-  double f = (E_in - incoming_energy_[l]) / (incoming_energy_[l+1] - incoming_energy_[l]);
+  double f = (E_in - incoming_energy_[l]) /
+             (incoming_energy_[l + 1] - incoming_energy_[l]);
 
   if (rng() > f) {
     return sample_bins(rng(), rng(), bin_sets_[l]);

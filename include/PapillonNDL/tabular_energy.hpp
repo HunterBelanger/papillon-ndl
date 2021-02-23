@@ -56,6 +56,7 @@ class TabularEnergy : public EnergyLaw {
    * @param JED Index offset to find the PDF and CDF tables.
    */
   TabularEnergy(const ACE& ace, size_t i, size_t JED);
+
   ~TabularEnergy() = default;
 
   double sample_energy(double E_in,

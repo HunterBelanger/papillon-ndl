@@ -206,6 +206,37 @@ Reaction::Reaction(const ACE& ace, size_t indx, const EnergyGrid& egrid)
   }
 }
 
+Reaction::Reaction(const ACE& ace, size_t indx, const EnergyGrid& egrid, const Reaction& reac)
+    : mt_(),
+      q_(),
+      awr_(),
+      threshold_(),
+      frame_(),
+      xs_(),
+      angle_energy_(nullptr),
+      yield_(nullptr) {
+  
+  // Get MT, Q, and AWR
+  mt_ = ace.xss<uint32_t>(ace.MTR() + indx);
+  q_ = ace.xss(ace.LQR() + indx);
+  awr_ = ace.awr();
+
+  // make sure the MT values agree
+  if(mt_ != reac.MT()) {
+    std::string mssg = "Reaction::Reaction: MT from ACE file doesn't match MT from reaction.";
+    throw PNDLException(mssg, __FILE__, __LINE__);
+  }
+
+  frame_ = reac.frame();
+  yield_ = reac.yield();
+  angle_energy_ = reac.angle_energy();
+
+  // Get XS from new ACE
+  uint32_t loca = ace.xss<uint32_t>(ace.LSIG() + indx);
+  xs_ = CrossSection(ace, ace.SIG() + loca - 1, egrid);
+  threshold_ = xs_.energy(0);
+}
+
 const CrossSection& Reaction::cross_section() const { return xs_; }
 
 std::shared_ptr<AngleEnergy> Reaction::angle_energy() const {

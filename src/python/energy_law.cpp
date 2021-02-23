@@ -80,8 +80,8 @@ void init_LevelInelasticScatter(py::module& m) {
              std::shared_ptr<LevelInelasticScatter>>(m, "LevelInelasticScatter")
       .def(py::init<const ACE&, size_t>())
       .def("sample_energy", &LevelInelasticScatter::sample_energy)
-      .def("C2", &LevelInelasticScatter::C1)
-      .def("C1", &LevelInelasticScatter::C2);
+      .def("C1", &LevelInelasticScatter::C1)
+      .def("C2", &LevelInelasticScatter::C2);
 }
 
 void init_TabularEnergy(py::module& m) {

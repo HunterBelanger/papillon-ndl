@@ -59,6 +59,15 @@ class Reaction {
    * @param egrid EnergyGrid for the nuclide.
    */
   Reaction(const ACE& ace, size_t indx, const EnergyGrid& egrid);
+  
+  /**
+   * @param ace ACE file to take cross section from.
+   * @param indx Reaction index in the MT array.
+   * @param egrid EnergyGrid for the nuclide.
+   * @param reac Reaction object to take distributions from.
+   */
+  Reaction(const ACE& ace, size_t indx, const EnergyGrid& egrid, const Reaction& reac);
+
   ~Reaction() = default;
 
   /**

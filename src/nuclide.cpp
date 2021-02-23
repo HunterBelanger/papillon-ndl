@@ -33,6 +33,7 @@
  * */
 #include <PapillonNDL/nuclide.hpp>
 #include <PapillonNDL/uncorrelated.hpp>
+#include <PapillonNDL/pndl_exception.hpp>
 
 namespace pndl {
 
@@ -45,7 +46,7 @@ Nuclide::Nuclide(const ACE& ace)
       total_xs_(),
       absorption_xs_(),
       elastic_xs_(),
-      elastic_angle_(ace, ace.xss<int>(ace.LAND())),
+      elastic_angle_(nullptr),
       fission_data_(),
       reactions_() {
   // Number of energy points
@@ -54,6 +55,9 @@ Nuclide::Nuclide(const ACE& ace)
   total_xs_ = CrossSection(ace, ace.ESZ() + NE, energy_grid_, false);
   absorption_xs_ = CrossSection(ace, ace.ESZ() + 2 * NE, energy_grid_, false);
   elastic_xs_ = CrossSection(ace, ace.ESZ() + 3 * NE, energy_grid_, false);
+
+  // Make elastic AngleDistribution
+  elastic_angle_ = std::make_shared<AngleDistribution>(ace, ace.xss<int>(ace.LAND()));
 
   // Read all reactions
   uint32_t NMT = ace.nxs(3);
@@ -72,6 +76,62 @@ Nuclide::Nuclide(const ACE& ace)
   }
 }
 
+Nuclide::Nuclide(const ACE& ace, const Nuclide& nuclide)
+    : zaid_(ace.zaid()),
+      awr_(ace.awr()),
+      temperature_(ace.temperature()),
+      fissile_(ace.fissile()),
+      energy_grid_(ace),
+      total_xs_(),
+      absorption_xs_(),
+      elastic_xs_(),
+      elastic_angle_(nullptr),
+      fission_data_(),
+      reactions_() {
+
+  // Make sure these are the same nuclide !
+
+  if(zaid_ != nuclide.ZAID()) {
+    std::string mssg = "Nuclide::Nuclide: ZAID of ACE doesn't match ZAID of nuclide.";
+    throw PNDLException(mssg, __FILE__, __LINE__);
+  }
+
+  if(awr_ != nuclide.AWR()) {
+    std::string mssg = "Nuclide::Nuclide: AWR of ACE doesn't match AWR of nuclide.";
+    throw PNDLException(mssg, __FILE__, __LINE__);
+  }
+
+  // Number of energy points
+  uint32_t NE = ace.nxs(2);
+
+  total_xs_ = CrossSection(ace, ace.ESZ() + NE, energy_grid_, false);
+  absorption_xs_ = CrossSection(ace, ace.ESZ() + 2 * NE, energy_grid_, false);
+  elastic_xs_ = CrossSection(ace, ace.ESZ() + 3 * NE, energy_grid_, false);
+
+  // Copy elastic AngleDistribution
+  elastic_angle_ = nuclide.elastic_angle_; 
+
+  // Read all reactions
+  uint32_t NMT = ace.nxs(3);
+  for (uint32_t indx = 0; indx < NMT; indx++) {
+    uint32_t MT = ace.xss<uint32_t>(ace.MTR() + indx);
+
+    if(!nuclide.has_reaction(MT)) {
+      std::string mssg = "Nuclide::Nuclide: MT=" + std::to_string(MT);
+      mssg += " is present in ACE, but not in nuclide.";
+      throw PNDLException(mssg, __FILE__, __LINE__);
+    }
+
+    Reaction reac(ace, indx, energy_grid_, nuclide.reaction(MT));
+    std::pair<uint32_t, Reaction> tmp_pair =
+        std::make_pair(MT, Reaction(ace, indx, energy_grid_));
+    reactions_.emplace(tmp_pair);
+  }
+
+  // Copy fission data from other nuclide
+  fission_data_ = nuclide.fission_data_;
+}
+
 const EnergyGrid& Nuclide::energy_grid() const { return energy_grid_; }
 
 const CrossSection& Nuclide::total_cross_section() const { return total_xs_; }
@@ -85,7 +145,7 @@ const CrossSection& Nuclide::absorption_cross_section() const {
 }
 
 const AngleDistribution& Nuclide::elastic_angle_distribution() const {
-  return elastic_angle_;
+  return *elastic_angle_;
 }
 
 }  // namespace pndl
