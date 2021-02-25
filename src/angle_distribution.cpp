@@ -63,12 +63,21 @@ AngleDistribution::AngleDistribution(const ACE& ace, int locb)
     for (uint32_t j = 0; j < NE; j++) {
       int l = ace.xss<int>(i + 1 + NE + j);
       uint32_t loc = ace.AND() + std::abs(l) - 1;
-      if (l > 0) {
-        laws_.push_back(std::make_shared<EquiprobableAngleBins>(ace, loc));
-      } else if (l < 0) {
-        laws_.push_back(std::make_shared<AngleTable>(ace, loc));
-      } else {
-        laws_.push_back(std::make_shared<Isotropic>());
+
+      try {
+        if (l > 0) {
+          laws_.push_back(std::make_shared<EquiprobableAngleBins>(ace, loc));
+        } else if (l < 0) {
+          laws_.push_back(std::make_shared<AngleTable>(ace, loc));
+        } else {
+          laws_.push_back(std::make_shared<Isotropic>());
+        }
+      } catch(PNDLException& err) {
+        std::string mssg = "AngleDistribution::AngleDistribution: Could not construct angular distribution\n";
+        mssg += "for energy index = " + std::to_string(j) + ", energy = " + std::to_string(energy_grid_[j]);
+        mssg += " MeV.";
+        err.add_to_exception(mssg, __FILE__, __LINE__);
+        throw err;
       }
     }
   } else if (locb == 0) {

@@ -35,6 +35,7 @@
 #include <PapillonNDL/pndl_exception.hpp>
 #include <algorithm>
 #include <cmath>
+#include <cstdio>
 
 namespace pndl {
 
@@ -60,6 +61,24 @@ PCTable::PCTable(const ACE& ace, size_t i, double normalization)
 
   if (!std::is_sorted(cdf_.begin(), cdf_.end())) {
     throw PNDLException("PCTable::PCTable: CDF is not sorted.", __FILE__, __LINE__);
+  }
+
+  if (cdf_[cdf_.size() - 1] != 1.) {
+    // If last element is close to 1, just set it to exactly 1
+    if ( std::abs(cdf_[cdf_.size() - 1] - 1.)  < 1.E-7) {
+      cdf_[cdf_.size() - 1] = 1.;
+    } else {
+      printf("\n CDF = %.15f\n", cdf_[cdf_.size() - 1]);
+      std::string mssg = "PCTable::PCTable: Last CDF entry is not 1, but ";
+      mssg += std::to_string(cdf_[cdf_.size() - 1]) + ".";
+      throw PNDLException(mssg, __FILE__, __LINE__);
+    }
+  }
+
+  for(const auto& p : pdf_) {
+    if (p < 0.) {
+      throw PNDLException("PCTable::PCTable: Negative value found in PDF.", __FILE__, __LINE__);
+    }
   }
 }
 
