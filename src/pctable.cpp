@@ -35,7 +35,6 @@
 #include <PapillonNDL/pndl_exception.hpp>
 #include <algorithm>
 #include <cmath>
-#include <cstdio>
 
 namespace pndl {
 
@@ -68,7 +67,6 @@ PCTable::PCTable(const ACE& ace, size_t i, double normalization)
     if ( std::abs(cdf_[cdf_.size() - 1] - 1.)  < 1.E-7) {
       cdf_[cdf_.size() - 1] = 1.;
     } else {
-      printf("\n CDF = %.15f\n", cdf_[cdf_.size() - 1]);
       std::string mssg = "PCTable::PCTable: Last CDF entry is not 1, but ";
       mssg += std::to_string(cdf_[cdf_.size() - 1]) + ".";
       throw PNDLException(mssg, __FILE__, __LINE__);
