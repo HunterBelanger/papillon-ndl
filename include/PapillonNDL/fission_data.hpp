@@ -42,6 +42,7 @@
 #include <PapillonNDL/ace.hpp>
 #include <PapillonNDL/angle_energy.hpp>
 #include <PapillonNDL/delayed_group.hpp>
+#include <PapillonNDL/frame.hpp>
 #include <PapillonNDL/function_1d.hpp>
 #include <memory>
 
@@ -59,7 +60,7 @@ class FissionData {
    * @param prmpt Pointer to the AngleEnergy product distribution for the
    *              prompt neutrons. This is the distribution from MT 18.
    */
-  FissionData(const ACE& ace, std::shared_ptr<AngleEnergy> prmpt);
+  FissionData(const ACE& ace, std::shared_ptr<AngleEnergy> prmpt, Frame frame);
   ~FissionData() = default;
 
   std::shared_ptr<Function1D> nu_total() const { return nu_total_; }
@@ -123,16 +124,27 @@ class FissionData {
   }
 
   /**
+   * @brief Returns the frame of referece of the prompt fission spectrum.
+   */
+  Frame prompt_frame() const { return prompt_spectrum_frame_; }
+
+  /**
    * @brief Sampled an angle and energy from the prompt spectrum.
    * @param E_in Incident energy in MeV.
    * @param rng Random number generation function.
    */
   AngleEnergyPacket sample_prompt_angle_energy(
       double E_in, std::function<double()> rng) const {
-    return prompt_spectrum_->sample_angle_energy(E_in, rng);
+    AngleEnergyPacket out = prompt_spectrum_->sample_angle_energy(E_in, rng);
+
+    if (prompt_spectrum_frame_ == Frame::Lab) cm_to_lab(E_in, awr_, out);
+
+    return out;
   }
 
  private:
+  double awr_;
+  Frame prompt_spectrum_frame_;
   std::shared_ptr<Function1D> nu_total_;
   std::shared_ptr<Function1D> nu_prompt_;
   std::shared_ptr<Function1D> nu_delayed_;

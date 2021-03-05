@@ -72,7 +72,8 @@ Nuclide::Nuclide(const ACE& ace)
   if (fissile()) {
     auto Fiss = reaction(18);
     auto prompt_angle_energy = Fiss.angle_energy();
-    fission_data_ = FissionData(ace, prompt_angle_energy);
+    auto prompt_frame = Fiss.frame();
+    fission_data_ = FissionData(ace, prompt_angle_energy, prompt_frame);
   }
 }
 
