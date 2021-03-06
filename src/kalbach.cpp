@@ -48,10 +48,26 @@ Kalbach::Kalbach(const ACE& ace, size_t i) : incoming_energy_(), tables_() {
   // Read incoming energies
   incoming_energy_ = ace.xss(i + 2 + 2 * NR, NE);
 
+  if (!std::is_sorted(incoming_energy_.begin(), incoming_energy_.end())) {
+    std::string mssg = "Kalbach::Kalbach: Incoming energy grid is not sorted.";
+    mssg += "\nIndex to Kalbach in XSS block is " + std::to_string(i) + ".";
+    throw PNDLException(mssg, __FILE__, __LINE__);
+  }
+
   // Read outgoing energy tables
   for (uint32_t j = 0; j < NE; j++) {
     uint32_t loc = ace.DLW() + ace.xss<uint32_t>(i + 2 + 2 * NR + NE + j) - 1;
-    tables_.emplace_back(ace, loc);
+    try {
+      tables_.emplace_back(ace, loc);
+    } catch (PNDLException& error) {
+      std::string mssg =
+          "Kalbach::Kalbach: Could not create KalbachTable for the\n";
+      mssg += std::to_string(j) + "th incoming energy ";
+      mssg += std::to_string(incoming_energy_[j]) + " MeV.\n";
+      mssg += "Index of Kalbach in XSS block is " + std::to_string(i) + ".";
+      error.add_to_exception(mssg, __FILE__, __LINE__);
+      throw error;
+    }
   }
 }
 
@@ -70,7 +86,8 @@ AngleEnergyPacket Kalbach::sample_angle_energy(
     f = 1.;
   } else {
     l = std::distance(incoming_energy_.begin(), in_E_it) - 1;
-    f = (E_in - incoming_energy_[l]) / (incoming_energy_[l + 1] - incoming_energy_[l]);
+    f = (E_in - incoming_energy_[l]) /
+        (incoming_energy_[l + 1] - incoming_energy_[l]);
   }
 
   // Sample outgoing energy, and get R and A for mu

@@ -50,8 +50,21 @@ TabularEnergy::TabularEnergy(const ACE& ace, size_t i, size_t JED)
 
   // Read tables
   for (uint32_t j = 0; j < NE; j++) {
-    uint32_t loc = static_cast<uint32_t>(JED) + ace.xss<uint32_t>(i + 2 + 2 * NR + NE + j) - 1;
-    tables_.emplace_back(ace, loc);
+    uint32_t loc = static_cast<uint32_t>(JED) +
+                   ace.xss<uint32_t>(i + 2 + 2 * NR + NE + j) - 1;
+    try {
+      tables_.emplace_back(ace, loc);
+    } catch (PNDLException& error) {
+      std::string mssg =
+          "TabularEnergy::TabularEnergy: Couldn't construct outgoin energy\n";
+      mssg += "table for j = " + std::to_string(j) + ",  energy = ";
+      mssg += std::to_string(incoming_energy_[j]) + "Mev.\n";
+      mssg += "Occurred at loc = " + std::to_string(loc) +
+              ", i = " + std::to_string(i);
+      mssg += ", JED = " + std::to_string(JED) + ".";
+      error.add_to_exception(mssg, __FILE__, __LINE__);
+      throw error;
+    }
   }
 }
 
@@ -70,7 +83,8 @@ double TabularEnergy::sample_energy(double E_in,
     f = 1.;
   } else {
     l = std::distance(incoming_energy_.begin(), in_E_it) - 1;
-    f = (E_in - incoming_energy_[l]) / (incoming_energy_[l+1] - incoming_energy_[l]);
+    f = (E_in - incoming_energy_[l]) /
+        (incoming_energy_[l + 1] - incoming_energy_[l]);
   }
   // Determine the index of the bounding tabulated incoming energies
 

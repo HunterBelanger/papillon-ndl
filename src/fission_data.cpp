@@ -48,7 +48,8 @@ FissionData::FissionData()
       prompt_spectrum_(nullptr),
       delayed_groups_() {}
 
-FissionData::FissionData(const ACE& ace, std::shared_ptr<AngleEnergy> prmpt, Frame frame)
+FissionData::FissionData(const ACE& ace, std::shared_ptr<AngleEnergy> prmpt,
+                         Frame frame)
     : awr_(ace.awr()),
       prompt_spectrum_frame_(frame),
       nu_total_(nullptr),

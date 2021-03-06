@@ -119,16 +119,19 @@ ACE::ACE(std::string fname)
   // Parse XSS
   xss_.resize(nxs_[0]);
   int i = 0;
-  while(!file.eof()) {
+  while (!file.eof()) {
     file >> xss_[i];
     i++;
   }
 
-  if(i-1 != nxs_[0]) {
-    std::string mssg = "ACE::ACE: Found incorrect number of entries in XSS array while reading\n";
-    mssg +=            "the \"" + fname + "\" ACE file.\n";
-    mssg +=            "This is likely due to a numerical entry which is missing the \"E\".\n";
-    mssg +=            "Please correct the ACE file.";
+  if (i - 1 != nxs_[0]) {
+    std::string mssg =
+        "ACE::ACE: Found incorrect number of entries in XSS array while "
+        "reading\n";
+    mssg += "the \"" + fname + "\" ACE file.\n";
+    mssg +=
+        "This is likely due to a numerical entry which is missing the \"E\".\n";
+    mssg += "Please correct the ACE file.";
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
 

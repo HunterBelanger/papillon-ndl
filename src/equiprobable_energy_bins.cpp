@@ -32,6 +32,8 @@
  *
  * */
 #include <PapillonNDL/equiprobable_energy_bins.hpp>
+#include <PapillonNDL/pndl_exception.hpp>
+#include <algorithm>
 #include <cmath>
 
 namespace pndl {
@@ -54,6 +56,17 @@ EquiprobableEnergyBins::EquiprobableEnergyBins(const ACE& ace, size_t i)
   // Read energy bins
   for (size_t j = 0; j < NE; j++) {
     bin_sets_.push_back(ace.xss(i + 3 + 2 * NR + NE + j * NET, NET));
+  }
+
+  // Make sure that each bin set is sorted
+  for (size_t j = 0; j < bin_sets_.size(); j++) {
+    if (!std::is_sorted(bin_sets_[j].begin(), bin_sets_[j].end())) {
+      std::string mssg = "EquiprobableEnergyBins::EquiprobableEnergyBins: ";
+      mssg += std::to_string(j) + "th bin bounds are not sorted.\n";
+      mssg += "Index of EquiprobableEnergyBins in XSS block is ";
+      mssg += std::to_string(i) + ".";
+      throw PNDLException(mssg, __FILE__, __LINE__);
+    }
   }
 }
 

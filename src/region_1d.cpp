@@ -31,37 +31,38 @@
  * termes.
  *
  * */
-#include <PapillonNDL/region_1d.hpp>
 #include <PapillonNDL/pndl_exception.hpp>
+#include <PapillonNDL/region_1d.hpp>
 #include <algorithm>
 
 namespace pndl {
 
 Region1D::Region1D(const std::vector<double>& i_x,
-                   const std::vector<double>& i_y,
-                   Interpolation interp)
+                   const std::vector<double>& i_y, Interpolation interp)
     : x_(i_x), y_(i_y), interpolation_(interp), interpolator() {
   if (x_.size() != y_.size()) {
     std::string mssg = "Region1D::Region1D: x and y have different sizes.\n";
-    mssg +=            "x.size() = " + std::to_string(x_.size()) + " and y.size() = " + std::to_string(y_.size()) + ".";
+    mssg += "x.size() = " + std::to_string(x_.size()) +
+            " and y.size() = " + std::to_string(y_.size()) + ".";
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
 
   // Ensure x_ is ordered
   if (!std::is_sorted(x_.begin(), x_.end())) {
-    throw PNDLException("Region1D::Region1D: x is not sorted.", __FILE__, __LINE__);
+    throw PNDLException("Region1D::Region1D: x is not sorted.", __FILE__,
+                        __LINE__);
   }
 
   // Set interpolator
-  if(interpolation_ == Interpolation::Histogram) {
+  if (interpolation_ == Interpolation::Histogram) {
     interpolator = Histogram();
-  } else if(interpolation_ == Interpolation::LinLin) {
+  } else if (interpolation_ == Interpolation::LinLin) {
     interpolator = LinLin();
-  } else if(interpolation_ == Interpolation::LinLog) {
+  } else if (interpolation_ == Interpolation::LinLog) {
     interpolator = LinLog();
-  } else if(interpolation_ == Interpolation::LogLin) {
+  } else if (interpolation_ == Interpolation::LogLin) {
     interpolator = LogLin();
-  } else if(interpolation_ == Interpolation::LogLog) {
+  } else if (interpolation_ == Interpolation::LogLog) {
     interpolator = LogLog();
   }
 }

@@ -39,9 +39,12 @@ namespace pndl {
 KalbachTable::KalbachTable(const ACE& ace, size_t i)
     : energy_(), pdf_(), cdf_(), R_(), A_(), interp_() {
   interp_ = ace.xss<Interpolation>(i);
-  if ((interp_ != Interpolation::Histogram) && (interp_ != Interpolation::LinLin)) {
+  if ((interp_ != Interpolation::Histogram) &&
+      (interp_ != Interpolation::LinLin)) {
     std::string mssg = "KalbachTable::KalbackTable: Invalid interpolation of ";
     mssg += std::to_string(static_cast<int>(interp_)) + ".";
+    mssg +=
+        "\nIndex of KalbachTable in XSS block is " + std::to_string(i) + ".";
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
   uint32_t NP = ace.xss<uint32_t>(i + 1);
@@ -53,11 +56,31 @@ KalbachTable::KalbachTable(const ACE& ace, size_t i)
   A_ = ace.xss(i + 2 + NP + NP + NP + NP, NP);
 
   if (!std::is_sorted(energy_.begin(), energy_.end())) {
-    throw PNDLException("KalbachTable::KalbackTable: Energies are not sorted.", __FILE__, __LINE__);
+    std::string mssg = "KalbachTable::KalbackTable: Energies are not sorted.";
+    mssg +=
+        "\nIndex of KalbachTable in XSS block is " + std::to_string(i) + ".";
+    throw PNDLException(mssg, __FILE__, __LINE__);
   }
 
   if (!std::is_sorted(cdf_.begin(), cdf_.end())) {
-    throw PNDLException("KalbachTable::KalbackTable: CDF is not sorted.", __FILE__, __LINE__);
+    std::string mssg = "KalbachTable::KalbackTable: CDF is not sorted.";
+    mssg +=
+        "\nIndex of KalbachTable in XSS block is " + std::to_string(i) + ".";
+    throw PNDLException(mssg, __FILE__, __LINE__);
+  }
+
+  if (cdf_[cdf_.size() - 1] != 1.) {
+    // If last element is close to 1, just set it to exactly 1
+    if (std::abs(cdf_[cdf_.size() - 1] - 1.) < 1.E-7) {
+      cdf_[cdf_.size() - 1] = 1.;
+    } else {
+      std::string mssg =
+          "KalbachTable::KalbachTable: Last CDF entry is not 1, but ";
+      mssg += std::to_string(cdf_[cdf_.size() - 1]) + ".";
+      mssg +=
+          "\nIndex of KalbachTable in XSS block is " + std::to_string(i) + ".";
+      throw PNDLException(mssg, __FILE__, __LINE__);
+    }
   }
 }
 

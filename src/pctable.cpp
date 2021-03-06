@@ -41,9 +41,11 @@ namespace pndl {
 PCTable::PCTable(const ACE& ace, size_t i, double normalization)
     : values_(), pdf_(), cdf_(), interp_() {
   interp_ = ace.xss<Interpolation>(i);
-  if ((interp_ != Interpolation::Histogram) && (interp_ != Interpolation::LinLin)) {
+  if ((interp_ != Interpolation::Histogram) &&
+      (interp_ != Interpolation::LinLin)) {
     std::string mssg = "PCTable::PCTable: Invalid interpolation of ";
     mssg += std::to_string(static_cast<int>(interp_)) + ".";
+    mssg += "\nIndex of PCTable in XSS block is " + std::to_string(i) + ".";
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
   uint32_t NP = ace.xss<uint32_t>(i + 1);
@@ -55,27 +57,34 @@ PCTable::PCTable(const ACE& ace, size_t i, double normalization)
   cdf_ = ace.xss(i + 2 + NP + NP, NP);
 
   if (!std::is_sorted(values_.begin(), values_.end())) {
-    throw PNDLException("PCTable::PCTable: Values are not sorted.", __FILE__, __LINE__);
+    std::string mssg = "PCTable::PCTable: Values are not sorted.";
+    mssg += "\nIndex of PCTable in XSS block is " + std::to_string(i) + ".";
+    throw PNDLException(mssg, __FILE__, __LINE__);
   }
 
   if (!std::is_sorted(cdf_.begin(), cdf_.end())) {
-    throw PNDLException("PCTable::PCTable: CDF is not sorted.", __FILE__, __LINE__);
+    std::string mssg = "PCTable::PCTable: CDF is not sorted.";
+    mssg += "\nIndex of PCTable in XSS block is " + std::to_string(i) + ".";
+    throw PNDLException(mssg, __FILE__, __LINE__);
   }
 
   if (cdf_[cdf_.size() - 1] != 1.) {
     // If last element is close to 1, just set it to exactly 1
-    if ( std::abs(cdf_[cdf_.size() - 1] - 1.)  < 1.E-7) {
+    if (std::abs(cdf_[cdf_.size() - 1] - 1.) < 1.E-7) {
       cdf_[cdf_.size() - 1] = 1.;
     } else {
       std::string mssg = "PCTable::PCTable: Last CDF entry is not 1, but ";
       mssg += std::to_string(cdf_[cdf_.size() - 1]) + ".";
+      mssg += "\nIndex of PCTable in XSS block is " + std::to_string(i) + ".";
       throw PNDLException(mssg, __FILE__, __LINE__);
     }
   }
 
-  for(const auto& p : pdf_) {
+  for (const auto& p : pdf_) {
     if (p < 0.) {
-      throw PNDLException("PCTable::PCTable: Negative value found in PDF.", __FILE__, __LINE__);
+      std::string mssg = "PCTable::PCTable: Negative value found in PDF.";
+      mssg += "\nIndex of PCTable in XSS block is " + std::to_string(i) + ".";
+      throw PNDLException(mssg, __FILE__, __LINE__);
     }
   }
 }

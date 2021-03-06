@@ -44,8 +44,9 @@ AngleDistribution::AngleDistribution(const ACE& ace, int locb)
   // Locb must be >= 0! If locb == -1, it means that there is
   // no angular distribution for the reaction (must use product distribution)
   if (locb < 0) {
-    std::string mssg = "AngleDistribution::AngleDistribution: Must have locb >= 0.\n";
-    mssg +=            "Was provided with locb = " + std::to_string(locb) + ".";
+    std::string mssg =
+        "AngleDistribution::AngleDistribution: Must have locb >= 0.\n";
+    mssg += "Was provided with locb = " + std::to_string(locb) + ".";
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
 
@@ -72,10 +73,14 @@ AngleDistribution::AngleDistribution(const ACE& ace, int locb)
         } else {
           laws_.push_back(std::make_shared<Isotropic>());
         }
-      } catch(PNDLException& err) {
-        std::string mssg = "AngleDistribution::AngleDistribution: Could not construct angular distribution\n";
-        mssg += "for energy index = " + std::to_string(j) + ", energy = " + std::to_string(energy_grid_[j]);
-        mssg += " MeV.";
+      } catch (PNDLException& err) {
+        std::string mssg =
+            "AngleDistribution::AngleDistribution: Could not construct angular "
+            "distribution\n";
+        mssg += "for energy index = " + std::to_string(j) +
+                ", energy = " + std::to_string(energy_grid_[j]);
+        mssg += " MeV.\nOccurred at loc = " + std::to_string(loc) +
+                ", locb = " + std::to_string(locb) + ".";
         err.add_to_exception(mssg, __FILE__, __LINE__);
         throw err;
       }

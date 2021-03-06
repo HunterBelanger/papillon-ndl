@@ -43,8 +43,10 @@ MultiRegion1D::MultiRegion1D(const std::vector<Region1D>& regions)
     : regions_(regions) {
   // Assure there are at least two regions
   if (regions_.size() < 2) {
-    std::string mssg = "MultiRegion1D::MultiRegion1D: Must provide at least 2 regions.\n";
-    mssg +=            "Was provided with " + std::to_string(regions_.size()) + " regions.";
+    std::string mssg =
+        "MultiRegion1D::MultiRegion1D: Must provide at least 2 regions.\n";
+    mssg +=
+        "Was provided with " + std::to_string(regions_.size()) + " regions.";
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
 
@@ -54,8 +56,10 @@ MultiRegion1D::MultiRegion1D(const std::vector<Region1D>& regions)
       if (regions_[i].min_x() >= regions_[i + 1].min_x() ||
           regions_[i].max_x() != regions_[i + 1].min_x()) {
         // Problem with ordering
-        std::string mssg = "MultiRegion1D::MultiRegion1D: Regions provided to MultiRegion1D constructor are\n";
-        mssg +=            "inproperly orderd.";
+        std::string mssg =
+            "MultiRegion1D::MultiRegion1D: Regions provided to MultiRegion1D "
+            "constructor are\n";
+        mssg += "improperly orderd.";
         throw PNDLException(mssg, __FILE__, __LINE__);
       }
     }
@@ -69,14 +73,18 @@ MultiRegion1D::MultiRegion1D(const std::vector<uint32_t>& NBT,
     : regions_() {
   // Ensure NBT and INT are the same length
   if (NBT.size() != INT.size()) {
-    std::string mssg = "MultiRegion1D::MultiRegion1D: NBT and INT have different sizes.\n";
-    mssg +=            "NBT.size() = " + std::to_string(NBT.size()) + " and INT.size() = " + std::to_string(INT.size()) + ".";
+    std::string mssg =
+        "MultiRegion1D::MultiRegion1D: NBT and INT have different sizes.\n";
+    mssg += "NBT.size() = " + std::to_string(NBT.size()) +
+            " and INT.size() = " + std::to_string(INT.size()) + ".";
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
 
   if (x.size() != y.size()) {
-    std::string mssg = "MultiRegion1D::MultiRegion1D: x and y have different sizes.\n";
-    mssg +=            "x.size() = " + std::to_string(x.size()) + " and y.size() = " + std::to_string(y.size()) + ".";
+    std::string mssg =
+        "MultiRegion1D::MultiRegion1D: x and y have different sizes.\n";
+    mssg += "x.size() = " + std::to_string(x.size()) +
+            " and y.size() = " + std::to_string(y.size()) + ".";
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
 
@@ -93,15 +101,16 @@ MultiRegion1D::MultiRegion1D(const std::vector<uint32_t>& NBT,
 
     try {
       regions_.push_back(Region1D({x.begin() + low, x.begin() + hi},
-                                  {y.begin() + low, y.begin() + hi},
-                                   INT[i]));
-    } catch(PNDLException& error) {
-      std::string mssg = "MultiRegion1D::MultiRegion1D: The i = " + std::to_string(i) + " Region1D could not be constructed\n";
-      mssg +=            "when building MultiRegion1D.";
+                                  {y.begin() + low, y.begin() + hi}, INT[i]));
+    } catch (PNDLException& error) {
+      std::string mssg =
+          "MultiRegion1D::MultiRegion1D: The i = " + std::to_string(i) +
+          " Region1D could not be constructed\n";
+      mssg += "when building MultiRegion1D.";
       error.add_to_exception(mssg, __FILE__, __LINE__);
       throw error;
     }
-    
+
     low = hi - 1;
 
     // Check for discontinuity at region boundary
@@ -126,7 +135,7 @@ double MultiRegion1D::operator()(double x) const {
 
 double MultiRegion1D::integrate(double x_low, double x_hi) const {
   bool inverted = x_low > x_hi;
-  if(inverted) {
+  if (inverted) {
     double x_low_tmp = x_low;
     x_low = x_hi;
     x_hi = x_low_tmp;
@@ -166,7 +175,7 @@ double MultiRegion1D::integrate(double x_low, double x_hi) const {
     }
   }
 
-  if(inverted) integral *= -1.;
+  if (inverted) integral *= -1.;
 
   return integral;
 }

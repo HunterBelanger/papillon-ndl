@@ -40,22 +40,37 @@ namespace pndl {
 
 EquiprobableAngleBins::EquiprobableAngleBins(const ACE& ace, size_t i)
     : bounds_(ace.xss(i, NBOUNDS)) {
-
   if (!std::is_sorted(bounds_.begin(), bounds_.end())) {
-    throw PNDLException("EquiprobableAngleBins::EquiprobableAngleBins: Bin bounds are not sorted.", __FILE__, __LINE__);
-  }       
-
-  if (bounds_[0] < -1.) {
-    throw PNDLException("EquiprobableAngleBins::EquiprobableAngleBins: Lowest bin bound is less than -1.", __FILE__, __LINE__);
+    std::string mssg =
+        "EquiprobableAngleBins::EquiprobableAngleBins: Bin bounds are not "
+        "sorted.\n";
+    mssg += "Index of EquiprobableAngleBins in XSS block is " +
+            std::to_string(i) + ".";
+    throw PNDLException(mssg, __FILE__, __LINE__);
   }
 
-  if (bounds_[NBOUNDS-1] > 1.) {
-    throw PNDLException("EquiprobableAngleBins::EquiprobableAngleBins: Highest bin bound is more than 1.", __FILE__, __LINE__);
+  if (bounds_[0] < -1.) {
+    std::string mssg =
+        "EquiprobableAngleBins::EquiprobableAngleBins: Lowest bin bound is "
+        "less than -1.\n";
+    mssg += "Index of EquiprobableAngleBins in XSS block is " +
+            std::to_string(i) + ".";
+    throw PNDLException(mssg, __FILE__, __LINE__);
+  }
+
+  if (bounds_[NBOUNDS - 1] > 1.) {
+    std::string mssg =
+        "EquiprobableAngleBins::EquiprobableAngleBins: Highest bin bound is "
+        "more than 1.\n";
+    mssg += "Index of EquiprobableAngleBins in XSS block is " +
+            std::to_string(i) + ".";
+    throw PNDLException(mssg, __FILE__, __LINE__);
   }
 }
 
 double EquiprobableAngleBins::sample_mu(double xi) const {
-  size_t bin = static_cast<size_t>(std::floor(static_cast<double>(NBOUNDS) * xi));
+  size_t bin =
+      static_cast<size_t>(std::floor(static_cast<double>(NBOUNDS) * xi));
   double C_b = bin * P_BIN;
   double mu_low = bounds_[bin];
   return ((xi - C_b) / P_BIN) + mu_low;

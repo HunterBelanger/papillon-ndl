@@ -37,9 +37,9 @@
 #include <PapillonNDL/general_evaporation.hpp>
 #include <PapillonNDL/maxwellian.hpp>
 #include <PapillonNDL/multi_region_1d.hpp>
+#include <PapillonNDL/pndl_exception.hpp>
 #include <PapillonNDL/tabular_energy.hpp>
 #include <PapillonNDL/watt.hpp>
-#include <PapillonNDL/pndl_exception.hpp>
 #include <iostream>
 
 #include "constants.hpp"

@@ -39,9 +39,13 @@ namespace pndl {
 EnergyAngleTable::EnergyAngleTable(const ACE& ace, size_t i)
     : energy_(), pdf_(), cdf_(), angles_(), interp_() {
   interp_ = ace.xss<Interpolation>(i);
-  if ((interp_ != Interpolation::Histogram) && (interp_ != Interpolation::LinLin)) {
-    std::string mssg = "EnergyAngleTable::EnergyAngleTable: Invalid interpolation of ";
+  if ((interp_ != Interpolation::Histogram) &&
+      (interp_ != Interpolation::LinLin)) {
+    std::string mssg =
+        "EnergyAngleTable::EnergyAngleTable: Invalid interpolation of ";
     mssg += std::to_string(static_cast<int>(interp_)) + ".";
+    mssg += "\nIndex of EnergyAngleTable in XSS block is " + std::to_string(i) +
+            ".";
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
   uint32_t NP = ace.xss<uint32_t>(i + 1);
@@ -51,20 +55,49 @@ EnergyAngleTable::EnergyAngleTable(const ACE& ace, size_t i)
   cdf_ = ace.xss(i + 2 + NP + NP, NP);
 
   if (!std::is_sorted(energy_.begin(), energy_.end())) {
-    std::string mssg = "EnergyAngleTable::EnergyAngleTable: Energies are not sorted";
+    std::string mssg =
+        "EnergyAngleTable::EnergyAngleTable: Energies are not sorted";
+    mssg += "\nIndex of EnergyAngleTable in XSS block is " + std::to_string(i) +
+            ".";
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
 
   if (!std::is_sorted(cdf_.begin(), cdf_.end())) {
     std::string mssg = "EnergyAngleTable::EnergyAngleTable: CDF is not sorted";
+    mssg += "\nIndex of EnergyAngleTable in XSS block is " + std::to_string(i) +
+            ".";
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
 
+  if (cdf_[cdf_.size() - 1] != 1.) {
+    // If last element is close to 1, just set it to exactly 1
+    if (std::abs(cdf_[cdf_.size() - 1] - 1.) < 1.E-7) {
+      cdf_[cdf_.size() - 1] = 1.;
+    } else {
+      std::string mssg =
+          "EnergyAngleTable::EnergyAngleTable: Last CDF entry is not 1, but ";
+      mssg += std::to_string(cdf_[cdf_.size() - 1]) + ".";
+      mssg +=
+          "\nIndex of KalbachTable in XSS block is " + std::to_string(i) + ".";
+      throw PNDLException(mssg, __FILE__, __LINE__);
+    }
+  }
+
   std::vector<int32_t> locs = ace.xss<int32_t>(i + 2 + NP + NP + NP, NP);
-  for (const auto& loc : locs) {
+  for (size_t j = 0; j < locs.size(); j++) {
+    int32_t loc = locs[j];
     size_t l = ace.DLW() + std::abs(loc) - 1;
-    ;
-    angles_.emplace_back(ace, l);
+    try {
+      angles_.emplace_back(ace, l);
+    } catch (PNDLException& error) {
+      std::string mssg = "EnergyAngleTable::EnergyAngleTable: Couldn't create";
+      mssg += " angle table\nfor " + std::to_string(j) + "th energy ";
+      mssg += std::to_string(energy_[j]) + " MeV.\n";
+      mssg += "Index of EnergyAngleTable in XSS block is " + std::to_string(i) +
+              ".";
+      error.add_to_exception(mssg, __FILE__, __LINE__);
+      throw error;
+    }
   }
 }
 
