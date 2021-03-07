@@ -4,10 +4,10 @@
 Nuclear Data Interface
 ======================
 
-Nuclide
+CENeutron
 -------
 
-.. doxygenclass:: pndl::Nuclide
+.. doxygenclass:: pndl::CENeutron
 
 EnergyGrid
 ----------
