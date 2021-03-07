@@ -51,7 +51,7 @@ class Function1D {
   /**
    * @brief Evaluates the function for a given value.
    * @param x Value at which to evaluate the function.
-   */ 
+   */
   virtual double operator()(double x) const = 0;
 
   /**

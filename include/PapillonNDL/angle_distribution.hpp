@@ -78,7 +78,8 @@ class AngleDistribution {
   const std::vector<double>& energy() const;
 
   /**
-   * @brief Gets the ith energy point (in MeV) which has an angular distribution.
+   * @brief Gets the ith energy point (in MeV) which has an angular
+   * distribution.
    * @param i Index in the energy grid.
    */
   double energy(size_t i) const;

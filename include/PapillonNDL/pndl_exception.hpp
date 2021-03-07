@@ -39,64 +39,69 @@
  * @author Hunter Belanger
  */
 
-#include <string>
 #include <exception>
+#include <string>
 
 namespace pndl {
 
+/**
+ * @brief Class used for exceptions by the library.
+ */
+class PNDLException : public std::exception {
+ public:
+  PNDLException() : message("\n") {}
   /**
-   * @brief Class used for exceptions by the library.
+   * @param mssg Error message.
+   * @param file File in which the error was thrown.
+   * @param line Line number where error was thrown.
    */
-  class PNDLException : public std::exception {
-    public:
-      PNDLException(): message("\n") {}
-      /**
-       * @param mssg Error message.
-       * @param file File in which the error was thrown.
-       * @param line Line number where error was thrown.
-       */
-      PNDLException(const std::string& mssg, const std::string& file, int line): message("\n") {
-        add_to_error_message(mssg, file, line); 
-      }
-      ~PNDLException() = default;
+  PNDLException(const std::string& mssg, const std::string& file, int line)
+      : message("\n") {
+    add_to_error_message(mssg, file, line);
+  }
+  ~PNDLException() = default;
 
-      /**
-       * @brief Adds details to the exception message as it is passed up the stack.
-       * @param mssg Error message.
-       * @param file File in which the error was thrown.
-       * @param line Line number where error was thrown.
-       */
-      void add_to_exception(const std::string& mssg, const std::string& file, int line) {
-        add_to_error_message(mssg, file, line);
-      }
-      
-      const char* what() const noexcept override {
-        return message.c_str();
-      }
+  /**
+   * @brief Adds details to the exception message as it is passed up the stack.
+   * @param mssg Error message.
+   * @param file File in which the error was thrown.
+   * @param line Line number where error was thrown.
+   */
+  void add_to_exception(const std::string& mssg, const std::string& file,
+                        int line) {
+    add_to_error_message(mssg, file, line);
+  }
 
-    private:
-      std::string message;
+  const char* what() const noexcept override { return message.c_str(); }
 
-      void add_to_error_message(const std::string& mssg, const std::string& file, int line) {
-        std::string tmp = "\n";
-        tmp += " #--------------------------------------------------------------------------------\n";
-        tmp += " # Location: " + file + ":" + std::to_string(line) + "\n";
-        tmp += " # \n";
-        tmp += " # Message: ";
-        
-        for(const auto& c : mssg) {
-          if(c == '\n') {
-            tmp += "\n #          ";
-          } else {
-            tmp += c;
-          }
-        }
-        tmp += "\n"; 
-        tmp += " #--------------------------------------------------------------------------------";
+ private:
+  std::string message;
 
-        message = tmp + message;
+  void add_to_error_message(const std::string& mssg, const std::string& file,
+                            int line) {
+    std::string tmp = "\n";
+    tmp +=
+        " #--------------------------------------------------------------------"
+        "------------\n";
+    tmp += " # Location: " + file + ":" + std::to_string(line) + "\n";
+    tmp += " # \n";
+    tmp += " # Message: ";
+
+    for (const auto& c : mssg) {
+      if (c == '\n') {
+        tmp += "\n #          ";
+      } else {
+        tmp += c;
       }
-  };
-}
+    }
+    tmp += "\n";
+    tmp +=
+        " #--------------------------------------------------------------------"
+        "------------";
+
+    message = tmp + message;
+  }
+};
+}  // namespace pndl
 
 #endif

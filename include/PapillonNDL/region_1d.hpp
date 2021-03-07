@@ -57,7 +57,8 @@ class Region1D : public Tabulated1D {
    * @param i_y Vector of all y points.
    * @param interp Interpolation method used for all points.
    */
-  Region1D(const std::vector<double>& i_x, const std::vector<double>& i_y, Interpolation interp);
+  Region1D(const std::vector<double>& i_x, const std::vector<double>& i_y,
+           Interpolation interp);
 
   // Methods required by Function1D
   double operator()(double x) const override final {
@@ -80,13 +81,15 @@ class Region1D : public Tabulated1D {
     double y1 = y_[i];
     double y2 = y_[i + 1];
 
-    auto doInterp = [&x,&x1,&x2,&y1,&y2](auto& interp){return interp.interpolate(x, x1, y1, x2, y2);};
+    auto doInterp = [&x, &x1, &x2, &y1, &y2](auto& interp) {
+      return interp.interpolate(x, x1, y1, x2, y2);
+    };
     return std::visit(doInterp, interpolator);
   }
-  
+
   double integrate(double x_low, double x_hi) const override final {
     bool inverted = x_low > x_hi;
-    if(inverted) {
+    if (inverted) {
       double x_low_tmp = x_low;
       x_low = x_hi;
       x_hi = x_low_tmp;
@@ -125,10 +128,14 @@ class Region1D : public Tabulated1D {
       if (x_low_lim < x1) x_low_lim = x1;
       if (x_upp_lim > x2) x_upp_lim = x2;
 
-      auto doIntegrl = [&x_low_lim,&x_upp_lim,&x1,&x2,&y1,&y2](auto& interp){return interp.integrate(x_low_lim, x_upp_lim, x1, y1, x2, y2);};
+      auto doIntegrl = [&x_low_lim, &x_upp_lim, &x1, &x2, &y1,
+                        &y2](auto& interp) {
+        return interp.integrate(x_low_lim, x_upp_lim, x1, y1, x2, y2);
+      };
       integral += std::visit(doIntegrl, interpolator);
 
-      //integral += interpolator.integrate(x_low_lim, x_upp_lim, x1, y1, x2, y2);
+      // integral += interpolator.integrate(x_low_lim, x_upp_lim, x1, y1, x2,
+      // y2);
 
       if (x_upp_lim == x_hi)
         integrating = false;
@@ -139,7 +146,7 @@ class Region1D : public Tabulated1D {
       }
     }
 
-    if(inverted) integral *= -1.;
+    if (inverted) integral *= -1.;
 
     return integral;
   }
@@ -156,7 +163,7 @@ class Region1D : public Tabulated1D {
 
   /**
    * @brief Returns the number of (x,y) pairs.
-   */ 
+   */
   size_t size() const { return x_.size(); }
 
   /**
@@ -173,7 +180,7 @@ class Region1D : public Tabulated1D {
   std::vector<double> x_;
   std::vector<double> y_;
   Interpolation interpolation_;
-  std::variant<Histogram,LinLin,LinLog,LogLin,LogLog> interpolator;
+  std::variant<Histogram, LinLin, LinLog, LogLin, LogLog> interpolator;
 };
 
 // This operator overload is provided only to accomodate the

@@ -74,7 +74,7 @@ class PCTable {
     // Must account for case where pdf_[l] = pdf_[l+1], which means  that
     // the slope is zero, and m=0. This results in nan for the linear alg.
     // To avoid this, must use histogram for that segment.
-    if (interp_ == Interpolation::Histogram || pdf_[l] == pdf_[l+1])
+    if (interp_ == Interpolation::Histogram || pdf_[l] == pdf_[l + 1])
       return histogram_interp(xi, l);
 
     return linear_interp(xi, l);

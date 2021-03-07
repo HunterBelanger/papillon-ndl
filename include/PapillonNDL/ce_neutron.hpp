@@ -135,13 +135,15 @@ class CENeutron {
   double total_xs(double E, size_t i) const { return total_xs_(E, i); }
 
   /**
-   * @brief Evaluates the elastic scattering cross section at E using bisection search.
+   * @brief Evaluates the elastic scattering cross section at E using bisection
+   * search.
    * @param E Energy.
    */
   double elastic_xs(double E) const { return elastic_xs_(E); }
 
   /**
-   * @brief Evaluates the elastic scattering cross section at energy E and index i.
+   * @brief Evaluates the elastic scattering cross section at energy E and index
+   * i.
    * @param E Energy.
    * @param i Index to the energy grid.
    */

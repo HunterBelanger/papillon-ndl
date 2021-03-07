@@ -60,8 +60,8 @@ void init_CENeutron(py::module& m) {
            py::overload_cast<double, size_t>(&CENeutron::total_xs, py::const_))
       .def("elastic_xs",
            py::overload_cast<double>(&CENeutron::elastic_xs, py::const_))
-      .def("elastic_xs",
-           py::overload_cast<double, size_t>(&CENeutron::elastic_xs, py::const_))
+      .def("elastic_xs", py::overload_cast<double, size_t>(
+                             &CENeutron::elastic_xs, py::const_))
       .def("absorption_xs",
            py::overload_cast<double>(&CENeutron::absorption_xs, py::const_))
       .def("absorption_xs", py::overload_cast<double, size_t>(

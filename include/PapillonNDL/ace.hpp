@@ -47,7 +47,7 @@ namespace pndl {
 
 /**
  * @brief Contains data from A Compact ENDF file.
- * 
+ *
  */
 class ACE {
  public:
@@ -81,7 +81,7 @@ class ACE {
    * @brief Retrieves an (int32_t, double) pair from the IZAW array.
    * @param i index to a pair in the IZAW array.
    *          Must be in the range [0,16).
-   */ 
+   */
   std::pair<int32_t, double> izaw(size_t i) const;
 
   /**
@@ -118,7 +118,7 @@ class ACE {
    *        (int32_t,double) pairs from the IZAW array.
    * @param i Starting index in the IZAW array.
    * @param len Number of elements to return.
-   */ 
+   */
   std::vector<std::pair<int32_t, double>> izaw(size_t i, size_t len) const;
 
   /**

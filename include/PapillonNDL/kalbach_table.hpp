@@ -61,7 +61,8 @@ class KalbachTable {
 
   double sample_energy(double xi) const {
     if (xi < 0. || xi > 1.) {
-      throw PNDLException("KalbachTable: Invalid value for xi provided.", __FILE__, __LINE__);
+      throw PNDLException("KalbachTable: Invalid value for xi provided.",
+                          __FILE__, __LINE__);
     }
 
     auto cdf_it = std::lower_bound(cdf_.begin(), cdf_.end(), xi);
@@ -72,7 +73,7 @@ class KalbachTable {
     // Must account for case where pdf_[l] = pdf_[l+1], which means  that
     // the slope is zero, and m=0. This results in nan for the linear alg.
     // To avoid this, must use histogram for that segment.
-    if (interp_ == Interpolation::Histogram || pdf_[l] == pdf_[l+1])
+    if (interp_ == Interpolation::Histogram || pdf_[l] == pdf_[l + 1])
       return histogram_interp_energy(xi, l);
 
     return linear_interp_energy(xi, l);
@@ -101,10 +102,12 @@ class KalbachTable {
       auto E_it = std::lower_bound(energy_.begin(), energy_.end(), E);
       size_t l = std::distance(energy_.begin(), E_it) - 1;
 
-      if(interp_ == Interpolation::Histogram) {
-        return Histogram::interpolate(E, energy_[l], R_[l], energy_[l+1], R_[l+1]);
+      if (interp_ == Interpolation::Histogram) {
+        return Histogram::interpolate(E, energy_[l], R_[l], energy_[l + 1],
+                                      R_[l + 1]);
       } else {
-        return LinLin::interpolate(E, energy_[l], R_[l], energy_[l+1], R_[l+1]);
+        return LinLin::interpolate(E, energy_[l], R_[l], energy_[l + 1],
+                                   R_[l + 1]);
       }
     }
   }
@@ -122,14 +125,16 @@ class KalbachTable {
       auto E_it = std::lower_bound(energy_.begin(), energy_.end(), E);
       size_t l = std::distance(energy_.begin(), E_it) - 1;
 
-      if(interp_ == Interpolation::Histogram) {
-        return Histogram::interpolate(E, energy_[l], A_[l], energy_[l+1], A_[l+1]);
+      if (interp_ == Interpolation::Histogram) {
+        return Histogram::interpolate(E, energy_[l], A_[l], energy_[l + 1],
+                                      A_[l + 1]);
       } else {
-        return LinLin::interpolate(E, energy_[l], A_[l], energy_[l+1], A_[l+1]);
+        return LinLin::interpolate(E, energy_[l], A_[l], energy_[l + 1],
+                                   A_[l + 1]);
       }
     }
   }
-  
+
   /**
    * @brief Returns a vector of the outgoing energy points.
    */
@@ -168,7 +173,7 @@ class KalbachTable {
   /**
    * @brief Returns the number of outgoing energy points / AngleTables.
    */
-  size_t size() const {return energy_.size();}
+  size_t size() const { return energy_.size(); }
 
  private:
   std::vector<double> energy_;

@@ -9,19 +9,19 @@ Reading an ACE File
 -------------------
 
 Most use cases of PapillonNDL only require the inclusion of a single header
-file: ``PapillonNDL/nuclide.hpp``. This allows you to first read an ACE file,
-and then construct a Nuclide object from it (assuming it is an ACE file with
+file: ``PapillonNDL/ce_neutron.hpp``. This allows you to first read an ACE file,
+and then construct a CENeutron object from it (assuming it is an ACE file with
 continuous energy neutron data !).
 
 .. code-block:: c++
 
-  #include <PapillonNDL/nuclide.hpp>
+  #include <PapillonNDL/ce_neutron.hpp>
   #include <iostream>
 
   int main() {
 
     pndl::ACE U235ace = pndl::ACE("U235.300c");
-    pndl::Nuclide U235(U235ace);
+    pndl::CENeutron U235(U235ace);
 
     // Writes the ZAID to the terimal. For U235, this should
     // be 92235.
@@ -45,7 +45,7 @@ your linker search path, then this should be as easy as:
 Evaluating Cross Sections
 -------------------------
 
-Nuclide objects have quick-access functions to allow fast evaluation of the
+CENeutron objects have quick-access functions to allow fast evaluation of the
 total, absorption, and elastic scattering cross sections. If we want to find
 these cross sections for U235 at 3MeV, then we can do
 

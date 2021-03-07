@@ -49,5 +49,4 @@ void init_Interpolation(py::module& m) {
       .value("LogLog", Interpolation::LogLog);
 
   // TODO interpolation classes
-
 }

@@ -50,7 +50,7 @@ namespace pndl {
  */
 class TabularEnergy : public EnergyLaw {
  public:
-   /**
+  /**
    * @param ace ACE file to take data from.
    * @param i Starting index of distribution in the XSS array.
    * @param JED Index offset to find the PDF and CDF tables.

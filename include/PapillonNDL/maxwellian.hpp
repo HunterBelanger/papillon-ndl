@@ -60,7 +60,7 @@ class Maxwellian : public EnergyLaw {
 
   double sample_energy(double E_in,
                        std::function<double()> rng) const override final;
-  
+
   /**
    * @brief Returns a pointer to the table containg the effective temperature
    *        as a function of incoming energy.

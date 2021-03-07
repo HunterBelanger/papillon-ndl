@@ -59,14 +59,15 @@ class Reaction {
    * @param egrid EnergyGrid for the nuclide.
    */
   Reaction(const ACE& ace, size_t indx, const EnergyGrid& egrid);
-  
+
   /**
    * @param ace ACE file to take cross section from.
    * @param indx Reaction index in the MT array.
    * @param egrid EnergyGrid for the nuclide.
    * @param reac Reaction object to take distributions from.
    */
-  Reaction(const ACE& ace, size_t indx, const EnergyGrid& egrid, const Reaction& reac);
+  Reaction(const ACE& ace, size_t indx, const EnergyGrid& egrid,
+           const Reaction& reac);
 
   ~Reaction() = default;
 
@@ -123,7 +124,7 @@ class Reaction {
    * @brief Samples and angle and energy from the reactions product
    *        distribution.
    * @param E_in Incident energy in MeV.
-   * @param rng Random number generation function. 
+   * @param rng Random number generation function.
    */
   AngleEnergyPacket sample_angle_energy(double E_in,
                                         std::function<double()> rng) const {

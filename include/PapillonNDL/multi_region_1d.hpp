@@ -54,7 +54,7 @@ class MultiRegion1D : public Tabulated1D {
    *                region.
    */
   MultiRegion1D(const std::vector<Region1D>& regions);
-  
+
   /**
    * @param NBT Vector of the breakpoint location.
    * @param INT Vector of the interpolations for each segment.
