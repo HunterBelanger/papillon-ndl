@@ -72,7 +72,7 @@ extern void init_CrossSection(py::module&);
 extern void init_DelayedGroup(py::module&);
 extern void init_FissionData(py::module&);
 extern void init_Reaction(py::module&);
-extern void init_Nuclide(py::module&);
+extern void init_CENeutron(py::module&);
 extern void init_PRNG(py::module&);
 
 PYBIND11_MODULE(pyPapillonNDL, m) {
@@ -112,7 +112,7 @@ PYBIND11_MODULE(pyPapillonNDL, m) {
   init_Reaction(m);
   init_DelayedGroup(m);
   init_FissionData(m);
-  init_Nuclide(m);
+  init_CENeutron(m);
   init_PRNG(m);
 
   m.attr("__author__") = "Hunter Belanger";

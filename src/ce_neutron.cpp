@@ -31,13 +31,13 @@
  * termes.
  *
  * */
-#include <PapillonNDL/nuclide.hpp>
+#include <PapillonNDL/ce_neutron.hpp>
 #include <PapillonNDL/pndl_exception.hpp>
 #include <PapillonNDL/uncorrelated.hpp>
 
 namespace pndl {
 
-Nuclide::Nuclide(const ACE& ace)
+CENeutron::CENeutron(const ACE& ace)
     : zaid_(ace.zaid()),
       awr_(ace.awr()),
       temperature_(ace.temperature()),
@@ -78,7 +78,7 @@ Nuclide::Nuclide(const ACE& ace)
   }
 }
 
-Nuclide::Nuclide(const ACE& ace, const Nuclide& nuclide)
+CENeutron::CENeutron(const ACE& ace, const CENeutron& nuclide)
     : zaid_(ace.zaid()),
       awr_(ace.awr()),
       temperature_(ace.temperature()),
@@ -135,19 +135,19 @@ Nuclide::Nuclide(const ACE& ace, const Nuclide& nuclide)
   fission_data_ = nuclide.fission_data_;
 }
 
-const EnergyGrid& Nuclide::energy_grid() const { return energy_grid_; }
+const EnergyGrid& CENeutron::energy_grid() const { return energy_grid_; }
 
-const CrossSection& Nuclide::total_cross_section() const { return total_xs_; }
+const CrossSection& CENeutron::total_cross_section() const { return total_xs_; }
 
-const CrossSection& Nuclide::elastic_cross_section() const {
+const CrossSection& CENeutron::elastic_cross_section() const {
   return elastic_xs_;
 }
 
-const CrossSection& Nuclide::absorption_cross_section() const {
+const CrossSection& CENeutron::absorption_cross_section() const {
   return absorption_xs_;
 }
 
-const AngleDistribution& Nuclide::elastic_angle_distribution() const {
+const AngleDistribution& CENeutron::elastic_angle_distribution() const {
   return *elastic_angle_;
 }
 

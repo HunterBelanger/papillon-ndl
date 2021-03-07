@@ -31,8 +31,8 @@
  * termes.
  *
  * */
-#ifndef PAPILLON_NDL_NUCLIDE_H
-#define PAPILLON_NDL_NUCLIDE_H
+#ifndef PAPILLON_NDL_CE_NEUTRON_H
+#define PAPILLON_NDL_CE_NEUTRON_H
 
 /**
  * @file
@@ -51,22 +51,22 @@ namespace pndl {
  * @brief Holds all continuous energy neutron data for a single nuclide
  *        and at a single temperature.
  */
-class Nuclide {
+class CENeutron {
  public:
   /**
-   * @param ace ACE file from which to construct the nuclide.
+   * @param ace ACE file from which to construct the data.
    */
-  Nuclide(const ACE& ace);
+  CENeutron(const ACE& ace);
 
   /**
    * @param ace ACE file from which to take the new cross sections.
-   * @param nuclide Nuclide containing another instance of the desired
+   * @param nuclide CENeutron containing another instance of the desired
    *                nuclide. Secondary distributions and fission data
-   *                will be shared between the two nuclide.
+   *                will be shared between the two data sets.
    */
-  Nuclide(const ACE& ace, const Nuclide& nuclide);
+  CENeutron(const ACE& ace, const CENeutron& nuclide);
 
-  ~Nuclide() = default;
+  ~CENeutron() = default;
 
   /**
    * @brief Returns the nuclide ZAID.
