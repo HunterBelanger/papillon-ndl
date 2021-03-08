@@ -146,7 +146,7 @@ and outgoing angle and energy in the laboratory frame with
 
   pndl::AngleEnergyPacket out = U235_n2n.sample_angle_energy(6., rng);
 
-The cose of the scattering angle is then stored in ``out.angle``, and
+The cose of the scattering angle is then stored in ``out.cos_angle``, and
 the energy is in ``out.energy``.
 
 ------------
