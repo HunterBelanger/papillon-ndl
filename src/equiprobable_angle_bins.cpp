@@ -68,12 +68,15 @@ EquiprobableAngleBins::EquiprobableAngleBins(const ACE& ace, size_t i)
   }
 }
 
-double EquiprobableAngleBins::sample_mu(double xi) const {
+AnglePacket EquiprobableAngleBins::sample_mu(double xi) const {
   size_t bin =
       static_cast<size_t>(std::floor(static_cast<double>(NBOUNDS) * xi));
   double C_b = bin * P_BIN;
   double mu_low = bounds_[bin];
-  return ((xi - C_b) / P_BIN) + mu_low;
+  double mu_hi = bounds_[bin + 1];
+  double mu = ((xi - C_b) / P_BIN) + mu_low;
+  double pdf = P_BIN / (mu_hi - mu_low);
+  return {mu, pdf};
 }
 
 size_t EquiprobableAngleBins::size() const { return NBOUNDS; }

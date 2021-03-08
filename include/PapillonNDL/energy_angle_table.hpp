@@ -40,7 +40,7 @@
  */
 
 #include <PapillonNDL/ace.hpp>
-#include <PapillonNDL/angle_energy_packet.hpp>
+#include <PapillonNDL/angle_energy.hpp>
 #include <PapillonNDL/pctable.hpp>
 #include <functional>
 
@@ -60,7 +60,7 @@ class EnergyAngleTable {
   ~EnergyAngleTable() = default;
 
   AngleEnergyPacket sample_angle_energy(std::function<double()> rng) const {
-    double E_out, mu;
+    double E_out, mu, pdf_mu;
     double xi = rng();
     auto cdf_it = std::lower_bound(cdf_.begin(), cdf_.end(), xi);
     size_t l = std::distance(cdf_.begin(), cdf_it) - 1;
@@ -72,20 +72,24 @@ class EnergyAngleTable {
       E_out = histogram_interp_energy(xi, l);
       mu = angles_[l].sample_value(rng());
       if (std::abs(mu) > 1.) mu = std::copysign(1., mu);
-      return {mu, E_out};
+      pdf_mu = angles_[l].pdf(mu);
+      return {mu, pdf_mu, E_out};
     }
 
     E_out = linear_interp_energy(xi, l);
 
     double f = (xi - cdf_[l]) / (cdf_[l + 1] - cdf_[l]);
-    if (f < 0.5)
+    if (f < 0.5) {
       mu = angles_[l].sample_value(rng());
-    else
+      if (std::abs(mu) > 1.) mu = std::copysign(1., mu);
+      pdf_mu = angles_[l].pdf(mu);
+    } else {
       mu = angles_[l + 1].sample_value(rng());
+      if (std::abs(mu) > 1.) mu = std::copysign(1., mu);
+      pdf_mu = angles_[l + 1].pdf(mu);
+    }
 
-    if (std::abs(mu) > 1.) mu = std::copysign(1., mu);
-
-    return {mu, E_out};
+    return {mu, pdf_mu, E_out};
   }
 
   /**

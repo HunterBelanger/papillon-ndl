@@ -52,7 +52,7 @@ class Isotropic : public AngleLaw {
   Isotropic() {}
   ~Isotropic() = default;
 
-  double sample_mu(double xi) const override final;
+  AnglePacket sample_mu(double xi) const override final;
 };
 
 }  // namespace pndl

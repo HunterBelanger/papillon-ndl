@@ -160,9 +160,7 @@ class CENeutron {
    * @param E Energy.
    * @param i Index to the energy grid.
    */
-  double capture_xs(double E, size_t i) const {
-    return capture_xs_(E, i);
-  }
+  double capture_xs(double E, size_t i) const { return capture_xs_(E, i); }
 
   /**
    * @brief Samples a scattering angle from the elastic scattering angular
@@ -170,7 +168,8 @@ class CENeutron {
    * @param E Incident energy.
    * @param rng Random number generation function.
    */
-  double sample_elastic_angle(double E, std::function<double()> rng) const {
+  AnglePacket sample_elastic_angle(double E,
+                                   std::function<double()> rng) const {
     return elastic_angle_->sample_angle(E, rng);
   }
 

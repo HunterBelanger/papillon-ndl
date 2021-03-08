@@ -48,7 +48,8 @@ void init_PCTable(py::module& m) {
       .def("max_value", &PCTable::max_value)
       .def("interpolation", &PCTable::interpolation)
       .def("values", &PCTable::values)
-      .def("pdf", &PCTable::pdf)
+      .def("pdf", py::overload_cast<double>(&PCTable::pdf, py::const_))
+      .def("pdf", py::overload_cast<>(&PCTable::pdf, py::const_))
       .def("cdf", &PCTable::cdf)
       .def("size", &PCTable::size);
 }

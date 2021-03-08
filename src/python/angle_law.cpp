@@ -42,13 +42,19 @@ namespace py = pybind11;
 
 using namespace pndl;
 
+void init_AnglePacket(py::module& m) {
+  py::class_<AnglePacket>(m, "AnglePacket")
+      .def_readwrite("cos_angle", &AnglePacket::cos_angle)
+      .def_readwrite("pdf_cos_angle", &AnglePacket::pdf_cos_angle);
+}
+
 // Trampoline class for abstract pndl::AngleLaw
 class PyAngleLaw : public AngleLaw {
  public:
   using AngleLaw::AngleLaw;
 
-  double sample_mu(double xi) const override {
-    PYBIND11_OVERRIDE_PURE(double, AngleLaw, sample_mu, xi);
+  AnglePacket sample_mu(double xi) const override {
+    PYBIND11_OVERRIDE_PURE(AnglePacket, AngleLaw, sample_mu, xi);
   }
 };
 

@@ -56,7 +56,7 @@ class EquiprobableAngleBins : public AngleLaw {
   EquiprobableAngleBins(const ACE& ace, size_t i);
   ~EquiprobableAngleBins() = default;
 
-  double sample_mu(double xi) const override final;
+  AnglePacket sample_mu(double xi) const override final;
 
   /**
    * @brief Returns the number of bin boundaries (number of bins + 1);

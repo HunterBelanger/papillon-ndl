@@ -56,7 +56,7 @@ class AngleTable : public AngleLaw {
   AngleTable(const ACE& ace, size_t i);
   ~AngleTable() = default;
 
-  double sample_mu(double xi) const override final;
+  AnglePacket sample_mu(double xi) const override final;
 
   /**
    * @brief Returns the number of points in the tabulated data.

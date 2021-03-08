@@ -75,7 +75,7 @@ AngleEnergyPacket NBody::sample_angle_energy(
   double E_out = (x / (x + y)) * Emax;
   double mu = 2. * rng() - 1.;
 
-  return {mu, E_out};
+  return {mu, 0.5, E_out};
 }
 
 double NBody::maxwellian_spectrum(std::function<double()>& rng) const {
