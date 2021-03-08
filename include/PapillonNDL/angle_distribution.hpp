@@ -64,7 +64,7 @@ class AngleDistribution {
    * @param E_in Incident energy before scatter, in MeV.
    * @param rng Random number generator function.
    */
-  AnglePacket sample_angle(double E_in, std::function<double()> rng) const;
+  double sample_angle(double E_in, std::function<double()> rng) const;
 
   /**
    * @brief Returns the number of energies/angular distributions stored.

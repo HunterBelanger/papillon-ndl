@@ -39,14 +39,6 @@
  * @author Hunter Belanger
  */
 
-/**
- * @brief A struct to hold a sampled angle and the PDF of the angle.
- */
-struct AnglePacket {
-  double cos_angle;     /**< Sampled cosine of scattering angle */
-  double pdf_cos_angle; /**< PDF of sampled cosine */
-};
-
 namespace pndl {
 
 /**
@@ -60,7 +52,7 @@ class AngleLaw {
    * @brief Samples a scattering cosine from the distribution.
    * @param xi Random variable from the interval [0,1).
    */
-  virtual AnglePacket sample_mu(double xi) const = 0;
+  virtual double sample_mu(double xi) const = 0;
 };
 
 }  // namespace pndl

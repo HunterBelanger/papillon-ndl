@@ -65,7 +65,7 @@ void init_CENeutron(py::module& m) {
       .def("capture_xs",
            py::overload_cast<double>(&CENeutron::capture_xs, py::const_))
       .def("capture_xs", py::overload_cast<double, size_t>(
-                             &CENeutron::capture_xs, py::const_))
+                                &CENeutron::capture_xs, py::const_))
       .def("sample_elastic_angle", &CENeutron::sample_elastic_angle)
       .def("has_reaction", &CENeutron::has_reaction)
       .def("reaction", &CENeutron::reaction)

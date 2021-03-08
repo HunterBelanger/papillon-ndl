@@ -118,7 +118,7 @@ AngleEnergyPacket Kalbach::sample_angle_energy(
   double E_out = Emin + ((E_hat - E_l_1) / (E_l_M - E_l_1)) * (Emax - Emin);
 
   // Sample mu
-  double mu, pdf_mu;
+  double mu;
   if (rng() > R) {
     double T = (2. * rng() - 1.) * std::sinh(A);
     mu = (1. / A) * std::log(T + std::sqrt(T * T + 1.));
@@ -129,10 +129,7 @@ AngleEnergyPacket Kalbach::sample_angle_energy(
 
   if (std::abs(mu) > 1.) mu = std::copysign(1., mu);
 
-  pdf_mu =
-      (0.5 * A / std::sinh(A)) * (std::cosh(A * mu) + R * std::sinh(A * mu));
-
-  return {mu, pdf_mu, E_out};
+  return {mu, E_out};
 }
 
 const std::vector<double>& Kalbach::incoming_energy() const {

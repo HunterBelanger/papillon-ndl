@@ -39,7 +39,7 @@
  * @author Hunter Belanger
  */
 
-#include <PapillonNDL/angle_energy.hpp>
+#include <PapillonNDL/angle_energy_packet.hpp>
 #include <cstdint>
 
 namespace pndl {

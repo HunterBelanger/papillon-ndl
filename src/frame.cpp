@@ -38,8 +38,7 @@ namespace pndl {
 
 void cm_to_lab(double E, double A, AngleEnergyPacket& ae) {
   double E_cm = ae.energy;
-  double mu_cm = ae.cos_angle;
-  double pdf_mu_cm = ae.pdf_cos_angle;
+  double mu_cm = ae.angle;
 
   double E_lab = E_cm + (E + 2. * mu_cm * (A + 1.) * std::sqrt(E * E_cm)) /
                             std::pow(A + 1., 2.);
@@ -47,13 +46,7 @@ void cm_to_lab(double E, double A, AngleEnergyPacket& ae) {
   double mu_lab =
       mu_cm * std::sqrt(E_cm / E_lab) + (1. / (A + 1.)) * std::sqrt(E / E_lab);
 
-  double d_cm_d_lab = std::sqrt(E_lab / E_cm) /
-                      (1. - ((mu_lab / (A + 1.)) * std::sqrt(E / E_lab)));
-
-  double pdf_mu_lab = pdf_mu_cm * d_cm_d_lab;
-
-  ae.cos_angle = mu_lab;
-  ae.pdf_cos_angle = pdf_mu_lab;
+  ae.angle = mu_lab;
   ae.energy = E_lab;
 }
 

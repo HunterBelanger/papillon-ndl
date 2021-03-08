@@ -48,8 +48,7 @@ using namespace pndl;
 
 void init_AngleEnergyPacket(py::module& m) {
   py::class_<AngleEnergyPacket>(m, "AngleEnergyPacket")
-      .def_readwrite("cos_angle", &AngleEnergyPacket::cos_angle)
-      .def_readwrite("pdf_cos_angle", &AngleEnergyPacket::pdf_cos_angle)
+      .def_readwrite("angle", &AngleEnergyPacket::angle)
       .def_readwrite("energy", &AngleEnergyPacket::energy);
 }
 

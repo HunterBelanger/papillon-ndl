@@ -36,10 +36,10 @@
 
 namespace pndl {
 
-AnglePacket Isotropic::sample_mu(double xi) const {
+double Isotropic::sample_mu(double xi) const {
   double mu = 2. * xi - 1.;
   if (std::abs(mu) > 1.) mu = std::copysign(1., mu);
-  return {mu, 0.5};
+  return mu;
 }
 
 }  // namespace pndl

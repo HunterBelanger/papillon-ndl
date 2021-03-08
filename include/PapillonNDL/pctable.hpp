@@ -101,24 +101,6 @@ class PCTable {
   const std::vector<double>& values() const { return values_; }
 
   /**
-   * @brief Returns the value of the PDF for the provided value.
-   * @param value Value at which to evaluate the PDF.
-   */
-  double pdf(double value) const {
-    auto value_it = std::lower_bound(values_.begin(), values_.end(), value);
-    size_t l = std::distance(values_.begin(), value_it);
-    if (value == *value_it) return pdf_[l];
-
-    l--;
-
-    if (interp_ == Interpolation::Histogram || pdf_[l] == pdf_[l + 1])
-      return pdf_[l];
-
-    return LinLin::interpolate(value, values_[l], pdf_[l], values_[l + 1],
-                               pdf_[l + 1]);
-  }
-
-  /**
    * @brief Returns a vector of the PDF grid points.
    */
   const std::vector<double>& pdf() const { return pdf_; }

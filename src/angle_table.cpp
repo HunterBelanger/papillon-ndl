@@ -37,11 +37,10 @@ namespace pndl {
 
 AngleTable::AngleTable(const ACE& ace, size_t i) : distribution_(ace, i) {}
 
-AnglePacket AngleTable::sample_mu(double xi) const {
+double AngleTable::sample_mu(double xi) const {
   double mu = distribution_.sample_value(xi);
   if (std::abs(mu) > 1.) mu = std::copysign(1., mu);
-  double pdf = distribution_.pdf(mu);
-  return {mu, pdf};
+  return mu;
 }
 
 size_t AngleTable::size() const { return distribution_.size(); }

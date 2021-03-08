@@ -103,7 +103,7 @@ AngleEnergyPacket TabularEnergyAngle::sample_angle_energy(
   double Emin = E_i_1 + f * (E_i_1_1 - E_i_1);
   double Emax = E_i_M + f * (E_i_1_M - E_i_M);
 
-  AngleEnergyPacket tmp{0., 0., 0.};
+  AngleEnergyPacket tmp{0., 0.};
   double E_hat = E_in;
   double E_l_1, E_l_M;
   if (rng() > f) {
@@ -119,13 +119,12 @@ AngleEnergyPacket TabularEnergyAngle::sample_angle_energy(
   }
 
   double E_out = Emin + ((E_hat - E_l_1) / (E_l_M - E_l_1)) * (Emax - Emin);
-  double mu = tmp.cos_angle;
-  double pdf_mu = tmp.pdf_cos_angle;
+  double mu = tmp.angle;
 
   // mu has already ben verified by the EenergyAngleTable to be in interval
   // [-1,1]
 
-  return {mu, pdf_mu, E_out};
+  return {mu, E_out};
 }
 
 const std::vector<double>& TabularEnergyAngle::incoming_energy() const {
