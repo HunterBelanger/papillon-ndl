@@ -34,7 +34,6 @@
 #ifndef PAPILLON_NDL_ANGLE_ENERGY_H
 #define PAPILLON_NDL_ANGLE_ENERGY_H
 
-#include <PapillonNDL/angle_energy_packet.hpp>
 #include <functional>
 
 /**
@@ -43,6 +42,14 @@
  */
 
 namespace pndl {
+
+/**
+ * @brief A struct to hold a sampled angle and energy.
+ */
+struct AngleEnergyPacket {
+  double cosine_angle;  /**< Sampled cosine of scattering angle */
+  double energy; /**<  Sampled outgoing energy in MeV */
+};
 
 /**
  * @brief Interface to represent any secondary angle-energy distribution.

@@ -40,7 +40,7 @@
  */
 
 #include <PapillonNDL/ace.hpp>
-#include <PapillonNDL/angle_energy_packet.hpp>
+#include <PapillonNDL/angle_energy.hpp>
 #include <PapillonNDL/pctable.hpp>
 #include <functional>
 

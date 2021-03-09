@@ -119,7 +119,7 @@ AngleEnergyPacket TabularEnergyAngle::sample_angle_energy(
   }
 
   double E_out = Emin + ((E_hat - E_l_1) / (E_l_M - E_l_1)) * (Emax - Emin);
-  double mu = tmp.angle;
+  double mu = tmp.cosine_angle;
 
   // mu has already ben verified by the EenergyAngleTable to be in interval
   // [-1,1]
