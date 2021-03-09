@@ -1,4 +1,5 @@
 # Papillon Nuclear Data Library
+[![Documentation Status](https://readthedocs.org/projects/papillon-ndl/badge/?version=latest)](https://papillon-ndl.readthedocs.io/en/latest/?badge=latest)
 ![License](https://img.shields.io/badge/License-CeCILL%20v2.1-brightgreen)
 
 The Papillon Nuclear Data Library (NDL) is used for reading, sampling,
