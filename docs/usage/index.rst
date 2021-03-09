@@ -6,4 +6,4 @@ Usage
    :maxdepth: 2
 
    cpp.rst
-   python.rst
+   python_tutorial
