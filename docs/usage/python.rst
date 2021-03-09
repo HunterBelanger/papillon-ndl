@@ -4,4 +4,7 @@
 Python
 ======
 
-This is comming soon !
+.. toctree::
+   :maxdepth: 2
+
+   python_tutorial

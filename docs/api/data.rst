@@ -5,7 +5,7 @@ Nuclear Data Interface
 ======================
 
 CENeutron
--------
+---------
 
 .. doxygenclass:: pndl::CENeutron
 
