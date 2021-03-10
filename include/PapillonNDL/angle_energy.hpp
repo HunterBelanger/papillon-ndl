@@ -48,7 +48,7 @@ namespace pndl {
  */
 struct AngleEnergyPacket {
   double cosine_angle;  /**< Sampled cosine of scattering angle */
-  double energy; /**<  Sampled outgoing energy in MeV */
+  double energy; /**< Sampled outgoing energy in MeV */
 };
 
 /**

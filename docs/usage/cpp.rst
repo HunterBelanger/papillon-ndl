@@ -52,7 +52,7 @@ these cross sections for U235 at 3MeV, then we can do
 .. code-block:: c++
 
   double tot_xs_at_3mev = U235.total_xs(3.);
-  double abs_xs_at_3mev = U235.absorption_xs(3.);
+  double abs_xs_at_3mev = U235.capture_xs(3.);
   double ela_xs_at_3mev = U235.elastic_xs(3.);
 
 The standard unit of energy in PapillonNDL is MeV. All energies are given in
@@ -70,7 +70,7 @@ pass that index to the cross section evaluation call.
   size_t i = U235.energy_grid_index(3.);
 
   tot_xs_at_3mev = U235.total_xs(3., i);
-  abs_xs_at_3mev = U235.absorption_xs(3., i);
+  abs_xs_at_3mev = U235.capture_xs(3., i);
   ela_xs_at_3mev = U235.elastic_xs(3., i);
 
 This method produces the same results, but is faster overall, and should be
@@ -96,9 +96,9 @@ Sampling Reaction Distributions
 -------------------------------
 
 In Monte Carlo simulations, we often need to sample data related to reactions
-such as the number of secondary neutrons produces, and their angle-energy
-distributions. To do this, get a reference to the desired reaction; Here, we
-will look at the (n,2n) reaction (MT=16):
+such as the number of secondary neutrons produced, and their angle-energy
+distributions. To do this, start by getting a reference to the desired
+reaction; Here, we will look at the (n,2n) reaction (MT=16):
 
 .. code-block:: c++
 
@@ -115,7 +115,7 @@ will look at the (n,2n) reaction (MT=16):
   double Qval = U235_n2n.Q();
 
   // For MT=16, the yield is always 2, no matter the energy, but
-  // some reactions has energy dependent yields.
+  // some reactions have energy dependent yields.
   double n_out = U235_n2n.yield(6.); 
 
 In the above example, we have been able to get lots of data about the
@@ -140,7 +140,7 @@ This isn't exactly beautiful, but it gets the job done. A random number
 generator function must be provided as some of the algorithms to sample
 the energy distributions require many random numbers, and it is
 impossible to know how many it will need in advance. We can now sample
-and outgoing angle and energy in the laboratory frame with
+an outgoing angle and energy in the laboratory frame with
 
 .. code-block:: c++
 
@@ -205,8 +205,8 @@ library to get work done, and access continuous energy neutron data. In an
 effort to maintain SOLID programming principles, energy and angle distributions
 are only ever accesed through virtual interface classes. This is not the case
 for the Python bindings however, as these are generated with Pybind11, which
-always downcasts pointers the pointers to the true object type. This makes it
-possible to see more of the inner workings of the library, and gain access to
-specific parts of distributions. If this is what you're into, take a look at
-using the Python API. It's just as fast (as it is in C++), but is a gereat
-way to plot data, especially cross sections and distributions.
+always downcasts objects to the true type. This makes it possible to see more
+of the inner workings of the library, and gain access to specific parts of
+distributions. If this is what you're into, take a look at using the Python
+API. It's just as fast (as it is written in C++), but is a gereat way to plot
+data, especially cross sections and distributions.

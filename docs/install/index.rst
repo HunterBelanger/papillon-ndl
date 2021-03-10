@@ -108,9 +108,9 @@ Several other standard cmake options will also be usefull in many cases, and
 are therefore listed here:
 
 CMAKE_BUILD_TYPE
-  If you are looking for sane optimizations in a normal build, set this to
-  Release. When doing development, it is often adventageous to set this to
-  Debug.
+  If you are looking for sane optimizations (``-O2``) in a normal build, set
+  this to ``Release``. When doing development, it is often adventageous to set
+  this to ``Debug``, which provides debug symbols.
 
 CMAKE_INSTALL_PREFIX
   This is the location to where the libararies and header files will be
@@ -128,7 +128,7 @@ we should use:
 In this case, the header files will be installed to the directory 
 ``/home/user/include/PapillonNDL``, the C++ library will be installed to
 ``/home/user/lib``, and the Python library will be installed to a directory similar
-to ``/home/user/lib64/python3.9/site-packages`` (the python version might be
+to ``/home/user/lib64/python3.9/site-packages`` (the Python version might be
 different however).
 
 .. warning::
