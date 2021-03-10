@@ -74,12 +74,12 @@ class Reaction {
   /**
    * @brief Returns the MT of the reaction.
    */
-  uint32_t MT() const { return mt_; }
+  uint32_t mt() const { return mt_; }
 
   /**
    * @brief Returns the Q-value of the reaction.
    */
-  double Q() const { return q_; }
+  double q() const { return q_; }
 
   /**
    * @brief Returns the reaction yield for an incident energy.

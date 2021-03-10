@@ -25,7 +25,7 @@ continuous energy neutron data !).
 
     // Writes the ZAID to the terimal. For U235, this should
     // be 92235.
-    std::cout << " ZAID: " << U235.ZAID() << std::endl;
+    std::cout << " ZAID: " << U235.zaid() << std::endl;
 
     // The temperature of is given in units of kelvin !
     std::cout << " Temp: " << U235.temperature() << std::endl;
@@ -112,7 +112,7 @@ reaction; Here, we will look at the (n,2n) reaction (MT=16):
   // for this reaction !
   double n2n_xs_at_3mev = U235_n2n.xs(6., i);
 
-  double Qval = U235_n2n.Q();
+  double Qval = U235_n2n.q();
 
   // For MT=16, the yield is always 2, no matter the energy, but
   // some reactions have energy dependent yields.

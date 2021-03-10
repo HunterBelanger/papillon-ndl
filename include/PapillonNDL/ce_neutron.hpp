@@ -71,12 +71,12 @@ class CENeutron {
   /**
    * @brief Returns the nuclide ZAID.
    */
-  uint32_t ZAID() const { return zaid_; }
+  uint32_t zaid() const { return zaid_; }
 
   /**
    * @brief Returns the nuclide Atomic Weight Ratio.
    */
-  double AWR() const { return awr_; }
+  double awr() const { return awr_; }
 
   /**
    * @brief Returns the temperature at which the data has been prepared.
