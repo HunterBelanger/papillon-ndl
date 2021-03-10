@@ -44,8 +44,8 @@ void init_Reaction(py::module& m) {
   py::class_<Reaction>(m, "Reaction")
       .def(py::init<const ACE&, size_t, const EnergyGrid&>())
       .def(py::init<const ACE&, size_t, const EnergyGrid&, const Reaction&>())
-      .def("MT", &Reaction::MT)
-      .def("Q", &Reaction::Q)
+      .def("mt", &Reaction::mt)
+      .def("q", &Reaction::q)
       .def("multiplicity",
            py::overload_cast<double>(&Reaction::yield, py::const_))
       .def("multiplicity", py::overload_cast<>(&Reaction::yield, py::const_))

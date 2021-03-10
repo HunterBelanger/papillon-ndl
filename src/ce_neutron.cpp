@@ -92,13 +92,13 @@ CENeutron::CENeutron(const ACE& ace, const CENeutron& nuclide)
       reactions_() {
   // Make sure these are the same nuclide !
 
-  if (zaid_ != nuclide.ZAID()) {
+  if (zaid_ != nuclide.zaid()) {
     std::string mssg =
         "Nuclide::Nuclide: ZAID of ACE doesn't match ZAID of nuclide.";
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
 
-  if (awr_ != nuclide.AWR()) {
+  if (awr_ != nuclide.awr()) {
     std::string mssg =
         "Nuclide::Nuclide: AWR of ACE doesn't match AWR of nuclide.";
     throw PNDLException(mssg, __FILE__, __LINE__);

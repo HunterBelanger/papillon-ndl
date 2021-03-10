@@ -249,7 +249,7 @@ Reaction::Reaction(const ACE& ace, size_t indx, const EnergyGrid& egrid,
   awr_ = ace.awr();
 
   // make sure the MT values agree
-  if (mt_ != reac.MT()) {
+  if (mt_ != reac.mt()) {
     std::string mssg =
         "Reaction::Reaction: MT from ACE file doesn't match MT from reaction.";
     throw PNDLException(mssg, __FILE__, __LINE__);
