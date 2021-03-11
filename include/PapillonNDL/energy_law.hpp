@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, Hunter Belanger
+ * Copyright 2021, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -34,18 +34,27 @@
 #ifndef PAPILLON_NDL_ENERGY_LAW_H
 #define PAPILLON_NDL_ENERGY_LAW_H
 
+/**
+ * @file
+ * @author Hunter Belanger
+ */
+
 #include <functional>
 
 namespace pndl {
 
+/**
+ * @brief Interface to represent uncorrelated energy distributions.
+ */
 class EnergyLaw {
  public:
   virtual ~EnergyLaw() = default;
 
-  // Cannot have a templated virtual class method, so in order to accept
-  // a RNG of any type, we wrap it in an std::function<double()>. This
-  // imposes the requirment that the true RNG object provide a function
-  // that when called, returns a double, on the interval [0,1).
+  /**
+   * @brief Samples an energy (in MeV) from the distribution.
+   * @param E_in Incident energy in MeV.
+   * @param rng Random number generation function.
+   */
   virtual double sample_energy(double E_in,
                                std::function<double()> rng) const = 0;
 };

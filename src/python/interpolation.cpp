@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, Hunter Belanger
+ * Copyright 2021, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -48,5 +48,5 @@ void init_Interpolation(py::module& m) {
       .value("LogLin", Interpolation::LogLin)
       .value("LogLog", Interpolation::LogLog);
 
-  m.def("interpolate", &interpolate);
+  // TODO interpolation classes
 }

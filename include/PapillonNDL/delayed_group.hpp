@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, Hunter Belanger
+ * Copyright 2021, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -34,6 +34,11 @@
 #ifndef PAPILLON_NDL_DELAYED_GROUP_H
 #define PAPILLON_NDL_DELAYED_GROUP_H
 
+/**
+ * @file
+ * @author Hunter Belanger
+ */
+
 #include <PapillonNDL/ace.hpp>
 #include <PapillonNDL/energy_law.hpp>
 #include <PapillonNDL/tabulated_1d.hpp>
@@ -44,21 +49,50 @@
 
 namespace pndl {
 
+/**
+ * @brief Contains data for a delayed neutron group.
+ */
 class DelayedGroup {
  public:
+  /**
+   * @param ace ACE file to take delayed neutron data from.
+   * @param i Index to the beinning of the delayed group data
+   *          in the XSS block.
+   * @param g Delayed group index.
+   */
   DelayedGroup(const ACE& ace, size_t i, size_t g);
   ~DelayedGroup() = default;
 
+  /**
+   * @brief Returns the decay constant for the group in inverse seconds.
+   */
   double decay_constant() const { return decay_constant_; }
 
+  /**
+   * @brief Returns pointer to the Tabulated1D function for the probability
+   *        of selecting the delayed group for a given energy.
+   */
   std::shared_ptr<Tabulated1D> probability() const { return probability_; }
 
+  /**
+   * @brief Evaluates the probability of selecting the delayed group
+   *        at incident energy E.
+   * @param E Incident energy in MeV.
+   */
   double probability(double E) const { return (*probability_)(E); }
 
+  /**
+   * @brief Samples and energy from the delayed group distribution.
+   * @param E Incident energy.
+   * @param rng Random number generation function.
+   */
   double sample_energy(double E, std::function<double()> rng) const {
     return energy_->sample_energy(E, rng);
   }
 
+  /**
+   * @brief Returns a pointer to the EnergyLaw for the group.
+   */
   std::shared_ptr<EnergyLaw> energy() const { return energy_; }
 
  private:

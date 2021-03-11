@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, Hunter Belanger
+ * Copyright 2021, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -34,20 +34,40 @@
 #ifndef PAPILLON_NDL_POLYNOMIAL_H
 #define PAPILLON_NDL_POLYNOMIAL_H
 
+/**
+ * @file
+ * @author Hunter Belanger
+ */
+
 #include <PapillonNDL/function_1d.hpp>
 #include <vector>
 
 namespace pndl {
 
+/**
+ * @brief A function of a single variable, represented by polynomial
+ *        coefficients.
+ */
 class Polynomial1D : public Function1D {
  public:
+  /**
+   * @param coeffs Vector containing all of the polynomial coefficients.
+   */
   Polynomial1D(const std::vector<double>& coeffs);
   ~Polynomial1D() = default;
 
   double operator()(double x) const override final;
   double integrate(double x_low, double x_hi) const override final;
 
+  /**
+   * @brief Returns the order of the polynomial.
+   */
   size_t order() const;
+
+  /**
+   * @brief Returns the coefficient for the ith order term.
+   * @param i Order of the term.
+   */
   double coefficient(size_t i) const;
 
  private:

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, Hunter Belanger
+ * Copyright 2021, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -43,8 +43,9 @@ using namespace pndl;
 void init_Reaction(py::module& m) {
   py::class_<Reaction>(m, "Reaction")
       .def(py::init<const ACE&, size_t, const EnergyGrid&>())
-      .def("MT", &Reaction::MT)
-      .def("Q", &Reaction::Q)
+      .def(py::init<const ACE&, size_t, const EnergyGrid&, const Reaction&>())
+      .def("mt", &Reaction::mt)
+      .def("q", &Reaction::q)
       .def("multiplicity",
            py::overload_cast<double>(&Reaction::yield, py::const_))
       .def("multiplicity", py::overload_cast<>(&Reaction::yield, py::const_))

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, Hunter Belanger
+ * Copyright 2021, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -32,6 +32,7 @@
  *
  * */
 #include <PapillonNDL/ace.hpp>
+#include <PapillonNDL/pndl_exception.hpp>
 #include <fstream>
 
 #include "constants.hpp"
@@ -80,7 +81,7 @@ ACE::ACE(std::string fname)
   if (legacy_header) {
     split = split_line(line);
     awr_ = std::stod(split[1]);
-    temperature_ = std::stod(split[2]) * EV_TO_K;
+    temperature_ = std::stod(split[2]) * MEV_TO_EV * EV_TO_K;
 
     // Skip next line
     std::getline(file, line);
@@ -89,7 +90,7 @@ ACE::ACE(std::string fname)
     std::getline(file, line);
     split = split_line(line);
     awr_ = std::stod(split[0]);
-    temperature_ = std::stod(split[1]) * EV_TO_K;
+    temperature_ = std::stod(split[1]) * MEV_TO_EV * EV_TO_K;
     int n_skip = std::stoi(split[3]);
 
     // Skip comment lines
@@ -117,8 +118,21 @@ ACE::ACE(std::string fname)
 
   // Parse XSS
   xss_.resize(nxs_[0]);
-  for (int i = 0; i < nxs_[0]; i++) {
+  int i = 0;
+  while (!file.eof()) {
     file >> xss_[i];
+    i++;
+  }
+
+  if (i - 1 != nxs_[0]) {
+    std::string mssg =
+        "ACE::ACE: Found incorrect number of entries in XSS array while "
+        "reading\n";
+    mssg += "the \"" + fname + "\" ACE file.\n";
+    mssg +=
+        "This is likely due to a numerical entry which is missing the \"E\".\n";
+    mssg += "Please correct the ACE file.";
+    throw PNDLException(mssg, __FILE__, __LINE__);
   }
 
   zaid_ = static_cast<uint32_t>(nxs_[1]);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, Hunter Belanger
+ * Copyright 2021, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -34,39 +34,123 @@
 #ifndef PAPILLON_NDL_ACE_H
 #define PAPILLON_NDL_ACE_H
 
+/**
+ * @file
+ * @author Hunter Belanger
+ */
+
 #include <array>
 #include <string>
 #include <vector>
 
 namespace pndl {
+
+/**
+ * @brief Contains data from A Compact ENDF file.
+ *
+ */
 class ACE {
  public:
+  /**
+   * @param fname Name of the file to be loaded.
+   */
   ACE(std::string fname);
   ~ACE() = default;
 
-  // Basic nuclide data
+  /**
+   * @brief Gets the ZAID of nuclide represented.
+   */
   int32_t zaid() const;
+
+  /**
+   * @brief Gets the temperature for which the data was prepared, in kelvins.
+   */
   double temperature() const;
+
+  /**
+   *  @brief Gets the Atomic Weight Ratio (AWR) of the nuclide.
+   */
   double awr() const;
+
+  /**
+   * @brief Returns true for a fissile nuclide, false for a non-fissile nuclide.
+   */
   bool fissile() const;
 
-  // Accessors to data arrays
+  /**
+   * @brief Retrieves an (int32_t, double) pair from the IZAW array.
+   * @param i index to a pair in the IZAW array.
+   *          Must be in the range [0,16).
+   */
   std::pair<int32_t, double> izaw(size_t i) const;
+
+  /**
+   * @brief Retrieves a value from the NXS array.
+   * @param i index to element in the NXS array.
+   *          Must be in the range [0,16).
+   */
   int32_t nxs(size_t i) const;
+
+  /**
+   * @brief Retrieves a value from the JXS array.
+   * @param i index to element in the JXS array.
+   *          Must be in the range [0,32).
+   */
   int32_t jxs(size_t i) const;
+
+  /**
+   * @brief Retrieves a value from the XSS array as a double.
+   * @param i index to element in the XSS array.
+   */
   double xss(size_t i) const;
 
+  /**
+   * @brief Retrieves a value from the XSS array, cast to type T.
+   * @param i index to element in the XSS array.
+   */
   template <class T>
   T xss(size_t i) const {
     return static_cast<T>(xss_[i]);
   }
 
-  // Range accessors to data arrays
+  /**
+   * @brief Retrieves a vector contianing a continuous segment of
+   *        (int32_t,double) pairs from the IZAW array.
+   * @param i Starting index in the IZAW array.
+   * @param len Number of elements to return.
+   */
   std::vector<std::pair<int32_t, double>> izaw(size_t i, size_t len) const;
+
+  /**
+   * @brief Retrieves a vector contianing a continuous segment of
+   *        values from the NXS array.
+   * @param i Starting index in the NXS array.
+   * @param len Number of elements to return.
+   */
   std::vector<int32_t> nxs(size_t i, size_t len) const;
+
+  /**
+   * @brief Retrieves a vector contianing a continuous segment of
+   *        values from the JXS array.
+   * @param i Starting index in the JXS array.
+   * @param len Number of elements to return.
+   */
   std::vector<int32_t> jxs(size_t i, size_t len) const;
+
+  /**
+   * @brief Retrieves a vector contianing a continuous segment of
+   *        values from the XSS array.
+   * @param i Starting index in the XSS array.
+   * @param len Number of elements to return.
+   */
   std::vector<double> xss(size_t i, size_t len) const;
 
+  /**
+   * @brief Retrieves a vector contianing a continuous segment of
+   *        values from the XSS array, all cast to type T.
+   * @param i Starting index in the XSS array.
+   * @param len Number of elements to return.
+   */
   template <class T>
   std::vector<T> xss(size_t i, size_t len) const {
     std::vector<T> tmp(len);
@@ -78,25 +162,85 @@ class ACE {
     return tmp;
   }
 
+  /**
+   * @brief Returns a pointer to the beginning of the XSS array.
+   */
   const double* xss_data() const;
 
-  // Locations for sections within XSS
+  /**
+   * @brief Returns the index to the beginning of the ESZ block.
+   */
   int32_t ESZ() const;
+
+  /**
+   * @brief Returns the index to the beginning of the NU block.
+   */
   int32_t NU() const;
+
+  /**
+   * @brief Returns the index to the beginning of the MTR block.
+   */
   int32_t MTR() const;
+
+  /**
+   * @brief Returns the index to the beginning of the LQR block.
+   */
   int32_t LQR() const;
+
+  /**
+   * @brief Returns the index to the beginning of the TYR block.
+   */
   int32_t TYR() const;
+
+  /**
+   * @brief Returns the index to the beginning of the LSIG block.
+   */
   int32_t LSIG() const;
+
+  /**
+   * @brief Returns the index to the beginning of the SIG block.
+   */
   int32_t SIG() const;
+
+  /**
+   * @brief Returns the index to the beginning of the LAND block.
+   */
   int32_t LAND() const;
+
+  /**
+   * @brief Returns the index to the beginning of the AND block.
+   */
   int32_t AND() const;
+
+  /**
+   * @brief Returns the index to the beginning of the LDLW block.
+   */
   int32_t LDLW() const;
+
+  /**
+   * @brief Returns the index to the beginning of the DLW block.
+   */
   int32_t DLW() const;
+
+  /**
+   * @brief Returns the index to the beginning of the DNEDL block.
+   */
   int32_t DNEDL() const;
+
+  /**
+   * @brief Returns the index to the beginning of the DNED block.
+   */
   int32_t DNED() const;
+
+  /**
+   * @brief Returns the index to the beginning of the DNU block.
+   */
   int32_t DNU() const;
+
+  /**
+   * @brief Returns the index to the beginning of the BDD block.
+   */
   int32_t BDD() const;
-  //=======================================================================
 
  private:
   int32_t zaid_;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, Hunter Belanger
+ * Copyright 2021, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -40,14 +40,19 @@
 namespace pndl {
 
 FissionData::FissionData()
-    : nu_total_(nullptr),
+    : awr_(),
+      prompt_spectrum_frame_(Frame::Lab),
+      nu_total_(nullptr),
       nu_prompt_(nullptr),
       nu_delayed_(nullptr),
       prompt_spectrum_(nullptr),
       delayed_groups_() {}
 
-FissionData::FissionData(const ACE& ace, std::shared_ptr<AngleEnergy> prmpt)
-    : nu_total_(nullptr),
+FissionData::FissionData(const ACE& ace, std::shared_ptr<AngleEnergy> prmpt,
+                         Frame frame)
+    : awr_(ace.awr()),
+      prompt_spectrum_frame_(frame),
+      nu_total_(nullptr),
       nu_prompt_(nullptr),
       nu_delayed_(nullptr),
       prompt_spectrum_(prmpt),

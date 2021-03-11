@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, Hunter Belanger
+ * Copyright 2021, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -41,6 +41,7 @@
 namespace pndl {
 
 Watt::Watt(const ACE& ace, size_t i) : a_(), b_(), restriction_energy_() {
+  size_t original_i = i;
   uint32_t NR = ace.xss<uint32_t>(i);
   uint32_t NE = ace.xss<uint32_t>(i + 1 + 2 * NR);
   std::vector<uint32_t> NBT_a;
@@ -60,10 +61,18 @@ Watt::Watt(const ACE& ace, size_t i) : a_(), b_(), restriction_energy_() {
   std::vector<double> a = ace.xss(i + 2 + 2 * NR + NE, NE);
 
   // Create Function1D pointer
-  if (NBT_a.size() == 1) {
-    a_ = std::make_shared<Region1D>(energy_a, a, INT_a[0]);
-  } else {
-    a_ = std::make_shared<MultiRegion1D>(NBT_a, INT_a, energy_a, a);
+  try {
+    if (NBT_a.size() == 1) {
+      a_ = std::make_shared<Region1D>(energy_a, a, INT_a[0]);
+    } else {
+      a_ = std::make_shared<MultiRegion1D>(NBT_a, INT_a, energy_a, a);
+    }
+  } catch (PNDLException& error) {
+    std::string mssg = "Watt::Watt: Could not construct";
+    mssg += "Tabular1D for the 'a'.\nIndex in the";
+    mssg += " XSS block is i = " + std::to_string(original_i) + ".";
+    error.add_to_exception(mssg, __FILE__, __LINE__);
+    throw error;
   }
 
   // Reset i for b
@@ -88,10 +97,18 @@ Watt::Watt(const ACE& ace, size_t i) : a_(), b_(), restriction_energy_() {
   std::vector<double> b = ace.xss(i + 2 + 2 * NR + NE, NE);
 
   // Create Function1D pointer
-  if (NBT_b.size() == 1) {
-    b_ = std::make_shared<Region1D>(energy_b, b, INT_b[0]);
-  } else {
-    b_ = std::make_shared<MultiRegion1D>(NBT_b, INT_b, energy_b, b);
+  try {
+    if (NBT_b.size() == 1) {
+      b_ = std::make_shared<Region1D>(energy_b, b, INT_b[0]);
+    } else {
+      b_ = std::make_shared<MultiRegion1D>(NBT_b, INT_b, energy_b, b);
+    }
+  } catch (PNDLException& error) {
+    std::string mssg = "Watt::Watt: Could not construct";
+    mssg += "Tabular1D for the 'b'.\nIndex in the";
+    mssg += " XSS block is i = " + std::to_string(original_i) + ".";
+    error.add_to_exception(mssg, __FILE__, __LINE__);
+    throw error;
   }
 
   // Get restriction energy

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, Hunter Belanger
+ * Copyright 2021, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -65,11 +65,20 @@ GeneralEvaporation::GeneralEvaporation(const ACE& ace, size_t i)
   bin_bounds_ = ace.xss(i + 2 + 2 * NR + 2 * NE, NX);
 
   // Create Function1D pointer
-  if (NBT.size() == 1) {
-    temperature_ = std::make_shared<Region1D>(energy, temperature, INT[0]);
-  } else {
-    temperature_ =
-        std::make_shared<MultiRegion1D>(NBT, INT, energy, temperature);
+  try {
+    if (NBT.size() == 1) {
+      temperature_ = std::make_shared<Region1D>(energy, temperature, INT[0]);
+    } else {
+      temperature_ =
+          std::make_shared<MultiRegion1D>(NBT, INT, energy, temperature);
+    }
+  } catch (PNDLException& error) {
+    std::string mssg =
+        "GeneralEvaporation::GeneralEvaporation: Could not construct\n";
+    mssg += "Tabular1D for the effective nuclear temperature.\nIndex in the";
+    mssg += " XSS block is i = " + std::to_string(i) + ".";
+    error.add_to_exception(mssg, __FILE__, __LINE__);
+    throw error;
   }
 }
 

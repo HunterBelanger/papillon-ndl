@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, Hunter Belanger
+ * Copyright 2021, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -48,7 +48,7 @@ using namespace pndl;
 
 void init_AngleEnergyPacket(py::module& m) {
   py::class_<AngleEnergyPacket>(m, "AngleEnergyPacket")
-      .def_readwrite("angle", &AngleEnergyPacket::angle)
+      .def_readwrite("cosine_angle", &AngleEnergyPacket::cosine_angle)
       .def_readwrite("energy", &AngleEnergyPacket::energy);
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, Hunter Belanger
+ * Copyright 2021, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -34,22 +34,49 @@
 #ifndef PAPILLON_NDL_TABULAR_ENERGY_H
 #define PAPILLON_NDL_TABULAR_ENERGY_H
 
+/**
+ * @file
+ * @author Hunter Belanger
+ */
+
 #include <PapillonNDL/ace.hpp>
 #include <PapillonNDL/energy_law.hpp>
 #include <PapillonNDL/pctable.hpp>
 
 namespace pndl {
 
+/**
+ * @brief Energy distribution represented as a tabulated PDF and CDF.
+ */
 class TabularEnergy : public EnergyLaw {
  public:
+  /**
+   * @param ace ACE file to take data from.
+   * @param i Starting index of distribution in the XSS array.
+   * @param JED Index offset to find the PDF and CDF tables.
+   */
   TabularEnergy(const ACE& ace, size_t i, size_t JED);
+
   ~TabularEnergy() = default;
 
   double sample_energy(double E_in,
                        std::function<double()> rng) const override final;
 
+  /**
+   * @brief Reterns the incoming energy points in MeV for which a PCTable
+   *        is stored.
+   */
   const std::vector<double>& incoming_energy() const;
+
+  /**
+   * @brief Returns the ith PDF/CDF, corresponding to the ith incoming energy.
+   * @param i Index in the incoming energy grid.
+   */
   const PCTable& table(size_t i) const;
+
+  /**
+   * @brief Returns the number of incoming energy points.
+   */
   size_t size() const;
 
  private:

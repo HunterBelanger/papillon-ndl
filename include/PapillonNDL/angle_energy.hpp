@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, Hunter Belanger
+ * Copyright 2021, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -34,15 +34,37 @@
 #ifndef PAPILLON_NDL_ANGLE_ENERGY_H
 #define PAPILLON_NDL_ANGLE_ENERGY_H
 
-#include <PapillonNDL/angle_energy_packet.hpp>
 #include <functional>
+
+/**
+ * @file
+ * @author Hunter Belanger
+ */
 
 namespace pndl {
 
+/**
+ * @brief A struct to hold a sampled angle and energy.
+ */
+struct AngleEnergyPacket {
+  double cosine_angle;  /**< Sampled cosine of scattering angle */
+  double energy; /**< Sampled outgoing energy in MeV */
+};
+
+/**
+ * @brief Interface to represent any secondary angle-energy distribution.
+ */
 class AngleEnergy {
  public:
   virtual ~AngleEnergy() = default;
 
+  /**
+   * @brief Samples an angle and energy from the distribution.
+   * @param E_in Incident energy in MeV.
+   * @param rng Randum number generation function.
+   * @return Sampled cosine of the scattering angle and energy in an
+   *         AngleEnergyPacket.
+   */
   virtual AngleEnergyPacket sample_angle_energy(
       double E_in, std::function<double()> rng) const = 0;
 };

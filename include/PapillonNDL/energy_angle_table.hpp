@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, Hunter Belanger
+ * Copyright 2021, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -34,15 +34,28 @@
 #ifndef PAPILLON_NDL_ENERGY_ANGLE_TABLE_H
 #define PAPILLON_NDL_ENERGY_ANGLE_TABLE_H
 
+/**
+ * @file
+ * @author Hunter Belanger
+ */
+
 #include <PapillonNDL/ace.hpp>
-#include <PapillonNDL/angle_energy_packet.hpp>
+#include <PapillonNDL/angle_energy.hpp>
 #include <PapillonNDL/pctable.hpp>
 #include <functional>
 
 namespace pndl {
 
+/**
+ * @brief Contains the product Angle-Energy distribution for a single
+ *        incident energy.
+ */
 class EnergyAngleTable {
  public:
+  /**
+   * @param ace ACE file to take data from.
+   * @param i Starting index of distribution in the XSS array.
+   */
   EnergyAngleTable(const ACE& ace, size_t i);
   ~EnergyAngleTable() = default;
 
@@ -52,7 +65,10 @@ class EnergyAngleTable {
     auto cdf_it = std::lower_bound(cdf_.begin(), cdf_.end(), xi);
     size_t l = std::distance(cdf_.begin(), cdf_it) - 1;
 
-    if (interp_ == Interpolation::Histogram) {
+    // Must account for case where pdf_[l] = pdf_[l+1], which means  that
+    // the slope is zero, and m=0. This results in nan for the linear alg.
+    // To avoid this, must use histogram for that segment.
+    if (interp_ == Interpolation::Histogram || pdf_[l] == pdf_[l + 1]) {
       E_out = histogram_interp_energy(xi, l);
       mu = angles_[l].sample_value(rng());
       if (std::abs(mu) > 1.) mu = std::copysign(1., mu);
@@ -61,7 +77,7 @@ class EnergyAngleTable {
 
     E_out = linear_interp_energy(xi, l);
 
-    double f = interpolation_factor(xi, cdf_[l], cdf_[l + 1]);
+    double f = (xi - cdf_[l]) / (cdf_[l + 1] - cdf_[l]);
     if (f < 0.5)
       mu = angles_[l].sample_value(rng());
     else
@@ -72,14 +88,49 @@ class EnergyAngleTable {
     return {mu, E_out};
   }
 
+  /**
+   * @brief Returns the lowest possible outgoing energy in MeV.
+   */
   double min_energy() const { return energy_.front(); }
+
+  /**
+   *  @brief Returns the highest possible outgoing energy in MeV.
+   */
   double max_energy() const { return energy_.back(); }
+
+  /**
+   * @brief Returns the method of interpolation used for the energy
+   *        PDF and CDF.
+   */
   Interpolation interpolation() const { return interp_; }
 
+  /**
+   * @brief Returns a vector of the outgoing energy points.
+   */
   const std::vector<double>& energy() const { return energy_; }
+
+  /**
+   * @brief Returns a vector for the PDF points corresponding to the
+   *        outgoing energy grid.
+   */
   const std::vector<double>& pdf() const { return pdf_; }
+
+  /**
+   * @brief Returns a vector for the CDF points corresponding to the
+   *        outgoing energy grid.
+   */
   const std::vector<double>& cdf() const { return cdf_; }
+
+  /**
+   * @brief Returns the ith AngleTable which contains the angular
+   *        distribution for the ith outgoing energy.
+   * @param i Index to the outgoing energy grid.
+   */
   const PCTable& angle_table(size_t i) const { return angles_[i]; }
+
+  /**
+   * @brief Returns the number of outgoing energy points / AngleTables.
+   */
   size_t size() const { return energy_.size(); }
 
  private:
@@ -95,6 +146,7 @@ class EnergyAngleTable {
 
   double linear_interp_energy(double xi, size_t l) const {
     double m = (pdf_[l + 1] - pdf_[l]) / (energy_[l + 1] - energy_[l]);
+
     return energy_[l] +
            (1. / m) * (std::sqrt(pdf_[l] * pdf_[l] + 2. * m * (xi - cdf_[l])) -
                        pdf_[l]);

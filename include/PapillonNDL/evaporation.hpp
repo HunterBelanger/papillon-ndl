@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, Hunter Belanger
+ * Copyright 2021, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -34,6 +34,11 @@
 #ifndef PAPILLON_NDL_EVAPORATION_H
 #define PAPILLON_NDL_EVAPORATION_H
 
+/**
+ * @file
+ * @author Hunter Belanger
+ */
+
 #include <PapillonNDL/ace.hpp>
 #include <PapillonNDL/energy_law.hpp>
 #include <PapillonNDL/tabulated_1d.hpp>
@@ -41,15 +46,30 @@
 
 namespace pndl {
 
+/**
+ * @brief Energy distribution represented as an evaporation spectrum.
+ */
 class Evaporation : public EnergyLaw {
  public:
+  /**
+   * @param ace ACE file to take data from.
+   * @param i Starting index of distribution in the XSS array.
+   */
   Evaporation(const ACE& ace, size_t i);
   ~Evaporation() = default;
 
   double sample_energy(double E_in,
                        std::function<double()> rng) const override final;
 
+  /**
+   * @brief Returns a pointer to the table containg the effective temperature
+   *        as a function of incoming energy.
+   */
   std::shared_ptr<Tabulated1D> temperature() const;
+
+  /**
+   * @brief Returns the value of the cuttoff energy of the distribution in MeV.
+   */
   double U() const;
 
  private:

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, Hunter Belanger
+ * Copyright 2021, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -34,43 +34,44 @@
 #include <pybind11/functional.h>
 #include <pybind11/pybind11.h>
 
-#include <PapillonNDL/nuclide.hpp>
+#include <PapillonNDL/ce_neutron.hpp>
 
 namespace py = pybind11;
 
 using namespace pndl;
 
-void init_Nuclide(py::module& m) {
-  py::class_<Nuclide>(m, "Nuclide")
+void init_CENeutron(py::module& m) {
+  py::class_<CENeutron>(m, "CENeutron")
       .def(py::init<const ACE&>())
-      .def("ZAID", &Nuclide::ZAID)
-      .def("AWR", &Nuclide::AWR)
-      .def("temperature", &Nuclide::temperature)
-      .def("fissile", &Nuclide::fissile)
-      .def("energy_grid", &Nuclide::energy_grid)
-      .def("total_cross_section", &Nuclide::total_cross_section)
-      .def("elastic_cross_section", &Nuclide::elastic_cross_section)
-      .def("absorption_cross_section", &Nuclide::absorption_cross_section)
-      .def("elastic_angle_distribution", &Nuclide::elastic_angle_distribution)
-      .def("energy_grid_index", &Nuclide::energy_grid_index)
+      .def(py::init<const ACE&, const CENeutron&>())
+      .def("zaid", &CENeutron::zaid)
+      .def("awr", &CENeutron::awr)
+      .def("temperature", &CENeutron::temperature)
+      .def("fissile", &CENeutron::fissile)
+      .def("energy_grid", &CENeutron::energy_grid)
+      .def("total_cross_section", &CENeutron::total_cross_section)
+      .def("elastic_cross_section", &CENeutron::elastic_cross_section)
+      .def("capture_cross_section", &CENeutron::capture_cross_section)
+      .def("elastic_angle_distribution", &CENeutron::elastic_angle_distribution)
+      .def("energy_grid_index", &CENeutron::energy_grid_index)
       .def("total_xs",
-           py::overload_cast<double>(&Nuclide::total_xs, py::const_))
+           py::overload_cast<double>(&CENeutron::total_xs, py::const_))
       .def("total_xs",
-           py::overload_cast<double, size_t>(&Nuclide::total_xs, py::const_))
+           py::overload_cast<double, size_t>(&CENeutron::total_xs, py::const_))
       .def("elastic_xs",
-           py::overload_cast<double>(&Nuclide::elastic_xs, py::const_))
-      .def("elastic_xs",
-           py::overload_cast<double, size_t>(&Nuclide::elastic_xs, py::const_))
-      .def("absorption_xs",
-           py::overload_cast<double>(&Nuclide::absorption_xs, py::const_))
-      .def("absorption_xs", py::overload_cast<double, size_t>(
-                                &Nuclide::absorption_xs, py::const_))
-      .def("sample_elastic_angle", &Nuclide::sample_elastic_angle)
-      .def("has_reaction", &Nuclide::has_reaction)
-      .def("reaction", &Nuclide::reaction)
+           py::overload_cast<double>(&CENeutron::elastic_xs, py::const_))
+      .def("elastic_xs", py::overload_cast<double, size_t>(
+                             &CENeutron::elastic_xs, py::const_))
+      .def("capture_xs",
+           py::overload_cast<double>(&CENeutron::capture_xs, py::const_))
+      .def("capture_xs", py::overload_cast<double, size_t>(
+                                &CENeutron::capture_xs, py::const_))
+      .def("sample_elastic_angle", &CENeutron::sample_elastic_angle)
+      .def("has_reaction", &CENeutron::has_reaction)
+      .def("reaction", &CENeutron::reaction)
       .def("reaction_xs", py::overload_cast<uint32_t, double>(
-                              &Nuclide::reaction_xs, py::const_))
+                              &CENeutron::reaction_xs, py::const_))
       .def("reaction_xs", py::overload_cast<uint32_t, double, size_t>(
-                              &Nuclide::reaction_xs, py::const_))
-      .def("fission_data", &Nuclide::fission_data);
+                              &CENeutron::reaction_xs, py::const_))
+      .def("fission_data", &CENeutron::fission_data);
 }

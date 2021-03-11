@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, Hunter Belanger
+ * Copyright 2021, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -34,12 +34,23 @@
 #ifndef PAPILLON_NDL_CONSTANT_H
 #define PAPILLON_NDL_CONSTANT_H
 
+/**
+ * @file
+ * @author Hunter Belanger
+ */
+
 #include <PapillonNDL/function_1d.hpp>
 
 namespace pndl {
 
+/**
+ * @brief Implements a function which is a constant value everywhere.
+ */
 class Constant : public Function1D {
  public:
+  /**
+   * @param value Value of the function.
+   */
   Constant(double value) : value_(value) {}
   ~Constant() = default;
 

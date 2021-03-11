@@ -7,13 +7,19 @@ namespace {
   using namespace pndl;
 
   TEST(MultiRegion1D, ConstructorRegions) {
-    std::vector<Region1D> regions {{{1.,4.},{1., 2.}},{{5.,6.},{2., 23.}}}; 
+    std::vector<Region1D> regions 
+      {Region1D({1.,4.},{1., 2.},Interpolation::LinLin),
+       Region1D({5.,6.},{2., 23.},Interpolation::LinLin)}; 
     EXPECT_ANY_THROW(MultiRegion1D m_fail(regions));
 
-    std::vector<Region1D> regions2 {{{1.,4.},{1., 2.}},{{-1.,6.},{2., 23.}}}; 
+    std::vector<Region1D> regions2 
+      {Region1D({1.,4.},{1., 2.},Interpolation::LinLin),
+       Region1D({-1.,6.},{2., 23.}, Interpolation::LinLin)}; 
     EXPECT_ANY_THROW(MultiRegion1D m_fail2(regions2));
 
-    std::vector<Region1D> regions3 {{{1.,4.},{1., 2.}},{{4.,6.},{2., 23.}}}; 
+    std::vector<Region1D> regions3
+      {Region1D({1.,4.},{1., 2.}, Interpolation::LinLin),
+       Region1D({4.,6.},{2., 23.},Interpolation::LinLin)}; 
     EXPECT_NO_THROW(MultiRegion1D m(regions3));
   }
 
@@ -44,21 +50,27 @@ namespace {
   }
 
   TEST(MultiRegion1D, Size) {
-    std::vector<Region1D> regions {{{1.,4.},{1., 2.}},{{4.,6.},{2., 23.}}}; 
+    std::vector<Region1D> regions 
+      {Region1D({1.,4.},{1., 2.},Interpolation::LinLin),
+       Region1D({4.,6.},{2., 23.},Interpolation::LinLin)}; 
     MultiRegion1D R(regions);
 
     EXPECT_EQ(R.size(), regions.size());
   }
 
   TEST(MultiRegion1D, Region) {
-    std::vector<Region1D> regions {{{1.,4.},{1., 2.}},{{4.,6.},{2., 23.}}}; 
+    std::vector<Region1D> regions 
+      {Region1D({1.,4.},{1., 2.},Interpolation::LinLin),
+       Region1D({4.,6.},{2., 23.},Interpolation::LinLin)}; 
     MultiRegion1D R(regions);
 
     EXPECT_EQ(R.size(), regions.size());
   }
 
   TEST(MultiRegion1D, Min_Max_x) {
-    std::vector<Region1D> regions {{{1.,4.},{1., 2.}},{{4.,6.},{2., 23.}}}; 
+    std::vector<Region1D> regions 
+      {Region1D({1.,4.},{1., 2.},Interpolation::LinLin),
+       Region1D({4.,6.},{2., 23.},Interpolation::LinLin)}; 
     MultiRegion1D R(regions);
 
     EXPECT_DOUBLE_EQ(regions.front().min_x(), R.min_x());
@@ -66,7 +78,9 @@ namespace {
   }
 
   TEST(MultiRegion1D, Evaluation) {
-    std::vector<Region1D> regions {{{1.,4.},{1., 4.}},{{4.,8.},{8., 16.}}}; 
+    std::vector<Region1D> regions 
+      {Region1D({1.,4.},{1., 4.},Interpolation::LinLin),
+       Region1D({4.,8.},{8., 16.},Interpolation::LinLin)}; 
     MultiRegion1D R(regions);
 
     double x = 0.9;
@@ -178,6 +192,9 @@ namespace {
     x_hi = 5.;
     double i = 5.25;
     EXPECT_DOUBLE_EQ(i, R.integrate(x_low, x_hi));
+
+    // Ensure integration with inverted limits produces negative
+    EXPECT_DOUBLE_EQ(-i, R.integrate(x_hi, x_low));
   }
 
 }

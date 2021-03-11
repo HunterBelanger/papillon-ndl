@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, Hunter Belanger
+ * Copyright 2021, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -35,7 +35,7 @@
 #include <PapillonNDL/angle_table.hpp>
 #include <PapillonNDL/equiprobable_angle_bins.hpp>
 #include <PapillonNDL/isotropic.hpp>
-#include <stdexcept>
+#include <PapillonNDL/pndl_exception.hpp>
 
 namespace pndl {
 
@@ -44,7 +44,10 @@ AngleDistribution::AngleDistribution(const ACE& ace, int locb)
   // Locb must be >= 0! If locb == -1, it means that there is
   // no angular distribution for the reaction (must use product distribution)
   if (locb < 0) {
-    throw std::runtime_error("AngleDistribution: Must have locb >= 0");
+    std::string mssg =
+        "AngleDistribution::AngleDistribution: Must have locb >= 0.\n";
+    mssg += "Was provided with locb = " + std::to_string(locb) + ".";
+    throw PNDLException(mssg, __FILE__, __LINE__);
   }
 
   if (locb > 0) {
@@ -61,12 +64,25 @@ AngleDistribution::AngleDistribution(const ACE& ace, int locb)
     for (uint32_t j = 0; j < NE; j++) {
       int l = ace.xss<int>(i + 1 + NE + j);
       uint32_t loc = ace.AND() + std::abs(l) - 1;
-      if (l > 0) {
-        laws_.push_back(std::make_shared<EquiprobableAngleBins>(ace, loc));
-      } else if (l < 0) {
-        laws_.push_back(std::make_shared<AngleTable>(ace, loc));
-      } else {
-        laws_.push_back(std::make_shared<Isotropic>());
+
+      try {
+        if (l > 0) {
+          laws_.push_back(std::make_shared<EquiprobableAngleBins>(ace, loc));
+        } else if (l < 0) {
+          laws_.push_back(std::make_shared<AngleTable>(ace, loc));
+        } else {
+          laws_.push_back(std::make_shared<Isotropic>());
+        }
+      } catch (PNDLException& err) {
+        std::string mssg =
+            "AngleDistribution::AngleDistribution: Could not construct angular "
+            "distribution\n";
+        mssg += "for energy index = " + std::to_string(j) +
+                ", energy = " + std::to_string(energy_grid_[j]);
+        mssg += " MeV.\nOccurred at loc = " + std::to_string(loc) +
+                ", locb = " + std::to_string(locb) + ".";
+        err.add_to_exception(mssg, __FILE__, __LINE__);
+        throw err;
       }
     }
   } else if (locb == 0) {
@@ -86,7 +102,7 @@ double AngleDistribution::sample_angle(double E_in,
 
   // Get index of low energy
   size_t l = std::distance(energy_grid_.begin(), E_it);
-  double f = interpolation_factor(E_in, energy_grid_[l], energy_grid_[l + 1]);
+  double f = (E_in - energy_grid_[l]) / (energy_grid_[l + 1] - energy_grid_[l]);
 
   if (rng() > f)
     return laws_[l]->sample_mu(rng());

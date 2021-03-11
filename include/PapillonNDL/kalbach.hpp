@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, Hunter Belanger
+ * Copyright 2021, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -34,6 +34,11 @@
 #ifndef PAPILLON_NDL_KALBACH_H
 #define PAPILLON_NDL_KALBACH_H
 
+/**
+ * @file
+ * @author Hunter Belanger
+ */
+
 #include <PapillonNDL/ace.hpp>
 #include <PapillonNDL/angle_energy.hpp>
 #include <PapillonNDL/kalbach_table.hpp>
@@ -41,17 +46,44 @@
 
 namespace pndl {
 
+/**
+ * @brief A product Angle-Energy distribution which follows a Kalbach-Mann
+ *        semantic. This distribution is simillar to the TabularEnergyAngle
+ *        distribution.
+ */
 class Kalbach : public AngleEnergy {
  public:
+  /**
+   * @param ace ACE file to take data from.
+   * @param i Starting index of distribution in the XSS array.
+   */
   Kalbach(const ACE& ace, size_t i);
   ~Kalbach() = default;
 
   AngleEnergyPacket sample_angle_energy(
       double E_in, std::function<double()> rng) const override final;
 
+  /**
+   * @brief Returns a vector to the grid of incoming energies.
+   */
   const std::vector<double>& incoming_energy() const;
+
+  /**
+   * @brief Returns the ith incoming energy in MeV.
+   * @param i Index to the incoming energy grid.
+   */
   double incoming_energy(size_t i) const;
+
+  /**
+   * @brief Returns a KalbachTable which contains the distributions
+   *        for the ith incoming energy.
+   * @param i Index to the incoming energy.
+   */
   const KalbachTable& table(size_t i) const;
+
+  /**
+   * @brief Returns the number of incoming energy points.
+   */
   size_t size() const;
 
  private:

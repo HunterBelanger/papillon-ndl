@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, Hunter Belanger
+ * Copyright 2021, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -48,10 +48,31 @@ TabularEnergyAngle::TabularEnergyAngle(const ACE& ace, size_t i)
   // Read incoming energies
   incoming_energy_ = ace.xss(i + 2 + 2 * NR, NE);
 
+  if (!std::is_sorted(incoming_energy_.begin(), incoming_energy_.end())) {
+    std::string mssg =
+        "TabularEnergyAngle::TabularEnergyAngle: Incoming energy grid is not "
+        "sorted.";
+    mssg += "\nIndex to TabularEnergyAngle in XSS block is " +
+            std::to_string(i) + ".";
+    throw PNDLException(mssg, __FILE__, __LINE__);
+  }
+
   // Read outgoing energy tables
   for (uint32_t j = 0; j < NE; j++) {
     uint32_t loc = ace.DLW() + ace.xss<uint32_t>(i + 2 + 2 * NR + NE + j) - 1;
-    tables_.emplace_back(ace, loc);
+    try {
+      tables_.emplace_back(ace, loc);
+    } catch (PNDLException& error) {
+      std::string mssg =
+          "TabularEnergyAngle::TabularEnergyAngle: Could not create\n";
+      mssg += "EnergyAngleTable for the " + std::to_string(j) +
+              "th incoming energy ";
+      mssg += std::to_string(incoming_energy_[j]) + " MeV.\n";
+      mssg += "Index of TabularEnergyAngle in XSS block is " +
+              std::to_string(i) + ".";
+      error.add_to_exception(mssg, __FILE__, __LINE__);
+      throw error;
+    }
   }
 }
 
@@ -70,8 +91,8 @@ AngleEnergyPacket TabularEnergyAngle::sample_angle_energy(
     f = 1.;
   } else {
     l = std::distance(incoming_energy_.begin(), in_E_it) - 1;
-    f = interpolation_factor(E_in, incoming_energy_[l],
-                             incoming_energy_[l + 1]);
+    f = (E_in - incoming_energy_[l]) /
+        (incoming_energy_[l + 1] - incoming_energy_[l]);
   }
 
   // Sample outgoing energy, and get R and A for mu
@@ -98,7 +119,7 @@ AngleEnergyPacket TabularEnergyAngle::sample_angle_energy(
   }
 
   double E_out = Emin + ((E_hat - E_l_1) / (E_l_M - E_l_1)) * (Emax - Emin);
-  double mu = tmp.angle;
+  double mu = tmp.cosine_angle;
 
   // mu has already ben verified by the EenergyAngleTable to be in interval
   // [-1,1]

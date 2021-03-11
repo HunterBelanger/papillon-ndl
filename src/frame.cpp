@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, Hunter Belanger
+ * Copyright 2021, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -38,7 +38,7 @@ namespace pndl {
 
 void cm_to_lab(double E, double A, AngleEnergyPacket& ae) {
   double E_cm = ae.energy;
-  double mu_cm = ae.angle;
+  double mu_cm = ae.cosine_angle;
 
   double E_lab = E_cm + (E + 2. * mu_cm * (A + 1.) * std::sqrt(E * E_cm)) /
                             std::pow(A + 1., 2.);
@@ -46,7 +46,7 @@ void cm_to_lab(double E, double A, AngleEnergyPacket& ae) {
   double mu_lab =
       mu_cm * std::sqrt(E_cm / E_lab) + (1. / (A + 1.)) * std::sqrt(E / E_lab);
 
-  ae.angle = mu_lab;
+  ae.cosine_angle = mu_lab;
   ae.energy = E_lab;
 }
 

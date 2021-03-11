@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, Hunter Belanger
+ * Copyright 2021, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -37,6 +37,7 @@
 #include <PapillonNDL/general_evaporation.hpp>
 #include <PapillonNDL/maxwellian.hpp>
 #include <PapillonNDL/multi_region_1d.hpp>
+#include <PapillonNDL/pndl_exception.hpp>
 #include <PapillonNDL/tabular_energy.hpp>
 #include <PapillonNDL/watt.hpp>
 #include <iostream>
@@ -108,8 +109,8 @@ DelayedGroup::DelayedGroup(const ACE& ace, size_t i, size_t g)
   } else {
     // Unknown or unsuported law
     std::string mssg = "DelayedGroup: Group " + std::to_string(g);
-    mssg += "has unkown energy law " + std::to_string(law);
-    throw std::runtime_error(mssg);
+    mssg += "has unkown energy law " + std::to_string(law) + ".";
+    throw PNDLException(mssg, __FILE__, __LINE__);
   }
 }
 

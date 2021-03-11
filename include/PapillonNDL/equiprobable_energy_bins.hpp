@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, Hunter Belanger
+ * Copyright 2021, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -34,21 +34,46 @@
 #ifndef PAPILLON_NDL_EQUIPROBABLE_ENERGY_BINS_H
 #define PAPILLON_NDL_EQUIPROBABLE_ENERGY_BINS_H
 
+/**
+ * @file
+ * @author Hunter Belanger
+ */
+
 #include <PapillonNDL/ace.hpp>
 #include <PapillonNDL/energy_law.hpp>
 
 namespace pndl {
 
+/**
+ * @brief Energy distribution which is provided as equiprobable energy bins.
+ */
 class EquiprobableEnergyBins : public EnergyLaw {
  public:
+  /**
+   * @param ace ACE file to take data from.
+   * @param i Starting index of distribution in the XSS array.
+   */
   EquiprobableEnergyBins(const ACE& ace, size_t i);
   ~EquiprobableEnergyBins() = default;
 
   double sample_energy(double E_in,
                        std::function<double()> rng) const override final;
 
+  /**
+   * @brief Returns a vector of the grid of incoming energy points for which
+   *        an equiprobable bin set is stored.
+   */
   const std::vector<double>& incoming_energy() const;
+
+  /**
+   * @brief Returns the ith set of bin boundaries as a vector.
+   * @param i Index for the incoming energy grid.
+   */
   const std::vector<double>& bin_bounds(size_t i) const;
+
+  /**
+   * @brief Returns the number of incoming energies / bin boundary sets stored.
+   */
   size_t size() const;
 
  private:

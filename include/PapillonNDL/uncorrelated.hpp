@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, Hunter Belanger
+ * Copyright 2021, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -34,6 +34,11 @@
 #ifndef PAPILLON_NDL_UNCORRELATED_H
 #define PAPILLON_NDL_UNCORRELATED_H
 
+/**
+ * @file
+ * @author Hunter Belanger
+ */
+
 #include <PapillonNDL/angle_distribution.hpp>
 #include <PapillonNDL/angle_energy.hpp>
 #include <PapillonNDL/energy_law.hpp>
@@ -41,8 +46,16 @@
 
 namespace pndl {
 
+/**
+ * @brief AngleDistribution - EnergyLaw pair for secondary distributions
+ *        where the angle and energy are not correlated.
+ */
 class Uncorrelated : public AngleEnergy {
  public:
+  /**
+   * @param angle Angle distribution for all incoming energies.
+   * @param energy Shared pointer to the energy distribution.
+   */
   Uncorrelated(const AngleDistribution& angle,
                std::shared_ptr<EnergyLaw> energy);
   ~Uncorrelated() = default;
@@ -50,7 +63,14 @@ class Uncorrelated : public AngleEnergy {
   AngleEnergyPacket sample_angle_energy(
       double E_in, std::function<double()> rng) const override final;
 
+  /**
+   * @brief Returns the angular distribution.
+   */
   AngleDistribution angle() const;
+
+  /**
+   * @brief Returns a pointer to the energy distribution.
+   */
   std::shared_ptr<EnergyLaw> energy() const;
 
  private:

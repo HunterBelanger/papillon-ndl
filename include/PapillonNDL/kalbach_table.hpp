@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, Hunter Belanger
+ * Copyright 2021, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -34,6 +34,11 @@
 #ifndef PAPILLON_NDL_KALBACH_TABLE_H
 #define PAPILLON_NDL_KALBACH_TABLE_H
 
+/**
+ * @file
+ * @author Hunter Belanger
+ */
+
 #include <PapillonNDL/ace.hpp>
 #include <PapillonNDL/interpolation.hpp>
 #include <algorithm>
@@ -41,14 +46,23 @@
 
 namespace pndl {
 
+/**
+ * @brief Contains the product Angle-Energy distribution for a single
+ *        incident energy, using the Kalbach-Mann representation.
+ */
 class KalbachTable {
  public:
+  /**
+   * @param ace ACE file to take data from.
+   * @param i Starting index of distribution in the XSS array.
+   */
   KalbachTable(const ACE& ace, size_t i);
   ~KalbachTable() = default;
 
   double sample_energy(double xi) const {
     if (xi < 0. || xi > 1.) {
-      throw std::runtime_error("KalbachTable: Invalid value for xi provided");
+      throw PNDLException("KalbachTable: Invalid value for xi provided.",
+                          __FILE__, __LINE__);
     }
 
     auto cdf_it = std::lower_bound(cdf_.begin(), cdf_.end(), xi);
@@ -56,16 +70,29 @@ class KalbachTable {
     if (xi == *cdf_it) return energy_[l];
     l--;
 
-    if (interp_ == Interpolation::Histogram)
+    // Must account for case where pdf_[l] = pdf_[l+1], which means  that
+    // the slope is zero, and m=0. This results in nan for the linear alg.
+    // To avoid this, must use histogram for that segment.
+    if (interp_ == Interpolation::Histogram || pdf_[l] == pdf_[l + 1])
       return histogram_interp_energy(xi, l);
 
     return linear_interp_energy(xi, l);
   }
 
+  /**
+   * @brief Returns the lowest possible outgoing energy in MeV.
+   */
   double min_energy() const { return energy_.front(); }
 
+  /**
+   *  @brief Returns the highest possible outgoing energy in MeV.
+   */
   double max_energy() const { return energy_.back(); }
 
+  /**
+   * @brief Evaluates R for a given outgoing energy.
+   * @param E Outgoing energy in MeV.
+   */
   double R(double E) const {
     if (E <= energy_.front())
       return R_.front();
@@ -75,11 +102,20 @@ class KalbachTable {
       auto E_it = std::lower_bound(energy_.begin(), energy_.end(), E);
       size_t l = std::distance(energy_.begin(), E_it) - 1;
 
-      return interpolate(E, energy_[l], R_[l], energy_[l + 1], R_[l + 1],
-                         interp_);
+      if (interp_ == Interpolation::Histogram) {
+        return Histogram::interpolate(E, energy_[l], R_[l], energy_[l + 1],
+                                      R_[l + 1]);
+      } else {
+        return LinLin::interpolate(E, energy_[l], R_[l], energy_[l + 1],
+                                   R_[l + 1]);
+      }
     }
   }
 
+  /**
+   * @brief Evaluates A for a given outgoing energy.
+   * @param E Outgoing energy in MeV.
+   */
   double A(double E) const {
     if (E <= energy_.front())
       return A_.front();
@@ -89,17 +125,55 @@ class KalbachTable {
       auto E_it = std::lower_bound(energy_.begin(), energy_.end(), E);
       size_t l = std::distance(energy_.begin(), E_it) - 1;
 
-      return interpolate(E, energy_[l], A_[l], energy_[l + 1], A_[l + 1],
-                         interp_);
+      if (interp_ == Interpolation::Histogram) {
+        return Histogram::interpolate(E, energy_[l], A_[l], energy_[l + 1],
+                                      A_[l + 1]);
+      } else {
+        return LinLin::interpolate(E, energy_[l], A_[l], energy_[l + 1],
+                                   A_[l + 1]);
+      }
     }
   }
 
+  /**
+   * @brief Returns a vector of the outgoing energy points.
+   */
   const std::vector<double>& energy() const { return energy_; }
+
+  /**
+   * @brief Returns a vector for the PDF points corresponding to the
+   *        outgoing energy grid.
+   */
   const std::vector<double>& pdf() const { return pdf_; }
+
+  /**
+   * @brief Returns a vector for the CDF points corresponding to the
+   *        outgoing energy grid.
+   */
   const std::vector<double>& cdf() const { return cdf_; }
+
+  /**
+   * @brief Returns a vector for the values of R corresponding to
+   *        the energy grid points.
+   */
   const std::vector<double>& R() const { return R_; }
+
+  /**
+   * @brief Returns a vector for the values of A corresponding to
+   *        the energy grid points.
+   */
   const std::vector<double>& A() const { return A_; }
+
+  /**
+   * @brief Returns the method of interpolation used for the energy
+   *        PDF and CDF, R, and A.
+   */
   Interpolation interpolation() const { return interp_; }
+
+  /**
+   * @brief Returns the number of outgoing energy points / AngleTables.
+   */
+  size_t size() const { return energy_.size(); }
 
  private:
   std::vector<double> energy_;

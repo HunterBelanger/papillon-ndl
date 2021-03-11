@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, Hunter Belanger
+ * Copyright 2021, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -64,11 +64,19 @@ Maxwellian::Maxwellian(const ACE& ace, size_t i)
   restriction_energy_ = ace.xss(i + 2 + 2 * NR + 2 * NE);
 
   // Create Function1D pointer
-  if (NBT.size() == 1) {
-    temperature_ = std::make_unique<Region1D>(energy, temperature, INT[0]);
-  } else {
-    temperature_ =
-        std::make_unique<MultiRegion1D>(NBT, INT, energy, temperature);
+  try {
+    if (NBT.size() == 1) {
+      temperature_ = std::make_unique<Region1D>(energy, temperature, INT[0]);
+    } else {
+      temperature_ =
+          std::make_unique<MultiRegion1D>(NBT, INT, energy, temperature);
+    }
+  } catch (PNDLException& error) {
+    std::string mssg = "Maxwellian::Maxwellian: Could not construct";
+    mssg += "Tabular1D for the\neffective nuclear temperature. Index in the";
+    mssg += " XSS block is i = " + std::to_string(i) + ".";
+    error.add_to_exception(mssg, __FILE__, __LINE__);
+    throw error;
   }
 }
 

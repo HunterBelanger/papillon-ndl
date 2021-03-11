@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, Hunter Belanger
+ * Copyright 2021, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -34,6 +34,11 @@
 #ifndef PAPILLON_NDL_ENERGY_GRID_H
 #define PAPILLON_NDL_ENERGY_GRID_H
 
+/**
+ * @file
+ * @author Hunter Belanger
+ */
+
 #include <PapillonNDL/ace.hpp>
 #include <PapillonNDL/shared_span.hpp>
 #include <cmath>
@@ -41,17 +46,51 @@
 
 namespace pndl {
 
+/**
+ * @brief Holds the hashed energy grid of a Nuclide.
+ */
 class EnergyGrid {
  public:
+  /**
+   * @param ace ACE file from which to take the energy grid.
+   * @param NBINS Number of bins to hash the energy grid into. The
+   *              default value is 8192, which is the number of bins
+   *              used by MCNP.
+   */
   EnergyGrid(const ACE& ace, uint32_t NBINS = 8192);
   ~EnergyGrid() = default;
 
+  /**
+   * @brief Returns the ith energy in the grid in MeV.
+   * @param i Index into energy grid.
+   */
   double operator[](size_t i) const;
+
+  /**
+   * @brief Number of points in the complete energy grid.
+   */
   size_t size() const;
+
+  /**
+   * @brief Returns the energy grid as a shared_span<float>
+   */
   shared_span<float> grid() const;
+
+  /**
+   * @brief Returns the lowest energy in the grid.
+   */
   double min_energy() const;
+
+  /**
+   * @brief Returns the highest energy in the grid.
+   */
   double max_energy() const;
 
+  /**
+   * @brief Finds the interpolation index for a given energy, using the
+   *        hashing algorithm for speed.
+   * @param E Energy for which to find the index.
+   */
   size_t get_lower_index(double E) const {
     if (E <= energy_values_.front()) {
       return 0;

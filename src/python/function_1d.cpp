@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, Hunter Belanger
+ * Copyright 2021, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -118,6 +118,7 @@ void init_Tabulated1D(py::module& m) {
   py::class_<Tabulated1D, PyTabulated1D, std::shared_ptr<Tabulated1D>>(
       m, "Tabulated1D")
       .def(py::init<>())
+      .def("__call__", &Tabulated1D::operator())
       .def("breakpoints", &Tabulated1D::breakpoints)
       .def("interpolation", &Tabulated1D::interpolation)
       .def("x", &Tabulated1D::x)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, Hunter Belanger
+ * Copyright 2021, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -32,6 +32,7 @@
  *
  * */
 #include <PapillonNDL/multi_region_1d.hpp>
+#include <PapillonNDL/pndl_exception.hpp>
 #include <algorithm>
 #include <numeric>
 #include <stdexcept>
@@ -42,7 +43,11 @@ MultiRegion1D::MultiRegion1D(const std::vector<Region1D>& regions)
     : regions_(regions) {
   // Assure there are at least two regions
   if (regions_.size() < 2) {
-    throw std::length_error("MultiRegion1D: must have at least 2 Region1D");
+    std::string mssg =
+        "MultiRegion1D::MultiRegion1D: Must provide at least 2 regions.\n";
+    mssg +=
+        "Was provided with " + std::to_string(regions_.size()) + " regions.";
+    throw PNDLException(mssg, __FILE__, __LINE__);
   }
 
   // Ensure all regions are ordered and not overlapping
@@ -51,8 +56,11 @@ MultiRegion1D::MultiRegion1D(const std::vector<Region1D>& regions)
       if (regions_[i].min_x() >= regions_[i + 1].min_x() ||
           regions_[i].max_x() != regions_[i + 1].min_x()) {
         // Problem with ordering
-        throw std::runtime_error(
-            "MultiRegion1D: unsorted or unaligned x values");
+        std::string mssg =
+            "MultiRegion1D::MultiRegion1D: Regions provided to MultiRegion1D "
+            "constructor are\n";
+        mssg += "improperly orderd.";
+        throw PNDLException(mssg, __FILE__, __LINE__);
       }
     }
   }
@@ -65,15 +73,24 @@ MultiRegion1D::MultiRegion1D(const std::vector<uint32_t>& NBT,
     : regions_() {
   // Ensure NBT and INT are the same length
   if (NBT.size() != INT.size()) {
-    throw std::runtime_error("MultiRegion1D: NBT and INT have different sizes");
+    std::string mssg =
+        "MultiRegion1D::MultiRegion1D: NBT and INT have different sizes.\n";
+    mssg += "NBT.size() = " + std::to_string(NBT.size()) +
+            " and INT.size() = " + std::to_string(INT.size()) + ".";
+    throw PNDLException(mssg, __FILE__, __LINE__);
   }
 
   if (x.size() != y.size()) {
-    throw std::runtime_error("MultiRegion1D: x and y have different sizes");
+    std::string mssg =
+        "MultiRegion1D::MultiRegion1D: x and y have different sizes.\n";
+    mssg += "x.size() = " + std::to_string(x.size()) +
+            " and y.size() = " + std::to_string(y.size()) + ".";
+    throw PNDLException(mssg, __FILE__, __LINE__);
   }
 
   if (!std::is_sorted(x.begin(), x.end())) {
-    throw std::runtime_error("MultiRegion1D: x is not sorted");
+    std::string mssg = "MultiRegion1D::MultiRegion1D: x is not sorted.";
+    throw PNDLException(mssg, __FILE__, __LINE__);
   }
 
   // Make 1D regions of all intervals
@@ -81,9 +98,19 @@ MultiRegion1D::MultiRegion1D(const std::vector<uint32_t>& NBT,
   size_t hi = 0;
   for (size_t i = 0; i < NBT.size(); i++) {
     hi = NBT[i];
-    regions_.push_back({{x.begin() + low, x.begin() + hi},
-                        {y.begin() + low, y.begin() + hi},
-                        INT[i]});
+
+    try {
+      regions_.push_back(Region1D({x.begin() + low, x.begin() + hi},
+                                  {y.begin() + low, y.begin() + hi}, INT[i]));
+    } catch (PNDLException& error) {
+      std::string mssg =
+          "MultiRegion1D::MultiRegion1D: The i = " + std::to_string(i) +
+          " Region1D could not be constructed\n";
+      mssg += "when building MultiRegion1D.";
+      error.add_to_exception(mssg, __FILE__, __LINE__);
+      throw error;
+    }
+
     low = hi - 1;
 
     // Check for discontinuity at region boundary
@@ -95,9 +122,9 @@ MultiRegion1D::MultiRegion1D(const std::vector<uint32_t>& NBT,
 
 double MultiRegion1D::operator()(double x) const {
   if (x <= min_x())
-    return regions_.front()(x);
+    return (regions_.front())(x);
   else if (x >= max_x())
-    return regions_.back()(x);
+    return (regions_.back())(x);
 
   // Get region which contains x
   auto region_it = std::lower_bound(regions_.begin(), regions_.end(), x);
@@ -107,6 +134,13 @@ double MultiRegion1D::operator()(double x) const {
 }
 
 double MultiRegion1D::integrate(double x_low, double x_hi) const {
+  bool inverted = x_low > x_hi;
+  if (inverted) {
+    double x_low_tmp = x_low;
+    x_low = x_hi;
+    x_hi = x_low_tmp;
+  }
+
   // Integration may only be carried out over the function's valid domain
   if (x_low <= min_x())
     x_low = min_x();
@@ -140,6 +174,8 @@ double MultiRegion1D::integrate(double x_low, double x_hi) const {
       region++;
     }
   }
+
+  if (inverted) integral *= -1.;
 
   return integral;
 }

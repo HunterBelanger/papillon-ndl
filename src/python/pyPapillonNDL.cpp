@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, Hunter Belanger
+ * Copyright 2021, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -32,6 +32,7 @@
  *
  * */
 #include <pybind11/pybind11.h>
+
 #include <PapillonNDL/version.hpp>
 
 namespace py = pybind11;
@@ -72,7 +73,7 @@ extern void init_CrossSection(py::module&);
 extern void init_DelayedGroup(py::module&);
 extern void init_FissionData(py::module&);
 extern void init_Reaction(py::module&);
-extern void init_Nuclide(py::module&);
+extern void init_CENeutron(py::module&);
 extern void init_PRNG(py::module&);
 
 PYBIND11_MODULE(pyPapillonNDL, m) {
@@ -112,11 +113,11 @@ PYBIND11_MODULE(pyPapillonNDL, m) {
   init_Reaction(m);
   init_DelayedGroup(m);
   init_FissionData(m);
-  init_Nuclide(m);
+  init_CENeutron(m);
   init_PRNG(m);
 
   m.attr("__author__") = "Hunter Belanger";
-  m.attr("__copyright__") = "Copyright 2020, Hunter Belanger";
+  m.attr("__copyright__") = "Copyright 2021, Hunter Belanger";
   m.attr("__license__") = "CECILL-2.1";
   m.attr("__maintainer__") = "Hunter Belanger";
   m.attr("__email__") = "hunter.belanger@gmail.com";

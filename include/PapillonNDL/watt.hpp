@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, Hunter Belanger
+ * Copyright 2021, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -34,6 +34,11 @@
 #ifndef PAPILLON_NDL_WATT_H
 #define PAPILLON_NDL_WATT_H
 
+/**
+ * @file
+ * @author Hunter Belanger
+ */
+
 #include <PapillonNDL/ace.hpp>
 #include <PapillonNDL/energy_law.hpp>
 #include <PapillonNDL/tabulated_1d.hpp>
@@ -41,16 +46,36 @@
 
 namespace pndl {
 
+/**
+ * @brief Energy distribution represented as a Watt spectrum.
+ */
 class Watt : public EnergyLaw {
  public:
+  /**
+   * @param ace ACE file to take data from.
+   * @param i Starting index of distribution in the XSS array.
+   */
   Watt(const ACE& ace, size_t i);
   ~Watt() = default;
 
   double sample_energy(double E_in,
                        std::function<double()> rng) const override final;
 
+  /**
+   * @brief Returns a pointer to the table containg the distribution parameter
+   *        a, as a function of the incident energy.
+   */
   std::shared_ptr<Tabulated1D> a() const;
+
+  /**
+   * @brief Returns a pointer to the table containg the distribution parameter
+   *        b, as a function of the incident energy.
+   */
   std::shared_ptr<Tabulated1D> b() const;
+
+  /**
+   * @brief Returns the the bin boundaries in a vector.
+   */
   double U() const;
 
  private:

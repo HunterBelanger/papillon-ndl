@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, Hunter Belanger
+ * Copyright 2021, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -34,13 +34,24 @@
 #ifndef PAPILLON_NDL_ANGLE_LAW_H
 #define PAPILLON_NDL_ANGLE_LAW_H
 
+/**
+ * @file
+ * @author Hunter Belanger
+ */
+
 namespace pndl {
 
+/**
+ * @brief Interface to represent an angular distribution for a single energy.
+ */
 class AngleLaw {
  public:
   virtual ~AngleLaw() = default;
 
-  // Must have xi in the range [0,1).
+  /**
+   * @brief Samples a scattering cosine from the distribution.
+   * @param xi Random variable from the interval [0,1).
+   */
   virtual double sample_mu(double xi) const = 0;
 };
 

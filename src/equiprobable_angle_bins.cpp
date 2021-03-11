@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, Hunter Belanger
+ * Copyright 2021, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -32,15 +32,45 @@
  *
  * */
 #include <PapillonNDL/equiprobable_angle_bins.hpp>
+#include <PapillonNDL/pndl_exception.hpp>
+#include <algorithm>
 #include <cmath>
 
 namespace pndl {
 
 EquiprobableAngleBins::EquiprobableAngleBins(const ACE& ace, size_t i)
-    : bounds_(ace.xss(i, NBOUNDS)) {}
+    : bounds_(ace.xss(i, NBOUNDS)) {
+  if (!std::is_sorted(bounds_.begin(), bounds_.end())) {
+    std::string mssg =
+        "EquiprobableAngleBins::EquiprobableAngleBins: Bin bounds are not "
+        "sorted.\n";
+    mssg += "Index of EquiprobableAngleBins in XSS block is " +
+            std::to_string(i) + ".";
+    throw PNDLException(mssg, __FILE__, __LINE__);
+  }
+
+  if (bounds_[0] < -1.) {
+    std::string mssg =
+        "EquiprobableAngleBins::EquiprobableAngleBins: Lowest bin bound is "
+        "less than -1.\n";
+    mssg += "Index of EquiprobableAngleBins in XSS block is " +
+            std::to_string(i) + ".";
+    throw PNDLException(mssg, __FILE__, __LINE__);
+  }
+
+  if (bounds_[NBOUNDS - 1] > 1.) {
+    std::string mssg =
+        "EquiprobableAngleBins::EquiprobableAngleBins: Highest bin bound is "
+        "more than 1.\n";
+    mssg += "Index of EquiprobableAngleBins in XSS block is " +
+            std::to_string(i) + ".";
+    throw PNDLException(mssg, __FILE__, __LINE__);
+  }
+}
 
 double EquiprobableAngleBins::sample_mu(double xi) const {
-  size_t bin = static_cast<double>(std::floor(NBOUNDS * xi));
+  size_t bin =
+      static_cast<size_t>(std::floor(static_cast<double>(NBOUNDS) * xi));
   double C_b = bin * P_BIN;
   double mu_low = bounds_[bin];
   return ((xi - C_b) / P_BIN) + mu_low;

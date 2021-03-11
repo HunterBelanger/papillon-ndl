@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, Hunter Belanger
+ * Copyright 2021, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -34,30 +34,53 @@
 #ifndef PAPILLON_NDL_FISSION_DATA_H
 #define PAPILLON_NDL_FISSION_DATA_H
 
+/**
+ * @file
+ * @author Hunter Belanger
+ */
+
 #include <PapillonNDL/ace.hpp>
 #include <PapillonNDL/angle_energy.hpp>
 #include <PapillonNDL/delayed_group.hpp>
+#include <PapillonNDL/frame.hpp>
 #include <PapillonNDL/function_1d.hpp>
 #include <memory>
 
 namespace pndl {
 
+/**
+ * @brief Contains all fission and fission product data for a nuclide,
+ *        but NOT the fission cross section.
+ */
 class FissionData {
  public:
   FissionData();
-  FissionData(const ACE& ace, std::shared_ptr<AngleEnergy> prmpt);
+  /**
+   * @param ace ACE file to extract fission data from.
+   * @param prmpt Pointer to the AngleEnergy product distribution for the
+   *              prompt neutrons. This is the distribution from MT 18.
+   */
+  FissionData(const ACE& ace, std::shared_ptr<AngleEnergy> prmpt, Frame frame);
   ~FissionData() = default;
 
   std::shared_ptr<Function1D> nu_total() const { return nu_total_; }
   std::shared_ptr<Function1D> nu_prompt() const { return nu_prompt_; }
   std::shared_ptr<Function1D> nu_delayed() const { return nu_delayed_; }
 
+  /**
+   * @brief Returns the total average number of fission neutron at energy E.
+   * @param E Energy in MeV.
+   */
   double nu_total(double E) const {
     if (nu_total_) return (*nu_total_)(E);
 
     return (*nu_prompt_)(E) + (*nu_delayed_)(E);
   }
 
+  /**
+   * @brief Returns the average number of prompt fission neutron at energy E.
+   * @param E Energy in MeV.
+   */
   double nu_prompt(double E) const {
     if (nu_prompt_) return (*nu_prompt_)(E);
 
@@ -66,6 +89,10 @@ class FissionData {
     return (*nu_total_)(E);
   }
 
+  /**
+   * @brief Returns the average number of delayed fission neutron at energy E.
+   * @param E Energy in MeV.
+   */
   double nu_delayed(double E) const {
     if (nu_delayed_)
       return (*nu_delayed_)(E);
@@ -76,22 +103,48 @@ class FissionData {
     return 0.;
   }
 
+  /**
+   * @brief Returns the number of delayed neutron groups.
+   */
   size_t ngroups() const { return delayed_groups_.size(); }
 
+  /**
+   * @brief Returns the ith delayed group data.
+   * @param i Index of the delayed group.
+   */
   const DelayedGroup& delayed_group(size_t i) const {
     return delayed_groups_[i];
   }
 
+  /**
+   * @brief Returns a pointer to the pronmpt neutron AngleEnergy distribution.
+   */
   std::shared_ptr<AngleEnergy> prompt_angle_energy() const {
     return prompt_spectrum_;
   }
 
+  /**
+   * @brief Returns the frame of referece of the prompt fission spectrum.
+   */
+  Frame prompt_frame() const { return prompt_spectrum_frame_; }
+
+  /**
+   * @brief Sampled an angle and energy from the prompt spectrum.
+   * @param E_in Incident energy in MeV.
+   * @param rng Random number generation function.
+   */
   AngleEnergyPacket sample_prompt_angle_energy(
       double E_in, std::function<double()> rng) const {
-    return prompt_spectrum_->sample_angle_energy(E_in, rng);
+    AngleEnergyPacket out = prompt_spectrum_->sample_angle_energy(E_in, rng);
+
+    if (prompt_spectrum_frame_ == Frame::Lab) cm_to_lab(E_in, awr_, out);
+
+    return out;
   }
 
  private:
+  double awr_;
+  Frame prompt_spectrum_frame_;
   std::shared_ptr<Function1D> nu_total_;
   std::shared_ptr<Function1D> nu_prompt_;
   std::shared_ptr<Function1D> nu_delayed_;

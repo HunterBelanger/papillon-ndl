@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, Hunter Belanger
+ * Copyright 2021, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -34,22 +34,54 @@
 #ifndef PAPILLON_NDL_ANGLE_TABLE_H
 #define PAPILLON_NDL_ANGLE_TABLE_H
 
+/**
+ * @file
+ * @author Hunter Belanger
+ */
+
 #include <PapillonNDL/angle_law.hpp>
 #include <PapillonNDL/pctable.hpp>
 
 namespace pndl {
 
+/**
+ * @brief Angular distribution which is provided as tabulated PDF and CDF.
+ */
 class AngleTable : public AngleLaw {
  public:
+  /**
+   * @param ace ACE file to take data from.
+   * @param i Starting index of distribution in the XSS array.
+   */
   AngleTable(const ACE& ace, size_t i);
   ~AngleTable() = default;
 
   double sample_mu(double xi) const override final;
 
+  /**
+   * @brief Returns the number of points in the tabulated data.
+   */
   size_t size() const;
+
+  /**
+   * @brief Returns the vector of the cosine points.
+   */
   const std::vector<double>& cosines() const;
+
+  /**
+   * @brief Returns the vector of the PDF values.
+   */
   const std::vector<double>& pdf() const;
+
+  /**
+   * @brief Returns the vector of the CDF values.
+   */
   const std::vector<double>& cdf() const;
+
+  /**
+   * @brief Returns the type of interpolation used on the table
+   *        (Histogram or LinLin).
+   */
   Interpolation interpolation() const;
 
  private:

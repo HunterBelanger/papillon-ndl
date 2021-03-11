@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, Hunter Belanger
+ * Copyright 2021, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -34,16 +34,34 @@
 #ifndef PAPILLON_NDL_FRAME_H
 #define PAPILLON_NDL_FRAME_H
 
-#include <PapillonNDL/angle_energy_packet.hpp>
+/**
+ * @file
+ * @author Hunter Belanger
+ */
+
+#include <PapillonNDL/angle_energy.hpp>
 #include <cstdint>
 
 namespace pndl {
 
+/**
+ * @brief Enum to indicate the frame of reference for secondary data
+ *        angle and energy data.
+ */
 enum class Frame : uint32_t {
-  Lab = 1,
-  CM = 2,
+  Lab = 1, /**< Laboratory frame */
+  CM = 2,  /**< Center of Mass frame */
 };
 
+/**
+ * @brief Converts the data contained in ae from the center of mass frame
+ *        to the lab frame, in place.
+ * @param E Initial energy in lab frame.
+ * @param A AWR of nuclide.
+ * @param ae Sampled outgoing angle and energy in the Center of Mass
+ *           frame. These values will be changed in place to the angle
+ *           and energy in the Lab frame.
+ */
 void cm_to_lab(double E, double A, AngleEnergyPacket& ae);
 
 }  // namespace pndl
