@@ -34,6 +34,7 @@
 #include <PapillonNDL/angle_distribution.hpp>
 #include <PapillonNDL/constant.hpp>
 #include <PapillonNDL/equiprobable_energy_bins.hpp>
+#include <PapillonNDL/discrete_photon.hpp>
 #include <PapillonNDL/evaporation.hpp>
 #include <PapillonNDL/general_evaporation.hpp>
 #include <PapillonNDL/kalbach.hpp>
@@ -137,6 +138,10 @@ Reaction::Reaction(const ACE& ace, size_t indx, const EnergyGrid& egrid)
         if (law == 1) {  // Equiprobable Energy Bins
           angle_energy_ = std::make_shared<Uncorrelated>(
               angle, std::make_shared<EquiprobableEnergyBins>(ace, j));
+
+        } else if (law == 2) { // Discrete Photon
+          angle_energy_ = std::make_shared<Uncorrelated>(
+              angle, std::make_shared<DiscretePhoton>(ace, j));
 
         } else if (law == 3) {  // Level Inelastic Scatter
           angle_energy_ = std::make_shared<Uncorrelated>(

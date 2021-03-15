@@ -52,6 +52,7 @@ extern void init_EquiprobableAngleBins(py::module&);
 extern void init_AngleTable(py::module&);
 extern void init_AngleDistribution(py::module&);
 extern void init_EnergyLaw(py::module&);
+extern void init_DiscretePhoton(py::module&);
 extern void init_TabularEnergy(py::module&);
 extern void init_GeneralEvaporation(py::module&);
 extern void init_EquiprobableEnergyBins(py::module&);
@@ -92,6 +93,7 @@ PYBIND11_MODULE(pyPapillonNDL, m) {
   init_AngleTable(m);
   init_AngleDistribution(m);
   init_EnergyLaw(m);
+  init_DiscretePhoton(m);
   init_TabularEnergy(m);
   init_GeneralEvaporation(m);
   init_EquiprobableEnergyBins(m);

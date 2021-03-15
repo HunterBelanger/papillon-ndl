@@ -36,6 +36,7 @@
 #include <pybind11/stl.h>
 
 #include <PapillonNDL/equiprobable_energy_bins.hpp>
+#include <PapillonNDL/discrete_photon.hpp>
 #include <PapillonNDL/evaporation.hpp>
 #include <PapillonNDL/general_evaporation.hpp>
 #include <PapillonNDL/level_inelastic_scatter.hpp>
@@ -73,6 +74,15 @@ void init_EquiprobableEnergyBins(py::module& m) {
       .def("size", &EquiprobableEnergyBins::size)
       .def("incoming_energy", &EquiprobableEnergyBins::incoming_energy)
       .def("bin_bounds", &EquiprobableEnergyBins::bin_bounds);
+}
+
+void init_DiscretePhoton(py::module& m) {
+  py::class_<DiscretePhoton, EnergyLaw,
+             std::shared_ptr<DiscretePhoton>>(m,"DiscretePhoton")
+      .def(py::init<const ACE&, size_t>())
+      .def("sample_energy", &DiscretePhoton::sample_energy)
+      .def("primary_indicator", &DiscretePhoton::primary_indicator)
+      .def("photon_energy", &DiscretePhoton::photon_energy);
 }
 
 void init_LevelInelasticScatter(py::module& m) {
