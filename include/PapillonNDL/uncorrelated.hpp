@@ -56,7 +56,7 @@ class Uncorrelated : public AngleEnergy {
    * @param angle Angle distribution for all incoming energies.
    * @param energy Shared pointer to the energy distribution.
    */
-  Uncorrelated(const AngleDistribution& angle,
+  Uncorrelated(std::shared_ptr<AngleDistribution> angle,
                std::shared_ptr<EnergyLaw> energy);
   ~Uncorrelated() = default;
 
@@ -64,9 +64,9 @@ class Uncorrelated : public AngleEnergy {
       double E_in, std::function<double()> rng) const override final;
 
   /**
-   * @brief Returns the angular distribution.
+   * @brief Returns a pointer to the angular distribution.
    */
-  AngleDistribution angle() const;
+  std::shared_ptr<AngleDistribution> angle() const;
 
   /**
    * @brief Returns a pointer to the energy distribution.
@@ -74,7 +74,7 @@ class Uncorrelated : public AngleEnergy {
   std::shared_ptr<EnergyLaw> energy() const;
 
  private:
-  AngleDistribution angle_;
+  std::shared_ptr<AngleDistribution> angle_;
   std::shared_ptr<EnergyLaw> energy_;
 };
 

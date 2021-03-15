@@ -42,7 +42,7 @@ namespace py = pybind11;
 using namespace pndl;
 
 void init_AngleDistribution(py::module& m) {
-  py::class_<AngleDistribution>(m, "AngleDistribution")
+  py::class_<AngleDistribution, std::shared_ptr<AngleDistribution>>(m, "AngleDistribution")
       .def(py::init<const ACE&, int>())
       .def("sample_angle", &AngleDistribution::sample_angle)
       .def("size", &AngleDistribution::size)

@@ -114,126 +114,93 @@ Reaction::Reaction(const ACE& ace, size_t indx, const EnergyGrid& egrid)
     // Get angle distribution location
     int locb = ace.xss<int>(ace.LAND() + indx + 1);
 
-    if (locb >= 0) {
+    std::shared_ptr<AngleDistribution> angle(nullptr);
+
+    // Get angulardistribution if it exists.
+    if(locb >= 0) {
       try {
-        AngleDistribution angle(ace, locb);
-
-        // Get energy distribution location
-        uint32_t locc = ace.xss<uint32_t>(ace.LDLW() + indx);
-        size_t i = ace.DLW() + locc - 1;
-
-        // TODO currently ignore extra distribuitons, only read first one
-        // Write a warning for now
-        if (ace.xss<int>(i) != 0) {
-          // there are other distributions
-          std::cerr << "\n PapillonNDL WARNING : Reaction MT=" << mt_;
-          std::cerr << " for ZAID=" << ace.zaid() << " has multiple";
-          std::cerr << " energy distributions.\n";
-        }
-
-        int law = ace.xss<int>(i + 1);
-        uint32_t idat = ace.xss<uint32_t>(i + 2);
-        size_t j = ace.DLW() + idat - 1;
-
-        if (law == 1) {  // Equiprobable Energy Bins
-          angle_energy_ = std::make_shared<Uncorrelated>(
-              angle, std::make_shared<EquiprobableEnergyBins>(ace, j));
-
-        } else if (law == 2) { // Discrete Photon
-          angle_energy_ = std::make_shared<Uncorrelated>(
-              angle, std::make_shared<DiscretePhoton>(ace, j));
-
-        } else if (law == 3) {  // Level Inelastic Scatter
-          angle_energy_ = std::make_shared<Uncorrelated>(
-              angle, std::make_shared<LevelInelasticScatter>(ace, j));
-
-        } else if (law == 4) {  // Tabular Energy
-          angle_energy_ = std::make_shared<Uncorrelated>(
-              angle, std::make_shared<TabularEnergy>(ace, j, ace.DLW()));
-
-        } else if (law == 5) {  // General Evaporation
-          angle_energy_ = std::make_shared<Uncorrelated>(
-              angle, std::make_shared<GeneralEvaporation>(ace, j));
-
-        } else if (law == 7) {  // Maxwellian
-          angle_energy_ = std::make_shared<Uncorrelated>(
-              angle, std::make_shared<Maxwellian>(ace, j));
-
-        } else if (law == 9) {  // Evaporation
-          angle_energy_ = std::make_shared<Uncorrelated>(
-              angle, std::make_shared<Evaporation>(ace, j));
-
-        } else if (law == 11) {  // Watt
-          angle_energy_ = std::make_shared<Uncorrelated>(
-              angle, std::make_shared<Watt>(ace, j));
-
-        } else if (law == 44) {  // Kalbach
-          angle_energy_ = std::make_shared<Kalbach>(ace, j);
-
-        } else if (law == 61) {  // Tabular Energy Angle
-          angle_energy_ = std::make_shared<TabularEnergyAngle>(ace, j);
-
-        } else if (law == 66) {  // N-body
-          angle_energy_ = std::make_shared<NBody>(ace, j, q_);
-
-        } else {
-          // Unknown or unsuported law
-          std::string mssg = "Reaction::Reaction: Unkown energy law " +
-                             std::to_string(law) + " in reaction \n";
-          mssg += "MT=" + std::to_string(mt_) +
-                  " in ZAID=" + std::to_string(ace.zaid()) + ".";
-          throw PNDLException(mssg, __FILE__, __LINE__);
-        }
-      } catch (PNDLException& error) {
+        angle = std::make_shared<AngleDistribution>(ace, locb);
+      } catch(PNDLException& error) {
         std::string mssg = "Reaction::Reaction: Could not create secondary ";
-        mssg +=
-            "angle-energy\ndistribution for MT = " + std::to_string(mt_) + ".";
+        mssg += "angular\ndistribution for MT = " + std::to_string(mt_) + ".";
         error.add_to_exception(mssg, __FILE__, __LINE__);
         throw error;
       }
-    } else {  // locb < 0, no angle distribution
-      try {
-        // Get energy distribution location
-        uint32_t locc = ace.xss<uint32_t>(ace.LDLW() + indx);
-        size_t i = ace.DLW() + locc - 1;
+    }
 
-        // TODO currently ignore extra distribuitons, only read first one
-        // Write a warning for now
-        if (ace.xss<int>(i) != 0) {
-          // there are other distributions
-          std::cerr << "\n PapillonNDL WARNING : Reaction MT=" << mt_;
-          std::cerr << " for ZAID=" << ace.zaid() << " has multiple";
-          std::cerr << " energy distributions.\n";
-        }
+    try {
+      // Get energy distribution location
+      uint32_t locc = ace.xss<uint32_t>(ace.LDLW() + indx);
+      size_t i = ace.DLW() + locc - 1;
 
-        int law = ace.xss<int>(i + 1);
-        uint32_t idat = ace.xss<uint32_t>(i + 2);
-        size_t j = ace.DLW() + idat - 1;
-
-        if (law == 44) {  // Kalbach
-          angle_energy_ = std::make_shared<Kalbach>(ace, j);
-
-        } else if (law == 61) {  // Tabular Energy Angle
-          angle_energy_ = std::make_shared<TabularEnergyAngle>(ace, j);
-
-        } else if (law == 66) {  // N-body
-          angle_energy_ = std::make_shared<NBody>(ace, j, q_);
-
-        } else {
-          // Unknown or unsuported law
-          std::string mssg = "Reaction::Reaction: Unkown energy law " +
-                             std::to_string(law) + " in reaction \n";
-          mssg += "MT=" + std::to_string(mt_) +
-                  " in ZAID=" + std::to_string(ace.zaid()) + ".";
-          throw PNDLException(mssg, __FILE__, __LINE__);
-        }
-      } catch (PNDLException& error) {
-        std::string mssg = "Reaction::Reaction: Could not create secondary ";
-        mssg +=
-            "angle-energy\ndistribution for MT = " + std::to_string(mt_) + ".";
-        error.add_to_exception(mssg, __FILE__, __LINE__);
-        throw error;
+      // TODO currently ignore extra distribuitons, only read first one
+      // Write a warning for now
+      if (ace.xss<int>(i) != 0) {
+        // there are other distributions
+        std::cerr << "\n PapillonNDL WARNING : Reaction MT=" << mt_;
+        std::cerr << " for ZAID=" << ace.zaid() << " has multiple";
+        std::cerr << " energy distributions.\n";
       }
+
+      int law = ace.xss<int>(i + 1);
+      uint32_t idat = ace.xss<uint32_t>(i + 2);
+      size_t j = ace.DLW() + idat - 1;
+
+      if (law == 1) {  // Equiprobable Energy Bins
+        angle_energy_ = std::make_shared<Uncorrelated>(
+            angle, std::make_shared<EquiprobableEnergyBins>(ace, j));
+
+      } else if (law == 2) { // Discrete Photon
+        angle_energy_ = std::make_shared<Uncorrelated>(
+            angle, std::make_shared<DiscretePhoton>(ace, j));
+
+      } else if (law == 3) {  // Level Inelastic Scatter
+        angle_energy_ = std::make_shared<Uncorrelated>(
+            angle, std::make_shared<LevelInelasticScatter>(ace, j));
+
+      } else if (law == 4) {  // Tabular Energy
+        angle_energy_ = std::make_shared<Uncorrelated>(
+            angle, std::make_shared<TabularEnergy>(ace, j, ace.DLW()));
+
+      } else if (law == 5) {  // General Evaporation
+        angle_energy_ = std::make_shared<Uncorrelated>(
+            angle, std::make_shared<GeneralEvaporation>(ace, j));
+
+      } else if (law == 7) {  // Maxwellian
+        angle_energy_ = std::make_shared<Uncorrelated>(
+            angle, std::make_shared<Maxwellian>(ace, j));
+
+      } else if (law == 9) {  // Evaporation
+        angle_energy_ = std::make_shared<Uncorrelated>(
+            angle, std::make_shared<Evaporation>(ace, j));
+
+      } else if (law == 11) {  // Watt
+        angle_energy_ = std::make_shared<Uncorrelated>(
+            angle, std::make_shared<Watt>(ace, j));
+
+      } else if (law == 44) {  // Kalbach
+        angle_energy_ = std::make_shared<Kalbach>(ace, j);
+
+      } else if (law == 61) {  // Tabular Energy Angle
+        angle_energy_ = std::make_shared<TabularEnergyAngle>(ace, j);
+
+      } else if (law == 66) {  // N-body
+        angle_energy_ = std::make_shared<NBody>(ace, j, q_);
+
+      } else {
+        // Unknown or unsuported law
+        std::string mssg = "Reaction::Reaction: Unkown energy law " +
+                            std::to_string(law) + " in reaction \n";
+        mssg += "MT=" + std::to_string(mt_) +
+                " in ZAID=" + std::to_string(ace.zaid()) + ".";
+        throw PNDLException(mssg, __FILE__, __LINE__);
+      }
+    } catch (PNDLException& error) {
+      std::string mssg = "Reaction::Reaction: Could not create secondary ";
+      mssg +=
+          "angle-energy\ndistribution for MT = " + std::to_string(mt_) + ".";
+      error.add_to_exception(mssg, __FILE__, __LINE__);
+      throw error;
     }
   }
 }
