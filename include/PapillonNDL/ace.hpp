@@ -242,6 +242,11 @@ class ACE {
    */
   int32_t BDD() const;
 
+  /**
+   * @brief Returns the index to the beginning of the GPD block.
+   */
+  int32_t GPD() const;
+
  private:
   int32_t zaid_;
   double temperature_;
@@ -255,7 +260,7 @@ class ACE {
 
   // Locator constants
   int32_t esz_, nu_, mtr_, lqr_, tyr_, lsig_, sig_, lan_, an_, ldlw_, dlw_;
-  int32_t dnedl_, dned_, dnu_, bdd_;
+  int32_t dnedl_, dned_, dnu_, bdd_, gpd_;
 
 };  // ACE
 }  // namespace pndl

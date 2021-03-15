@@ -109,6 +109,11 @@ class CENeutron {
   const CrossSection& disappearance_cross_section() const;
 
   /**
+   * @brief Returns the photon production CrossSection for the nuclide.
+   */
+  const CrossSection& photon_production_cross_section() const;
+
+  /**
    * @brief Returns the AngleDistribution for elastic scattering.
    */
   const AngleDistribution& elastic_angle_distribution() const;
@@ -162,6 +167,23 @@ class CENeutron {
    */
   double disappearance_xs(double E, size_t i) const {
     return (*disappearance_xs_)(E, i);
+  }
+
+  /**
+   * @brief Evaluates the photon production cross section at E using bisection search.
+   * @param E Energy.
+   */
+  double photon_production_xs(double E) const {
+    return (*photon_production_xs_)(E);
+  }
+
+  /**
+   * @brief Evaluates the photon production cross section at energy E and index i.
+   * @param E Energy.
+   * @param i Index to the energy grid.
+   */
+  double photon_production_xs(double E, size_t i) const {
+    return (*photon_production_xs_)(E, i);
   }
 
   /**
@@ -232,6 +254,7 @@ class CENeutron {
   std::shared_ptr<CrossSection> total_xs_;
   std::shared_ptr<CrossSection> disappearance_xs_;
   std::shared_ptr<CrossSection> elastic_xs_;
+  std::shared_ptr<CrossSection> photon_production_xs_;
 
   std::shared_ptr<AngleDistribution> elastic_angle_;
 

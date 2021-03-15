@@ -46,6 +46,7 @@ CENeutron::CENeutron(const ACE& ace)
       total_xs_(nullptr),
       disappearance_xs_(nullptr),
       elastic_xs_(nullptr),
+      photon_production_xs_(nullptr),
       elastic_angle_(nullptr),
       fission_data_(),
       reactions_() {
@@ -55,6 +56,11 @@ CENeutron::CENeutron(const ACE& ace)
   total_xs_ = std::make_shared<CrossSection>(ace, ace.ESZ() + NE, energy_grid_, false);
   disappearance_xs_ = std::make_shared<CrossSection>(ace, ace.ESZ() + 2 * NE, energy_grid_, false);
   elastic_xs_ = std::make_shared<CrossSection>(ace, ace.ESZ() + 3 * NE, energy_grid_, false);
+
+  // Get photon production XS if present
+  if(ace.jxs(11) != 0) {
+    photon_production_xs_ = std::make_shared<CrossSection>(ace, ace.GPD(), energy_grid_, false);
+  }
 
   // Make elastic AngleDistribution
   elastic_angle_ =
@@ -87,6 +93,7 @@ CENeutron::CENeutron(const ACE& ace, const CENeutron& nuclide)
       total_xs_(nullptr),
       disappearance_xs_(nullptr),
       elastic_xs_(nullptr),
+      photon_production_xs_(nullptr),
       elastic_angle_(nullptr),
       fission_data_(),
       reactions_() {
@@ -110,6 +117,11 @@ CENeutron::CENeutron(const ACE& ace, const CENeutron& nuclide)
   total_xs_ = std::make_shared<CrossSection>(ace, ace.ESZ() + NE, energy_grid_, false);
   disappearance_xs_ = std::make_shared<CrossSection>(ace, ace.ESZ() + 2 * NE, energy_grid_, false);
   elastic_xs_ = std::make_shared<CrossSection>(ace, ace.ESZ() + 3 * NE, energy_grid_, false);
+
+  // Get photon production XS if present
+  if(ace.jxs(11) != 0) {
+    photon_production_xs_ = std::make_shared<CrossSection>(ace, ace.GPD(), energy_grid_, false);
+  }
 
   // Copy elastic AngleDistribution
   elastic_angle_ = nuclide.elastic_angle_;
@@ -145,6 +157,10 @@ const CrossSection& CENeutron::elastic_cross_section() const {
 
 const CrossSection& CENeutron::disappearance_cross_section() const {
   return *disappearance_xs_;
+}
+
+const CrossSection& CENeutron::photon_production_cross_section() const {
+  return *photon_production_xs_;
 }
 
 const AngleDistribution& CENeutron::elastic_angle_distribution() const {
