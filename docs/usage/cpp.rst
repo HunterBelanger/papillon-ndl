@@ -52,7 +52,7 @@ these cross sections for U235 at 3MeV, then we can do
 .. code-block:: c++
 
   double tot_xs_at_3mev = U235.total_xs(3.);
-  double abs_xs_at_3mev = U235.capture_xs(3.);
+  double abs_xs_at_3mev = U235.disappearance_xs(3.);
   double ela_xs_at_3mev = U235.elastic_xs(3.);
 
 The standard unit of energy in PapillonNDL is MeV. All energies are given in
@@ -70,7 +70,7 @@ pass that index to the cross section evaluation call.
   size_t i = U235.energy_grid_index(3.);
 
   tot_xs_at_3mev = U235.total_xs(3., i);
-  abs_xs_at_3mev = U235.capture_xs(3., i);
+  abs_xs_at_3mev = U235.disappearance_xs(3., i);
   ela_xs_at_3mev = U235.elastic_xs(3., i);
 
 This method produces the same results, but is faster overall, and should be

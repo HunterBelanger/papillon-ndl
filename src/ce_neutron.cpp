@@ -44,7 +44,7 @@ CENeutron::CENeutron(const ACE& ace)
       fissile_(ace.fissile()),
       energy_grid_(ace),
       total_xs_(),
-      capture_xs_(),
+      disappearance_xs_(),
       elastic_xs_(),
       elastic_angle_(nullptr),
       fission_data_(),
@@ -53,7 +53,7 @@ CENeutron::CENeutron(const ACE& ace)
   uint32_t NE = ace.nxs(2);
 
   total_xs_ = CrossSection(ace, ace.ESZ() + NE, energy_grid_, false);
-  capture_xs_ = CrossSection(ace, ace.ESZ() + 2 * NE, energy_grid_, false);
+  disappearance_xs_ = CrossSection(ace, ace.ESZ() + 2 * NE, energy_grid_, false);
   elastic_xs_ = CrossSection(ace, ace.ESZ() + 3 * NE, energy_grid_, false);
 
   // Make elastic AngleDistribution
@@ -85,7 +85,7 @@ CENeutron::CENeutron(const ACE& ace, const CENeutron& nuclide)
       fissile_(ace.fissile()),
       energy_grid_(ace),
       total_xs_(),
-      capture_xs_(),
+      disappearance_xs_(),
       elastic_xs_(),
       elastic_angle_(nullptr),
       fission_data_(),
@@ -108,7 +108,7 @@ CENeutron::CENeutron(const ACE& ace, const CENeutron& nuclide)
   uint32_t NE = ace.nxs(2);
 
   total_xs_ = CrossSection(ace, ace.ESZ() + NE, energy_grid_, false);
-  capture_xs_ = CrossSection(ace, ace.ESZ() + 2 * NE, energy_grid_, false);
+  disappearance_xs_ = CrossSection(ace, ace.ESZ() + 2 * NE, energy_grid_, false);
   elastic_xs_ = CrossSection(ace, ace.ESZ() + 3 * NE, energy_grid_, false);
 
   // Copy elastic AngleDistribution
@@ -143,8 +143,8 @@ const CrossSection& CENeutron::elastic_cross_section() const {
   return elastic_xs_;
 }
 
-const CrossSection& CENeutron::capture_cross_section() const {
-  return capture_xs_;
+const CrossSection& CENeutron::disappearance_cross_section() const {
+  return disappearance_xs_;
 }
 
 const AngleDistribution& CENeutron::elastic_angle_distribution() const {

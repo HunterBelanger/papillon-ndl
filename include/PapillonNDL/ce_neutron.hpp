@@ -104,9 +104,9 @@ class CENeutron {
   const CrossSection& elastic_cross_section() const;
 
   /**
-   * @brief Returns the capture CrossSection for the nuclide.
+   * @brief Returns the disappearance CrossSection for the nuclide.
    */
-  const CrossSection& capture_cross_section() const;
+  const CrossSection& disappearance_cross_section() const;
 
   /**
    * @brief Returns the AngleDistribution for elastic scattering.
@@ -150,18 +150,18 @@ class CENeutron {
   double elastic_xs(double E, size_t i) const { return elastic_xs_(E, i); }
 
   /**
-   * @brief Evaluates the capture cross section at E using bisection search.
+   * @brief Evaluates the disappearance cross section at E using bisection search.
    * @param E Energy.
    */
-  double capture_xs(double E) const { return capture_xs_(E); }
+  double disappearance_xs(double E) const { return disappearance_xs_(E); }
 
   /**
-   * @brief Evaluates the capture cross section at energy E and index i.
+   * @brief Evaluates the disappearance cross section at energy E and index i.
    * @param E Energy.
    * @param i Index to the energy grid.
    */
-  double capture_xs(double E, size_t i) const {
-    return capture_xs_(E, i);
+  double disappearance_xs(double E, size_t i) const {
+    return disappearance_xs_(E, i);
   }
 
   /**
@@ -230,7 +230,7 @@ class CENeutron {
   EnergyGrid energy_grid_;
 
   CrossSection total_xs_;
-  CrossSection capture_xs_;
+  CrossSection disappearance_xs_;
   CrossSection elastic_xs_;
 
   std::shared_ptr<AngleDistribution> elastic_angle_;
