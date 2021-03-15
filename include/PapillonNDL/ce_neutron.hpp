@@ -125,21 +125,21 @@ class CENeutron {
    * @brief Evaluates the total cross section at E using bisection search.
    * @param E Energy.
    */
-  double total_xs(double E) const { return total_xs_(E); }
+  double total_xs(double E) const { return (*total_xs_)(E); }
 
   /**
    * @brief Evaluates the total cross section at energy E and index i.
    * @param E Energy.
    * @param i Index to the energy grid.
    */
-  double total_xs(double E, size_t i) const { return total_xs_(E, i); }
+  double total_xs(double E, size_t i) const { return (*total_xs_)(E, i); }
 
   /**
    * @brief Evaluates the elastic scattering cross section at E using bisection
    * search.
    * @param E Energy.
    */
-  double elastic_xs(double E) const { return elastic_xs_(E); }
+  double elastic_xs(double E) const { return (*elastic_xs_)(E); }
 
   /**
    * @brief Evaluates the elastic scattering cross section at energy E and index
@@ -147,13 +147,13 @@ class CENeutron {
    * @param E Energy.
    * @param i Index to the energy grid.
    */
-  double elastic_xs(double E, size_t i) const { return elastic_xs_(E, i); }
+  double elastic_xs(double E, size_t i) const { return (*elastic_xs_)(E, i); }
 
   /**
    * @brief Evaluates the disappearance cross section at E using bisection search.
    * @param E Energy.
    */
-  double disappearance_xs(double E) const { return disappearance_xs_(E); }
+  double disappearance_xs(double E) const { return (*disappearance_xs_)(E); }
 
   /**
    * @brief Evaluates the disappearance cross section at energy E and index i.
@@ -161,7 +161,7 @@ class CENeutron {
    * @param i Index to the energy grid.
    */
   double disappearance_xs(double E, size_t i) const {
-    return disappearance_xs_(E, i);
+    return (*disappearance_xs_)(E, i);
   }
 
   /**
@@ -229,9 +229,9 @@ class CENeutron {
 
   EnergyGrid energy_grid_;
 
-  CrossSection total_xs_;
-  CrossSection disappearance_xs_;
-  CrossSection elastic_xs_;
+  std::shared_ptr<CrossSection> total_xs_;
+  std::shared_ptr<CrossSection> disappearance_xs_;
+  std::shared_ptr<CrossSection> elastic_xs_;
 
   std::shared_ptr<AngleDistribution> elastic_angle_;
 

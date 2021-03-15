@@ -106,7 +106,7 @@ class Reaction {
   double xs(double E) const {
     if (E < threshold_) return 0.;
 
-    return xs_(E);
+    return (*xs_)(E);
   }
 
   /**
@@ -117,7 +117,7 @@ class Reaction {
   double xs(double E, size_t i) const {
     if (E < threshold_) return 0.;
 
-    return xs_(E, i);
+    return (*xs_)(E, i);
   }
 
   /**
@@ -159,7 +159,7 @@ class Reaction {
   double awr_;
   double threshold_;
   Frame frame_;
-  CrossSection xs_;
+  std::shared_ptr<CrossSection> xs_;
   std::shared_ptr<AngleEnergy> angle_energy_;
   std::shared_ptr<Function1D> yield_;
 };

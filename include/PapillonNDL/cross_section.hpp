@@ -51,7 +51,6 @@ namespace pndl {
  */
 class CrossSection {
  public:
-  CrossSection() : energy_values_({0.}), values_(), index_(0) {}
   /**
    * @param ace ACE file to take the data from.
    * @param i Index in the XSS block where the cross section starts.

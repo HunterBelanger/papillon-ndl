@@ -60,7 +60,7 @@ Reaction::Reaction(const ACE& ace, size_t indx, const EnergyGrid& egrid)
       awr_(),
       threshold_(),
       frame_(),
-      xs_(),
+      xs_(nullptr),
       angle_energy_(nullptr),
       yield_(nullptr) {
   // Get MT, Q, and AWR
@@ -106,8 +106,8 @@ Reaction::Reaction(const ACE& ace, size_t indx, const EnergyGrid& egrid)
 
   // Load the cross section
   uint32_t loca = ace.xss<uint32_t>(ace.LSIG() + indx);
-  xs_ = CrossSection(ace, ace.SIG() + loca - 1, egrid);
-  threshold_ = xs_.energy(0);
+  xs_ = std::make_shared<CrossSection>(ace, ace.SIG() + loca - 1, egrid);
+  threshold_ = xs_->energy(0);
 
   // Get secondary info if yld != 0 (not an absorption reaction)
   if (yld != 0.) {
@@ -212,7 +212,7 @@ Reaction::Reaction(const ACE& ace, size_t indx, const EnergyGrid& egrid,
       awr_(),
       threshold_(),
       frame_(),
-      xs_(),
+      xs_(nullptr),
       angle_energy_(nullptr),
       yield_(nullptr) {
   // Get MT, Q, and AWR
@@ -233,11 +233,11 @@ Reaction::Reaction(const ACE& ace, size_t indx, const EnergyGrid& egrid,
 
   // Get XS from new ACE
   uint32_t loca = ace.xss<uint32_t>(ace.LSIG() + indx);
-  xs_ = CrossSection(ace, ace.SIG() + loca - 1, egrid);
-  threshold_ = xs_.energy(0);
+  xs_ = std::make_shared<CrossSection>(ace, ace.SIG() + loca - 1, egrid);
+  threshold_ = xs_->energy(0);
 }
 
-const CrossSection& Reaction::cross_section() const { return xs_; }
+const CrossSection& Reaction::cross_section() const { return *xs_; }
 
 std::shared_ptr<AngleEnergy> Reaction::angle_energy() const {
   return angle_energy_;

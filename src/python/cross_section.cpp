@@ -41,8 +41,7 @@ namespace py = pybind11;
 using namespace pndl;
 
 void init_CrossSection(py::module& m) {
-  py::class_<CrossSection>(m, "CrossSection")
-      .def(py::init<>())
+  py::class_<CrossSection, std::shared_ptr<CrossSection>>(m, "CrossSection")
       .def(py::init<const ACE&, size_t, const EnergyGrid&, bool>())
       .def("__getitem__", &CrossSection::operator[])
       .def("__call__",
