@@ -184,7 +184,10 @@ class CENeutron {
    * @param E Energy.
    */
   double photon_production_xs(double E) const {
-    return photon_production_xs_->evaluate(E);
+    // Need to check photon production XS exists, as this one is not
+    // necessarily present.
+    if(photon_production_xs_) return photon_production_xs_->evaluate(E);
+    return 0.;
   }
 
   /**
@@ -193,7 +196,10 @@ class CENeutron {
    * @param i Index to the energy grid.
    */
   double photon_production_xs(double E, size_t i) const {
-    return photon_production_xs_->evaluate(E, i);
+    // Need to check photon production XS exists, as this one is not
+    // necessarily present.
+    if(photon_production_xs_) return photon_production_xs_->evaluate(E, i);
+    return 0.;
   }
 
   /**
