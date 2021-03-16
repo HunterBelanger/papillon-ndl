@@ -237,12 +237,16 @@ Reaction::Reaction(const ACE& ace, size_t indx, const EnergyGrid& egrid,
   threshold_ = xs_->energy(0);
 }
 
-const CrossSection& Reaction::cross_section() const { return *xs_; }
+std::shared_ptr<CrossSection> Reaction::cross_section() const {
+  return xs_;
+}
 
 std::shared_ptr<AngleEnergy> Reaction::angle_energy() const {
   return angle_energy_;
 }
 
-std::shared_ptr<Function1D> Reaction::yield() const { return yield_; }
+std::shared_ptr<Function1D> Reaction::yield() const {
+  return yield_;
+}
 
 }  // namespace pndl

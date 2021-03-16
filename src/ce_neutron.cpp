@@ -149,22 +149,24 @@ CENeutron::CENeutron(const ACE& ace, const CENeutron& nuclide)
 
 const EnergyGrid& CENeutron::energy_grid() const { return energy_grid_; }
 
-const CrossSection& CENeutron::total_cross_section() const { return *total_xs_; }
-
-const CrossSection& CENeutron::elastic_cross_section() const {
-  return *elastic_xs_;
+std::shared_ptr<CrossSection> CENeutron::total_cross_section() const {
+  return total_xs_;
 }
 
-const CrossSection& CENeutron::disappearance_cross_section() const {
-  return *disappearance_xs_;
+std::shared_ptr<CrossSection> CENeutron::elastic_cross_section() const {
+  return elastic_xs_;
 }
 
-const CrossSection& CENeutron::photon_production_cross_section() const {
-  return *photon_production_xs_;
+std::shared_ptr<CrossSection> CENeutron::disappearance_cross_section() const {
+  return disappearance_xs_;
 }
 
-const AngleDistribution& CENeutron::elastic_angle_distribution() const {
-  return *elastic_angle_;
+std::shared_ptr<CrossSection> CENeutron::photon_production_cross_section() const {
+  return photon_production_xs_;
+}
+
+std::shared_ptr<AngleDistribution> CENeutron::elastic_angle_distribution() const {
+  return elastic_angle_;
 }
 
 }  // namespace pndl

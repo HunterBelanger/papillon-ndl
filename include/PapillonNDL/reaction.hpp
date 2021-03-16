@@ -106,7 +106,7 @@ class Reaction {
   double xs(double E) const {
     if (E < threshold_) return 0.;
 
-    return (*xs_)(E);
+    return xs_->evaluate(E);
   }
 
   /**
@@ -117,7 +117,7 @@ class Reaction {
   double xs(double E, size_t i) const {
     if (E < threshold_) return 0.;
 
-    return (*xs_)(E, i);
+    return xs_->evaluate(E, i);
   }
 
   /**
@@ -138,9 +138,9 @@ class Reaction {
   }
 
   /**
-   * @brief Returns the CrossSection for the reaction.
+   * @brief Returns a pointer to the CrossSection for the reaction.
    */
-  const CrossSection& cross_section() const;
+  std::shared_ptr<CrossSection> cross_section() const;
 
   /**
    * @brief Returns a pointer to the AngleEnergy distribution for

@@ -94,29 +94,29 @@ class CENeutron {
   const EnergyGrid& energy_grid() const;
 
   /**
-   * @brief Returns the total CrossSection for the nuclide.
+   * @brief Returns a pointer to the total CrossSection for the nuclide.
    */
-  const CrossSection& total_cross_section() const;
+  std::shared_ptr<CrossSection> total_cross_section() const;
 
   /**
-   * @brief Returns the elastic scattering CrossSection for the nuclide.
+   * @brief Returns a pointer to the elastic scattering CrossSection for the nuclide.
    */
-  const CrossSection& elastic_cross_section() const;
+   std::shared_ptr<CrossSection> elastic_cross_section() const;
 
   /**
-   * @brief Returns the disappearance CrossSection for the nuclide.
+   * @brief Returns a pointer to the disappearance CrossSection for the nuclide.
    */
-  const CrossSection& disappearance_cross_section() const;
+  std::shared_ptr<CrossSection> disappearance_cross_section() const;
 
   /**
-   * @brief Returns the photon production CrossSection for the nuclide.
+   * @brief Returns a pointer to the photon production CrossSection for the nuclide.
    */
-  const CrossSection& photon_production_cross_section() const;
+  std::shared_ptr<CrossSection> photon_production_cross_section() const;
 
   /**
-   * @brief Returns the AngleDistribution for elastic scattering.
+   * @brief Returns a pointer to the AngleDistribution for elastic scattering.
    */
-  const AngleDistribution& elastic_angle_distribution() const;
+  std::shared_ptr<AngleDistribution> elastic_angle_distribution() const;
 
   /**
    * @brief Retrieves the index in the energy grid for an energy.
@@ -130,21 +130,27 @@ class CENeutron {
    * @brief Evaluates the total cross section at E using bisection search.
    * @param E Energy.
    */
-  double total_xs(double E) const { return (*total_xs_)(E); }
+  double total_xs(double E) const {
+    return total_xs_->evaluate(E);
+  }
 
   /**
    * @brief Evaluates the total cross section at energy E and index i.
    * @param E Energy.
    * @param i Index to the energy grid.
    */
-  double total_xs(double E, size_t i) const { return (*total_xs_)(E, i); }
+  double total_xs(double E, size_t i) const {
+    return total_xs_->evaluate(E, i);
+  }
 
   /**
    * @brief Evaluates the elastic scattering cross section at E using bisection
    * search.
    * @param E Energy.
    */
-  double elastic_xs(double E) const { return (*elastic_xs_)(E); }
+  double elastic_xs(double E) const {
+    return elastic_xs_->evaluate(E);
+  }
 
   /**
    * @brief Evaluates the elastic scattering cross section at energy E and index
@@ -152,13 +158,17 @@ class CENeutron {
    * @param E Energy.
    * @param i Index to the energy grid.
    */
-  double elastic_xs(double E, size_t i) const { return (*elastic_xs_)(E, i); }
+  double elastic_xs(double E, size_t i) const {
+    return elastic_xs_->evaluate(E, i);
+  }
 
   /**
    * @brief Evaluates the disappearance cross section at E using bisection search.
    * @param E Energy.
    */
-  double disappearance_xs(double E) const { return (*disappearance_xs_)(E); }
+  double disappearance_xs(double E) const {
+    return disappearance_xs_->evaluate(E);
+  }
 
   /**
    * @brief Evaluates the disappearance cross section at energy E and index i.
@@ -166,7 +176,7 @@ class CENeutron {
    * @param i Index to the energy grid.
    */
   double disappearance_xs(double E, size_t i) const {
-    return (*disappearance_xs_)(E, i);
+    return disappearance_xs_->evaluate(E, i);
   }
 
   /**
@@ -174,7 +184,7 @@ class CENeutron {
    * @param E Energy.
    */
   double photon_production_xs(double E) const {
-    return (*photon_production_xs_)(E);
+    return photon_production_xs_->evaluate(E);
   }
 
   /**
@@ -183,7 +193,7 @@ class CENeutron {
    * @param i Index to the energy grid.
    */
   double photon_production_xs(double E, size_t i) const {
-    return (*photon_production_xs_)(E, i);
+    return photon_production_xs_->evaluate(E, i);
   }
 
   /**
