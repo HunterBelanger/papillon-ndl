@@ -128,7 +128,7 @@ class Reaction {
    */
   AngleEnergyPacket sample_angle_energy(double E_in,
                                         std::function<double()> rng) const {
-    if (!angle_energy_) return {0., 0.};
+    if (!angle_energy_ || E_in < threshold_) return {0., 0.};
 
     AngleEnergyPacket out = angle_energy_->sample_angle_energy(E_in, rng);
 
