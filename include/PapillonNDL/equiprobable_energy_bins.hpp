@@ -54,6 +54,14 @@ class EquiprobableEnergyBins : public EnergyLaw {
    * @param i Starting index of distribution in the XSS array.
    */
   EquiprobableEnergyBins(const ACE& ace, size_t i);
+
+  /**
+   * @param incoming_energy Incoming energy grid.
+   * @param bin_bounds A vector of vectors containing bin bounds, one for
+   *                   each point in the incoming energy grid.
+   */
+  EquiprobableEnergyBins(const std::vector<double>& incoming_energy,
+                         const std::vector<std::vector<double>>& bin_bounds);
   ~EquiprobableEnergyBins() = default;
 
   double sample_energy(double E_in,

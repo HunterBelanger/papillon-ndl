@@ -51,6 +51,14 @@ EquiprobableEnergyBins::EquiprobableEnergyBins(const ACE& ace, size_t i)
   // Read energies
   incoming_energy_ = ace.xss(i + 2 + 2 * NR, NE);
 
+  if (!std::is_sorted(incoming_energy_.begin(), incoming_energy_.end())) {
+    std::string mssg = "EquiprobableEnergyBins::EquiprobableEnergyBins: ";
+    mssg += "Incoming energy grid is not sorted.\n";
+    mssg += "Index of EquiprobableEnergyBins in XSS block is ";
+    mssg += std::to_string(i) + ".";
+    throw PNDLException(mssg, __FILE__, __LINE__);
+  }
+
   uint32_t NET = ace.xss<uint32_t>(i + 2 + 2 * NR + NE);
 
   // Read energy bins
@@ -65,6 +73,33 @@ EquiprobableEnergyBins::EquiprobableEnergyBins(const ACE& ace, size_t i)
       mssg += std::to_string(j) + "th bin bounds are not sorted.\n";
       mssg += "Index of EquiprobableEnergyBins in XSS block is ";
       mssg += std::to_string(i) + ".";
+      throw PNDLException(mssg, __FILE__, __LINE__);
+    }
+  }
+}
+
+EquiprobableEnergyBins::EquiprobableEnergyBins(
+    const std::vector<double>& incoming_energy,
+    const std::vector<std::vector<double>>& bin_bounds)
+    : incoming_energy_(incoming_energy), bin_sets_(bin_bounds) {
+  if (!std::is_sorted(incoming_energy_.begin(), incoming_energy_.end())) {
+    std::string mssg = "EquiprobableEnergyBins::EquiprobableEnergyBins: ";
+    mssg += "Incoming energy grid is not sorted.";
+    throw PNDLException(mssg, __FILE__, __LINE__);
+  }
+
+  if (incoming_energy_.size() != bin_sets_.size()) {
+    std::string mssg = "EquiprobableEnergyBins::EquiprobableEnergyBins: ";
+    mssg += "The number of\nincoming energies does not match the numer ";
+    mssg += "of bin sets provided.";
+    throw PNDLException(mssg, __FILE__, __LINE__);
+  }
+
+  // Make sure that each bin set is sorted
+  for (size_t j = 0; j < bin_sets_.size(); j++) {
+    if (!std::is_sorted(bin_sets_[j].begin(), bin_sets_[j].end())) {
+      std::string mssg = "EquiprobableEnergyBins::EquiprobableEnergyBins: ";
+      mssg += std::to_string(j) + "th bin bounds are not sorted.";
       throw PNDLException(mssg, __FILE__, __LINE__);
     }
   }

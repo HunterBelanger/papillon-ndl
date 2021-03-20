@@ -70,6 +70,8 @@ void init_EquiprobableEnergyBins(py::module& m) {
              std::shared_ptr<EquiprobableEnergyBins>>(m,
                                                       "EquiprobableEnergyBins")
       .def(py::init<const ACE&, size_t>())
+      .def(py::init<const std::vector<double>&,
+                    const std::vector<std::vector<double>>&>())
       .def("sample_energy", &EquiprobableEnergyBins::sample_energy)
       .def("size", &EquiprobableEnergyBins::size)
       .def("incoming_energy", &EquiprobableEnergyBins::incoming_energy)
