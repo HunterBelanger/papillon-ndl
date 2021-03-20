@@ -60,6 +60,14 @@ AngleDistribution::AngleDistribution(const ACE& ace, int locb)
     // Read in energies
     energy_grid_ = ace.xss(i + 1, NE);
 
+    if (!std::is_sorted(energy_grid_.begin(), energy_grid_.end())) {
+      std::string mssg =
+          "AngleDistribution::AngleDistribution: The energy grid"
+          " must be sorted.\n";
+      mssg += "Occurred at lobc = " + std::to_string(locb) + ".";
+      throw PNDLException(mssg, __FILE__, __LINE__);
+    }
+
     // Get each table
     for (uint32_t j = 0; j < NE; j++) {
       int l = ace.xss<int>(i + 1 + NE + j);
@@ -88,6 +96,25 @@ AngleDistribution::AngleDistribution(const ACE& ace, int locb)
   } else if (locb == 0) {
     energy_grid_.push_back(1.E-5);
     laws_.push_back(std::make_shared<Isotropic>());
+  }
+}
+
+AngleDistribution::AngleDistribution(
+    const std::vector<double>& energy_grid,
+    const std::vector<std::shared_ptr<AngleLaw>>& laws)
+    : energy_grid_(energy_grid), laws_(laws) {
+  if (energy_grid_.size() != laws_.size()) {
+    std::string mssg =
+        "AngleDistribution::AngleDistribution: The energy grid"
+        " and the\nvector of laws must have the same size.";
+    throw PNDLException(mssg, __FILE__, __LINE__);
+  }
+
+  if (!std::is_sorted(energy_grid_.begin(), energy_grid_.end())) {
+    std::string mssg =
+        "AngleDistribution::AngleDistribution: The energy grid"
+        " must be sorted.";
+    throw PNDLException(mssg, __FILE__, __LINE__);
   }
 }
 

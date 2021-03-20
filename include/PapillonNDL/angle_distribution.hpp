@@ -57,6 +57,13 @@ class AngleDistribution {
    * @param locb Index in the XSS array to start reading angular distribution.
    */
   AngleDistribution(const ACE& ace, int locb);
+
+  /**
+   * @param energy_grid Incoming energies which has angle laws.
+   * @param laws Angle laws for each incoming energy.
+   */
+  AngleDistribution(const std::vector<double>& energy_grid,
+                    const std::vector<std::shared_ptr<AngleLaw>>& laws);
   ~AngleDistribution() = default;
 
   /**
