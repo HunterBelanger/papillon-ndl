@@ -57,6 +57,13 @@ class TabularEnergy : public EnergyLaw {
    */
   TabularEnergy(const ACE& ace, size_t i, size_t JED);
 
+  /**
+   * @param incoming_energy Incoming energy grid.
+   * @param tables PCTables for each point in the incoming energy grid.
+   */
+  TabularEnergy(const std::vector<double>& incoming_energy,
+                const std::vector<PCTable>& tables);
+
   ~TabularEnergy() = default;
 
   double sample_energy(double E_in,

@@ -102,6 +102,7 @@ void init_TabularEnergy(py::module& m) {
   py::class_<TabularEnergy, EnergyLaw, std::shared_ptr<TabularEnergy>>(
       m, "TabularEnergy")
       .def(py::init<const ACE&, size_t, size_t>())
+      .def(py::init<const std::vector<double>&, const std::vector<PCTable>&>())
       .def("sample_energy", &TabularEnergy::sample_energy)
       .def("incoming_energy", &TabularEnergy::incoming_energy)
       .def("table", &TabularEnergy::table)

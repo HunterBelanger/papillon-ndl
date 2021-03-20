@@ -68,6 +68,16 @@ TabularEnergy::TabularEnergy(const ACE& ace, size_t i, size_t JED)
   }
 }
 
+TabularEnergy::TabularEnergy(const std::vector<double>& incoming_energy,
+                             const std::vector<PCTable>& tables)
+    : incoming_energy_(incoming_energy), tables_(tables) {
+  if (!std::is_sorted(incoming_energy_.begin(), incoming_energy_.end())) {
+    std::string mssg = "TabularEnergy::TabularEnergy: The incoming energy ";
+    mssg += "grid is not sroted.";
+    throw PNDLException(mssg, __FILE__, __LINE__);
+  }
+}
+
 double TabularEnergy::sample_energy(double E_in,
                                     std::function<double()> rng) const {
   // Determine the index of the bounding tabulated incoming energies
