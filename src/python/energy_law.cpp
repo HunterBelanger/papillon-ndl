@@ -80,6 +80,7 @@ void init_DiscretePhoton(py::module& m) {
   py::class_<DiscretePhoton, EnergyLaw, std::shared_ptr<DiscretePhoton>>(
       m, "DiscretePhoton")
       .def(py::init<const ACE&, size_t>())
+      .def(py::init<int, double, double>())
       .def("sample_energy", &DiscretePhoton::sample_energy)
       .def("primary_indicator", &DiscretePhoton::primary_indicator)
       .def("photon_energy", &DiscretePhoton::photon_energy);

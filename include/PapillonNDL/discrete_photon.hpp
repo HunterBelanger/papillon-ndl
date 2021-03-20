@@ -41,6 +41,7 @@
 
 #include <PapillonNDL/ace.hpp>
 #include <PapillonNDL/energy_law.hpp>
+#include <PapillonNDL/pndl_exception.hpp>
 
 namespace pndl {
 
@@ -49,11 +50,64 @@ namespace pndl {
  */
 class DiscretePhoton : public EnergyLaw {
  public:
+  /**
+   * @param ace ACE file to take data from.
+   * @param i Starting index of distribution in XSS array.
+   */
   DiscretePhoton(const ACE& ace, size_t i) : lp(), A(), Eg() {
     lp = ace.xss<int>(i);
     Eg = ace.xss(i + 1);
     A = ace.awr();
+
+    if ((lp != 0) && (lp != 1) && (lp != 2)) {
+      std::string mssg = "DiscretePhoton::DiscretePhoton: Invalid lp of " +
+                         std::to_string(lp) + ".\n";
+      mssg += "Occurred at index " + std::to_string(i) + " in XSS array.";
+      throw PNDLException(mssg, __FILE__, __LINE__);
+    }
+
+    if (Eg <= 0.) {
+      std::string mssg =
+          "DiscretePphoton::DiscretePhoton: Eg must be greater than zero.\n";
+      mssg += "Occurred at index " + std::to_string(i) + " in XSS array.";
+      throw PNDLException(mssg, __FILE__, __LINE__);
+    }
+
+    if (A <= 0.) {
+      std::string mssg =
+          "DiscretePphoton::DiscretePhoton: Atomic weight ratio must be "
+          "greater than zero.\n";
+      mssg += "Occurred at index " + std::to_string(i) + " in XSS array.";
+      throw PNDLException(mssg, __FILE__, __LINE__);
+    }
   }
+
+  /**
+   * @param lp Primary indicator flag (0 or 1 is primary, 2 is secondary).
+   * @param Eg Energy argument of distribution.
+   * @param AWR Atomic Weight Ratio of nuclide.
+   */
+  DiscretePhoton(int lp, double Eg, double AWR) : lp(lp), A(AWR), Eg(Eg) {
+    if ((lp != 0) && (lp != 1) && (lp != 2)) {
+      std::string mssg = "DiscretePhoton::DiscretePhoton: Invalid lp of " +
+                         std::to_string(lp) + ".";
+      throw PNDLException(mssg, __FILE__, __LINE__);
+    }
+
+    if (Eg <= 0.) {
+      std::string mssg =
+          "DiscretePphoton::DiscretePhoton: Eg must be greater than zero.";
+      throw PNDLException(mssg, __FILE__, __LINE__);
+    }
+
+    if (A <= 0.) {
+      std::string mssg =
+          "DiscretePphoton::DiscretePhoton: Atomic weight ratio must be "
+          "greater than zero.";
+      throw PNDLException(mssg, __FILE__, __LINE__);
+    }
+  }
+
   ~DiscretePhoton() = default;
 
   double sample_energy(double E_in,
