@@ -64,6 +64,14 @@ GeneralEvaporation::GeneralEvaporation(const ACE& ace, size_t i)
   // Get bins
   bin_bounds_ = ace.xss(i + 2 + 2 * NR + 2 * NE, NX);
 
+  if (!std::is_sorted(bin_bounds_.begin(), bin_bounds_.end())) {
+    std::string mssg =
+        "GeneralEvaporation::GeneralEvaporation: Bin bounds for ";
+    mssg += "X are not sorted.\n";
+    mssg += "Index in the XSS block is " + std::to_string(i) + ".";
+    throw PNDLException(mssg, __FILE__, __LINE__);
+  }
+
   // Create Function1D pointer
   try {
     if (NBT.size() == 1) {
@@ -79,6 +87,17 @@ GeneralEvaporation::GeneralEvaporation(const ACE& ace, size_t i)
     mssg += " XSS block is i = " + std::to_string(i) + ".";
     error.add_to_exception(mssg, __FILE__, __LINE__);
     throw error;
+  }
+}
+
+GeneralEvaporation::GeneralEvaporation(std::shared_ptr<Tabulated1D> temperature,
+                                       const std::vector<double>& bounds)
+    : temperature_(temperature), bin_bounds_(bounds) {
+  if (!std::is_sorted(bin_bounds_.begin(), bin_bounds_.end())) {
+    std::string mssg =
+        "GeneralEvaporation::GeneralEvaporation: Bin bounds for ";
+    mssg += "X are not sorted.";
+    throw PNDLException(mssg, __FILE__, __LINE__);
   }
 }
 

@@ -113,6 +113,7 @@ void init_GeneralEvaporation(py::module& m) {
   py::class_<GeneralEvaporation, EnergyLaw,
              std::shared_ptr<GeneralEvaporation>>(m, "GeneralEvaporation")
       .def(py::init<const ACE&, size_t>())
+      .def(py::init<std::shared_ptr<Tabulated1D>, const std::vector<double>&>())
       .def("sample_energy", &GeneralEvaporation::sample_energy)
       .def("temperature", &GeneralEvaporation::temperature)
       .def("bin_bounds", &GeneralEvaporation::bin_bounds);

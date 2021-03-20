@@ -56,6 +56,13 @@ class GeneralEvaporation : public EnergyLaw {
    * @param i Starting index of distribution in the XSS array.
    */
   GeneralEvaporation(const ACE& ace, size_t i);
+
+  /**
+   * @param temperature Tabulated function for nuclear temperature.
+   * @param bounds Equiprobable bounds for X.
+   */
+  GeneralEvaporation(std::shared_ptr<Tabulated1D> temperature,
+                     const std::vector<double>& bounds);
   ~GeneralEvaporation() = default;
 
   double sample_energy(double E_in,
