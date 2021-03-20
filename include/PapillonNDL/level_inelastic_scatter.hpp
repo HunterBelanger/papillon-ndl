@@ -55,6 +55,12 @@ class LevelInelasticScatter : public EnergyLaw {
    * @param i Starting index of distribution in the XSS array.
    */
   LevelInelasticScatter(const ACE& ace, size_t i);
+
+  /**
+   * @param Q Q-value of the reaction.
+   * @param AWR Atomic Weight Ratio of nuclide.
+   */
+  LevelInelasticScatter(double Q, double AWR);
   ~LevelInelasticScatter() = default;
 
   double sample_energy(double E_in,

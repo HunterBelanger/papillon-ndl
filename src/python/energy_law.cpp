@@ -92,6 +92,7 @@ void init_LevelInelasticScatter(py::module& m) {
   py::class_<LevelInelasticScatter, EnergyLaw,
              std::shared_ptr<LevelInelasticScatter>>(m, "LevelInelasticScatter")
       .def(py::init<const ACE&, size_t>())
+      .def(py::init<double, double>())
       .def("sample_energy", &LevelInelasticScatter::sample_energy)
       .def("C1", &LevelInelasticScatter::C1)
       .def("C2", &LevelInelasticScatter::C2);

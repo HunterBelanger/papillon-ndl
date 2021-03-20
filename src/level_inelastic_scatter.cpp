@@ -32,6 +32,7 @@
  *
  * */
 #include <PapillonNDL/level_inelastic_scatter.hpp>
+#include <PapillonNDL/pndl_exception.hpp>
 
 namespace pndl {
 
@@ -39,6 +40,19 @@ LevelInelasticScatter::LevelInelasticScatter(const ACE& ace, size_t i)
     : C1_(), C2_() {
   C1_ = ace.xss(i);
   C2_ = ace.xss(i + 1);
+}
+
+LevelInelasticScatter::LevelInelasticScatter(double Q, double AWR)
+    : C1_(), C2_() {
+  if (AWR <= 0.) {
+    std::string mssg = "LevelInelasticScattter::LevelInelasticScatter: ";
+    mssg += "AWR must be greater than zero.";
+    throw PNDLException(mssg, __FILE__, __LINE__);
+  }
+
+  C1_ = (AWR + 1.) * std::abs(Q) / AWR;
+  double tmp = AWR / (AWR + 1.);
+  C2_ = tmp * tmp;
 }
 
 double LevelInelasticScatter::sample_energy(double E_in,
