@@ -33,8 +33,8 @@
  * */
 #include <PapillonNDL/angle_distribution.hpp>
 #include <PapillonNDL/constant.hpp>
-#include <PapillonNDL/equiprobable_energy_bins.hpp>
 #include <PapillonNDL/discrete_photon.hpp>
+#include <PapillonNDL/equiprobable_energy_bins.hpp>
 #include <PapillonNDL/evaporation.hpp>
 #include <PapillonNDL/general_evaporation.hpp>
 #include <PapillonNDL/kalbach.hpp>
@@ -117,10 +117,10 @@ Reaction::Reaction(const ACE& ace, size_t indx, const EnergyGrid& egrid)
     std::shared_ptr<AngleDistribution> angle(nullptr);
 
     // Get angulardistribution if it exists.
-    if(locb >= 0) {
+    if (locb >= 0) {
       try {
         angle = std::make_shared<AngleDistribution>(ace, locb);
-      } catch(PNDLException& error) {
+      } catch (PNDLException& error) {
         std::string mssg = "Reaction::Reaction: Could not create secondary ";
         mssg += "angular\ndistribution for MT = " + std::to_string(mt_) + ".";
         error.add_to_exception(mssg, __FILE__, __LINE__);
@@ -150,7 +150,7 @@ Reaction::Reaction(const ACE& ace, size_t indx, const EnergyGrid& egrid)
         angle_energy_ = std::make_shared<Uncorrelated>(
             angle, std::make_shared<EquiprobableEnergyBins>(ace, j));
 
-      } else if (law == 2) { // Discrete Photon
+      } else if (law == 2) {  // Discrete Photon
         angle_energy_ = std::make_shared<Uncorrelated>(
             angle, std::make_shared<DiscretePhoton>(ace, j));
 
@@ -190,7 +190,7 @@ Reaction::Reaction(const ACE& ace, size_t indx, const EnergyGrid& egrid)
       } else {
         // Unknown or unsuported law
         std::string mssg = "Reaction::Reaction: Unkown energy law " +
-                            std::to_string(law) + " in reaction \n";
+                           std::to_string(law) + " in reaction \n";
         mssg += "MT=" + std::to_string(mt_) +
                 " in ZAID=" + std::to_string(ace.zaid()) + ".";
         throw PNDLException(mssg, __FILE__, __LINE__);
@@ -237,16 +237,12 @@ Reaction::Reaction(const ACE& ace, size_t indx, const EnergyGrid& egrid,
   threshold_ = xs_->energy(0);
 }
 
-std::shared_ptr<CrossSection> Reaction::cross_section() const {
-  return xs_;
-}
+std::shared_ptr<CrossSection> Reaction::cross_section() const { return xs_; }
 
 std::shared_ptr<AngleEnergy> Reaction::angle_energy() const {
   return angle_energy_;
 }
 
-std::shared_ptr<Function1D> Reaction::yield() const {
-  return yield_;
-}
+std::shared_ptr<Function1D> Reaction::yield() const { return yield_; }
 
 }  // namespace pndl

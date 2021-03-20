@@ -43,6 +43,8 @@ using namespace pndl;
 void init_PCTable(py::module& m) {
   py::class_<PCTable>(m, "PCTable")
       .def(py::init<const ACE&, size_t, double>())
+      .def(py::init<const std::vector<double>&, const std::vector<double>&,
+                    const std::vector<double>&, Interpolation>())
       .def("sample_value", &PCTable::sample_value)
       .def("min_value", &PCTable::min_value)
       .def("max_value", &PCTable::max_value)

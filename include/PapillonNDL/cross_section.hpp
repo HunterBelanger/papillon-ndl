@@ -129,10 +129,8 @@ class CrossSection {
    *        bisection search.
    * @param E Energy to evaluate the cross section at.
    */
-  double evaluate(double E) const {
-    return this->operator()(E);
-  }
-  
+  double evaluate(double E) const { return this->operator()(E); }
+
   /**
    * @brief Evaluates the cross section at a given energy, with the
    *        grid point already provided.
@@ -140,9 +138,7 @@ class CrossSection {
    * @param i Index of the points for interpolation in the frame of
    *          the energy grid.
    */
-  double evaluate(double E, size_t i) const {
-    return this->operator()(E, i);
-  }
+  double evaluate(double E, size_t i) const { return this->operator()(E, i); }
 
   /**
    * @brief Returns index in the energy grid at which the cross section

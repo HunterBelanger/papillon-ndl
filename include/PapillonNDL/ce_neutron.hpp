@@ -99,9 +99,10 @@ class CENeutron {
   std::shared_ptr<CrossSection> total_cross_section() const;
 
   /**
-   * @brief Returns a pointer to the elastic scattering CrossSection for the nuclide.
+   * @brief Returns a pointer to the elastic scattering CrossSection for the
+   * nuclide.
    */
-   std::shared_ptr<CrossSection> elastic_cross_section() const;
+  std::shared_ptr<CrossSection> elastic_cross_section() const;
 
   /**
    * @brief Returns a pointer to the disappearance CrossSection for the nuclide.
@@ -109,7 +110,8 @@ class CENeutron {
   std::shared_ptr<CrossSection> disappearance_cross_section() const;
 
   /**
-   * @brief Returns a pointer to the photon production CrossSection for the nuclide.
+   * @brief Returns a pointer to the photon production CrossSection for the
+   * nuclide.
    */
   std::shared_ptr<CrossSection> photon_production_cross_section() const;
 
@@ -130,9 +132,7 @@ class CENeutron {
    * @brief Evaluates the total cross section at E using bisection search.
    * @param E Energy.
    */
-  double total_xs(double E) const {
-    return total_xs_->evaluate(E);
-  }
+  double total_xs(double E) const { return total_xs_->evaluate(E); }
 
   /**
    * @brief Evaluates the total cross section at energy E and index i.
@@ -148,9 +148,7 @@ class CENeutron {
    * search.
    * @param E Energy.
    */
-  double elastic_xs(double E) const {
-    return elastic_xs_->evaluate(E);
-  }
+  double elastic_xs(double E) const { return elastic_xs_->evaluate(E); }
 
   /**
    * @brief Evaluates the elastic scattering cross section at energy E and index
@@ -163,7 +161,8 @@ class CENeutron {
   }
 
   /**
-   * @brief Evaluates the disappearance cross section at E using bisection search.
+   * @brief Evaluates the disappearance cross section at E using bisection
+   * search.
    * @param E Energy.
    */
   double disappearance_xs(double E) const {
@@ -180,25 +179,27 @@ class CENeutron {
   }
 
   /**
-   * @brief Evaluates the photon production cross section at E using bisection search.
+   * @brief Evaluates the photon production cross section at E using bisection
+   * search.
    * @param E Energy.
    */
   double photon_production_xs(double E) const {
     // Need to check photon production XS exists, as this one is not
     // necessarily present.
-    if(photon_production_xs_) return photon_production_xs_->evaluate(E);
+    if (photon_production_xs_) return photon_production_xs_->evaluate(E);
     return 0.;
   }
 
   /**
-   * @brief Evaluates the photon production cross section at energy E and index i.
+   * @brief Evaluates the photon production cross section at energy E and index
+   * i.
    * @param E Energy.
    * @param i Index to the energy grid.
    */
   double photon_production_xs(double E, size_t i) const {
     // Need to check photon production XS exists, as this one is not
     // necessarily present.
-    if(photon_production_xs_) return photon_production_xs_->evaluate(E, i);
+    if (photon_production_xs_) return photon_production_xs_->evaluate(E, i);
     return 0.;
   }
 

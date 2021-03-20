@@ -48,39 +48,40 @@ namespace pndl {
  * @brief Energy distribution for discrete photons.
  */
 class DiscretePhoton : public EnergyLaw {
-  public:
-    DiscretePhoton(const ACE& ace, size_t i): lp(), A(), Eg() {
-      lp = ace.xss<int>(i);
-      Eg = ace.xss(i+1);
-      A = ace.awr();
-    }
-    ~DiscretePhoton() = default;
+ public:
+  DiscretePhoton(const ACE& ace, size_t i) : lp(), A(), Eg() {
+    lp = ace.xss<int>(i);
+    Eg = ace.xss(i + 1);
+    A = ace.awr();
+  }
+  ~DiscretePhoton() = default;
 
-    double sample_energy(double E_in, std::function<double()> /*rng*/) const override final {
-      if((lp == 0) || (lp == 1)) return Eg;
-      return Eg + (A / (A+1.))*E_in;
-    }
+  double sample_energy(double E_in,
+                       std::function<double()> /*rng*/) const override final {
+    if ((lp == 0) || (lp == 1)) return Eg;
+    return Eg + (A / (A + 1.)) * E_in;
+  }
 
-    /**
-     * @brief Returns the flay indicating whether the photon is a primary or secondary.
-     *        A secondary photon corresponds with 0 and 1, while a secondary photon has
-     *        a value of 2.
-     */
-    int primary_indicator() const {return lp;}
+  /**
+   * @brief Returns the flay indicating whether the photon is a primary or
+   * secondary. A secondary photon corresponds with 0 and 1, while a secondary
+   * photon has a value of 2.
+   */
+  int primary_indicator() const { return lp; }
 
-    /**
-     * @brief Returns the energy argument for the distribution. If it is a primary photon,
-     *        this is the outgoing energy, and for a secondary neutron this is the binding
-     *        energy.
-     */
-    double photon_energy() const {return Eg;}
+  /**
+   * @brief Returns the energy argument for the distribution. If it is a primary
+   * photon, this is the outgoing energy, and for a secondary neutron this is
+   * the binding energy.
+   */
+  double photon_energy() const { return Eg; }
 
-  private:
-    int lp;
-    double A;
-    double Eg;
+ private:
+  int lp;
+  double A;
+  double Eg;
 };
 
-}
+}  // namespace pndl
 
 #endif

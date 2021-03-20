@@ -54,6 +54,16 @@ class AngleTable : public AngleLaw {
    * @param i Starting index of distribution in the XSS array.
    */
   AngleTable(const ACE& ace, size_t i);
+
+  /**
+   * @param cosines Conines of scattering angle which are tabulated.
+   * @param pdf The Probability Density Function for the provided values.
+   * @param cdf The Cumulative Density Function for the provided values.
+   * @param interp Interpolation rule for the data. May be either
+   *               Histogram or LinLin.
+   */
+  AngleTable(const std::vector<double>& cosines, const std::vector<double>& pdf,
+             const std::vector<double>& cdf, Interpolation interp);
   ~AngleTable() = default;
 
   double sample_mu(double xi) const override final;

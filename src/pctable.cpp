@@ -89,4 +89,50 @@ PCTable::PCTable(const ACE& ace, size_t i, double normalization)
   }
 }
 
+PCTable::PCTable(const std::vector<double>& values,
+                 const std::vector<double>& pdf, const std::vector<double>& cdf,
+                 Interpolation interp)
+    : values_(values), pdf_(pdf), cdf_(cdf), interp_(interp) {
+  if ((interp_ != Interpolation::Histogram) &&
+      (interp_ != Interpolation::LinLin)) {
+    std::string mssg = "PCTable::PCTable: Invalid interpolation of ";
+    mssg += std::to_string(static_cast<int>(interp_)) + ".";
+    throw PNDLException(mssg, __FILE__, __LINE__);
+  }
+
+  if ((values_.size() != pdf_.size()) || (pdf_.size() != cdf_.size())) {
+    std::string mssg = "PCTable::PCTable: Values, PDF, and CDF must";
+    mssg += " have the same length.";
+    throw PNDLException(mssg, __FILE__, __LINE__);
+  }
+
+  if (!std::is_sorted(values_.begin(), values_.end())) {
+    std::string mssg = "PCTable::PCTable: Values are not sorted.";
+    throw PNDLException(mssg, __FILE__, __LINE__);
+  }
+
+  if (!std::is_sorted(cdf_.begin(), cdf_.end())) {
+    std::string mssg = "PCTable::PCTable: CDF is not sorted.";
+    throw PNDLException(mssg, __FILE__, __LINE__);
+  }
+
+  if (cdf_[cdf_.size() - 1] != 1.) {
+    // If last element is close to 1, just set it to exactly 1
+    if (std::abs(cdf_[cdf_.size() - 1] - 1.) < 1.E-7) {
+      cdf_[cdf_.size() - 1] = 1.;
+    } else {
+      std::string mssg = "PCTable::PCTable: Last CDF entry is not 1, but ";
+      mssg += std::to_string(cdf_[cdf_.size() - 1]) + ".";
+      throw PNDLException(mssg, __FILE__, __LINE__);
+    }
+  }
+
+  for (const auto& p : pdf_) {
+    if (p < 0.) {
+      std::string mssg = "PCTable::PCTable: Negative value found in PDF.";
+      throw PNDLException(mssg, __FILE__, __LINE__);
+    }
+  }
+}
+
 }  // namespace pndl

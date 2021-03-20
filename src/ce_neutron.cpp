@@ -53,13 +53,17 @@ CENeutron::CENeutron(const ACE& ace)
   // Number of energy points
   uint32_t NE = ace.nxs(2);
 
-  total_xs_ = std::make_shared<CrossSection>(ace, ace.ESZ() + NE, energy_grid_, false);
-  disappearance_xs_ = std::make_shared<CrossSection>(ace, ace.ESZ() + 2 * NE, energy_grid_, false);
-  elastic_xs_ = std::make_shared<CrossSection>(ace, ace.ESZ() + 3 * NE, energy_grid_, false);
+  total_xs_ =
+      std::make_shared<CrossSection>(ace, ace.ESZ() + NE, energy_grid_, false);
+  disappearance_xs_ = std::make_shared<CrossSection>(ace, ace.ESZ() + 2 * NE,
+                                                     energy_grid_, false);
+  elastic_xs_ = std::make_shared<CrossSection>(ace, ace.ESZ() + 3 * NE,
+                                               energy_grid_, false);
 
   // Get photon production XS if present
-  if(ace.jxs(11) != 0) {
-    photon_production_xs_ = std::make_shared<CrossSection>(ace, ace.GPD(), energy_grid_, false);
+  if (ace.jxs(11) != 0) {
+    photon_production_xs_ =
+        std::make_shared<CrossSection>(ace, ace.GPD(), energy_grid_, false);
   }
 
   // Make elastic AngleDistribution
@@ -114,13 +118,17 @@ CENeutron::CENeutron(const ACE& ace, const CENeutron& nuclide)
   // Number of energy points
   uint32_t NE = ace.nxs(2);
 
-  total_xs_ = std::make_shared<CrossSection>(ace, ace.ESZ() + NE, energy_grid_, false);
-  disappearance_xs_ = std::make_shared<CrossSection>(ace, ace.ESZ() + 2 * NE, energy_grid_, false);
-  elastic_xs_ = std::make_shared<CrossSection>(ace, ace.ESZ() + 3 * NE, energy_grid_, false);
+  total_xs_ =
+      std::make_shared<CrossSection>(ace, ace.ESZ() + NE, energy_grid_, false);
+  disappearance_xs_ = std::make_shared<CrossSection>(ace, ace.ESZ() + 2 * NE,
+                                                     energy_grid_, false);
+  elastic_xs_ = std::make_shared<CrossSection>(ace, ace.ESZ() + 3 * NE,
+                                               energy_grid_, false);
 
   // Get photon production XS if present
-  if(ace.jxs(11) != 0) {
-    photon_production_xs_ = std::make_shared<CrossSection>(ace, ace.GPD(), energy_grid_, false);
+  if (ace.jxs(11) != 0) {
+    photon_production_xs_ =
+        std::make_shared<CrossSection>(ace, ace.GPD(), energy_grid_, false);
   }
 
   // Copy elastic AngleDistribution
@@ -161,11 +169,13 @@ std::shared_ptr<CrossSection> CENeutron::disappearance_cross_section() const {
   return disappearance_xs_;
 }
 
-std::shared_ptr<CrossSection> CENeutron::photon_production_cross_section() const {
+std::shared_ptr<CrossSection> CENeutron::photon_production_cross_section()
+    const {
   return photon_production_xs_;
 }
 
-std::shared_ptr<AngleDistribution> CENeutron::elastic_angle_distribution() const {
+std::shared_ptr<AngleDistribution> CENeutron::elastic_angle_distribution()
+    const {
   return elastic_angle_;
 }
 

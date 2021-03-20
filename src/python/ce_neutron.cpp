@@ -51,8 +51,10 @@ void init_CENeutron(py::module& m) {
       .def("energy_grid", &CENeutron::energy_grid)
       .def("total_cross_section", &CENeutron::total_cross_section)
       .def("elastic_cross_section", &CENeutron::elastic_cross_section)
-      .def("disappearance_cross_section", &CENeutron::disappearance_cross_section)
-      .def("photon_production_cross_section", &CENeutron::photon_production_cross_section)
+      .def("disappearance_cross_section",
+           &CENeutron::disappearance_cross_section)
+      .def("photon_production_cross_section",
+           &CENeutron::photon_production_cross_section)
       .def("elastic_angle_distribution", &CENeutron::elastic_angle_distribution)
       .def("energy_grid_index", &CENeutron::energy_grid_index)
       .def("total_xs",
@@ -66,11 +68,13 @@ void init_CENeutron(py::module& m) {
       .def("disappearance_xs",
            py::overload_cast<double>(&CENeutron::disappearance_xs, py::const_))
       .def("disappearance_xs", py::overload_cast<double, size_t>(
-                                &CENeutron::disappearance_xs, py::const_))
-     .def("photon_production_xs",
-           py::overload_cast<double>(&CENeutron::photon_production_xs, py::const_))
-      .def("photon_production_xs", py::overload_cast<double, size_t>(
-                                &CENeutron::photon_production_xs, py::const_))
+                                   &CENeutron::disappearance_xs, py::const_))
+      .def("photon_production_xs",
+           py::overload_cast<double>(&CENeutron::photon_production_xs,
+                                     py::const_))
+      .def("photon_production_xs",
+           py::overload_cast<double, size_t>(&CENeutron::photon_production_xs,
+                                             py::const_))
       .def("sample_elastic_angle", &CENeutron::sample_elastic_angle)
       .def("has_reaction", &CENeutron::has_reaction)
       .def("reaction", &CENeutron::reaction)

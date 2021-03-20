@@ -76,6 +76,8 @@ void init_EquiprobableAngleBins(py::module& m) {
 void init_AngleTable(py::module& m) {
   py::class_<AngleTable, AngleLaw, std::shared_ptr<AngleTable>>(m, "AngleTable")
       .def(py::init<const ACE&, size_t>())
+      .def(py::init<const std::vector<double>&, const std::vector<double>&,
+                    const std::vector<double>&, Interpolation>())
       .def("sample_mu", &AngleTable::sample_mu)
       .def("size", &AngleTable::size)
       .def("cosines", &AngleTable::cosines)

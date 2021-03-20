@@ -37,6 +37,11 @@ namespace pndl {
 
 AngleTable::AngleTable(const ACE& ace, size_t i) : distribution_(ace, i) {}
 
+AngleTable::AngleTable(const std::vector<double>& cosines,
+                       const std::vector<double>& pdf,
+                       const std::vector<double>& cdf, Interpolation interp)
+    : distribution_(cosines, pdf, cdf, interp) {}
+
 double AngleTable::sample_mu(double xi) const {
   double mu = distribution_.sample_value(xi);
   if (std::abs(mu) > 1.) mu = std::copysign(1., mu);

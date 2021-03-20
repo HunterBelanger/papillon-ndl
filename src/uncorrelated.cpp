@@ -31,21 +31,21 @@
  * termes.
  *
  * */
-#include <PapillonNDL/uncorrelated.hpp>
 #include <PapillonNDL/pndl_exception.hpp>
+#include <PapillonNDL/uncorrelated.hpp>
 
 namespace pndl {
 
 Uncorrelated::Uncorrelated(std::shared_ptr<AngleDistribution> angle,
                            std::shared_ptr<EnergyLaw> energy)
     : angle_(angle), energy_(energy) {
-  if(!angle_) {
+  if (!angle_) {
     std::string mssg =
-      "Uncorrelated::Uncorrelated: Provided angular distribution is nullptr.";
+        "Uncorrelated::Uncorrelated: Provided angular distribution is nullptr.";
     throw PNDLException(mssg, __FILE__, __LINE__);
-  } else if(!energy_) {
+  } else if (!energy_) {
     std::string mssg =
-      "Uncorrelated::Uncorrelated: Provided energy distribution is nullptr.";
+        "Uncorrelated::Uncorrelated: Provided energy distribution is nullptr.";
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
 }
@@ -57,7 +57,9 @@ AngleEnergyPacket Uncorrelated::sample_angle_energy(
   return {mu, E_out};
 }
 
-std::shared_ptr<AngleDistribution> Uncorrelated::angle() const { return angle_; }
+std::shared_ptr<AngleDistribution> Uncorrelated::angle() const {
+  return angle_;
+}
 
 std::shared_ptr<EnergyLaw> Uncorrelated::energy() const { return energy_; }
 

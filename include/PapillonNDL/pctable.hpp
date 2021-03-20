@@ -58,6 +58,16 @@ class PCTable {
    *                      Default value is 1.
    */
   PCTable(const ACE& ace, size_t i, double normalization = 1.);
+
+  /**
+   * @param values Vector of values for which the PDF and CDF are provided.
+   * @param pdf The Probability Density Function for the provided values.
+   * @param cdf The Cumulative Density Function for the provided values.
+   * @param interp Interpolation rule for the data. May be either
+   *               Histogram or LinLin.
+   */
+  PCTable(const std::vector<double>& values, const std::vector<double>& pdf,
+          const std::vector<double>& cdf, Interpolation interp);
   ~PCTable() = default;
 
   /**

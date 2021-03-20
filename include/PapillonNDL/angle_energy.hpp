@@ -47,8 +47,8 @@ namespace pndl {
  * @brief A struct to hold a sampled angle and energy.
  */
 struct AngleEnergyPacket {
-  double cosine_angle;  /**< Sampled cosine of scattering angle */
-  double energy; /**< Sampled outgoing energy in MeV */
+  double cosine_angle; /**< Sampled cosine of scattering angle */
+  double energy;       /**< Sampled outgoing energy in MeV */
 };
 
 /**
