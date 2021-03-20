@@ -123,6 +123,7 @@ void init_Evaporation(py::module& m) {
   py::class_<Evaporation, EnergyLaw, std::shared_ptr<Evaporation>>(
       m, "Evaporation")
       .def(py::init<const ACE&, size_t>())
+      .def(py::init<std::shared_ptr<Tabulated1D>, double>())
       .def("sample_energy", &Evaporation::sample_energy)
       .def("temperature", &Evaporation::temperature)
       .def("U", &Evaporation::U);
@@ -132,6 +133,7 @@ void init_Maxwellian(py::module& m) {
   py::class_<Maxwellian, EnergyLaw, std::shared_ptr<Maxwellian>>(m,
                                                                  "Maxwellian")
       .def(py::init<const ACE&, size_t>())
+      .def(py::init<std::shared_ptr<Tabulated1D>, double>())
       .def("sample_energy", &Maxwellian::sample_energy)
       .def("temperature", &Maxwellian::temperature)
       .def("U", &Maxwellian::U);

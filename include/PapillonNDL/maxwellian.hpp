@@ -56,6 +56,13 @@ class Maxwellian : public EnergyLaw {
    * @param i Starting index of distribution in the XSS array.
    */
   Maxwellian(const ACE& ace, size_t i);
+
+  /**
+   * @param temeprature Tabulated1D function for the nuclear temperature.
+   * @param restriction_energy Restriction energy for the distribution.
+   */
+  Maxwellian(std::shared_ptr<Tabulated1D> temperature,
+             double restriction_energy);
   ~Maxwellian() = default;
 
   double sample_energy(double E_in,
