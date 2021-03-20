@@ -56,6 +56,14 @@ class Watt : public EnergyLaw {
    * @param i Starting index of distribution in the XSS array.
    */
   Watt(const ACE& ace, size_t i);
+
+  /**
+   * @param a Tabulated1D function for a.
+   * @param b Tabulated1D function for b.
+   * @param restriction_energy Restriction energy for the distribution.
+   */
+  Watt(std::shared_ptr<Tabulated1D> a, std::shared_ptr<Tabulated1D> b,
+       double restriction_energy);
   ~Watt() = default;
 
   double sample_energy(double E_in,

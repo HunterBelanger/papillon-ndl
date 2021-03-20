@@ -142,6 +142,8 @@ void init_Maxwellian(py::module& m) {
 void init_Watt(py::module& m) {
   py::class_<Watt, EnergyLaw, std::shared_ptr<Watt>>(m, "Watt")
       .def(py::init<const ACE&, size_t>())
+      .def(py::init<std::shared_ptr<Tabulated1D>, std::shared_ptr<Tabulated1D>,
+                    double>())
       .def("sample_energy", &Watt::sample_energy)
       .def("a", &Watt::a)
       .def("b", &Watt::b)
