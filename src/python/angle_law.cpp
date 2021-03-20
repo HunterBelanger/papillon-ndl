@@ -68,6 +68,7 @@ void init_EquiprobableAngleBins(py::module& m) {
   py::class_<EquiprobableAngleBins, AngleLaw,
              std::shared_ptr<EquiprobableAngleBins>>(m, "EquiprobableAngleBins")
       .def(py::init<const ACE&, size_t>())
+      .def(py::init<const std::vector<double>&>())
       .def("sample_mu", &EquiprobableAngleBins::sample_mu)
       .def("size", &EquiprobableAngleBins::size)
       .def("bin_bounds", &EquiprobableAngleBins::bin_bounds);

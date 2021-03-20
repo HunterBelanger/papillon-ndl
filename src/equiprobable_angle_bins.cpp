@@ -68,6 +68,37 @@ EquiprobableAngleBins::EquiprobableAngleBins(const ACE& ace, size_t i)
   }
 }
 
+EquiprobableAngleBins::EquiprobableAngleBins(const std::vector<double>& bounds)
+    : bounds_(bounds) {
+  if (bounds_.size() != 33) {
+    std::string mssg =
+        "EquiprobableAngleBins::EquiprobableAngleBins: Must provide 33 bin "
+        "boundaries.";
+    throw PNDLException(mssg, __FILE__, __LINE__);
+  }
+
+  if (!std::is_sorted(bounds_.begin(), bounds_.end())) {
+    std::string mssg =
+        "EquiprobableAngleBins::EquiprobableAngleBins: Bin bounds are not "
+        "sorted.";
+    throw PNDLException(mssg, __FILE__, __LINE__);
+  }
+
+  if (bounds_[0] < -1.) {
+    std::string mssg =
+        "EquiprobableAngleBins::EquiprobableAngleBins: Lowest bin bound is "
+        "less than -1.";
+    throw PNDLException(mssg, __FILE__, __LINE__);
+  }
+
+  if (bounds_[NBOUNDS - 1] > 1.) {
+    std::string mssg =
+        "EquiprobableAngleBins::EquiprobableAngleBins: Highest bin bound is "
+        "more than 1.";
+    throw PNDLException(mssg, __FILE__, __LINE__);
+  }
+}
+
 double EquiprobableAngleBins::sample_mu(double xi) const {
   size_t bin =
       static_cast<size_t>(std::floor(static_cast<double>(NBOUNDS) * xi));

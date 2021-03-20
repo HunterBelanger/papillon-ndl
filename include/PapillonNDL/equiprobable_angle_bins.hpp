@@ -54,6 +54,11 @@ class EquiprobableAngleBins : public AngleLaw {
    * @param i Starting index of distribution in the XSS array.
    */
   EquiprobableAngleBins(const ACE& ace, size_t i);
+
+  /**
+   * @param bounds Vector of 33 bin bounds.
+   */
+  EquiprobableAngleBins(const std::vector<double>& bounds);
   ~EquiprobableAngleBins() = default;
 
   double sample_mu(double xi) const override final;
