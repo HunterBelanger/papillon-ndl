@@ -84,4 +84,49 @@ KalbachTable::KalbachTable(const ACE& ace, size_t i)
   }
 }
 
+KalbachTable::KalbachTable(const std::vector<double>& energy,
+               const std::vector<double>& pdf,
+               const std::vector<double>& cdf,
+               const std::vector<double>& R,
+               const std::vector<double>& A,
+               Interpolation interp): energy_(energy), pdf_(pdf), cdf_(cdf),
+               R_(R), A_(A), interp_(interp) {
+
+  if((interp_ != Interpolation::Histogram) &&
+     (interp_ != Interpolation::LinLin)) {
+    std::string mssg = "KalbachTable::KalbackTable: Invalid interpolation of ";
+    mssg += std::to_string(static_cast<int>(interp_)) + ".";
+    throw PNDLException(mssg, __FILE__, __LINE__);
+  }
+
+  if((energy_.size() != pdf_.size()) || (pdf_.size() != cdf_.size()) ||
+     (cdf_.size() != R_.size()) || (R_.size() != A_.size())) {
+    std::string mssg = "KalbachTable::KalbackTable: The outgoing energy, PDF,";
+    mssg += " CDF,\nR, and A grids must all be the same size.";
+    throw PNDLException(mssg, __FILE__, __LINE__);
+  }
+
+  if (!std::is_sorted(energy_.begin(), energy_.end())) {
+    std::string mssg = "KalbachTable::KalbackTable: Energies are not sorted.";
+    throw PNDLException(mssg, __FILE__, __LINE__);
+  }
+
+  if (!std::is_sorted(cdf_.begin(), cdf_.end())) {
+    std::string mssg = "KalbachTable::KalbackTable: CDF is not sorted.";
+    throw PNDLException(mssg, __FILE__, __LINE__);
+  }
+
+  if (cdf_[cdf_.size() - 1] != 1.) {
+    // If last element is close to 1, just set it to exactly 1
+    if (std::abs(cdf_[cdf_.size() - 1] - 1.) < 1.E-7) {
+      cdf_[cdf_.size() - 1] = 1.;
+    } else {
+      std::string mssg =
+          "KalbachTable::KalbachTable: Last CDF entry is not 1, but ";
+      mssg += std::to_string(cdf_[cdf_.size() - 1]) + ".";
+      throw PNDLException(mssg, __FILE__, __LINE__);
+    }
+  }
+}
+
 }  // namespace pndl

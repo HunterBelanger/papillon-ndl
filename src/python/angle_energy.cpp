@@ -94,6 +94,9 @@ void init_NBody(py::module& m) {
 void init_KalbachTable(py::module& m) {
   py::class_<KalbachTable>(m, "KalbachTable")
       .def(py::init<const ACE&, size_t>())
+      .def(py::init<const std::vector<double>&, const std::vector<double>&,
+                    const std::vector<double>&, const std::vector<double>&,
+                    const std::vector<double>&, Interpolation>())
       .def("sample_energy", &KalbachTable::sample_energy)
       .def("min_energy", &KalbachTable::min_energy)
       .def("max_energy", &KalbachTable::max_energy)
