@@ -21,8 +21,7 @@
  * donné sa spécificité de logiciel libre, qui peut le rendre complexe à
  * manipuler et qui le réserve donc à des développeurs et des professionnels
  * avertis possédant  des  connaissances  informatiques approfondies.  Les
- * utilisateurs sont donc invités à charger  et  tester  l'adéquation  du
- * logiciel à leurs besoins dans des conditions permettant d'assurer la
+ * utilisateurs sont donc invités à charger  et  tester  l'adéquation  du * logiciel à leurs besoins dans des conditions permettant d'assurer la
  * sécurité de leurs systèmes et ou de leurs données et, plus généralement,
  * à l'utiliser et l'exploiter dans les mêmes conditions de sécurité.
  *
@@ -58,6 +57,14 @@ class Kalbach : public AngleEnergy {
    * @param i Starting index of distribution in the XSS array.
    */
   Kalbach(const ACE& ace, size_t i);
+
+  /**
+   * @param incoming_energy Incoming energy grid.
+   * @param tables vector of KalbachTable for each point in the incoming
+   *               energy grid.
+   */
+  Kalbach(const std::vector<double>& incoming_energy,
+          const std::vector<KalbachTable>& tables);
   ~Kalbach() = default;
 
   AngleEnergyPacket sample_angle_energy(

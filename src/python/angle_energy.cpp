@@ -112,6 +112,7 @@ void init_KalbachTable(py::module& m) {
 
 void init_Kalbach(py::module& m) {
   py::class_<Kalbach, AngleEnergy, std::shared_ptr<Kalbach>>(m, "Kalbach")
+      .def(py::init<const std::vector<double>&, const std::vector<KalbachTable>&>())
       .def("sample_angle_energy", &Kalbach::sample_angle_energy)
       .def("incoming_energy",
            py::overload_cast<>(&Kalbach::incoming_energy, py::const_))
