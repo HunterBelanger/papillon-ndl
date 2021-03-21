@@ -56,6 +56,14 @@ class NBody : public AngleEnergy {
    * @param iQ Q-value for the reaction.
    */
   NBody(const ACE& ace, size_t i, double iQ);
+
+  /**
+   * @param n Number of particles (3, 4, or 5).
+   * @param Ap Total mass ratio for the n particles.
+   * @param AWR Atomic Weight Ratio of the nuclide.
+   * @param Q Q-value for the reaction.
+   */
+  NBody(uint16_t n, double Ap, double AWR, double Q);
   ~NBody() = default;
 
   AngleEnergyPacket sample_angle_energy(

@@ -74,6 +74,8 @@ void init_AngleEnergy(py::module& m) {
 void init_Uncorrelated(py::module& m) {
   py::class_<Uncorrelated, AngleEnergy, std::shared_ptr<Uncorrelated>>(
       m, "Uncorrelated")
+      .def(py::init<std::shared_ptr<AngleDistribution>,
+                    std::shared_ptr<EnergyLaw>>())
       .def("sample_angle_energy", &Uncorrelated::sample_angle_energy)
       .def("angle", &Uncorrelated::angle)
       .def("energy", &Uncorrelated::energy);
@@ -81,6 +83,7 @@ void init_Uncorrelated(py::module& m) {
 
 void init_NBody(py::module& m) {
   py::class_<NBody, AngleEnergy, std::shared_ptr<NBody>>(m, "NBody")
+      .def(py::init<uint32_t, double, double, double>())
       .def("sample_angle_energy", &NBody::sample_angle_energy)
       .def("n", &NBody::n)
       .def("Ap", &NBody::Ap)
