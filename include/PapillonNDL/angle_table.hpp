@@ -64,6 +64,12 @@ class AngleTable : public AngleLaw {
    */
   AngleTable(const std::vector<double>& cosines, const std::vector<double>& pdf,
              const std::vector<double>& cdf, Interpolation interp);
+
+  /**
+   * @param table PCTable contianing the PDF and CDF for the cosine
+   *              distribution.
+   */
+  AngleTable(const PCTable& table);
   ~AngleTable() = default;
 
   double sample_mu(double xi) const override final;
