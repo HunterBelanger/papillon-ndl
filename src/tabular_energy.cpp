@@ -76,6 +76,13 @@ TabularEnergy::TabularEnergy(const std::vector<double>& incoming_energy,
     mssg += "grid is not sroted.";
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
+
+  if(incoming_energy_.size() != tables_.size()) {
+    std::string mssg = "TabularEnergy::TabularEnergy: Must have the same ";
+    mssg += "number of points\nin the incoming energy grid as there are";
+    mssg += " PCTables for the outgoing energy.";
+    throw PNDLException(mssg, __FILE__, __LINE__);
+  }
 }
 
 double TabularEnergy::sample_energy(double E_in,
