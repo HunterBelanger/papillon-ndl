@@ -55,9 +55,8 @@ Watt::Watt(const ACE& ace, size_t i) : a_(), b_(), restriction_energy_() {
     INT_a = ace.xss<Interpolation>(i + 1 + NR, NR);
   }
 
-  // Get energy grid, convert from MeV to eV
+  // Get energy grid
   std::vector<double> energy_a = ace.xss(i + 2 + 2 * NR, NE);
-
   std::vector<double> a = ace.xss(i + 2 + 2 * NR + NE, NE);
 
   // Create Function1D pointer
@@ -91,9 +90,8 @@ Watt::Watt(const ACE& ace, size_t i) : a_(), b_(), restriction_energy_() {
     INT_b = ace.xss<Interpolation>(i + 1 + NR, NR);
   }
 
-  // Get energy grid, convert from MeV to eV
+  // Get energy grid
   std::vector<double> energy_b = ace.xss(i + 2 + 2 * NR, NE);
-
   std::vector<double> b = ace.xss(i + 2 + 2 * NR + NE, NE);
 
   // Create Function1D pointer

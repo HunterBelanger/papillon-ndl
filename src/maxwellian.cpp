@@ -55,9 +55,8 @@ Maxwellian::Maxwellian(const ACE& ace, size_t i)
     INT = ace.xss<Interpolation>(i + 1 + NR, NR);
   }
 
-  // Get energy grid, convert from MeV to eV
+  // Get energy grid
   std::vector<double> energy = ace.xss(i + 2 + 2 * NR, NE);
-
   std::vector<double> temperature = ace.xss(i + 2 + 2 * NR + NE, NE);
 
   // Get restriction energy
