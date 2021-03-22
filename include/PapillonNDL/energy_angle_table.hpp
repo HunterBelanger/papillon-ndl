@@ -57,6 +57,27 @@ class EnergyAngleTable {
    * @param i Starting index of distribution in the XSS array.
    */
   EnergyAngleTable(const ACE& ace, size_t i);
+
+  /**
+   * @param outgoing_energy Outgoing energy grid.
+   * @param pdf Probability Density Function for outgoing energy.
+   * @param cdf Cumulative Density Function for outgoing energy.
+   * @param angle_tables A vector a PCTable, one for each outgoing energy,
+   *                     each describing the cosine of the scattering angle.
+   * @param interp Interpolation used for the PDF (Histogram or LinLin).
+   */
+  EnergyAngleTable(const std::vector<double>& outgoing_energy,
+                   const std::vector<double>& pdf,
+                   const std::vector<double>& cdf,
+                   const std::vector<PCTable>& angle_tables,
+                   Interpolation interp);
+
+  /**
+   * @param
+   * @param interp Interpolation used for the PDF (Histogram or LinLin).
+   */
+  EnergyAngleTable(const PCTable& outgoing_energy,
+                   const std::vector<PCTable>& angle_tables);
   ~EnergyAngleTable() = default;
 
   AngleEnergyPacket sample_angle_energy(std::function<double()> rng) const {

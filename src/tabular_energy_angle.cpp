@@ -76,6 +76,26 @@ TabularEnergyAngle::TabularEnergyAngle(const ACE& ace, size_t i)
   }
 }
 
+TabularEnergyAngle::TabularEnergyAngle(
+    const std::vector<double>& incoming_energy,
+    const std::vector<EnergyAngleTable>& tables)
+    : incoming_energy_(incoming_energy), tables_(tables) {
+  if (!std::is_sorted(incoming_energy_.begin(), incoming_energy_.end())) {
+    std::string mssg =
+        "TabularEnergyAngle::TabularEnergyAngle: Incoming energy"
+        "grid is not sorted.";
+    throw PNDLException(mssg, __FILE__, __LINE__);
+  }
+
+  if (incoming_energy_.size() != tables_.size()) {
+    std::string mssg =
+        "TabularEnergyAngle::TabularEnergyAngle: Must have the same ";
+    mssg += "number of points in the\nincoming energy grid as there are";
+    mssg += " KalbachTables for the outgoing energy and angle.";
+    throw PNDLException(mssg, __FILE__, __LINE__);
+  }
+}
+
 AngleEnergyPacket TabularEnergyAngle::sample_angle_energy(
     double E_in, std::function<double()> rng) const {
   // Determine the index of the bounding tabulated incoming energies

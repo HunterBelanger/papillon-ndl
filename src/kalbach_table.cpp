@@ -82,6 +82,15 @@ KalbachTable::KalbachTable(const ACE& ace, size_t i)
       throw PNDLException(mssg, __FILE__, __LINE__);
     }
   }
+
+  for (const auto& p : pdf_) {
+    if (p < 0.) {
+      std::string mssg =
+          "KalbachTable::KalbachTable: Negative value found in PDF.";
+      mssg += "\nIndex of PCTable in XSS block is " + std::to_string(i) + ".";
+      throw PNDLException(mssg, __FILE__, __LINE__);
+    }
+  }
 }
 
 KalbachTable::KalbachTable(const std::vector<double>& energy,
@@ -124,6 +133,14 @@ KalbachTable::KalbachTable(const std::vector<double>& energy,
       std::string mssg =
           "KalbachTable::KalbachTable: Last CDF entry is not 1, but ";
       mssg += std::to_string(cdf_[cdf_.size() - 1]) + ".";
+      throw PNDLException(mssg, __FILE__, __LINE__);
+    }
+  }
+
+  for (const auto& p : pdf_) {
+    if (p < 0.) {
+      std::string mssg =
+          "KalbachTable::KalbachTable: Negative value found in PDF.";
       throw PNDLException(mssg, __FILE__, __LINE__);
     }
   }

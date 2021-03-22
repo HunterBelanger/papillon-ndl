@@ -112,7 +112,8 @@ void init_KalbachTable(py::module& m) {
 
 void init_Kalbach(py::module& m) {
   py::class_<Kalbach, AngleEnergy, std::shared_ptr<Kalbach>>(m, "Kalbach")
-      .def(py::init<const std::vector<double>&, const std::vector<KalbachTable>&>())
+      .def(py::init<const std::vector<double>&,
+                    const std::vector<KalbachTable>&>())
       .def("sample_angle_energy", &Kalbach::sample_angle_energy)
       .def("incoming_energy",
            py::overload_cast<>(&Kalbach::incoming_energy, py::const_))
@@ -125,6 +126,10 @@ void init_Kalbach(py::module& m) {
 void init_EnergyAngleTable(py::module& m) {
   py::class_<EnergyAngleTable>(m, "EnergyAngleTable")
       .def(py::init<const ACE&, size_t>())
+      .def(py::init<const std::vector<double>&, const std::vector<double>&,
+                    const std::vector<double>&, const std::vector<PCTable>&,
+                    Interpolation>())
+      .def(py::init<const PCTable&, const std::vector<PCTable>&>())
       .def("sample_angle_energy", &EnergyAngleTable::sample_angle_energy)
       .def("min_energy", &EnergyAngleTable::min_energy)
       .def("max_energy", &EnergyAngleTable::max_energy)
@@ -139,6 +144,8 @@ void init_EnergyAngleTable(py::module& m) {
 void init_TabularEnergyAngle(py::module& m) {
   py::class_<TabularEnergyAngle, AngleEnergy,
              std::shared_ptr<TabularEnergyAngle>>(m, "TabularEnergyAngle")
+      .def(py::init<const std::vector<double>&,
+                    const std::vector<EnergyAngleTable>&>())
       .def("sample_angle_energy", &TabularEnergyAngle::sample_angle_energy)
       .def(
           "incoming_energy",
