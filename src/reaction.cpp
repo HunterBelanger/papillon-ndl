@@ -98,16 +98,23 @@ Reaction::Reaction(const ACE& ace, size_t indx, const EnergyGrid& egrid)
       }
     }
   } catch (PNDLException& error) {
-    std::string mssg = "Reaction::Reaction: Could not create yield function";
+    std::string mssg = "Reaction::Reaction: Could not create yield function ";
     mssg += "for MT = " + std::to_string(mt_) + ".";
     error.add_to_exception(mssg, __FILE__, __LINE__);
     throw error;
   }
 
   // Load the cross section
-  uint32_t loca = ace.xss<uint32_t>(ace.LSIG() + indx);
-  xs_ = std::make_shared<CrossSection>(ace, ace.SIG() + loca - 1, egrid);
-  threshold_ = xs_->energy(0);
+  try {
+    uint32_t loca = ace.xss<uint32_t>(ace.LSIG() + indx);
+    xs_ = std::make_shared<CrossSection>(ace, ace.SIG() + loca - 1, egrid);
+    threshold_ = xs_->energy(0);
+  } catch(PNDLException& error) {
+    std::string mssg = "Reaction::Reaction: Could not create cross section ";
+    mssg += "for MT = " + std::to_string(mt_) + ".";
+    error.add_to_exception(mssg, __FILE__, __LINE__);
+    throw error;
+  }
 
   // Get secondary info if yld != 0 (not an absorption reaction)
   if (yld != 0.) {
@@ -232,9 +239,16 @@ Reaction::Reaction(const ACE& ace, size_t indx, const EnergyGrid& egrid,
   angle_energy_ = reac.angle_energy();
 
   // Get XS from new ACE
-  uint32_t loca = ace.xss<uint32_t>(ace.LSIG() + indx);
-  xs_ = std::make_shared<CrossSection>(ace, ace.SIG() + loca - 1, egrid);
-  threshold_ = xs_->energy(0);
+  try {
+    uint32_t loca = ace.xss<uint32_t>(ace.LSIG() + indx);
+    xs_ = std::make_shared<CrossSection>(ace, ace.SIG() + loca - 1, egrid);
+    threshold_ = xs_->energy(0);
+  } catch(PNDLException& error) {
+    std::string mssg = "Reaction::Reaction: Could not create cross section ";
+    mssg += "for MT = " + std::to_string(mt_) + ".";
+    error.add_to_exception(mssg, __FILE__, __LINE__);
+    throw error;
+  }
 }
 
 std::shared_ptr<CrossSection> Reaction::cross_section() const { return xs_; }

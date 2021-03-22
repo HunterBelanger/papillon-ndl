@@ -32,6 +32,7 @@
  *
  * */
 #include <PapillonNDL/cross_section.hpp>
+#include <PapillonNDL/pndl_exception.hpp>
 #include <algorithm>
 
 namespace pndl {
@@ -50,6 +51,86 @@ CrossSection::CrossSection(const ACE& ace, size_t i, const EnergyGrid& E_grid,
   }
 
   values_ = ace.xss<float>(i, NE);
+
+  if(energy_values_.size() != values_.size()) {
+    std::string mssg = "CrossSection::CrossSection: Different number of points in the";
+    mssg += " energy grid and xs-values grid.\n";
+    mssg += "Cross section begins at " + std::to_string(i) + " in XSS block.";
+    throw PNDLException(mssg, __FILE__, __LINE__);
+  }
+
+  for (size_t l = 0; l < values_.size(); l++) {
+    if (values_[l] < 0.) {
+      std::string mssg =
+          "CrossSection::CrossSection: Negative cross section found at "
+          "element\n";
+      mssg += std::to_string(l) + " in cross section grid starting at " +
+              std::to_string(i) + ".";
+      throw PNDLException(mssg, __FILE__, __LINE__);
+    }
+  }
+}
+
+CrossSection::CrossSection(const std::vector<double>& xs,
+                           const EnergyGrid& E_grid, size_t index)
+    : energy_values_(E_grid.grid()),
+      values_(xs.begin(), xs.end()),
+      index_(index) {
+
+  if(index_ >= energy_values_.size()) {
+    std::string mssg = "CrossSection::CrossSection: Starting index is larger than size of\n";
+    mssg += "the energy grid.";
+    throw PNDLException(mssg, __FILE__, __LINE__);
+  }
+  
+  energy_values_ = energy_values_.subspan(index_, energy_values_.size());
+
+  for (size_t l = 0; l < values_.size(); l++) {
+    if (values_[l] < 0.) {
+      std::string mssg =
+          "CrossSection::CrossSection: Negative cross section found at "
+          "element " +
+          std::to_string(l) + ".";
+      throw PNDLException(mssg, __FILE__, __LINE__);
+    }
+  }
+
+  if(energy_values_.size() != values_.size()) {
+    std::string mssg = "CrossSection::CrossSection: Different number of points in the";
+    mssg += " energy grid and xs-values grid.";
+    throw PNDLException(mssg, __FILE__, __LINE__);
+  }
+}
+
+CrossSection::CrossSection(const std::vector<float>& xs,
+                           const EnergyGrid& E_grid, size_t index)
+    : energy_values_(E_grid.grid()),
+      values_(xs.begin(), xs.end()),
+      index_(index) {
+  
+  if(index_ >= energy_values_.size()) {
+    std::string mssg = "CrossSection::CrossSection: Starting index is larger than size of\n";
+    mssg += "the energy grid.";
+    throw PNDLException(mssg, __FILE__, __LINE__);
+  }
+  
+  energy_values_ = energy_values_.subspan(index_, energy_values_.size());
+
+  for (size_t l = 0; l < values_.size(); l++) {
+    if (values_[l] < 0.) {
+      std::string mssg =
+          "CrossSection::CrossSection: Nevative cross section found at "
+          "element " +
+          std::to_string(l) + ".";
+      throw PNDLException(mssg, __FILE__, __LINE__);
+    }
+  }
+
+  if(energy_values_.size() != values_.size()) {
+    std::string mssg = "CrossSection::CrossSection: Different number of points in the";
+    mssg += " energy grid and xs-values grid.";
+    throw PNDLException(mssg, __FILE__, __LINE__);
+  }
 }
 
 size_t CrossSection::size() const { return values_.size(); }
