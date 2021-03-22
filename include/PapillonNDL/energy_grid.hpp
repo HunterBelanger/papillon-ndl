@@ -58,6 +58,22 @@ class EnergyGrid {
    *              used by MCNP.
    */
   EnergyGrid(const ACE& ace, uint32_t NBINS = 8192);
+
+  /**
+   * @param energy Vector of all points in energy grid (sorted).
+   * @param NBINS Number of bins to hash the energy grid into. The
+   *              default value is 8192, which is the number of bins
+   *              used by MCNP.
+   */
+  EnergyGrid(const std::vector<double>& energy, uint32_t NBINS = 8192);
+
+  /**
+   * @param energy Vector of all points in energy grid (sorted).
+   * @param NBINS Number of bins to hash the energy grid into. The
+   *              default value is 8192, which is the number of bins
+   *              used by MCNP.
+   */
+  EnergyGrid(const std::vector<float>& energy, uint32_t NBINS = 8192);
   ~EnergyGrid() = default;
 
   /**

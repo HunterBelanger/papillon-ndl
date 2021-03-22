@@ -32,6 +32,8 @@
  *
  * */
 #include <PapillonNDL/energy_grid.hpp>
+#include <PapillonNDL/pndl_exception.hpp>
+#include <algorithm>
 
 namespace pndl {
 
@@ -40,6 +42,106 @@ EnergyGrid::EnergyGrid(const ACE& ace, uint32_t NBINS)
   std::vector<float> raw_egrid = ace.xss<float>(ace.ESZ(), ace.nxs(2));
 
   energy_values_ = shared_span<float>(raw_egrid.begin(), raw_egrid.end());
+
+  if (!std::is_sorted(energy_values_.begin(), energy_values_.end())) {
+    std::string mssg =
+        "EnergyGrid::EnergyGrid: Energy values are not sorted.\n";
+    mssg += "Index in the XSS block is " + std::to_string(ace.ESZ()) + ".";
+    throw PNDLException(mssg, __FILE__, __LINE__);
+  }
+
+  if (energy_values_.front() <= 0.) {
+    std::string mssg =
+        "EnergyGrid::EnergyGrid: Nevative or zero values in energy grid.\n";
+    mssg += "Index in the XSS block is " + std::to_string(ace.ESZ()) + ".";
+    throw PNDLException(mssg, __FILE__, __LINE__);
+  }
+
+  // Generate pointers for lethargy bins
+  u_min = std::log(energy_values_.front());
+  double u_max = std::log(energy_values_.back());
+  du = (u_max - u_min) / static_cast<double>(NBINS);
+
+  bin_pointers_.reserve(NBINS + 1);
+
+  double E = energy_values_.front();
+  size_t i = 0;
+
+  // Start by storing index to u_min which is 0
+  bin_pointers_.push_back(0);
+
+  // Get energy index for each lethargy bin bound
+  for (size_t b = 1; b < NBINS + 1; b++) {
+    E *= std::exp(du);
+
+    i = std::distance(
+            energy_values_.begin(),
+            std::lower_bound(energy_values_.begin(), energy_values_.end(), E)) -
+        1;
+
+    bin_pointers_.push_back(static_cast<uint32_t>(i));
+  }
+}
+
+EnergyGrid::EnergyGrid(const std::vector<double>& energy, uint32_t NBINS)
+    : energy_values_(energy.begin(), energy.end()),
+      bin_pointers_(),
+      u_min(),
+      du() {
+  if (!std::is_sorted(energy_values_.begin(), energy_values_.end())) {
+    std::string mssg =
+        "EnergyGrid::EnergyGrid: Energy values are not sorted.\n";
+    throw PNDLException(mssg, __FILE__, __LINE__);
+  }
+
+  if (energy_values_.front() <= 0.) {
+    std::string mssg =
+        "EnergyGrid::EnergyGrid: Nevative or zero values in energy grid.";
+    throw PNDLException(mssg, __FILE__, __LINE__);
+  }
+
+  // Generate pointers for lethargy bins
+  u_min = std::log(energy_values_.front());
+  double u_max = std::log(energy_values_.back());
+  du = (u_max - u_min) / static_cast<double>(NBINS);
+
+  bin_pointers_.reserve(NBINS + 1);
+
+  double E = energy_values_.front();
+  size_t i = 0;
+
+  // Start by storing index to u_min which is 0
+  bin_pointers_.push_back(0);
+
+  // Get energy index for each lethargy bin bound
+  for (size_t b = 1; b < NBINS + 1; b++) {
+    E *= std::exp(du);
+
+    i = std::distance(
+            energy_values_.begin(),
+            std::lower_bound(energy_values_.begin(), energy_values_.end(), E)) -
+        1;
+
+    bin_pointers_.push_back(static_cast<uint32_t>(i));
+  }
+}
+
+EnergyGrid::EnergyGrid(const std::vector<float>& energy, uint32_t NBINS)
+    : energy_values_(energy.begin(), energy.end()),
+      bin_pointers_(),
+      u_min(),
+      du() {
+  if (!std::is_sorted(energy_values_.begin(), energy_values_.end())) {
+    std::string mssg =
+        "EnergyGrid::EnergyGrid: Energy values are not sorted.\n";
+    throw PNDLException(mssg, __FILE__, __LINE__);
+  }
+
+  if (energy_values_.front() <= 0.) {
+    std::string mssg =
+        "EnergyGrid::EnergyGrid: Nevative or zero values in energy grid.";
+    throw PNDLException(mssg, __FILE__, __LINE__);
+  }
 
   // Generate pointers for lethargy bins
   u_min = std::log(energy_values_.front());
