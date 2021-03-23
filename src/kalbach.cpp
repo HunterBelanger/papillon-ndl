@@ -49,8 +49,10 @@ Kalbach::Kalbach(const ACE& ace, size_t i) : incoming_energy_(), tables_() {
   incoming_energy_ = ace.xss(i + 2 + 2 * NR, NE);
 
   if (!std::is_sorted(incoming_energy_.begin(), incoming_energy_.end())) {
-    std::string mssg = "Kalbach::Kalbach: Incoming energy grid is not sorted.";
-    mssg += "\nIndex to Kalbach in XSS block is " + std::to_string(i) + ".";
+    std::string mssg =
+        "Kalbach::Kalbach: Incoming energy grid is not sorted. Index to "
+        "Kalbach in XSS block is " +
+        std::to_string(i) + ".";
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
 
@@ -61,10 +63,10 @@ Kalbach::Kalbach(const ACE& ace, size_t i) : incoming_energy_(), tables_() {
       tables_.emplace_back(ace, loc);
     } catch (PNDLException& error) {
       std::string mssg =
-          "Kalbach::Kalbach: Could not create KalbachTable for the\n";
-      mssg += std::to_string(j) + "th incoming energy ";
-      mssg += std::to_string(incoming_energy_[j]) + " MeV.\n";
-      mssg += "Index of Kalbach in XSS block is " + std::to_string(i) + ".";
+          "Kalbach::Kalbach: Could not create KalbachTable for the " +
+          std::to_string(j) + " incoming energy " +
+          std::to_string(incoming_energy_[j]) +
+          " MeV. Index of Kalbach in XSS block is " + std::to_string(i) + ".";
       error.add_to_exception(mssg, __FILE__, __LINE__);
       throw error;
     }
@@ -72,17 +74,18 @@ Kalbach::Kalbach(const ACE& ace, size_t i) : incoming_energy_(), tables_() {
 }
 
 Kalbach::Kalbach(const std::vector<double>& incoming_energy,
-                 const std::vector<KalbachTable>& tables):
-                 incoming_energy_(incoming_energy), tables_(tables) {
+                 const std::vector<KalbachTable>& tables)
+    : incoming_energy_(incoming_energy), tables_(tables) {
   if (!std::is_sorted(incoming_energy_.begin(), incoming_energy_.end())) {
     std::string mssg = "Kalbach::Kalbach: Incoming energy grid is not sorted.";
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
 
-  if(incoming_energy_.size() != tables_.size()) {
-    std::string mssg = "Kalbach::Kalbach: Must have the same ";
-    mssg += "number of points in the\nincoming energy grid as there are";
-    mssg += " KalbachTables for the outgoing energy and angle.";
+  if (incoming_energy_.size() != tables_.size()) {
+    std::string mssg =
+        "Kalbach::Kalbach: Must have the same number of points in the incoming "
+        "energy grid as there are KalbachTables for the outgoing energy and "
+        "angle.";
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
 }

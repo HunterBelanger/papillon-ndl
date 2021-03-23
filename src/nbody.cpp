@@ -44,45 +44,50 @@ NBody::NBody(const ACE& ace, size_t i, double iQ) : n_(), Ap_(), A_(), Q_(iQ) {
   Ap_ = ace.xss(i + 1);
   A_ = ace.awr();
 
-  if((n_ != 3) && (n_ != 4) && (n_ != 5)) {
-    std::string mssg = "NBody::NBody: n may only be 3, 4, or 5. Was given n = ";
-    mssg += std::to_string(n_) + ".\n";
-    mssg += "Index to XSS block is " + std::to_string(i) + ".";
+  if ((n_ != 3) && (n_ != 4) && (n_ != 5)) {
+    std::string mssg =
+        "NBody::NBody: n may only be 3, 4, or 5. Was given n = " +
+        std::to_string(n_) + ". Index to XSS block is " + std::to_string(i) +
+        ".";
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
 
-  if(Ap_ <= 0.) {
-    std::string mssg = "NBody::NBody: Total mass ratio of all particles (Ap)";
-    mssg += " must be greater than zero.\n";
-    mssg += "Index to XSS block is " + std::to_string(i) + ".";
+  if (Ap_ <= 0.) {
+    std::string mssg =
+        "NBody::NBody: Total mass ratio of all particles (Ap) must be greater "
+        "than zero. Index to XSS block is " +
+        std::to_string(i) + ".";
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
 
-  if(A_ <= 0.) {
-    std::string mssg = "NBody::NBody: Atomic weight ratio (AWR) must be";
-    mssg += " greater than zero.\n";
+  if (A_ <= 0.) {
+    std::string mssg =
+        "NBody::NBody: Atomic weight ratio (AWR) must be greater than zero.";
     // No need to give index here, as this value is taken directly from
     // the ACE file data.
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
 }
 
-NBody::NBody(uint16_t n, double Ap, double AWR, double Q): n_(n), Ap_(Ap), A_(AWR), Q_(Q) {
-  if((n_ != 3) && (n_ != 4) && (n_ != 5)) {
-    std::string mssg = "NBody::NBody: n may only be 3, 4, or 5. Was given n = ";
-    mssg += std::to_string(n_) + ".";
+NBody::NBody(uint16_t n, double Ap, double AWR, double Q)
+    : n_(n), Ap_(Ap), A_(AWR), Q_(Q) {
+  if ((n_ != 3) && (n_ != 4) && (n_ != 5)) {
+    std::string mssg =
+        "NBody::NBody: n may only be 3, 4, or 5. Was given n = " +
+        std::to_string(n_) + ".";
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
 
-  if(Ap_ <= 0.) {
-    std::string mssg = "NBody::NBody: Total mass ratio of all particles (Ap)";
-    mssg += " must be\ngreater than zero.";
+  if (Ap_ <= 0.) {
+    std::string mssg =
+        "NBody::NBody: Total mass ratio of all particles (Ap) must be greater "
+        "than zero.";
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
 
-  if(A_ <= 0.) {
-    std::string mssg = "NBody::NBody: Atomic weight ratio (AWR) must be";
-    mssg += " greater than zero.";
+  if (A_ <= 0.) {
+    std::string mssg =
+        "NBody::NBody: Atomic weight ratio (AWR) must be greater than zero.";
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
 }

@@ -79,25 +79,45 @@ class PNDLException : public std::exception {
 
   void add_to_error_message(const std::string& mssg, const std::string& file,
                             int line) {
+    // Go through original string and determine line breaks
+    std::string mssg_tmp = mssg;
+    int nbreaks = static_cast<int>(mssg_tmp.size()) / 80;
+    if((mssg_tmp.size() % 80) == 0) nbreaks--;
+    if(nbreaks > 0) {
+      for(size_t b = 0; b < nbreaks; b++) {
+        // Get index of break.
+        size_t ind = 80 * (b+1);
+
+        // Work backwards to first space
+        while(mssg_tmp[ind] != ' ') {
+          if(ind > 0) ind--;
+          else {
+            ind = 80 * (b+1);
+            break;
+          }
+        }
+
+        mssg_tmp[ind] = '\n';
+      }
+    }
+
     std::string tmp = "\n";
     tmp +=
-        " #--------------------------------------------------------------------"
-        "------------\n";
+        " #---------------------------------------------------------------------------------\n";
     tmp += " # Location: " + file + ":" + std::to_string(line) + "\n";
     tmp += " # \n";
-    tmp += " # Message: ";
+    tmp += " # ";
 
-    for (const auto& c : mssg) {
+    for (const auto& c : mssg_tmp) {
       if (c == '\n') {
-        tmp += "\n #          ";
+        tmp += "\n # ";
       } else {
         tmp += c;
       }
     }
     tmp += "\n";
     tmp +=
-        " #--------------------------------------------------------------------"
-        "------------";
+        " #---------------------------------------------------------------------------------";
 
     message = tmp + message;
   }

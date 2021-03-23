@@ -43,9 +43,10 @@ PCTable::PCTable(const ACE& ace, size_t i, double normalization)
   interp_ = ace.xss<Interpolation>(i);
   if ((interp_ != Interpolation::Histogram) &&
       (interp_ != Interpolation::LinLin)) {
-    std::string mssg = "PCTable::PCTable: Invalid interpolation of ";
-    mssg += std::to_string(static_cast<int>(interp_)) + ".";
-    mssg += "\nIndex of PCTable in XSS block is " + std::to_string(i) + ".";
+    std::string mssg = "PCTable::PCTable: Invalid interpolation of " +
+                       std::to_string(static_cast<int>(interp_)) +
+                       ". Index of PCTable in XSS block is " +
+                       std::to_string(i) + ".";
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
   uint32_t NP = ace.xss<uint32_t>(i + 1);
@@ -57,14 +58,18 @@ PCTable::PCTable(const ACE& ace, size_t i, double normalization)
   cdf_ = ace.xss(i + 2 + NP + NP, NP);
 
   if (!std::is_sorted(values_.begin(), values_.end())) {
-    std::string mssg = "PCTable::PCTable: Values are not sorted.";
-    mssg += "\nIndex of PCTable in XSS block is " + std::to_string(i) + ".";
+    std::string mssg =
+        "PCTable::PCTable: Values are not sorted. Index of PCTable in XSS "
+        "block is " +
+        std::to_string(i) + ".";
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
 
   if (!std::is_sorted(cdf_.begin(), cdf_.end())) {
-    std::string mssg = "PCTable::PCTable: CDF is not sorted.";
-    mssg += "\nIndex of PCTable in XSS block is " + std::to_string(i) + ".";
+    std::string mssg =
+        "PCTable::PCTable: CDF is not sorted. Index of PCTable in XSS block "
+        "is " +
+        std::to_string(i) + ".";
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
 
@@ -73,17 +78,20 @@ PCTable::PCTable(const ACE& ace, size_t i, double normalization)
     if (std::abs(cdf_[cdf_.size() - 1] - 1.) < 1.E-7) {
       cdf_[cdf_.size() - 1] = 1.;
     } else {
-      std::string mssg = "PCTable::PCTable: Last CDF entry is not 1, but ";
-      mssg += std::to_string(cdf_[cdf_.size() - 1]) + ".";
-      mssg += "\nIndex of PCTable in XSS block is " + std::to_string(i) + ".";
+      std::string mssg = "PCTable::PCTable: Last CDF entry is not 1, but " +
+                         std::to_string(cdf_[cdf_.size() - 1]) +
+                         ". Index of PCTable in XSS block is " +
+                         std::to_string(i) + ".";
       throw PNDLException(mssg, __FILE__, __LINE__);
     }
   }
 
   for (const auto& p : pdf_) {
     if (p < 0.) {
-      std::string mssg = "PCTable::PCTable: Negative value found in PDF.";
-      mssg += "\nIndex of PCTable in XSS block is " + std::to_string(i) + ".";
+      std::string mssg =
+          "PCTable::PCTable: Negative value found in PDF. Index of PCTable in "
+          "XSS block is " +
+          std::to_string(i) + ".";
       throw PNDLException(mssg, __FILE__, __LINE__);
     }
   }
@@ -95,14 +103,14 @@ PCTable::PCTable(const std::vector<double>& values,
     : values_(values), pdf_(pdf), cdf_(cdf), interp_(interp) {
   if ((interp_ != Interpolation::Histogram) &&
       (interp_ != Interpolation::LinLin)) {
-    std::string mssg = "PCTable::PCTable: Invalid interpolation of ";
-    mssg += std::to_string(static_cast<int>(interp_)) + ".";
+    std::string mssg = "PCTable::PCTable: Invalid interpolation of " +
+                       std::to_string(static_cast<int>(interp_)) + ".";
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
 
   if ((values_.size() != pdf_.size()) || (pdf_.size() != cdf_.size())) {
-    std::string mssg = "PCTable::PCTable: Values, PDF, and CDF must";
-    mssg += " have the same length.";
+    std::string mssg =
+        "PCTable::PCTable: Values, PDF, and CDF must have the same length.";
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
 
@@ -121,8 +129,8 @@ PCTable::PCTable(const std::vector<double>& values,
     if (std::abs(cdf_[cdf_.size() - 1] - 1.) < 1.E-7) {
       cdf_[cdf_.size() - 1] = 1.;
     } else {
-      std::string mssg = "PCTable::PCTable: Last CDF entry is not 1, but ";
-      mssg += std::to_string(cdf_[cdf_.size() - 1]) + ".";
+      std::string mssg = "PCTable::PCTable: Last CDF entry is not 1, but " +
+                         std::to_string(cdf_[cdf_.size() - 1]) + ".";
       throw PNDLException(mssg, __FILE__, __LINE__);
     }
   }

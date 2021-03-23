@@ -140,8 +140,8 @@ CENeutron::CENeutron(const ACE& ace, const CENeutron& nuclide)
     uint32_t MT = ace.xss<uint32_t>(ace.MTR() + indx);
 
     if (!nuclide.has_reaction(MT)) {
-      std::string mssg = "Nuclide::Nuclide: MT=" + std::to_string(MT);
-      mssg += " is present in ACE, but not in nuclide.";
+      std::string mssg = "Nuclide::Nuclide: MT = " + std::to_string(MT) +
+                         " is present in ACE, but not in nuclide.";
       throw PNDLException(mssg, __FILE__, __LINE__);
     }
 

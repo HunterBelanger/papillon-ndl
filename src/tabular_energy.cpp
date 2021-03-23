@@ -56,12 +56,12 @@ TabularEnergy::TabularEnergy(const ACE& ace, size_t i, size_t JED)
       tables_.emplace_back(ace, loc);
     } catch (PNDLException& error) {
       std::string mssg =
-          "TabularEnergy::TabularEnergy: Couldn't construct outgoin energy\n";
-      mssg += "table for j = " + std::to_string(j) + ",  energy = ";
-      mssg += std::to_string(incoming_energy_[j]) + "Mev.\n";
-      mssg += "Occurred at loc = " + std::to_string(loc) +
-              ", i = " + std::to_string(i);
-      mssg += ", JED = " + std::to_string(JED) + ".";
+          "TabularEnergy::TabularEnergy: Couldn't construct outgoin energy "
+          "table for j = " +
+          std::to_string(j) +
+          ",  energy = " + std::to_string(incoming_energy_[j]) +
+          "Mev. Occurred at loc = " + std::to_string(loc) +
+          ", i = " + std::to_string(i) + ", JED = " + std::to_string(JED) + ".";
       error.add_to_exception(mssg, __FILE__, __LINE__);
       throw error;
     }
@@ -72,15 +72,16 @@ TabularEnergy::TabularEnergy(const std::vector<double>& incoming_energy,
                              const std::vector<PCTable>& tables)
     : incoming_energy_(incoming_energy), tables_(tables) {
   if (!std::is_sorted(incoming_energy_.begin(), incoming_energy_.end())) {
-    std::string mssg = "TabularEnergy::TabularEnergy: The incoming energy ";
-    mssg += "grid is not sroted.";
+    std::string mssg =
+        "TabularEnergy::TabularEnergy: The incoming energy grid is not sroted.";
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
 
-  if(incoming_energy_.size() != tables_.size()) {
-    std::string mssg = "TabularEnergy::TabularEnergy: Must have the same ";
-    mssg += "number of points\nin the incoming energy grid as there are";
-    mssg += " PCTables for the outgoing energy.";
+  if (incoming_energy_.size() != tables_.size()) {
+    std::string mssg =
+        "TabularEnergy::TabularEnergy: Must have the same number of points in "
+        "the incoming energy grid as there are PCTables for the outgoing "
+        "energy.";
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
 }

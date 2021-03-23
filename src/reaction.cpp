@@ -98,8 +98,9 @@ Reaction::Reaction(const ACE& ace, size_t indx, const EnergyGrid& egrid)
       }
     }
   } catch (PNDLException& error) {
-    std::string mssg = "Reaction::Reaction: Could not create yield function ";
-    mssg += "for MT = " + std::to_string(mt_) + ".";
+    std::string mssg =
+        "Reaction::Reaction: Could not create yield function for MT = " +
+        std::to_string(mt_) + ".";
     error.add_to_exception(mssg, __FILE__, __LINE__);
     throw error;
   }
@@ -109,9 +110,10 @@ Reaction::Reaction(const ACE& ace, size_t indx, const EnergyGrid& egrid)
     uint32_t loca = ace.xss<uint32_t>(ace.LSIG() + indx);
     xs_ = std::make_shared<CrossSection>(ace, ace.SIG() + loca - 1, egrid);
     threshold_ = xs_->energy(0);
-  } catch(PNDLException& error) {
-    std::string mssg = "Reaction::Reaction: Could not create cross section ";
-    mssg += "for MT = " + std::to_string(mt_) + ".";
+  } catch (PNDLException& error) {
+    std::string mssg =
+        "Reaction::Reaction: Could not create cross section for MT = " +
+        std::to_string(mt_) + ".";
     error.add_to_exception(mssg, __FILE__, __LINE__);
     throw error;
   }
@@ -128,8 +130,10 @@ Reaction::Reaction(const ACE& ace, size_t indx, const EnergyGrid& egrid)
       try {
         angle = std::make_shared<AngleDistribution>(ace, locb);
       } catch (PNDLException& error) {
-        std::string mssg = "Reaction::Reaction: Could not create secondary ";
-        mssg += "angular\ndistribution for MT = " + std::to_string(mt_) + ".";
+        std::string mssg =
+            "Reaction::Reaction: Could not create secondary angular "
+            "distribution for MT = " +
+            std::to_string(mt_) + ".";
         error.add_to_exception(mssg, __FILE__, __LINE__);
         throw error;
       }
@@ -197,15 +201,16 @@ Reaction::Reaction(const ACE& ace, size_t indx, const EnergyGrid& egrid)
       } else {
         // Unknown or unsuported law
         std::string mssg = "Reaction::Reaction: Unkown energy law " +
-                           std::to_string(law) + " in reaction \n";
-        mssg += "MT=" + std::to_string(mt_) +
-                " in ZAID=" + std::to_string(ace.zaid()) + ".";
+                           std::to_string(law) +
+                           " in reaction MT=" + std::to_string(mt_) +
+                           " in ZAID=" + std::to_string(ace.zaid()) + ".";
         throw PNDLException(mssg, __FILE__, __LINE__);
       }
     } catch (PNDLException& error) {
-      std::string mssg = "Reaction::Reaction: Could not create secondary ";
-      mssg +=
-          "angle-energy\ndistribution for MT = " + std::to_string(mt_) + ".";
+      std::string mssg =
+          "Reaction::Reaction: Could not create secondary angle-energy "
+          "distribution for MT = " +
+          std::to_string(mt_) + ".";
       error.add_to_exception(mssg, __FILE__, __LINE__);
       throw error;
     }
@@ -243,9 +248,10 @@ Reaction::Reaction(const ACE& ace, size_t indx, const EnergyGrid& egrid,
     uint32_t loca = ace.xss<uint32_t>(ace.LSIG() + indx);
     xs_ = std::make_shared<CrossSection>(ace, ace.SIG() + loca - 1, egrid);
     threshold_ = xs_->energy(0);
-  } catch(PNDLException& error) {
-    std::string mssg = "Reaction::Reaction: Could not create cross section ";
-    mssg += "for MT = " + std::to_string(mt_) + ".";
+  } catch (PNDLException& error) {
+    std::string mssg =
+        "Reaction::Reaction: Could not create cross section for MT = " +
+        std::to_string(mt_) + ".";
     error.add_to_exception(mssg, __FILE__, __LINE__);
     throw error;
   }

@@ -51,9 +51,8 @@ TabularEnergyAngle::TabularEnergyAngle(const ACE& ace, size_t i)
   if (!std::is_sorted(incoming_energy_.begin(), incoming_energy_.end())) {
     std::string mssg =
         "TabularEnergyAngle::TabularEnergyAngle: Incoming energy grid is not "
-        "sorted.";
-    mssg += "\nIndex to TabularEnergyAngle in XSS block is " +
-            std::to_string(i) + ".";
+        "sorted. Index to TabularEnergyAngle in XSS block is " +
+        std::to_string(i) + ".";
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
 
@@ -64,12 +63,12 @@ TabularEnergyAngle::TabularEnergyAngle(const ACE& ace, size_t i)
       tables_.emplace_back(ace, loc);
     } catch (PNDLException& error) {
       std::string mssg =
-          "TabularEnergyAngle::TabularEnergyAngle: Could not create\n";
-      mssg += "EnergyAngleTable for the " + std::to_string(j) +
-              "th incoming energy ";
-      mssg += std::to_string(incoming_energy_[j]) + " MeV.\n";
-      mssg += "Index of TabularEnergyAngle in XSS block is " +
-              std::to_string(i) + ".";
+          "TabularEnergyAngle::TabularEnergyAngle: Could not create "
+          "EnergyAngleTable for the " +
+          std::to_string(j) + "th incoming energy " +
+          std::to_string(incoming_energy_[j]) +
+          " MeV. Index of TabularEnergyAngle in XSS block is " +
+          std::to_string(i) + ".";
       error.add_to_exception(mssg, __FILE__, __LINE__);
       throw error;
     }
@@ -82,16 +81,16 @@ TabularEnergyAngle::TabularEnergyAngle(
     : incoming_energy_(incoming_energy), tables_(tables) {
   if (!std::is_sorted(incoming_energy_.begin(), incoming_energy_.end())) {
     std::string mssg =
-        "TabularEnergyAngle::TabularEnergyAngle: Incoming energy"
-        "grid is not sorted.";
+        "TabularEnergyAngle::TabularEnergyAngle: Incoming energy grid is not "
+        "sorted.";
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
 
   if (incoming_energy_.size() != tables_.size()) {
     std::string mssg =
-        "TabularEnergyAngle::TabularEnergyAngle: Must have the same ";
-    mssg += "number of points in the\nincoming energy grid as there are";
-    mssg += " KalbachTables for the outgoing energy and angle.";
+        "TabularEnergyAngle::TabularEnergyAngle: Must have the same number of "
+        "points in the\nincoming energy grid as there are KalbachTables for "
+        "the outgoing energy and angle.";
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
 }

@@ -38,18 +38,20 @@ namespace pndl {
 
 AngleTable::AngleTable(const ACE& ace, size_t i) : distribution_(ace, i) {
   if (distribution_.min_value() < -1.) {
-    std::string mssg = "AngleTable::AngleTable: Lowest posible cosine value is";
-    mssg += "\n-1. Lowest given cosine is ";
-    mssg += std::to_string(distribution_.min_value()) + ".\n";
-    mssg += "Index to XSS block for table is " + std::to_string(i) + ".";
+    std::string mssg =
+        "AngleTable::AngleTable: Lowest posible cosine value is -1. Lowest "
+        "given cosine is " +
+        std::to_string(distribution_.min_value()) +
+        ". Index to XSS block for table is " + std::to_string(i) + ".";
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
 
   if (distribution_.max_value() > 1.) {
-    std::string mssg = "AngleTable::AngleTable: Largest posible cosine value";
-    mssg += " is\n1. Largest given cosine is ";
-    mssg += std::to_string(distribution_.max_value()) + ".\n";
-    mssg += "Index to XSS block for table is " + std::to_string(i) + ".";
+    std::string mssg =
+        "AngleTable::AngleTable: Largest posible cosine value is 1. Largest "
+        "given cosine is " +
+        std::to_string(distribution_.max_value()) +
+        ". Index to XSS block for table is " + std::to_string(i) + ".";
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
 }
@@ -59,32 +61,36 @@ AngleTable::AngleTable(const std::vector<double>& cosines,
                        const std::vector<double>& cdf, Interpolation interp)
     : distribution_(cosines, pdf, cdf, interp) {
   if (distribution_.min_value() < -1.) {
-    std::string mssg = "AngleTable::AngleTable: Lowest posible cosine value is";
-    mssg += "\n-1. Lowest given cosine is ";
-    mssg += std::to_string(distribution_.min_value()) + ".";
+    std::string mssg =
+        "AngleTable::AngleTable: Lowest posible cosine value is -1. Lowest "
+        "given cosine is " +
+        std::to_string(distribution_.min_value()) + ".";
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
 
   if (distribution_.max_value() > 1.) {
-    std::string mssg = "AngleTable::AngleTable: Largest posible cosine value";
-    mssg += " is\n1. Largest given cosine is ";
-    mssg += std::to_string(distribution_.max_value()) + ".";
+    std::string mssg =
+        "AngleTable::AngleTable: Largest posible cosine value is 1. Largest "
+        "given cosine is " +
+        std::to_string(distribution_.max_value()) + ".";
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
 }
 
 AngleTable::AngleTable(const PCTable& table) : distribution_(table) {
   if (distribution_.min_value() < -1.) {
-    std::string mssg = "AngleTable::AngleTable: Lowest posible cosine value is";
-    mssg += "\n-1. Lowest given cosine is ";
-    mssg += std::to_string(distribution_.min_value()) + ".";
+    std::string mssg =
+        "AngleTable::AngleTable: Lowest posible cosine value is -1. Lowest "
+        "given cosine is " +
+        std::to_string(distribution_.min_value()) + ".";
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
 
   if (distribution_.max_value() > 1.) {
-    std::string mssg = "AngleTable::AngleTable: Largest posible cosine value";
-    mssg += " is\n1. Largest given cosine is ";
-    mssg += std::to_string(distribution_.max_value()) + ".";
+    std::string mssg =
+        "AngleTable::AngleTable: Largest posible cosine value is 1. Largest "
+        "given cosine is " +
+        std::to_string(distribution_.max_value()) + ".";
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
 }

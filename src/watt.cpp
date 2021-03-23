@@ -67,9 +67,10 @@ Watt::Watt(const ACE& ace, size_t i) : a_(), b_(), restriction_energy_() {
       a_ = std::make_shared<MultiRegion1D>(NBT_a, INT_a, energy_a, a);
     }
   } catch (PNDLException& error) {
-    std::string mssg = "Watt::Watt: Could not construct";
-    mssg += "Tabular1D for the 'a'.\nIndex in the";
-    mssg += " XSS block is i = " + std::to_string(original_i) + ".";
+    std::string mssg =
+        "Watt::Watt: Could not construct Tabular1D for the 'a'. Index in the "
+        "XSS block is i = " +
+        std::to_string(original_i) + ".";
     error.add_to_exception(mssg, __FILE__, __LINE__);
     throw error;
   }
@@ -102,9 +103,10 @@ Watt::Watt(const ACE& ace, size_t i) : a_(), b_(), restriction_energy_() {
       b_ = std::make_shared<MultiRegion1D>(NBT_b, INT_b, energy_b, b);
     }
   } catch (PNDLException& error) {
-    std::string mssg = "Watt::Watt: Could not construct";
-    mssg += "Tabular1D for the 'b'.\nIndex in the";
-    mssg += " XSS block is i = " + std::to_string(original_i) + ".";
+    std::string mssg =
+        "Watt::Watt: Could not construct Tabular1D for the 'b'. Index in the "
+        "XSS block is i = " +
+        std::to_string(original_i) + ".";
     error.add_to_exception(mssg, __FILE__, __LINE__);
     throw error;
   }
@@ -112,9 +114,10 @@ Watt::Watt(const ACE& ace, size_t i) : a_(), b_(), restriction_energy_() {
   // Get restriction energy
   restriction_energy_ = ace.xss(i + 2 + 2 * NR + 2 * NE);
   if (restriction_energy_ <= 0.) {
-    std::string mssg = "Watt::Watt: Restriction energy must be ";
-    mssg += "greater than zero.\n";
-    mssg += "Index in the XSS block is " + std::to_string(i) + ".";
+    std::string mssg =
+        "Watt::Watt: Restriction energy must be greater than zero. Index in "
+        "the XSS block is " +
+        std::to_string(i) + ".";
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
 }
@@ -123,8 +126,8 @@ Watt::Watt(std::shared_ptr<Tabulated1D> a, std::shared_ptr<Tabulated1D> b,
            double restriction_energy)
     : a_(a), b_(b), restriction_energy_(restriction_energy) {
   if (restriction_energy_ <= 0.) {
-    std::string mssg = "Watt::Watt: Restriction energy must be ";
-    mssg += "greater than zero.";
+    std::string mssg =
+        "Watt::Watt: Restriction energy must be greater than zero.";
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
 }

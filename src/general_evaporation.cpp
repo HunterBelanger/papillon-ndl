@@ -66,9 +66,9 @@ GeneralEvaporation::GeneralEvaporation(const ACE& ace, size_t i)
 
   if (!std::is_sorted(bin_bounds_.begin(), bin_bounds_.end())) {
     std::string mssg =
-        "GeneralEvaporation::GeneralEvaporation: Bin bounds for ";
-    mssg += "X are not sorted.\n";
-    mssg += "Index in the XSS block is " + std::to_string(i) + ".";
+        "GeneralEvaporation::GeneralEvaporation: Bin bounds for X are not "
+        "sorted. Index in the XSS block is " +
+        std::to_string(i) + ".";
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
 
@@ -82,9 +82,10 @@ GeneralEvaporation::GeneralEvaporation(const ACE& ace, size_t i)
     }
   } catch (PNDLException& error) {
     std::string mssg =
-        "GeneralEvaporation::GeneralEvaporation: Could not construct\n";
-    mssg += "Tabular1D for the effective nuclear temperature.\nIndex in the";
-    mssg += " XSS block is i = " + std::to_string(i) + ".";
+        "GeneralEvaporation::GeneralEvaporation: Could not construct Tabular1D "
+        "for the effective nuclear temperature. Index in the XSS block is i "
+        "= " +
+        std::to_string(i) + ".";
     error.add_to_exception(mssg, __FILE__, __LINE__);
     throw error;
   }
@@ -95,8 +96,8 @@ GeneralEvaporation::GeneralEvaporation(std::shared_ptr<Tabulated1D> temperature,
     : temperature_(temperature), bin_bounds_(bounds) {
   if (!std::is_sorted(bin_bounds_.begin(), bin_bounds_.end())) {
     std::string mssg =
-        "GeneralEvaporation::GeneralEvaporation: Bin bounds for ";
-    mssg += "X are not sorted.";
+        "GeneralEvaporation::GeneralEvaporation: Bin bounds for X are not "
+        "sorted.";
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
 }

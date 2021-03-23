@@ -128,11 +128,10 @@ ACE::ACE(std::string fname)
   if (i - 1 != nxs_[0]) {
     std::string mssg =
         "ACE::ACE: Found incorrect number of entries in XSS array while "
-        "reading\n";
-    mssg += "the \"" + fname + "\" ACE file.\n";
-    mssg +=
-        "This is likely due to a numerical entry which is missing the \"E\".\n";
-    mssg += "Please correct the ACE file.";
+        "reading the \"" +
+        fname +
+        "\" ACE file. This is likely due to a numerical entry which is missing "
+        "the \"E\". Please correct the ACE file.";
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
 

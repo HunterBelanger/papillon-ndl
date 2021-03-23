@@ -108,8 +108,8 @@ DelayedGroup::DelayedGroup(const ACE& ace, size_t i, size_t g)
 
   } else {
     // Unknown or unsuported law
-    std::string mssg = "DelayedGroup: Group " + std::to_string(g);
-    mssg += "has unkown energy law " + std::to_string(law) + ".";
+    std::string mssg = "DelayedGroup: Group " + std::to_string(g) +
+                       " has unkown energy law " + std::to_string(law) + ".";
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
 }

@@ -45,8 +45,9 @@ LevelInelasticScatter::LevelInelasticScatter(const ACE& ace, size_t i)
 LevelInelasticScatter::LevelInelasticScatter(double Q, double AWR)
     : C1_(), C2_() {
   if (AWR <= 0.) {
-    std::string mssg = "LevelInelasticScattter::LevelInelasticScatter: ";
-    mssg += "AWR must be greater than zero.";
+    std::string mssg =
+        "LevelInelasticScattter::LevelInelasticScatter: AWR must be greater "
+        "than zero.";
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
 

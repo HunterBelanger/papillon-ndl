@@ -62,9 +62,10 @@ Evaporation::Evaporation(const ACE& ace, size_t i)
   restriction_energy_ = ace.xss(i + 2 + 2 * NR + 2 * NE);
 
   if (restriction_energy_ <= 0.) {
-    std::string mssg = "Evaporation::Evaporation: Restriction energy must be ";
-    mssg += "greater than zero.\n";
-    mssg += "Index in the XSS block is " + std::to_string(i) + ".";
+    std::string mssg =
+        "Evaporation::Evaporation: Restriction energy must be greater than "
+        "zero. Index in the XSS block is " +
+        std::to_string(i) + ".";
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
 
@@ -77,9 +78,10 @@ Evaporation::Evaporation(const ACE& ace, size_t i)
           std::make_shared<MultiRegion1D>(NBT, INT, energy, temperature);
     }
   } catch (PNDLException& error) {
-    std::string mssg = "Evaporation::Evaporation: Could not construct";
-    mssg += "Tabular1D for the\neffective nuclear temperature. Index in the";
-    mssg += " XSS block is i = " + std::to_string(i) + ".";
+    std::string mssg =
+        "Evaporation::Evaporation: Could not construct Tabular1D for the "
+        "effective nuclear temperature. Index in the XSS block is i = " +
+        std::to_string(i) + ".";
     error.add_to_exception(mssg, __FILE__, __LINE__);
     throw error;
   }
@@ -89,8 +91,9 @@ Evaporation::Evaporation(std::shared_ptr<Tabulated1D> temperature,
                          double restriction_energy)
     : temperature_(temperature), restriction_energy_(restriction_energy) {
   if (restriction_energy_ <= 0.) {
-    std::string mssg = "Evaporation::Evaporation: Restriction energy must be ";
-    mssg += "greater than zero.";
+    std::string mssg =
+        "Evaporation::Evaporation: Restriction energy must be greater than "
+        "zero.";
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
 }

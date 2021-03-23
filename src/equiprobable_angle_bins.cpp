@@ -43,27 +43,24 @@ EquiprobableAngleBins::EquiprobableAngleBins(const ACE& ace, size_t i)
   if (!std::is_sorted(bounds_.begin(), bounds_.end())) {
     std::string mssg =
         "EquiprobableAngleBins::EquiprobableAngleBins: Bin bounds are not "
-        "sorted.\n";
-    mssg += "Index of EquiprobableAngleBins in XSS block is " +
-            std::to_string(i) + ".";
+        "sorted. Index of EquiprobableAngleBins in XSS block is " +
+        std::to_string(i) + ".";
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
 
   if (bounds_[0] < -1.) {
     std::string mssg =
         "EquiprobableAngleBins::EquiprobableAngleBins: Lowest bin bound is "
-        "less than -1.\n";
-    mssg += "Index of EquiprobableAngleBins in XSS block is " +
-            std::to_string(i) + ".";
+        "less than -1. Index of EquiprobableAngleBins in XSS block is " +
+        std::to_string(i) + ".";
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
 
   if (bounds_[NBOUNDS - 1] > 1.) {
     std::string mssg =
         "EquiprobableAngleBins::EquiprobableAngleBins: Highest bin bound is "
-        "more than 1.\n";
-    mssg += "Index of EquiprobableAngleBins in XSS block is " +
-            std::to_string(i) + ".";
+        "more than 1. Index of EquiprobableAngleBins in XSS block is " +
+        std::to_string(i) + ".";
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
 }
