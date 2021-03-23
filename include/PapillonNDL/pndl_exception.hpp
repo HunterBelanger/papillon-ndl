@@ -84,7 +84,7 @@ class PNDLException : public std::exception {
     int nbreaks = static_cast<int>(mssg_tmp.size()) / 80;
     if((mssg_tmp.size() % 80) == 0) nbreaks--;
     if(nbreaks > 0) {
-      for(size_t b = 0; b < nbreaks; b++) {
+      for(size_t b = 0; b < static_cast<size_t>(nbreaks); b++) {
         // Get index of break.
         size_t ind = 80 * (b+1);
 

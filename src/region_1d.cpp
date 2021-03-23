@@ -66,6 +66,16 @@ Region1D::Region1D(const std::vector<double>& i_x,
   } else if (interpolation_ == Interpolation::LogLog) {
     interpolator = LogLog();
   }
+
+  auto verify_x_grid = [&i_x](auto& interp) {
+    return interp.verify_x_grid(i_x.begin(), i_x.end());
+  };
+  auto verify_y_grid = [&i_y](auto& interp) {
+    return interp.verify_y_grid(i_y.begin(), i_y.end());
+  };
+
+  std::visit(verify_x_grid, interpolator);
+  std::visit(verify_y_grid, interpolator);
 }
 
 bool operator<(const Region1D& R, const double& X) { return R.min_x() < X; }
