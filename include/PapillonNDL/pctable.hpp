@@ -91,6 +91,25 @@ class PCTable {
   }
 
   /**
+   * @brief Returns the value of the PDF for the queried value.
+   * @param value Value at which to evaluate the PDF.
+   */
+  double pdf(double value) const {
+    if (value < min_value() || value > max_value()) return 0.;
+
+    auto val_it = std::lower_bound(values_.begin(), values_.end(), value);
+    size_t l = std::distance(values_.begin(), val_it);
+    if (value == *val_it) return pdf_[l];
+
+    l--;
+
+    if (interp_ == Interpolation::Histogram) return pdf_[l];
+
+    return LinLin::interpolate(value, values_[l], values_[l + 1], pdf_[l],
+                               pdf_[l + 1]);
+  }
+
+  /**
    * @brief Returns the lowest possible value that can be sampled.
    */
   double min_value() const { return values_.front(); }
