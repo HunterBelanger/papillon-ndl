@@ -61,23 +61,24 @@ class DiscretePhoton : public EnergyLaw {
 
     if ((lp != 0) && (lp != 1) && (lp != 2)) {
       std::string mssg = "DiscretePhoton::DiscretePhoton: Invalid lp of " +
-                         std::to_string(lp) + ".\n";
-      mssg += "Occurred at index " + std::to_string(i) + " in XSS array.";
+                         std::to_string(lp) + ". Occurred at index " +
+                         std::to_string(i) + " in XSS array.";
       throw PNDLException(mssg, __FILE__, __LINE__);
     }
 
     if (Eg <= 0.) {
       std::string mssg =
-          "DiscretePphoton::DiscretePhoton: Eg must be greater than zero.\n";
-      mssg += "Occurred at index " + std::to_string(i) + " in XSS array.";
+          "DiscretePphoton::DiscretePhoton: Eg must be greater than zero. "
+          "Occurred at index " +
+          std::to_string(i) + " in XSS array.";
       throw PNDLException(mssg, __FILE__, __LINE__);
     }
 
     if (A <= 0.) {
       std::string mssg =
           "DiscretePphoton::DiscretePhoton: Atomic weight ratio must be "
-          "greater than zero.\n";
-      mssg += "Occurred at index " + std::to_string(i) + " in XSS array.";
+          "greater than zero. Occurred at index " +
+          std::to_string(i) + " in XSS array.";
       throw PNDLException(mssg, __FILE__, __LINE__);
     }
   }

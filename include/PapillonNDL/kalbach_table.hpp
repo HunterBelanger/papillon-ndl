@@ -62,22 +62,20 @@ class KalbachTable {
    * @param energy Outgoing energy grid.
    * @param pdf Probability Density Function for outgoing energy grid.
    * @param cdf Cumulative Density Function for outgoing energy grid.
-   * @param R R values as a function of outgoing energy. 
+   * @param R R values as a function of outgoing energy.
    * @param A A values as a function of outgoing energy.
    * @param interp Interpolation method (Histogram or LinLin).
    */
   KalbachTable(const std::vector<double>& energy,
-               const std::vector<double>& pdf,
-               const std::vector<double>& cdf,
-               const std::vector<double>& R,
-               const std::vector<double>& A,
+               const std::vector<double>& pdf, const std::vector<double>& cdf,
+               const std::vector<double>& R, const std::vector<double>& A,
                Interpolation interp);
   ~KalbachTable() = default;
 
   double sample_energy(double xi) const {
     if (xi < 0. || xi > 1.) {
-      throw PNDLException("KalbachTable: Invalid value for xi provided.",
-                          __FILE__, __LINE__);
+      std::string mssg = "KalbachTable: Invalid value for xi provided.";
+      throw PNDLException(mssg, __FILE__, __LINE__);
     }
 
     auto cdf_it = std::lower_bound(cdf_.begin(), cdf_.end(), xi);

@@ -82,17 +82,18 @@ class PNDLException : public std::exception {
     // Go through original string and determine line breaks
     std::string mssg_tmp = mssg;
     int nbreaks = static_cast<int>(mssg_tmp.size()) / 80;
-    if((mssg_tmp.size() % 80) == 0) nbreaks--;
-    if(nbreaks > 0) {
-      for(size_t b = 0; b < static_cast<size_t>(nbreaks); b++) {
+    if ((mssg_tmp.size() % 80) == 0) nbreaks--;
+    if (nbreaks > 0) {
+      for (size_t b = 0; b < static_cast<size_t>(nbreaks); b++) {
         // Get index of break.
-        size_t ind = 80 * (b+1);
+        size_t ind = 80 * (b + 1);
 
         // Work backwards to first space
-        while(mssg_tmp[ind] != ' ') {
-          if(ind > 0) ind--;
+        while (mssg_tmp[ind] != ' ') {
+          if (ind > 0)
+            ind--;
           else {
-            ind = 80 * (b+1);
+            ind = 80 * (b + 1);
             break;
           }
         }
@@ -103,7 +104,8 @@ class PNDLException : public std::exception {
 
     std::string tmp = "\n";
     tmp +=
-        " #---------------------------------------------------------------------------------\n";
+        " #--------------------------------------------------------------------"
+        "-------------\n";
     tmp += " # Location: " + file + ":" + std::to_string(line) + "\n";
     tmp += " # \n";
     tmp += " # ";
@@ -117,7 +119,8 @@ class PNDLException : public std::exception {
     }
     tmp += "\n";
     tmp +=
-        " #---------------------------------------------------------------------------------";
+        " #--------------------------------------------------------------------"
+        "-------------";
 
     message = tmp + message;
   }

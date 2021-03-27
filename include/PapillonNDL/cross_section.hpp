@@ -65,16 +65,18 @@ class CrossSection {
   /**
    * @param xs Vector containing the cross section values.
    * @param E_grid Energy grid to use for the cross section.
-   * @param index Starting index in the energy grid. 
+   * @param index Starting index in the energy grid.
    */
-  CrossSection(const std::vector<double>& xs, const EnergyGrid& E_grid, size_t index);
+  CrossSection(const std::vector<double>& xs, const EnergyGrid& E_grid,
+               size_t index);
 
   /**
    * @param xs Vector containing the cross section values.
    * @param E_grid Energy grid to use for the cross section.
-   * @param index Starting index in the energy grid. 
+   * @param index Starting index in the energy grid.
    */
-  CrossSection(const std::vector<float>& xs, const EnergyGrid& E_grid, size_t index);
+  CrossSection(const std::vector<float>& xs, const EnergyGrid& E_grid,
+               size_t index);
   ~CrossSection() = default;
 
   /**
