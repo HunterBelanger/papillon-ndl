@@ -57,6 +57,15 @@ class EnergyLaw {
    */
   virtual double sample_energy(double E_in,
                                std::function<double()> rng) const = 0;
+
+  /**
+   * @brief Samples the PDF for the energy transfer from E_in to E_out where
+   *        E_in is provided in the lab frame, and E_out is provided in the
+   *        frame of the reaction data.
+   * @param E_in Incoming energy.
+   * @param E_out Outgoing energy.
+   */
+  virtual double pdf(double E_in, double E_out) const = 0;
 };
 
 }  // namespace pndl

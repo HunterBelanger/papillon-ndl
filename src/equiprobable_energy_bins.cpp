@@ -131,10 +131,49 @@ double EquiprobableEnergyBins::sample_energy(
   }
 }
 
+double EquiprobableEnergyBins::pdf(double E_in, double E_out) const {
+  // Determine the index of the bounding tabulated incoming energies
+  auto in_E_it =
+      std::lower_bound(incoming_energy_.begin(), incoming_energy_.end(), E_in);
+  if (in_E_it == incoming_energy_.begin()) {
+    return pdf_bins(E_out, bin_sets_.front());
+  } else if (in_E_it == incoming_energy_.end()) {
+    return pdf_bins(E_out, bin_sets_.back());
+  }
+
+  size_t l = std::distance(incoming_energy_.begin(), in_E_it);
+  l--;
+
+  double f = (E_in - incoming_energy_[l]) /
+             (incoming_energy_[l + 1] - incoming_energy_[l]);
+
+  return (1. - f) * pdf_bins(E_out, bin_sets_[l]) +
+         f * pdf_bins(E_out, bin_sets_[l + 1]);
+}
+
 double EquiprobableEnergyBins::sample_bins(
     double xi1, double xi2, const std::vector<double>& bounds) const {
   size_t bin = static_cast<size_t>(std::floor(bounds.size() * xi1));
   return (bounds[bin + 1] - bounds[bin]) * xi2 + bounds[bin];
+}
+
+double EquiprobableEnergyBins::pdf_bins(
+    double E_out, const std::vector<double>& bounds) const {
+  if (E_out < bounds.front() || E_out > bounds.back()) return 0;
+
+  size_t bin = 0;
+  for (size_t i = 0; i < bounds.size() - 1; i++) {
+    if (bounds[i] <= E_out && bounds[i + 1] >= E_out) {
+      bin = i;
+      break;
+    }
+  }
+
+  double nbins = static_cast<double>(bounds.size() - 1);
+  double prob_per_bin = 1. / nbins;
+  double E_low = bounds[bin];
+  double E_hi = bounds[bin + 1];
+  return prob_per_bin / (E_hi - E_low);
 }
 
 const std::vector<double>& EquiprobableEnergyBins::incoming_energy() const {

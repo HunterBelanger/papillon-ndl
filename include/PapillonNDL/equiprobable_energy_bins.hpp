@@ -67,6 +67,8 @@ class EquiprobableEnergyBins : public EnergyLaw {
   double sample_energy(double E_in,
                        std::function<double()> rng) const override final;
 
+  double pdf(double E_in, double E_out) const override final;
+
   /**
    * @brief Returns a vector of the grid of incoming energy points for which
    *        an equiprobable bin set is stored.
@@ -90,6 +92,8 @@ class EquiprobableEnergyBins : public EnergyLaw {
 
   double sample_bins(double xi1, double xi2,
                      const std::vector<double>& bounds) const;
+
+  double pdf_bins(double E_out, const std::vector<double>& bounds) const;
 };
 
 }  // namespace pndl

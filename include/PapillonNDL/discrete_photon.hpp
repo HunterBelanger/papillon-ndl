@@ -117,6 +117,17 @@ class DiscretePhoton : public EnergyLaw {
     return Eg + (A / (A + 1.)) * E_in;
   }
 
+  double pdf(double E_in, double E_out) const override final {
+    auto rng = []() { return 0.5; };
+    double smp_E_out = this->sample_energy(E_in, rng);
+
+    // Make sure that the provided E_out is close to the actual
+    // outgoing energy for the discrete distribution. If so, return 1,
+    // otherwise return 0.
+    if (std::abs(E_out - smp_E_out) > 1.E-15) return 0.;
+    return 1.;
+  }
+
   /**
    * @brief Returns the flay indicating whether the photon is a primary or
    * secondary. A secondary photon corresponds with 0 and 1, while a secondary

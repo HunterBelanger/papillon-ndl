@@ -160,6 +160,19 @@ double Watt::sample_energy(double E_in, std::function<double()> rng) const {
   return E_out;
 }
 
+double Watt::pdf(double E_in, double E_out) const {
+  double du = E_in - restriction_energy_;
+  if (E_out < 0. || E_out > du) return 0.;
+
+  double a = (*a_)(E_in);
+  double b = (*b_)(E_in);
+  double I = 0.5 * std::sqrt(PI * a * a * a * b / 4.) * std::exp(a * b / 4.);
+  I *= std::erf(std::sqrt(du / a) - std::sqrt(a * b / 4.)) +
+       std::erf(std::sqrt(du / a) + std::sqrt(a * b / 4.));
+  I -= a * std::exp(-du / a) * std::sinh(std::sqrt(b * du));
+  return (std::exp(-E_out / a) / I) * std::sinh(std::sqrt(b * E_out));
+}
+
 std::shared_ptr<Tabulated1D> Watt::a() const { return a_; }
 
 std::shared_ptr<Tabulated1D> Watt::b() const { return b_; }

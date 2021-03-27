@@ -130,6 +130,53 @@ double TabularEnergy::sample_energy(double E_in,
   return E_out;
 }
 
+double TabularEnergy::pdf(double E_in, double E_out) const {
+  // Determine the index of the bounding tabulated incoming energies
+  size_t l;
+  double f;  // Interpolation factor
+  auto in_E_it =
+      std::lower_bound(incoming_energy_.begin(), incoming_energy_.end(), E_in);
+  if (in_E_it == incoming_energy_.begin()) {
+    l = 0;
+    f = 0.;
+  } else if (in_E_it == incoming_energy_.end()) {
+    l = incoming_energy_.size() - 2;
+    f = 1.;
+  } else {
+    l = std::distance(incoming_energy_.begin(), in_E_it) - 1;
+    f = (E_in - incoming_energy_[l]) /
+        (incoming_energy_[l + 1] - incoming_energy_[l]);
+  }
+  // Determine the index of the bounding tabulated incoming energies
+
+  double E_i_1 = tables_[l].min_value();
+  double E_i_M = tables_[l].max_value();
+  double E_i_1_1 = tables_[l + 1].min_value();
+  double E_i_1_M = tables_[l + 1].max_value();
+  double Emin = E_i_1 + f * (E_i_1_1 - E_i_1);
+  double Emax = E_i_M + f * (E_i_1_M - E_i_M);
+
+  // Variable to store answer. Will add two parts to it.
+  double pdf = 0.;
+
+  double E_hat = E_in;
+  double E_l_1 = 0., E_l_M = 0.;
+
+  // Do the l table portion
+  E_l_1 = E_i_1;
+  E_l_M = E_i_M;
+  E_hat = ((E_out - Emin) / (Emax - Emin)) * (E_l_M - E_l_1) + E_l_1;
+  pdf += (1. - f) * tables_[l].pdf(E_hat);
+
+  // Do the l+1 table portion
+  E_l_1 = E_i_1_1;
+  E_l_M = E_i_1_M;
+  E_hat = ((E_out - Emin) / (Emax - Emin)) * (E_l_M - E_l_1) + E_l_1;
+  pdf += f * tables_[l + 1].pdf(E_hat);
+
+  return pdf;
+}
+
 const std::vector<double>& TabularEnergy::incoming_energy() const {
   return incoming_energy_;
 }

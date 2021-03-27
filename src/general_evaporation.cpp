@@ -113,6 +113,29 @@ double GeneralEvaporation::sample_energy(double E_in,
   return Chi * T;
 }
 
+double GeneralEvaporation::pdf(double E_in, double E_out) const {
+  double T = (*temperature_)(E_in);
+  double Chi = E_out / T;
+
+  // Go find Chi in bins
+  if (Chi < bin_bounds_.front() || Chi > bin_bounds_.back()) return 0.;
+
+  size_t bin = 0;
+  for (size_t i = 0; i < bin_bounds_.size() - 1; i++) {
+    if (bin_bounds_[i] <= Chi && bin_bounds_[i + 1] >= Chi) {
+      bin = i;
+      break;
+    }
+  }
+
+  double Chi_low = bin_bounds_[bin];
+  double Chi_hi = bin_bounds_[bin + 1];
+  double nbins = static_cast<double>(bin_bounds_.size() - 1);
+  double prob_per_bin = 1. / nbins;
+
+  return (prob_per_bin / (Chi_hi - Chi_low)) * T;
+}
+
 std::shared_ptr<Tabulated1D> GeneralEvaporation::temperature() const {
   return temperature_;
 }

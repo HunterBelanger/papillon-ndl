@@ -69,6 +69,8 @@ class Watt : public EnergyLaw {
   double sample_energy(double E_in,
                        std::function<double()> rng) const override final;
 
+  double pdf(double E_in, double E_out) const override final;
+
   /**
    * @brief Returns a pointer to the table containg the distribution parameter
    *        a, as a function of the incident energy.

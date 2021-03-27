@@ -57,12 +57,17 @@ class PyEnergyLaw : public EnergyLaw {
                        std::function<double()> rng) const override {
     PYBIND11_OVERRIDE_PURE(double, EnergyLaw, sample_energy, E_in, rng);
   }
+
+  double pdf(double E_in, double E_out) const override {
+    PYBIND11_OVERRIDE_PURE(double, EnergyLaw, pdf, E_in, E_out);
+  }
 };
 
 void init_EnergyLaw(py::module& m) {
   py::class_<EnergyLaw, PyEnergyLaw, std::shared_ptr<EnergyLaw>>(m, "EnergyLaw")
       .def(py::init<>())
-      .def("sample_energy", &EnergyLaw::sample_energy);
+      .def("sample_energy", &EnergyLaw::sample_energy)
+      .def("pdf", &EnergyLaw::pdf);
 }
 
 void init_EquiprobableEnergyBins(py::module& m) {
@@ -73,6 +78,7 @@ void init_EquiprobableEnergyBins(py::module& m) {
       .def(py::init<const std::vector<double>&,
                     const std::vector<std::vector<double>>&>())
       .def("sample_energy", &EquiprobableEnergyBins::sample_energy)
+      .def("pdf", &EquiprobableEnergyBins::pdf)
       .def("size", &EquiprobableEnergyBins::size)
       .def("incoming_energy", &EquiprobableEnergyBins::incoming_energy)
       .def("bin_bounds", &EquiprobableEnergyBins::bin_bounds);
@@ -84,6 +90,7 @@ void init_DiscretePhoton(py::module& m) {
       .def(py::init<const ACE&, size_t>())
       .def(py::init<int, double, double>())
       .def("sample_energy", &DiscretePhoton::sample_energy)
+      .def("pdf", &DiscretePhoton::pdf)
       .def("primary_indicator", &DiscretePhoton::primary_indicator)
       .def("photon_energy", &DiscretePhoton::photon_energy);
 }
@@ -94,6 +101,7 @@ void init_LevelInelasticScatter(py::module& m) {
       .def(py::init<const ACE&, size_t>())
       .def(py::init<double, double>())
       .def("sample_energy", &LevelInelasticScatter::sample_energy)
+      .def("pdf", &LevelInelasticScatter::pdf)
       .def("C1", &LevelInelasticScatter::C1)
       .def("C2", &LevelInelasticScatter::C2);
 }
@@ -104,6 +112,7 @@ void init_TabularEnergy(py::module& m) {
       .def(py::init<const ACE&, size_t, size_t>())
       .def(py::init<const std::vector<double>&, const std::vector<PCTable>&>())
       .def("sample_energy", &TabularEnergy::sample_energy)
+      .def("pdf", &TabularEnergy::pdf)
       .def("incoming_energy", &TabularEnergy::incoming_energy)
       .def("table", &TabularEnergy::table)
       .def("size", &TabularEnergy::size);
@@ -115,6 +124,7 @@ void init_GeneralEvaporation(py::module& m) {
       .def(py::init<const ACE&, size_t>())
       .def(py::init<std::shared_ptr<Tabulated1D>, const std::vector<double>&>())
       .def("sample_energy", &GeneralEvaporation::sample_energy)
+      .def("pdf", &GeneralEvaporation::pdf)
       .def("temperature", &GeneralEvaporation::temperature)
       .def("bin_bounds", &GeneralEvaporation::bin_bounds);
 }
@@ -125,6 +135,7 @@ void init_Evaporation(py::module& m) {
       .def(py::init<const ACE&, size_t>())
       .def(py::init<std::shared_ptr<Tabulated1D>, double>())
       .def("sample_energy", &Evaporation::sample_energy)
+      .def("pdf", &Evaporation::pdf)
       .def("temperature", &Evaporation::temperature)
       .def("U", &Evaporation::U);
 }
@@ -135,6 +146,7 @@ void init_Maxwellian(py::module& m) {
       .def(py::init<const ACE&, size_t>())
       .def(py::init<std::shared_ptr<Tabulated1D>, double>())
       .def("sample_energy", &Maxwellian::sample_energy)
+      .def("pdf", &Maxwellian::pdf)
       .def("temperature", &Maxwellian::temperature)
       .def("U", &Maxwellian::U);
 }
@@ -145,6 +157,7 @@ void init_Watt(py::module& m) {
       .def(py::init<std::shared_ptr<Tabulated1D>, std::shared_ptr<Tabulated1D>,
                     double>())
       .def("sample_energy", &Watt::sample_energy)
+      .def("pdf", &Watt::pdf)
       .def("a", &Watt::a)
       .def("b", &Watt::b)
       .def("U", &Watt::U);

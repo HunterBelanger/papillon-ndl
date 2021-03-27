@@ -121,6 +121,16 @@ double Maxwellian::sample_energy(double E_in,
   return E_out;
 }
 
+double Maxwellian::pdf(double E_in, double E_out) const {
+  double du = E_in - restriction_energy_;
+  if (E_out < 0. || E_out > du) return 0.;
+
+  double T = (*temperature_)(E_in);
+  double I = std::pow(T, 3. / 2.) * ((std::sqrt(PI) / 2.) * std::erf(du / T) -
+                                     std::sqrt(du / T) * std::exp(-du / T));
+  return (std::sqrt(E_out) / I) * std::exp(-E_out / T);
+}
+
 std::shared_ptr<Tabulated1D> Maxwellian::temperature() const {
   return temperature_;
 }

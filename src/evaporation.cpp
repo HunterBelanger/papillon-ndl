@@ -122,6 +122,15 @@ double Evaporation::sample_energy(double E_in,
   return E_out;
 }
 
+double Evaporation::pdf(double E_in, double E_out) const {
+  double du = E_in - restriction_energy_;
+  if (E_out < 0. || E_out > du) return 0.;
+
+  double T = (*temperature_)(E_in);
+  double I = T * T * (1. - std::exp(-du / T) * (1. + (du / T)));
+  return (E_out / I) * std::exp(-E_out / T);
+}
+
 std::shared_ptr<Tabulated1D> Evaporation::temperature() const {
   return temperature_;
 }

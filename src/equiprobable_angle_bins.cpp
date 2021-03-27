@@ -109,7 +109,10 @@ double EquiprobableAngleBins::pdf(double mu) const {
 
   size_t bin = 0;
   for (size_t i = 0; i < NBOUNDS - 1; i++) {
-    if (bounds_[i] <= mu && bounds_[i + 1] >= mu) bin = i;
+    if (bounds_[i] <= mu && bounds_[i + 1] >= mu) {
+      bin = i;
+      break;
+    }
   }
 
   double mu_low = bounds_[bin];
