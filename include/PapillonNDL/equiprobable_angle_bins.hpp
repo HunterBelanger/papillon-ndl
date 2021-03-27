@@ -63,6 +63,8 @@ class EquiprobableAngleBins : public AngleLaw {
 
   double sample_mu(double xi) const override final;
 
+  double pdf(double mu) const override final;
+
   /**
    * @brief Returns the number of bin boundaries (number of bins + 1);
    */

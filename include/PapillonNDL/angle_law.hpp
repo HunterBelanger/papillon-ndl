@@ -53,6 +53,12 @@ class AngleLaw {
    * @param xi Random variable from the interval [0,1).
    */
   virtual double sample_mu(double xi) const = 0;
+
+  /**
+   * @brief Returns the PDF for the desired scattering cosine.
+   * @param mu Scatter cosnine at which to evaluate the PDF.
+   */
+  virtual double pdf(double mu) const = 0;
 };
 
 }  // namespace pndl

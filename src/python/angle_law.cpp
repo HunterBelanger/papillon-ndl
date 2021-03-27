@@ -50,18 +50,24 @@ class PyAngleLaw : public AngleLaw {
   double sample_mu(double xi) const override {
     PYBIND11_OVERRIDE_PURE(double, AngleLaw, sample_mu, xi);
   }
+
+  double pdf(double mu) const override {
+    PYBIND11_OVERRIDE_PURE(double, AngleLaw, pdf, mu);
+  }
 };
 
 void init_AngleLaw(py::module& m) {
   py::class_<AngleLaw, PyAngleLaw, std::shared_ptr<AngleLaw>>(m, "AngleLaw")
       .def(py::init<>())
-      .def("sample_mu", &AngleLaw::sample_mu);
+      .def("sample_mu", &AngleLaw::sample_mu)
+      .def("pdf", &AngleLaw::pdf);
 }
 
 void init_Isotropic(py::module& m) {
   py::class_<Isotropic, AngleLaw, std::shared_ptr<Isotropic>>(m, "Isotropic")
       .def(py::init<>())
-      .def("sample_mu", &Isotropic::sample_mu);
+      .def("sample_mu", &Isotropic::sample_mu)
+      .def("pdf", &Isotropic::pdf);
 }
 
 void init_EquiprobableAngleBins(py::module& m) {
@@ -70,6 +76,7 @@ void init_EquiprobableAngleBins(py::module& m) {
       .def(py::init<const ACE&, size_t>())
       .def(py::init<const std::vector<double>&>())
       .def("sample_mu", &EquiprobableAngleBins::sample_mu)
+      .def("pdf", &EquiprobableAngleBins::pdf)
       .def("size", &EquiprobableAngleBins::size)
       .def("bin_bounds", &EquiprobableAngleBins::bin_bounds);
 }
@@ -83,7 +90,8 @@ void init_AngleTable(py::module& m) {
       .def("sample_mu", &AngleTable::sample_mu)
       .def("size", &AngleTable::size)
       .def("cosines", &AngleTable::cosines)
-      .def("pdf", &AngleTable::pdf)
+      .def("pdf", py::overload_cast<>(&AngleTable::pdf, py::const_))
+      .def("pdf", py::overload_cast<double>(&AngleTable::pdf, py::const_))
       .def("cdf", &AngleTable::cdf)
       .def("interpolation", &AngleTable::interpolation);
 }

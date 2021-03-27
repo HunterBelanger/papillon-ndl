@@ -104,6 +104,19 @@ double EquiprobableAngleBins::sample_mu(double xi) const {
   return ((xi - C_b) / P_BIN) + mu_low;
 }
 
+double EquiprobableAngleBins::pdf(double mu) const {
+  if (mu < bounds_.front() || mu > bounds_.back()) return 0.;
+
+  size_t bin = 0;
+  for (size_t i = 0; i < NBOUNDS - 1; i++) {
+    if (bounds_[i] <= mu && bounds_[i + 1] >= mu) bin = i;
+  }
+
+  double mu_low = bounds_[bin];
+  double mu_hi = bounds_[bin + 1];
+  return P_BIN / (mu_hi - mu_low);
+}
+
 size_t EquiprobableAngleBins::size() const { return NBOUNDS; }
 
 const std::vector<double>& EquiprobableAngleBins::bin_bounds() const {

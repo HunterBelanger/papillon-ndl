@@ -42,4 +42,9 @@ double Isotropic::sample_mu(double xi) const {
   return mu;
 }
 
+double Isotropic::pdf(double mu) const {
+  if (mu < -1. || mu > 1.) return 0.;
+  return 0.5;
+}
+
 }  // namespace pndl

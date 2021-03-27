@@ -53,6 +53,8 @@ class Isotropic : public AngleLaw {
   ~Isotropic() = default;
 
   double sample_mu(double xi) const override final;
+
+  double pdf(double mu) const override final;
 };
 
 }  // namespace pndl

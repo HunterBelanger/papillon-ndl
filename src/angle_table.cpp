@@ -101,6 +101,8 @@ double AngleTable::sample_mu(double xi) const {
   return mu;
 }
 
+double AngleTable::pdf(double mu) const { return distribution_.pdf(mu); }
+
 size_t AngleTable::size() const { return distribution_.size(); }
 
 const std::vector<double>& AngleTable::cosines() const {
