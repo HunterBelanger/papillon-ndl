@@ -149,7 +149,7 @@ double AngleDistribution::pdf(double E_in, double mu) const {
   size_t l = std::distance(energy_grid_.begin(), E_it);
   double f = (E_in - energy_grid_[l]) / (energy_grid_[l + 1] - energy_grid_[l]);
 
-  return (1. - f)*laws_[l]->pdf(mu) + f*laws_[l+1]->pdf(mu);
+  return (1. - f) * laws_[l]->pdf(mu) + f * laws_[l + 1]->pdf(mu);
 }
 
 size_t AngleDistribution::size() const { return energy_grid_.size(); }
