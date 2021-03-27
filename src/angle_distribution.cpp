@@ -137,6 +137,21 @@ double AngleDistribution::sample_angle(double E_in,
     return laws_[l + 1]->sample_mu(rng());
 }
 
+double AngleDistribution::pdf(double E_in, double mu) const {
+  auto E_it = std::lower_bound(energy_grid_.begin(), energy_grid_.end(), E_in);
+  if (E_it == energy_grid_.begin())
+    return laws_.front()->pdf(mu);
+  else if (E_it == energy_grid_.end())
+    return laws_.back()->pdf(mu);
+  E_it--;
+
+  // Get index of low energy
+  size_t l = std::distance(energy_grid_.begin(), E_it);
+  double f = (E_in - energy_grid_[l]) / (energy_grid_[l + 1] - energy_grid_[l]);
+
+  return (1. - f)*laws_[l]->pdf(mu) + f*laws_[l+1]->pdf(mu);
+}
+
 size_t AngleDistribution::size() const { return energy_grid_.size(); }
 
 const std::vector<double>& AngleDistribution::energy() const {

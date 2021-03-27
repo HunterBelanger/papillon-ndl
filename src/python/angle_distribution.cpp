@@ -48,6 +48,7 @@ void init_AngleDistribution(py::module& m) {
       .def(py::init<const std::vector<double>&,
                     const std::vector<std::shared_ptr<AngleLaw>>&>())
       .def("sample_angle", &AngleDistribution::sample_angle)
+      .def("pdf", &AngleDistribution::pdf)
       .def("size", &AngleDistribution::size)
       .def("energy",
            py::overload_cast<>(&AngleDistribution::energy, py::const_))

@@ -74,6 +74,14 @@ class AngleDistribution {
   double sample_angle(double E_in, std::function<double()> rng) const;
 
   /**
+   * @brief Evaluates the PDF for having a scattering cosine of mu at incoming
+   *        energy E_in.
+   * @param E_in Incoming energy.
+   * @param mu Scattering cosine.
+   */
+  double pdf(double E_in, double mu) const;
+
+  /**
    * @brief Returns the number of energies/angular distributions stored.
    */
   size_t size() const;
