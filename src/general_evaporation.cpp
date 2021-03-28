@@ -133,7 +133,7 @@ double GeneralEvaporation::pdf(double E_in, double E_out) const {
   double nbins = static_cast<double>(bin_bounds_.size() - 1);
   double prob_per_bin = 1. / nbins;
 
-  return (prob_per_bin / (Chi_hi - Chi_low)) * T;
+  return prob_per_bin / ((Chi_hi - Chi_low) * T);
 }
 
 std::shared_ptr<Tabulated1D> GeneralEvaporation::temperature() const {
