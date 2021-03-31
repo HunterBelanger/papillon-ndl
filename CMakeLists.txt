@@ -6,6 +6,8 @@ project(PapillonNDL
   LANGUAGES CXX
 )
 
+include(CMakePackageConfigHelpers)
+
 # Add options
 option(PNDL_GO_FASTER "Enable -Ofast -ffast-math compiler optimizations" OFF)
 option(PNDL_PYTHON "Enable Python interface to PapillonNDL" ON)
@@ -55,7 +57,7 @@ endif()
 # Add public interface includes directory
 target_include_directories(PapillonNDL PUBLIC 
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>
+  $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
 # Require C++17 standard
@@ -118,11 +120,51 @@ if(PNDL_PYTHON)
           "\nEnsure this directory is included in your PYTHONPATH environment variable !\n")
 
   # Install python lib
-  install(TARGETS pyPapillonNDL EXPORT pyPapillonNDL DESTINATION ${CMAKE_INSTALL_PREFIX}/${PNDL_PYTHON_DEFAULT_RELATIVE_PATH})
-  install(EXPORT pyPapillonNDL FILE pyPapillonNDL-config.cmake DESTINATION share/cmake/pyPapillonNDL)
+  configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/pyPapillonNDLConfig.cmake.in
+    "${CMAKE_CURRENT_BINARY_DIR}/pyPapillonNDLConfig.cmake"
+    INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/pyPapillonNDL
+  )
+
+  install(TARGETS pyPapillonNDL
+          EXPORT pyPapillonNDLTargets
+          LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/${PNDL_PYTHON_DEFAULT_RELATIVE_PATH}
+  )
+
+  install(EXPORT pyPapillonNDLTargets
+          FILE pyPapillonNDLTargets.cmake
+          NAMESPACE pyPapillonNDL::
+          DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/pyPapillonNDL
+  )
+
+  install(FILES
+            "${CMAKE_CURRENT_BINARY_DIR}/pyPapillonNDLConfig.cmake"
+          DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/pyPapillonNDL
+  )
 endif()
 
 # Install
-install(TARGETS PapillonNDL EXPORT PapillonNDL DESTINATION lib)
-install(EXPORT PapillonNDL FILE PapillonNDL-config.cmake DESTINATION share/cmake/PapillonNDL)
-install(DIRECTORY include/PapillonNDL DESTINATION include)
+configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/PapillonNDLConfig.cmake.in
+  "${CMAKE_CURRENT_BINARY_DIR}/PapillonNDLConfig.cmake"
+  INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/PapillonNDL
+)
+
+install(TARGETS PapillonNDL
+        EXPORT PapillonNDLTargets
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+)
+
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/include/PapillonNDL DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+
+install(EXPORT PapillonNDLTargets
+        FILE PapillonNDLTargets.cmake
+        NAMESPACE PapillonNDL::
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/PapillonNDL
+)
+
+install(FILES
+          "${CMAKE_CURRENT_BINARY_DIR}/PapillonNDLConfig.cmake"
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/PapillonNDL
+)
