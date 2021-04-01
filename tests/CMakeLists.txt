@@ -1,10 +1,12 @@
 cmake_minimum_required(VERSION 3.9)
+
 project(PapillonNDL-Tests
   DESCRIPTION "Tests for PapillonNDL library"
   LANGUAGES CXX
 )
 
 find_package(GTest REQUIRED)
+# TODO Use FetchContent if GTest isn't found
 
 # Create PapillonNDL library target
 add_executable(PapillonNDL-Tests
