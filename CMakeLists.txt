@@ -55,6 +55,9 @@ else()
   add_library(PapillonNDL SHARED ${PNDL_SOURCE_LIST})
 endif()
 
+# Add alias to make more friendly with FetchConent
+add_library(PapillonNDL::PapillonNDL ALIAS PapillonNDL)
+
 # Add public interface includes directory
 target_include_directories(PapillonNDL PUBLIC 
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
