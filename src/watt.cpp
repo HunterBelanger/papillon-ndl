@@ -113,24 +113,11 @@ Watt::Watt(const ACE& ace, size_t i) : a_(), b_(), restriction_energy_() {
 
   // Get restriction energy
   restriction_energy_ = ace.xss(i + 2 + 2 * NR + 2 * NE);
-  if (restriction_energy_ <= 0.) {
-    std::string mssg =
-        "Watt::Watt: Restriction energy must be greater than zero. Index in "
-        "the XSS block is " +
-        std::to_string(i) + ".";
-    throw PNDLException(mssg, __FILE__, __LINE__);
-  }
 }
 
 Watt::Watt(std::shared_ptr<Tabulated1D> a, std::shared_ptr<Tabulated1D> b,
            double restriction_energy)
-    : a_(a), b_(b), restriction_energy_(restriction_energy) {
-  if (restriction_energy_ <= 0.) {
-    std::string mssg =
-        "Watt::Watt: Restriction energy must be greater than zero.";
-    throw PNDLException(mssg, __FILE__, __LINE__);
-  }
-}
+    : a_(a), b_(b), restriction_energy_(restriction_energy) {}
 
 double Watt::sample_energy(double E_in, std::function<double()> rng) const {
   double a = (*a_)(E_in);

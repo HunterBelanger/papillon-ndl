@@ -61,14 +61,6 @@ Evaporation::Evaporation(const ACE& ace, size_t i)
   // Get restriction energy
   restriction_energy_ = ace.xss(i + 2 + 2 * NR + 2 * NE);
 
-  if (restriction_energy_ <= 0.) {
-    std::string mssg =
-        "Evaporation::Evaporation: Restriction energy must be greater than "
-        "zero. Index in the XSS block is " +
-        std::to_string(i) + ".";
-    throw PNDLException(mssg, __FILE__, __LINE__);
-  }
-
   // Create Function1D pointer
   try {
     if (NBT.size() == 1) {
@@ -89,14 +81,7 @@ Evaporation::Evaporation(const ACE& ace, size_t i)
 
 Evaporation::Evaporation(std::shared_ptr<Tabulated1D> temperature,
                          double restriction_energy)
-    : temperature_(temperature), restriction_energy_(restriction_energy) {
-  if (restriction_energy_ <= 0.) {
-    std::string mssg =
-        "Evaporation::Evaporation: Restriction energy must be greater than "
-        "zero.";
-    throw PNDLException(mssg, __FILE__, __LINE__);
-  }
-}
+    : temperature_(temperature), restriction_energy_(restriction_energy) {}
 
 double Evaporation::sample_energy(double E_in,
                                   std::function<double()> rng) const {
