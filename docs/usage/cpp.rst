@@ -155,34 +155,28 @@ Fission Data
 
 Often we want to look up lots of particular fission data for isotopes
 such as U235. While the fission cross section is contained in the
-MT=18 reaction, the best place to get other bits of fission data such
-as the number of neutrons per fission, the fission neutron spectrum,
-and delayed group info/spectra is the FissionData object in the
-nuclide.
+MT=18 reaction (or sometimes MT=19,20,21, and 38), helper methods to
+access other bits of fission data such as the number of neutrons per
+fission, the fission neutron spectrum, and delayed group info/spectra are
+provided in the CENeutron class.
 
 .. code-block:: c++
 
-  const pndl::FissionData& fiss_data = U235.fission_data();
-
   // Total number of fission neutrons for fissions induced by 3 MeV
   // neutrons.
-  double nu = fiss_data.nu_total(3.);
+  double nu = U235.nu_total(3.);
 
-  double nu_prmpt = fiss_data.nu_prompt(3.);
-  double nu_delyd = fiss_data.nu_delayed(3.);
-
-  // The angle-energy distributions for prompt neutrons can be sampled
-  // with the method
-  pndl::AngleEnergyPacket fiss_out = fiss_data.sample_prompt_angle_energy(3., rng);
+  double nu_prmpt = U235.nu_prompt(3.);
+  double nu_delyd = U235.nu_delayed(3.);
 
 Information for a delayed neutron group is also available in a DelayedGroup class:
 
 .. code-block:: c++
 
-  size_t delayed_grps = fiss_data.ngroups();
+  size_t delayed_grps = U235.n_delayed_groups();
 
   // Delayed groups are indexed starting from 0
-  const pndl::DelayedGroup& dg1 = fiss_data.delayed_group(1);
+  const pndl::DelayedGroup& dg1 = U235.delayed_group(1);
 
   // The decay constant for the group is given in units of
   // inverse seconds.
