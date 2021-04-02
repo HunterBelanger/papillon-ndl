@@ -72,7 +72,6 @@ extern void init_TabularEnergyAngle(py::module&);
 extern void init_EnergyGrid(py::module&);
 extern void init_CrossSection(py::module&);
 extern void init_DelayedGroup(py::module&);
-extern void init_FissionData(py::module&);
 extern void init_Reaction(py::module&);
 extern void init_CENeutron(py::module&);
 extern void init_PRNG(py::module&);
@@ -114,7 +113,6 @@ PYBIND11_MODULE(pyPapillonNDL, m) {
   init_CrossSection(m);
   init_Reaction(m);
   init_DelayedGroup(m);
-  init_FissionData(m);
   init_CENeutron(m);
   init_PRNG(m);
 

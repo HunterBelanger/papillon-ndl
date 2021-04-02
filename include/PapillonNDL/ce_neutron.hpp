@@ -41,7 +41,7 @@
 
 #include <PapillonNDL/ace.hpp>
 #include <PapillonNDL/angle_distribution.hpp>
-#include <PapillonNDL/fission_data.hpp>
+#include <PapillonNDL/delayed_group.hpp>
 #include <PapillonNDL/reaction.hpp>
 #include <unordered_map>
 
@@ -114,6 +114,21 @@ class CENeutron {
    * nuclide.
    */
   std::shared_ptr<CrossSection> photon_production_cross_section() const;
+
+  /**
+   * @brief Returns a pointer to the function for total nu.
+   */
+  std::shared_ptr<Function1D> nu_total() const { return nu_total_; }
+
+  /**
+   * @brief Returns a pointer to the function for prompt nu.
+   */
+  std::shared_ptr<Function1D> nu_prompt() const { return nu_prompt_; }
+
+  /**
+   * @brief Returns a pointer to the function for delayed nu.
+   */
+  std::shared_ptr<Function1D> nu_delayed() const { return nu_delayed_; }
 
   /**
    * @brief Returns a pointer to the AngleDistribution for elastic scattering.
@@ -204,6 +219,66 @@ class CENeutron {
   }
 
   /**
+   * @brief Returns the total average number of fission neutron at energy E.
+   * @param E Energy in MeV.
+   */
+  double nu_total(double E) const {
+    if (nu_total_)
+      return (*nu_total_)(E);
+
+    else if(nu_prompt_ && nu_delayed_)
+      return (*nu_prompt_)(E) + (*nu_delayed_)(E);
+
+    else if(nu_delayed_)
+      return (*nu_delayed_)(E);
+
+    return 0.;
+  }
+
+  /**
+   * @brief Returns the average number of prompt fission neutron at energy E.
+   * @param E Energy in MeV.
+   */
+  double nu_prompt(double E) const {
+    if (nu_prompt_)
+      return (*nu_prompt_)(E);
+
+    // If no prompt, that means no delayed data either, so all
+    // neutrons are treated as prompt.
+    else if (nu_total_)
+      return (*nu_total_)(E);
+
+    return 0.;
+  }
+
+  /**
+   * @brief Returns the average number of delayed fission neutron at energy E.
+   * @param E Energy in MeV.
+   */
+  double nu_delayed(double E) const {
+    if (nu_delayed_)
+      return (*nu_delayed_)(E);
+
+    else if (nu_total_ && nu_prompt_)
+      return (*nu_total_)(E) - (*nu_prompt_)(E);
+
+    return 0.;
+  }
+
+  /**
+   * @brief Returns the number of delayed neutron groups.
+   */
+  size_t n_delayed_groups() const { return delayed_groups_.size(); }
+
+  /**
+   * @brief Returns the ith delayed group data.
+   * @param i Index of the delayed group.
+   */
+  const DelayedGroup& delayed_group(size_t i) const {
+    return delayed_groups_[i];
+  }
+
+  /**
    * @brief Samples a scattering angle from the elastic scattering angular
    *        distribution.
    * @param E Incident energy.
@@ -255,11 +330,6 @@ class CENeutron {
     return reactions_.find(mt)->second.xs(E, i);
   }
 
-  /**
-   * @brief Returns the fission data for the nuclide.
-   */
-  const FissionData& fission_data() const { return fission_data_; }
-
  private:
   uint32_t zaid_;
   double awr_;
@@ -275,9 +345,18 @@ class CENeutron {
 
   std::shared_ptr<AngleDistribution> elastic_angle_;
 
-  FissionData fission_data_;
+  std::shared_ptr<Function1D> nu_total_;
+  std::shared_ptr<Function1D> nu_prompt_;
+  std::shared_ptr<Function1D> nu_delayed_;
+  std::vector<DelayedGroup> delayed_groups_;
 
   std::unordered_map<uint32_t, Reaction> reactions_;
+
+  // Private helper methods
+  void read_fission_data(const ACE& ace);
+  std::shared_ptr<Function1D> read_nu(const ACE& ace, size_t i);
+  std::shared_ptr<Function1D> read_polynomial_nu(const ACE& ace, size_t i);
+  std::shared_ptr<Function1D> read_tabular_nu(const ACE& ace, size_t i);
 };
 
 }  // namespace pndl

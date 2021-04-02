@@ -41,7 +41,6 @@ set(PNDL_SOURCE_LIST src/frame.cpp
                      src/cross_section.cpp
                      src/reaction.cpp
                      src/delayed_group.cpp
-                     src/fission_data.cpp
                      src/ce_neutron.cpp
                      src/version.cpp
 )
@@ -104,7 +103,6 @@ if(PNDL_PYTHON)
                                     src/python/cross_section.cpp
                                     src/python/reaction.cpp
                                     src/python/delayed_group.cpp
-                                    src/python/fission_data.cpp
                                     src/python/ce_neutron.cpp
                                     src/python/prng.cpp
   )

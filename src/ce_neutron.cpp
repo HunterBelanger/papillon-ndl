@@ -34,6 +34,10 @@
 #include <PapillonNDL/ce_neutron.hpp>
 #include <PapillonNDL/pndl_exception.hpp>
 #include <PapillonNDL/uncorrelated.hpp>
+#include <PapillonNDL/constant.hpp>
+#include <PapillonNDL/polynomial_1d.hpp>
+#include <PapillonNDL/region_1d.hpp>
+#include <PapillonNDL/multi_region_1d.hpp>
 
 namespace pndl {
 
@@ -48,7 +52,10 @@ CENeutron::CENeutron(const ACE& ace)
       elastic_xs_(nullptr),
       photon_production_xs_(nullptr),
       elastic_angle_(nullptr),
-      fission_data_(),
+      nu_total_(nullptr),
+      nu_prompt_(nullptr),
+      nu_delayed_(nullptr),
+      delayed_groups_(),
       reactions_() {
   // Number of energy points
   uint32_t NE = ace.nxs(2);
@@ -81,10 +88,11 @@ CENeutron::CENeutron(const ACE& ace)
   }
 
   if (fissile()) {
-    auto Fiss = reaction(18);
-    auto prompt_angle_energy = Fiss.angle_energy();
-    auto prompt_frame = Fiss.frame();
-    fission_data_ = FissionData(ace, prompt_angle_energy, prompt_frame);
+    read_fission_data(ace);
+  } else {
+    nu_total_ = std::make_shared<Constant>(0.);
+    nu_prompt_ = std::make_shared<Constant>(0.);
+    nu_delayed_ = std::make_shared<Constant>(0.);
   }
 }
 
@@ -99,7 +107,10 @@ CENeutron::CENeutron(const ACE& ace, const CENeutron& nuclide)
       elastic_xs_(nullptr),
       photon_production_xs_(nullptr),
       elastic_angle_(nullptr),
-      fission_data_(),
+      nu_total_(nullptr),
+      nu_prompt_(nullptr),
+      nu_delayed_(nullptr),
+      delayed_groups_(),
       reactions_() {
   // Make sure these are the same nuclide !
 
@@ -152,7 +163,10 @@ CENeutron::CENeutron(const ACE& ace, const CENeutron& nuclide)
   }
 
   // Copy fission data from other nuclide
-  fission_data_ = nuclide.fission_data_;
+  nu_total_ = nuclide.nu_total_;
+  nu_prompt_ = nuclide.nu_prompt_;
+  nu_delayed_ = nuclide.nu_delayed_;
+  delayed_groups_ = nuclide.delayed_groups_;
 }
 
 const EnergyGrid& CENeutron::energy_grid() const { return energy_grid_; }
@@ -177,6 +191,83 @@ std::shared_ptr<CrossSection> CENeutron::photon_production_cross_section()
 std::shared_ptr<AngleDistribution> CENeutron::elastic_angle_distribution()
     const {
   return elastic_angle_;
+}
+
+void CENeutron::read_fission_data(const ACE& ace) {
+  // If prompt and or total neutrons are given
+  if(ace.jxs(1) > 0) {
+    if (ace.xss(ace.NU()) > 0.) {
+      // Either prompt or total given, but not both
+      if (ace.DNU() > 0) {  // Prompt is provided, as delayed is present
+        nu_prompt_ = read_nu(ace, ace.DNU());
+      } else {
+        nu_total_ = read_nu(ace, ace.DNU());
+      }
+    } else {
+      // Both prompt and total given
+      uint32_t KNU_prmpt = ace.NU() + 1;
+      uint32_t KNU_tot = ace.NU() + std::abs(ace.xss<int32_t>(ace.NU())) + 1;
+
+      nu_total_ = read_nu(ace, KNU_tot);
+      nu_prompt_ = read_nu(ace, KNU_prmpt);
+    }
+  }
+
+  // Read delayed nu if given
+  if (ace.DNU() > 0) {
+    nu_delayed_ = read_nu(ace, ace.DNU());
+  }
+
+  // Read all delayed group data
+  if (ace.BDD() > 0) {
+    uint32_t NGRPS = ace.nxs(7);
+    size_t g = 1;
+    size_t i = ace.BDD();
+    while (g <= NGRPS) {
+      delayed_groups_.push_back(DelayedGroup(ace, i, g));
+      uint32_t NR = ace.xss<uint32_t>(i + 1);
+      uint32_t NE = ace.xss<uint32_t>(i + 2 + 2 * NR);
+      i += 3 + 2 * (NR + NE);
+      g++;
+    }
+  }
+}
+
+std::shared_ptr<Function1D> CENeutron::read_nu(const ACE& ace, size_t i) {
+  uint32_t LNU = ace.xss<uint32_t>(i);
+
+  if (LNU == 1) {  // Polynomial
+    return read_polynomial_nu(ace, ++i);
+  } else {  // Tabular
+    return read_tabular_nu(ace, ++i);
+  }
+}
+
+std::shared_ptr<Function1D> CENeutron::read_polynomial_nu(const ACE& ace,
+                                                            size_t i) {
+  uint32_t NC = ace.xss<uint32_t>(i);
+  std::vector<double> coeffs = ace.xss(i + 1, NC);
+  return std::make_shared<Polynomial1D>(coeffs);
+}
+
+std::shared_ptr<Function1D> CENeutron::read_tabular_nu(const ACE& ace,
+                                                         size_t i) {
+  uint32_t NR = ace.xss<uint32_t>(i);
+  uint32_t NE = ace.xss<uint32_t>(i + 1 + 2 * NR);
+  std::vector<double> energy = ace.xss(i + 2 + 2 * NR, NE);
+  std::vector<double> y = ace.xss(i + 2 + 2 * NR + NE, NE);
+
+  if (NR == 0 || NR == 1) {
+    Interpolation interp = Interpolation::LinLin;
+    if (NR == 1) interp = ace.xss<Interpolation>(i + 2);
+
+    return std::make_shared<Region1D>(energy, y, interp);
+  } else {
+    std::vector<uint32_t> breaks = ace.xss<uint32_t>(i + 1, NR);
+    std::vector<Interpolation> interps = ace.xss<Interpolation>(i + 1 + NR, NR);
+
+    return std::make_shared<MultiRegion1D>(breaks, interps, energy, y);
+  }
 }
 
 }  // namespace pndl

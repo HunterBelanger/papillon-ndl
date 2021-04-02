@@ -75,12 +75,24 @@ void init_CENeutron(py::module& m) {
       .def("photon_production_xs",
            py::overload_cast<double, size_t>(&CENeutron::photon_production_xs,
                                              py::const_))
+      .def("nu_total", py::overload_cast<>(&CENeutron::nu_total, py::const_))
+      .def("nu_total",
+           py::overload_cast<double>(&CENeutron::nu_total, py::const_))
+      .def("nu_prompt",
+           py::overload_cast<>(&CENeutron::nu_prompt, py::const_))
+      .def("nu_prompt",
+           py::overload_cast<double>(&CENeutron::nu_prompt, py::const_))
+      .def("nu_delayed",
+           py::overload_cast<>(&CENeutron::nu_delayed, py::const_))
+      .def("nu_delayed",
+           py::overload_cast<double>(&CENeutron::nu_delayed, py::const_))
+      .def("n_delayed_groups", &CENeutron::n_delayed_groups)
+      .def("delayed_group", &CENeutron::delayed_group)
       .def("sample_elastic_angle", &CENeutron::sample_elastic_angle)
       .def("has_reaction", &CENeutron::has_reaction)
       .def("reaction", &CENeutron::reaction)
       .def("reaction_xs", py::overload_cast<uint32_t, double>(
                               &CENeutron::reaction_xs, py::const_))
       .def("reaction_xs", py::overload_cast<uint32_t, double, size_t>(
-                              &CENeutron::reaction_xs, py::const_))
-      .def("fission_data", &CENeutron::fission_data);
+                              &CENeutron::reaction_xs, py::const_));
 }
