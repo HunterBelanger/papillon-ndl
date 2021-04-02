@@ -78,8 +78,7 @@ void init_CENeutron(py::module& m) {
       .def("nu_total", py::overload_cast<>(&CENeutron::nu_total, py::const_))
       .def("nu_total",
            py::overload_cast<double>(&CENeutron::nu_total, py::const_))
-      .def("nu_prompt",
-           py::overload_cast<>(&CENeutron::nu_prompt, py::const_))
+      .def("nu_prompt", py::overload_cast<>(&CENeutron::nu_prompt, py::const_))
       .def("nu_prompt",
            py::overload_cast<double>(&CENeutron::nu_prompt, py::const_))
       .def("nu_delayed",

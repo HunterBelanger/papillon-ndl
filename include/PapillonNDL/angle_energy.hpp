@@ -34,7 +34,9 @@
 #ifndef PAPILLON_NDL_ANGLE_ENERGY_H
 #define PAPILLON_NDL_ANGLE_ENERGY_H
 
+#include <PapillonNDL/tabulated_1d.hpp>
 #include <functional>
+#include <memory>
 
 /**
  * @file
@@ -56,6 +58,11 @@ struct AngleEnergyPacket {
  */
 class AngleEnergy {
  public:
+  /**
+   * @param prob Pointer to tabulated function for the probability of the
+   *             validity of the distribution.
+   */
+  AngleEnergy(std::shared_ptr<Tabulated1D> prob) : probability_(prob) {}
   virtual ~AngleEnergy() = default;
 
   /**
@@ -67,6 +74,22 @@ class AngleEnergy {
    */
   virtual AngleEnergyPacket sample_angle_energy(
       double E_in, std::function<double()> rng) const = 0;
+
+  /**
+   * @brief Returns a pointer to the tabulated function for the probability
+   *        of validity for the distribution.
+   */
+  std::shared_ptr<Tabulated1D> probability() const { return probability_; }
+
+  /**
+   * @brief Returns the value of the probability of validity for the
+   *        distribution, at energy E.
+   * @param E Energy at which to evaluate the probability.
+   */
+  double probability(double E) const { return (*probability_)(E); }
+
+ private:
+  std::shared_ptr<Tabulated1D> probability_;
 };
 
 }  // namespace pndl

@@ -32,12 +32,12 @@
  *
  * */
 #include <PapillonNDL/ce_neutron.hpp>
-#include <PapillonNDL/pndl_exception.hpp>
-#include <PapillonNDL/uncorrelated.hpp>
 #include <PapillonNDL/constant.hpp>
+#include <PapillonNDL/multi_region_1d.hpp>
+#include <PapillonNDL/pndl_exception.hpp>
 #include <PapillonNDL/polynomial_1d.hpp>
 #include <PapillonNDL/region_1d.hpp>
-#include <PapillonNDL/multi_region_1d.hpp>
+#include <PapillonNDL/uncorrelated.hpp>
 
 namespace pndl {
 
@@ -195,7 +195,7 @@ std::shared_ptr<AngleDistribution> CENeutron::elastic_angle_distribution()
 
 void CENeutron::read_fission_data(const ACE& ace) {
   // If prompt and or total neutrons are given
-  if(ace.jxs(1) > 0) {
+  if (ace.jxs(1) > 0) {
     if (ace.xss(ace.NU()) > 0.) {
       // Either prompt or total given, but not both
       if (ace.DNU() > 0) {  // Prompt is provided, as delayed is present
@@ -244,14 +244,14 @@ std::shared_ptr<Function1D> CENeutron::read_nu(const ACE& ace, size_t i) {
 }
 
 std::shared_ptr<Function1D> CENeutron::read_polynomial_nu(const ACE& ace,
-                                                            size_t i) {
+                                                          size_t i) {
   uint32_t NC = ace.xss<uint32_t>(i);
   std::vector<double> coeffs = ace.xss(i + 1, NC);
   return std::make_shared<Polynomial1D>(coeffs);
 }
 
 std::shared_ptr<Function1D> CENeutron::read_tabular_nu(const ACE& ace,
-                                                         size_t i) {
+                                                       size_t i) {
   uint32_t NR = ace.xss<uint32_t>(i);
   uint32_t NE = ace.xss<uint32_t>(i + 1 + 2 * NR);
   std::vector<double> energy = ace.xss(i + 2 + 2 * NR, NE);

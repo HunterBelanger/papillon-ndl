@@ -128,10 +128,24 @@ class Reaction {
    */
   AngleEnergyPacket sample_angle_energy(double E_in,
                                         std::function<double()> rng) const {
-    if (!angle_energy_ || E_in < threshold_) return {0., 0.};
+    if (distributions_.size() == 0 || E_in < threshold_) return {0., 0.};
 
-    AngleEnergyPacket out = angle_energy_->sample_angle_energy(E_in, rng);
+    // First select distribution
+    double xi = rng();
+    double sum = 0.;
+    for (size_t d = 0; d < distributions_.size(); d++) {
+      sum += distributions_[d]->probability(E_in);
+      if (xi < sum) {
+        AngleEnergyPacket out =
+            distributions_[d]->sample_angle_energy(E_in, rng);
+        if (frame_ == Frame::CM) cm_to_lab(E_in, awr_, out);
+        return out;
+      }
+    }
 
+    // Shouldn't get here, but if we do, use the last distribution
+    AngleEnergyPacket out =
+        distributions_.back()->sample_angle_energy(E_in, rng);
     if (frame_ == Frame::CM) cm_to_lab(E_in, awr_, out);
 
     return out;
@@ -143,10 +157,25 @@ class Reaction {
   std::shared_ptr<CrossSection> cross_section() const;
 
   /**
-   * @brief Returns a pointer to the AngleEnergy distribution for
-   *        the reaction.
+   * @brief Returns the vector of pointers to all distributions for the
+   *        reaction.
    */
-  std::shared_ptr<AngleEnergy> angle_energy() const;
+  const std::vector<std::shared_ptr<AngleEnergy>>& distributions() const {
+    return distributions_;
+  }
+
+  /**
+   * @brief Returns the number of distributions for the reaction.
+   */
+  size_t n_distributions() const { return distributions_.size(); }
+
+  /**
+   * @brief Returns the ith distributions for the reaction.
+   * @param i Index of distribution to fetch.
+   */
+  std::shared_ptr<AngleEnergy> distribution(size_t i) const {
+    return distributions_[i];
+  }
 
   /**
    * @brief Returns a pointer to the function for the reaction yield.
@@ -160,8 +189,8 @@ class Reaction {
   double threshold_;
   Frame frame_;
   std::shared_ptr<CrossSection> xs_;
-  std::shared_ptr<AngleEnergy> angle_energy_;
   std::shared_ptr<Function1D> yield_;
+  std::vector<std::shared_ptr<AngleEnergy>> distributions_;
 };
 
 }  // namespace pndl

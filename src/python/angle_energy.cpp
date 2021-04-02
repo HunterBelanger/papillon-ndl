@@ -67,15 +67,19 @@ class PyAngleEnergy : public AngleEnergy {
 void init_AngleEnergy(py::module& m) {
   py::class_<AngleEnergy, PyAngleEnergy, std::shared_ptr<AngleEnergy>>(
       m, "AngleEnergy")
-      .def(py::init<>())
-      .def("sample_angle_energy", &AngleEnergy::sample_angle_energy);
+      .def(py::init<std::shared_ptr<Tabulated1D>>())
+      .def("sample_angle_energy", &AngleEnergy::sample_angle_energy)
+      .def("probability",
+           py::overload_cast<double>(&AngleEnergy::probability, py::const_))
+      .def("probability",
+           py::overload_cast<>(&AngleEnergy::probability, py::const_));
 }
 
 void init_Uncorrelated(py::module& m) {
   py::class_<Uncorrelated, AngleEnergy, std::shared_ptr<Uncorrelated>>(
       m, "Uncorrelated")
       .def(py::init<std::shared_ptr<AngleDistribution>,
-                    std::shared_ptr<EnergyLaw>>())
+                    std::shared_ptr<EnergyLaw>, std::shared_ptr<Tabulated1D>>())
       .def("sample_angle_energy", &Uncorrelated::sample_angle_energy)
       .def("angle", &Uncorrelated::angle)
       .def("energy", &Uncorrelated::energy);
@@ -83,7 +87,8 @@ void init_Uncorrelated(py::module& m) {
 
 void init_NBody(py::module& m) {
   py::class_<NBody, AngleEnergy, std::shared_ptr<NBody>>(m, "NBody")
-      .def(py::init<uint32_t, double, double, double>())
+      .def(py::init<uint32_t, double, double, double,
+                    std::shared_ptr<Tabulated1D>>())
       .def("sample_angle_energy", &NBody::sample_angle_energy)
       .def("n", &NBody::n)
       .def("Ap", &NBody::Ap)
@@ -112,8 +117,9 @@ void init_KalbachTable(py::module& m) {
 
 void init_Kalbach(py::module& m) {
   py::class_<Kalbach, AngleEnergy, std::shared_ptr<Kalbach>>(m, "Kalbach")
-      .def(py::init<const std::vector<double>&,
-                    const std::vector<KalbachTable>&>())
+      .def(
+          py::init<const std::vector<double>&, const std::vector<KalbachTable>&,
+                   std::shared_ptr<Tabulated1D>>())
       .def("sample_angle_energy", &Kalbach::sample_angle_energy)
       .def("incoming_energy",
            py::overload_cast<>(&Kalbach::incoming_energy, py::const_))
@@ -145,7 +151,8 @@ void init_TabularEnergyAngle(py::module& m) {
   py::class_<TabularEnergyAngle, AngleEnergy,
              std::shared_ptr<TabularEnergyAngle>>(m, "TabularEnergyAngle")
       .def(py::init<const std::vector<double>&,
-                    const std::vector<EnergyAngleTable>&>())
+                    const std::vector<EnergyAngleTable>&,
+                    std::shared_ptr<Tabulated1D>>())
       .def("sample_angle_energy", &TabularEnergyAngle::sample_angle_energy)
       .def(
           "incoming_energy",

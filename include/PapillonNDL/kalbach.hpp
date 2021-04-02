@@ -56,16 +56,19 @@ class Kalbach : public AngleEnergy {
   /**
    * @param ace ACE file to take data from.
    * @param i Starting index of distribution in the XSS array.
+   * @param probability Function for probability of validity.
    */
-  Kalbach(const ACE& ace, size_t i);
+  Kalbach(const ACE& ace, size_t i, std::shared_ptr<Tabulated1D> probability);
 
   /**
    * @param incoming_energy Incoming energy grid.
    * @param tables vector of KalbachTable for each point in the incoming
    *               energy grid.
+   * @param probability Function for probability of validity.
    */
   Kalbach(const std::vector<double>& incoming_energy,
-          const std::vector<KalbachTable>& tables);
+          const std::vector<KalbachTable>& tables,
+          std::shared_ptr<Tabulated1D> probability);
   ~Kalbach() = default;
 
   AngleEnergyPacket sample_angle_energy(

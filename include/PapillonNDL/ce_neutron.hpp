@@ -226,10 +226,10 @@ class CENeutron {
     if (nu_total_)
       return (*nu_total_)(E);
 
-    else if(nu_prompt_ && nu_delayed_)
+    else if (nu_prompt_ && nu_delayed_)
       return (*nu_prompt_)(E) + (*nu_delayed_)(E);
 
-    else if(nu_delayed_)
+    else if (nu_delayed_)
       return (*nu_delayed_)(E);
 
     return 0.;
@@ -240,8 +240,7 @@ class CENeutron {
    * @param E Energy in MeV.
    */
   double nu_prompt(double E) const {
-    if (nu_prompt_)
-      return (*nu_prompt_)(E);
+    if (nu_prompt_) return (*nu_prompt_)(E);
 
     // If no prompt, that means no delayed data either, so all
     // neutrons are treated as prompt.
