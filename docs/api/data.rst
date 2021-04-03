@@ -28,8 +28,3 @@ DelayedGroup
 ------------
 
 .. doxygenclass:: pndl::DelayedGroup
-
-FissionData
------------
-
-.. doxygenclass:: pndl::FissionData
