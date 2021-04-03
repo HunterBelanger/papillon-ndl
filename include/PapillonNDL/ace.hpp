@@ -259,7 +259,7 @@ class ACE {
   std::vector<double> xss_;
 
   // Locator constants
-  int32_t esz_, nu_, mtr_, lqr_, tyr_, lsig_, sig_, lan_, an_, ldlw_, dlw_;
+  int32_t esz_, nu_, mtr_, lqr_, tyr_, lsig_, sig_, land_, and_, ldlw_, dlw_;
   int32_t dnedl_, dned_, dnu_, bdd_, gpd_;
 
 };  // ACE

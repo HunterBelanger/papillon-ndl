@@ -33,6 +33,7 @@
  * */
 #include <PapillonNDL/ace.hpp>
 #include <PapillonNDL/pndl_exception.hpp>
+#include <filesystem>
 #include <fstream>
 
 #include "constants.hpp"
@@ -57,8 +58,8 @@ ACE::ACE(std::string fname)
       tyr_(),
       lsig_(),
       sig_(),
-      lan_(),
-      an_(),
+      land_(),
+      and_(),
       ldlw_(),
       dlw_(),
       dnedl_(),
@@ -66,6 +67,12 @@ ACE::ACE(std::string fname)
       dnu_(),
       bdd_(),
       gpd_() {
+  // Make sure file exists
+  if (!std::filesystem::exists(fname)) {
+    std::string mssg = "ACE::ACE: File \"" + fname + "\" does not exist.";
+    throw PNDLException(mssg, __FILE__, __LINE__);
+  }
+
   // Open ACE file
   std::ifstream file(fname);
 
@@ -147,8 +154,8 @@ ACE::ACE(std::string fname)
   tyr_ = jxs_[4] - 1;
   lsig_ = jxs_[5] - 1;
   sig_ = jxs_[6] - 1;
-  lan_ = jxs_[7] - 1;
-  an_ = jxs_[8] - 1;
+  land_ = jxs_[7] - 1;
+  and_ = jxs_[8] - 1;
   ldlw_ = jxs_[9] - 1;
   dlw_ = jxs_[10] - 1;
   gpd_ = jxs_[11] - 1;
@@ -193,8 +200,8 @@ int32_t ACE::LQR() const { return lqr_; }
 int32_t ACE::TYR() const { return tyr_; }
 int32_t ACE::LSIG() const { return lsig_; }
 int32_t ACE::SIG() const { return sig_; }
-int32_t ACE::LAND() const { return lan_; }
-int32_t ACE::AND() const { return an_; }
+int32_t ACE::LAND() const { return land_; }
+int32_t ACE::AND() const { return and_; }
 int32_t ACE::LDLW() const { return ldlw_; }
 int32_t ACE::DLW() const { return dlw_; }
 int32_t ACE::DNEDL() const { return dnedl_; }
