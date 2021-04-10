@@ -69,6 +69,10 @@ void init_CENeutron(py::module& m) {
            py::overload_cast<double>(&CENeutron::disappearance_xs, py::const_))
       .def("disappearance_xs", py::overload_cast<double, size_t>(
                                    &CENeutron::disappearance_xs, py::const_))
+     .def("fission_xs",
+           py::overload_cast<double>(&CENeutron::fission_xs, py::const_))
+      .def("fission_xs", py::overload_cast<double, size_t>(
+                                   &CENeutron::fission_xs, py::const_))
       .def("photon_production_xs",
            py::overload_cast<double>(&CENeutron::photon_production_xs,
                                      py::const_))
