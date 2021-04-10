@@ -194,6 +194,60 @@ class CENeutron {
   }
 
   /**
+   * @brief Evaluates the total fission cross section at E using bisection
+   * search.
+   * @param E Energy.
+   */
+  double fission_xs(double E) const {
+    if (!this->fissile_) return 0.;
+
+    if (this->has_reaction(18)) return this->reaction_xs(18, E);
+
+    double sigma_f = 0.;
+
+    if (this->has_reaction(19))
+      sigma_f += this->reaction_xs(19, E);
+
+    if (this->has_reaction(20))
+      sigma_f += this->reaction_xs(20, E);
+
+    if (this->has_reaction(21))
+      sigma_f += this->reaction_xs(21, E);
+
+    if (this->has_reaction(38))
+      sigma_f += this->reaction_xs(38, E);
+
+    return sigma_f;
+  }
+
+  /**
+   * @brief Evaluates the total fission cross section at energy E and index i.
+   * @param E Energy.
+   * @param i Index to the energy grid.
+   */
+  double fission_xs(double E, size_t i) const {
+    if (!this->fissile_) return 0.;
+
+    if (this->has_reaction(18)) return this->reaction_xs(18, E, i);
+
+    double sigma_f = 0.;
+
+    if (this->has_reaction(19))
+      sigma_f += this->reaction_xs(19, E, i);
+
+    if (this->has_reaction(20))
+      sigma_f += this->reaction_xs(20, E, i);
+
+    if (this->has_reaction(21))
+      sigma_f += this->reaction_xs(21, E, i);
+
+    if (this->has_reaction(38))
+      sigma_f += this->reaction_xs(38, E, i);
+
+    return sigma_f;
+  }
+
+  /**
    * @brief Evaluates the photon production cross section at E using bisection
    * search.
    * @param E Energy.
