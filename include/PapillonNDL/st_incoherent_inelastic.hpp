@@ -40,8 +40,8 @@
  */
 
 #include <PapillonNDL/ace.hpp>
-#include <PapillonNDL/region_1d.hpp>
 #include <PapillonNDL/angle_energy.hpp>
+#include <PapillonNDL/region_1d.hpp>
 
 namespace pndl {
 
@@ -50,50 +50,45 @@ namespace pndl {
  *        at a single temperature.
  */
 class STIncoherentInelastic {
-  public:
-    /**
-     * @param ace ACE file which contains thermal scattering law.
-     */
-    STIncoherentInelastic(const ACE& ace);
-    ~STIncoherentInelastic() = default;
+ public:
+  /**
+   * @param ace ACE file which contains thermal scattering law.
+   */
+  STIncoherentInelastic(const ACE& ace);
+  ~STIncoherentInelastic() = default;
 
-    /**
-     * @brief Returns a pointer to the cross section function.
-     */
-    std::shared_ptr<Region1D> cross_section() const {
-      return xs_;
-    }
-    
-    /**
-     * @brief Evaluates the incoherent inelastic scattering cross section
-     *        at energy E.
-     * @param E Incident energy at which to evaluate the cross section in MeV.
-     */
-    double xs(double E) const {
-      return (*this->xs_)(E);
-    }
+  /**
+   * @brief Returns a pointer to the cross section function.
+   */
+  std::shared_ptr<Region1D> cross_section() const { return xs_; }
 
-    /**
-     * @brief Sample the angle-energy distribution.
-     * @param E_in Incident energy in MeV.
-     * @param rng Random number generation function.
-     */
-    AngleEnergyPacket sample_angle_energy(double E_in, std::function<double()> rng) const {
-      return angle_energy_->sample_angle_energy(E_in, rng);
-    }
+  /**
+   * @brief Evaluates the incoherent inelastic scattering cross section
+   *        at energy E.
+   * @param E Incident energy at which to evaluate the cross section in MeV.
+   */
+  double xs(double E) const { return (*this->xs_)(E); }
 
-    /**
-     * @brief Returns a pointer to the AngleEnergy distribution.
-     */
-    std::shared_ptr<AngleEnergy> distribution() const {
-      return angle_energy_;
-    }
+  /**
+   * @brief Sample the angle-energy distribution.
+   * @param E_in Incident energy in MeV.
+   * @param rng Random number generation function.
+   */
+  AngleEnergyPacket sample_angle_energy(double E_in,
+                                        std::function<double()> rng) const {
+    return angle_energy_->sample_angle_energy(E_in, rng);
+  }
 
-  private:
-    std::shared_ptr<Region1D> xs_;
-    std::shared_ptr<AngleEnergy> angle_energy_;
+  /**
+   * @brief Returns a pointer to the AngleEnergy distribution.
+   */
+  std::shared_ptr<AngleEnergy> distribution() const { return angle_energy_; }
+
+ private:
+  std::shared_ptr<Region1D> xs_;
+  std::shared_ptr<AngleEnergy> angle_energy_;
 };
 
-}
+}  // namespace pndl
 
 #endif

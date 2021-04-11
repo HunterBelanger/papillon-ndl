@@ -31,42 +31,49 @@
  * termes.
  *
  * */
-#include <PapillonNDL/st_incoherent_inelastic.hpp>
+#include <PapillonNDL/continuous_energy_discrete_cosines.hpp>
 #include <PapillonNDL/discrete_cosines_energies.hpp>
 #include <PapillonNDL/pndl_exception.hpp>
+#include <PapillonNDL/st_incoherent_inelastic.hpp>
 
 namespace pndl {
 
-  STIncoherentInelastic::STIncoherentInelastic(const ACE& ace): xs_(nullptr), angle_energy_(nullptr) {
-    // Read the XS
-    try {
-      int32_t S = ace.jxs(0) - 1;
-      uint32_t Ne = ace.xss<uint32_t>(S); // Number of grid points
-      std::vector<double> energy = ace.xss(S+1,Ne);
-      std::vector<double> xs = ace.xss(S+1+Ne,Ne);
-      xs_ = std::make_shared<Region1D>(energy, xs, Interpolation::LinLin);
-    } catch(PNDLException& err) {
-      std::string mssg = "STIncoherentInelastic::STIncoherentInelastic: Could not construct cross section.";
-      err.add_to_exception(mssg, __FILE__, __LINE__);
-      throw err;
-    }
-    
+STIncoherentInelastic::STIncoherentInelastic(const ACE& ace)
+    : xs_(nullptr), angle_energy_(nullptr) {
+  // Read the XS
+  try {
+    int32_t S = ace.jxs(0) - 1;
+    uint32_t Ne = ace.xss<uint32_t>(S);  // Number of grid points
+    std::vector<double> energy = ace.xss(S + 1, Ne);
+    std::vector<double> xs = ace.xss(S + 1 + Ne, Ne);
+    xs_ = std::make_shared<Region1D>(energy, xs, Interpolation::LinLin);
+  } catch (PNDLException& err) {
+    std::string mssg =
+        "STIncoherentInelastic::STIncoherentInelastic: Could not construct "
+        "cross section.";
+    err.add_to_exception(mssg, __FILE__, __LINE__);
+    throw err;
+  }
 
-    // Read the angle-energy distribution
-    try {
-      int32_t nxs_7 = ace.nxs(6);
-      if (nxs_7 == 0 || nxs_7 == 1) {
-        angle_energy_ = std::make_shared<DiscreteCosinesEnergies>(ace);
-      } else if (nxs_7 == 2) {
-
-      } else {
-        std::string mssg = "STIncoherentInelastic::STIncoherentInelastic: Unknown distribution type. Make sure this is a valid thermal scattering law ACE file.";
-        throw PNDLException(mssg, __FILE__, __LINE__);
-      }
-    } catch(PNDLException& err) {
-      std::string mssg = "STIncoherentInelastic::STIncoherentInelastic: Could not construct AngleEnergy distribution.";
-      err.add_to_exception(mssg, __FILE__, __LINE__);
-      throw err;
+  // Read the angle-energy distribution
+  try {
+    int32_t nxs_7 = ace.nxs(6);
+    if (nxs_7 == 0 || nxs_7 == 1) {
+      angle_energy_ = std::make_shared<DiscreteCosinesEnergies>(ace);
+    } else if (nxs_7 == 2) {
+      angle_energy_ = std::make_shared<ContinuousEnergyDiscreteCosines>(ace);
+    } else {
+      std::string mssg =
+          "STIncoherentInelastic::STIncoherentInelastic: Unknown distribution "
+          "type. Make sure this is a valid thermal scattering law ACE file.";
+      throw PNDLException(mssg, __FILE__, __LINE__);
     }
+  } catch (PNDLException& err) {
+    std::string mssg =
+        "STIncoherentInelastic::STIncoherentInelastic: Could not construct "
+        "AngleEnergy distribution.";
+    err.add_to_exception(mssg, __FILE__, __LINE__);
+    throw err;
   }
 }
+}  // namespace pndl

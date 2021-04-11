@@ -42,6 +42,9 @@ set(PNDL_SOURCE_LIST src/frame.cpp
                      src/reaction.cpp
                      src/delayed_group.cpp
                      src/ce_neutron.cpp
+                     src/continuous_energy_discrete_cosines.cpp
+                     src/discrete_cosines_energies.cpp
+                     src/st_incoherent_inelastic.cpp
                      src/version.cpp
 )
 
@@ -98,6 +101,7 @@ if(PNDL_PYTHON)
                                     src/python/angle_distribution.cpp
                                     src/python/energy_law.cpp
                                     src/python/angle_energy.cpp
+                                    src/python/thermal_scattering.cpp
                                     src/python/pctable.cpp
                                     src/python/energy_grid.cpp
                                     src/python/cross_section.cpp

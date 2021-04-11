@@ -35,6 +35,8 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
+#include <PapillonNDL/continuous_energy_discrete_cosines.hpp>
+#include <PapillonNDL/discrete_cosines_energies.hpp>
 #include <PapillonNDL/energy_angle_table.hpp>
 #include <PapillonNDL/kalbach.hpp>
 #include <PapillonNDL/kalbach_table.hpp>
@@ -162,4 +164,41 @@ void init_TabularEnergyAngle(py::module& m) {
                                      py::const_))
       .def("table", &TabularEnergyAngle::table)
       .def("size", &TabularEnergyAngle::size);
+}
+
+void init_DiscreteCosinesEnergies(py::module& m) {
+  py::class_<DiscreteCosinesEnergies::DiscreteEnergy>(m, "DiscreteEnergy")
+      .def_readwrite("energy", &DiscreteCosinesEnergies::DiscreteEnergy::energy)
+      .def_readwrite("cosines",
+                     &DiscreteCosinesEnergies::DiscreteEnergy::cosines);
+
+  py::class_<DiscreteCosinesEnergies, AngleEnergy,
+             std::shared_ptr<DiscreteCosinesEnergies>>(
+      m, "DiscreteCosinesEnergies")
+      .def(py::init<const ACE&>())
+      .def("sample_angle_energy", &DiscreteCosinesEnergies::sample_angle_energy)
+      .def("skewed", &DiscreteCosinesEnergies::skewed)
+      .def("incoming_energy", &DiscreteCosinesEnergies::incoming_energy)
+      .def("outgoing_energies", &DiscreteCosinesEnergies::outgoing_energies);
+}
+
+void init_ContinuousEnergyDiscreteCosines(py::module& m) {
+  py::class_<ContinuousEnergyDiscreteCosines::CEDCTable>(m, "CEDCTable")
+      .def_readwrite("energy",
+                     &ContinuousEnergyDiscreteCosines::CEDCTable::energy)
+      .def_readwrite("pdf", &ContinuousEnergyDiscreteCosines::CEDCTable::pdf)
+      .def_readwrite("cdf", &ContinuousEnergyDiscreteCosines::CEDCTable::cdf)
+      .def_readwrite("cosines",
+                     &ContinuousEnergyDiscreteCosines::CEDCTable::cosines);
+
+  py::class_<ContinuousEnergyDiscreteCosines, AngleEnergy,
+             std::shared_ptr<ContinuousEnergyDiscreteCosines>>(
+      m, "ContinuousEnergyDiscreteCosines")
+      .def(py::init<const ACE&>())
+      .def("sample_angle_energy",
+           &ContinuousEnergyDiscreteCosines::sample_angle_energy)
+      .def("incoming_energy", &ContinuousEnergyDiscreteCosines::incoming_energy)
+      .def("size", &ContinuousEnergyDiscreteCosines::size)
+      .def("tables", &ContinuousEnergyDiscreteCosines::tables)
+      .def("table", &ContinuousEnergyDiscreteCosines::table);
 }

@@ -31,68 +31,22 @@
  * termes.
  *
  * */
-#ifndef PAPILLON_NDL_DISCRETE_COSINES_ENERGIES_H
-#define PAPILLON_NDL_DISCRETE_COSINES_ENERGIES_H
+#include <pybind11/functional.h>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 
-#include <PapillonNDL/ace.hpp>
-#include <PapillonNDL/angle_energy.hpp>
+#include <PapillonNDL/st_incoherent_inelastic.hpp>
 
-/**
- * @file
- * @author Hunter Belanger
- */
+namespace py = pybind11;
 
-namespace pndl {
+using namespace pndl;
 
-/**
- * @brief Class which represents equiprobably and skewed discrete energy and
- *        discrete cosine distributions for incoherent inelastic scattering.
- */
-class DiscreteCosinesEnergies : public AngleEnergy {
- public:
-  /**
-   * @param ace ACE file which contains thermal scattering law.
-   */
-  DiscreteCosinesEnergies(const ACE& ace);
-
-  /**
-   * @brief Struct to contain a discrete outgoing energy, with its
-   *        associated discrete cosines.
-   */
-  struct DiscreteEnergy {
-    double energy;               /**< Discrete outgoing energy */
-    std::vector<double> cosines; /**< Discrete cosines */
-  };
-
-  AngleEnergyPacket sample_angle_energy(
-      double E_in, std::function<double()> rng) const override final;
-
-  /**
-   * @brief Returns true if the outgoing energies are skewed.
-   */
-  bool skewed() const { return skewed_; }
-
-  /**
-   * @brief Returns vector to the incoming energy grid.
-   */
-  const std::vector<double>& incoming_energy() const {
-    return incoming_energy_;
-  }
-
-  /**
-   * @brief Returns the vector of outgoing energies for all incoming energies.
-   */
-  const std::vector<std::vector<DiscreteEnergy>>& outgoing_energies() const {
-    return outgoing_energies_;
-  }
-
- private:
-  std::vector<double> incoming_energy_;
-  std::vector<std::vector<DiscreteEnergy>> outgoing_energies_;
-  uint32_t Noe, Nmu;
-  bool skewed_;
-};
-
-}  // namespace pndl
-
-#endif
+void init_STIncoherentInelastic(py::module& m) {
+  py::class_<STIncoherentInelastic, std::shared_ptr<STIncoherentInelastic>>(
+      m, "STIncoherentInelastic")
+      .def(py::init<const ACE&>())
+      .def("cross_section", &STIncoherentInelastic::cross_section)
+      .def("xs", &STIncoherentInelastic::xs)
+      .def("sample_angle_energy", &STIncoherentInelastic::sample_angle_energy)
+      .def("distribution", &STIncoherentInelastic::distribution);
+}
