@@ -31,8 +31,8 @@
  * termes.
  *
  * */
-#ifndef PAPILLON_NDL_ST_INCOHERENT_INELASTIC_H
-#define PAPILLON_NDL_ST_INCOHERENT_INELASTIC_H
+#ifndef PAPILLON_NDL_ST_INCOHERENT_ELASTIC_H
+#define PAPILLON_NDL_ST_INCOHERENT_ELASTIC_H
 
 /**
  * @file
@@ -42,20 +42,21 @@
 #include <PapillonNDL/ace.hpp>
 #include <PapillonNDL/angle_energy.hpp>
 #include <PapillonNDL/region_1d.hpp>
+#include <algorithm>
 
 namespace pndl {
 
 /**
- * @brief Holds the Incoherent Inelastic scattering data for a single nuclide
+ * @brief Holds the Incoherent Elastic scattering data for a single nuclide
  *        at a single temperature.
  */
-class STIncoherentInelastic {
+class STIncoherentElastic {
  public:
   /**
    * @param ace ACE file which contains thermal scattering law.
    */
-  STIncoherentInelastic(const ACE& ace);
-  ~STIncoherentInelastic() = default;
+  STIncoherentElastic(const ACE& ace);
+  ~STIncoherentElastic() = default;
 
   /**
    * @brief Returns a pointer to the cross section function.
@@ -72,21 +73,67 @@ class STIncoherentInelastic {
   /**
    * @brief Sample the angle-energy distribution.
    * @param E_in Incident energy in MeV.
-   * @param rng Random number generation function.
    */
   AngleEnergyPacket sample_angle_energy(double E_in,
                                         std::function<double()> rng) const {
-    return angle_energy_->sample_angle_energy(E_in, rng);
+    // Get energy index
+    auto Eit = std::lower_bound(incoming_energy_.begin(),
+                                incoming_energy_.end(), E_in);
+    size_t i = 0;
+    double f = 0.;
+    if (Eit == incoming_energy_.begin()) {
+      i = 0;
+      f = 0.;
+    } else if (Eit == incoming_energy_.end()) {
+      i = incoming_energy_.size() - 2;
+      f = 1.;
+    } else {
+      i = std::distance(incoming_energy_.begin(), Eit) - 1;
+      f = (E_in - incoming_energy_[i]) /
+          (incoming_energy_[i + 1] - incoming_energy_[i]);
+    }
+
+    // Sample random index for cosine
+    uint32_t j = Nmu * rng();
+
+    double mu_prime =
+        cosines_[i][j] + f * (cosines_[i + 1][j] - cosines_[i][j]);
+
+    double mu_left = -1. - (mu_prime + 1.);
+    if (j != 0) {
+      mu_left = cosines_[i][j - 1] +
+                f * (cosines_[i + 1][j - 1] - cosines_[i][j - 1]);
+    }
+
+    double mu_right = 1. - (mu_prime - 1.);
+    if (j != Nmu - 1) {
+      mu_right = cosines_[i][j + 1] +
+                 f * (cosines_[i + 1][j + 1] - cosines_[i][j + 1]);
+    }
+
+    double mu = mu_prime + std::min(mu_prime - mu_left, mu_prime + mu_right) *
+                               (rng() - 0.5);
+
+    return {mu, E_in};
   }
 
   /**
-   * @brief Returns a pointer to the AngleEnergy distribution.
+   * @brief Returns vector to the incoming energy grid.
    */
-  std::shared_ptr<AngleEnergy> distribution() const { return angle_energy_; }
+  const std::vector<double>& incoming_energy() const {
+    return incoming_energy_;
+  }
+
+  /**
+   * @brief Returns array of discrete scattering cosines.
+   */
+  const std::vector<std::vector<double>>& cosines() const { return cosines_; }
 
  private:
   std::shared_ptr<Region1D> xs_;
-  std::shared_ptr<AngleEnergy> angle_energy_;
+  uint32_t Nmu;
+  std::vector<double> incoming_energy_;
+  std::vector<std::vector<double>> cosines_;
 };
 
 }  // namespace pndl

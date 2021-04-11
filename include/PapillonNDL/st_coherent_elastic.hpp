@@ -31,8 +31,8 @@
  * termes.
  *
  * */
-#ifndef PAPILLON_NDL_ST_INCOHERENT_INELASTIC_H
-#define PAPILLON_NDL_ST_INCOHERENT_INELASTIC_H
+#ifndef PAPILLON_NDL_ST_COHERENT_ELASTIC_H
+#define PAPILLON_NDL_ST_COHERENT_ELASTIC_H
 
 /**
  * @file
@@ -42,51 +42,79 @@
 #include <PapillonNDL/ace.hpp>
 #include <PapillonNDL/angle_energy.hpp>
 #include <PapillonNDL/region_1d.hpp>
+#include <algorithm>
 
 namespace pndl {
 
 /**
- * @brief Holds the Incoherent Inelastic scattering data for a single nuclide
+ * @brief Holds the Coherent Elastic scattering data for a single nuclide
  *        at a single temperature.
  */
-class STIncoherentInelastic {
+class STCoherentElastic {
  public:
   /**
    * @param ace ACE file which contains thermal scattering law.
    */
-  STIncoherentInelastic(const ACE& ace);
-  ~STIncoherentInelastic() = default;
-
-  /**
-   * @brief Returns a pointer to the cross section function.
-   */
-  std::shared_ptr<Region1D> cross_section() const { return xs_; }
+  STCoherentElastic(const ACE& ace);
+  ~STCoherentElastic() = default;
 
   /**
    * @brief Evaluates the incoherent inelastic scattering cross section
    *        at energy E.
    * @param E Incident energy at which to evaluate the cross section in MeV.
    */
-  double xs(double E) const { return (*this->xs_)(E); }
+  double xs(double E) const {
+    if (E > bragg_edges_.front() && E < bragg_edges_.back()) {
+      // Get index for lower bragg edge
+      auto Eit = std::lower_bound(bragg_edges_.begin(), bragg_edges_.end(), E);
+      size_t l = std::distance(bragg_edges_.begin(), Eit) - 1;
+      return structure_factor_sum_[l] / E;
+    } else if (E < bragg_edges_.front()) {
+      return 0.;
+    } else {
+      return structure_factor_sum_.back() / E;
+    }
+  }
 
   /**
    * @brief Sample the angle-energy distribution.
    * @param E_in Incident energy in MeV.
-   * @param rng Random number generation function.
    */
-  AngleEnergyPacket sample_angle_energy(double E_in,
-                                        std::function<double()> rng) const {
-    return angle_energy_->sample_angle_energy(E_in, rng);
+  AngleEnergyPacket sample_angle_energy(double E_in) const {
+    // Get Bragg edge of scatter
+    double Ei = 0.;
+    if (E_in > bragg_edges_.front() && E_in < bragg_edges_.back()) {
+      // Get index for lower bragg edge
+      auto Eit =
+          std::lower_bound(bragg_edges_.begin(), bragg_edges_.end(), E_in);
+      Eit--;
+      Ei = *Eit;
+    } else if (E_in < bragg_edges_.front()) {
+      Ei = 0.;
+    } else {
+      Ei = bragg_edges_.back();
+    }
+
+    double mu = 1. - (2. * Ei / E_in);
+
+    return {mu, E_in};
   }
 
   /**
-   * @brief Returns a pointer to the AngleEnergy distribution.
+   * @brief Returns the vector of Bragg edges.
    */
-  std::shared_ptr<AngleEnergy> distribution() const { return angle_energy_; }
+  const std::vector<double>& bragg_edges() const { return bragg_edges_; }
+
+  /**
+   * @brief Returns the vector of the sum of structure factors.
+   */
+  const std::vector<double>& structure_factor_sum() const {
+    return structure_factor_sum_;
+  }
 
  private:
-  std::shared_ptr<Region1D> xs_;
-  std::shared_ptr<AngleEnergy> angle_energy_;
+  std::vector<double> bragg_edges_;
+  std::vector<double> structure_factor_sum_;
 };
 
 }  // namespace pndl

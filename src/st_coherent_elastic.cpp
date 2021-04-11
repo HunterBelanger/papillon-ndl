@@ -31,64 +31,40 @@
  * termes.
  *
  * */
-#ifndef PAPILLON_NDL_ST_INCOHERENT_INELASTIC_H
-#define PAPILLON_NDL_ST_INCOHERENT_INELASTIC_H
-
-/**
- * @file
- * @author Hunter Belanger
- */
-
-#include <PapillonNDL/ace.hpp>
-#include <PapillonNDL/angle_energy.hpp>
-#include <PapillonNDL/region_1d.hpp>
+#include <PapillonNDL/pndl_exception.hpp>
+#include <PapillonNDL/st_coherent_elastic.hpp>
 
 namespace pndl {
 
-/**
- * @brief Holds the Incoherent Inelastic scattering data for a single nuclide
- *        at a single temperature.
- */
-class STIncoherentInelastic {
- public:
-  /**
-   * @param ace ACE file which contains thermal scattering law.
-   */
-  STIncoherentInelastic(const ACE& ace);
-  ~STIncoherentInelastic() = default;
-
-  /**
-   * @brief Returns a pointer to the cross section function.
-   */
-  std::shared_ptr<Region1D> cross_section() const { return xs_; }
-
-  /**
-   * @brief Evaluates the incoherent inelastic scattering cross section
-   *        at energy E.
-   * @param E Incident energy at which to evaluate the cross section in MeV.
-   */
-  double xs(double E) const { return (*this->xs_)(E); }
-
-  /**
-   * @brief Sample the angle-energy distribution.
-   * @param E_in Incident energy in MeV.
-   * @param rng Random number generation function.
-   */
-  AngleEnergyPacket sample_angle_energy(double E_in,
-                                        std::function<double()> rng) const {
-    return angle_energy_->sample_angle_energy(E_in, rng);
+STCoherentElastic::STCoherentElastic(const ACE& ace)
+    : bragg_edges_(), structure_factor_sum_() {
+  // Fist make sure ACE file does indeed give coherent elastic scattering
+  int32_t elastic_mode = ace.nxs(4);
+  if (elastic_mode != 4) {
+    std::string mssg =
+        "STCoherentElastic::STCoherentElastic: Provided ACE file does not have "
+        "coherent elastic scattering.";
+    throw PNDLException(mssg, __FILE__, __LINE__);
   }
 
-  /**
-   * @brief Returns a pointer to the AngleEnergy distribution.
-   */
-  std::shared_ptr<AngleEnergy> distribution() const { return angle_energy_; }
+  // Get index to Bragg edge and structure data
+  int32_t i = ace.jxs(3) - 1;
+  uint32_t Ne = ace.xss<uint32_t>(i);
+  bragg_edges_ = ace.xss(i + 1, Ne);
+  structure_factor_sum_ = ace.xss(i + 1 + Ne, Ne);
 
- private:
-  std::shared_ptr<Region1D> xs_;
-  std::shared_ptr<AngleEnergy> angle_energy_;
-};
+  // Make sure Bragg edges are all positive and sorted
+  if (!std::is_sorted(bragg_edges_.begin(), bragg_edges_.end())) {
+    std::string mssg =
+        "STCoherentElastic::STCoherentElastic: Bragg edges are not sorted.";
+    throw PNDLException(mssg, __FILE__, __LINE__);
+  }
+
+  if (bragg_edges_.front() < 0.) {
+    std::string mssg =
+        "STCoherentElastic::STCoherentElastic: Negative Bragg edges found.";
+    throw PNDLException(mssg, __FILE__, __LINE__);
+  }
+}
 
 }  // namespace pndl
-
-#endif

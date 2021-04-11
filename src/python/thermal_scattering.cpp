@@ -35,7 +35,10 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
+#include <PapillonNDL/st_coherent_elastic.hpp>
+#include <PapillonNDL/st_incoherent_elastic.hpp>
 #include <PapillonNDL/st_incoherent_inelastic.hpp>
+#include <PapillonNDL/st_thermal_scattering_law.hpp>
 
 namespace py = pybind11;
 
@@ -49,4 +52,46 @@ void init_STIncoherentInelastic(py::module& m) {
       .def("xs", &STIncoherentInelastic::xs)
       .def("sample_angle_energy", &STIncoherentInelastic::sample_angle_energy)
       .def("distribution", &STIncoherentInelastic::distribution);
+}
+
+void init_STCoherentElastic(py::module& m) {
+  py::class_<STCoherentElastic, std::shared_ptr<STCoherentElastic>>(
+      m, "STCoherentElastic")
+      .def(py::init<const ACE&>())
+      .def("xs", &STCoherentElastic::xs)
+      .def("sample_angle_energy", &STCoherentElastic::sample_angle_energy)
+      .def("bragg_edges", &STCoherentElastic::bragg_edges)
+      .def("structure_factor_sum", &STCoherentElastic::structure_factor_sum);
+}
+
+void init_STInoherentElastic(py::module& m) {
+  py::class_<STIncoherentElastic, std::shared_ptr<STIncoherentElastic>>(
+      m, "STIncoherentElastic")
+      .def(py::init<const ACE&>())
+      .def("xs", &STIncoherentElastic::xs)
+      .def("sample_angle_energy", &STIncoherentElastic::sample_angle_energy)
+      .def("incoming_energy", &STIncoherentElastic::incoming_energy)
+      .def("cosines", &STIncoherentElastic::cosines);
+}
+
+void init_STThermalScatteringLaw(py::module& m) {
+  py::class_<STThermalScatteringLaw, std::shared_ptr<STThermalScatteringLaw>>(
+      m, "STThermalScatteringLaw")
+      .def(py::init<const ACE&>())
+      .def("zaid", &STThermalScatteringLaw::zaid)
+      .def("awr", &STThermalScatteringLaw::awr)
+      .def("temperature", &STThermalScatteringLaw::temperature)
+      .def("has_coherent_elastic",
+           &STThermalScatteringLaw::has_coherent_elastic)
+      .def("has_incoherent_elastic",
+           &STThermalScatteringLaw::has_incoherent_elastic)
+      .def("coherent_elastic", &STThermalScatteringLaw::coherent_elastic)
+      .def("incoherent_elastic", &STThermalScatteringLaw::incoherent_elastic)
+      .def("incoherent_inelastic",
+           &STThermalScatteringLaw::incoherent_inelastic)
+      .def("coherent_elastic_xs", &STThermalScatteringLaw::coherent_elastic_xs)
+      .def("incoherent_elastic_xs",
+           &STThermalScatteringLaw::incoherent_elastic_xs)
+      .def("incoherent_inelastic_xs",
+           &STThermalScatteringLaw::incoherent_inelastic_xs);
 }

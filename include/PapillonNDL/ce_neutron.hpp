@@ -205,17 +205,13 @@ class CENeutron {
 
     double sigma_f = 0.;
 
-    if (this->has_reaction(19))
-      sigma_f += this->reaction_xs(19, E);
+    if (this->has_reaction(19)) sigma_f += this->reaction_xs(19, E);
 
-    if (this->has_reaction(20))
-      sigma_f += this->reaction_xs(20, E);
+    if (this->has_reaction(20)) sigma_f += this->reaction_xs(20, E);
 
-    if (this->has_reaction(21))
-      sigma_f += this->reaction_xs(21, E);
+    if (this->has_reaction(21)) sigma_f += this->reaction_xs(21, E);
 
-    if (this->has_reaction(38))
-      sigma_f += this->reaction_xs(38, E);
+    if (this->has_reaction(38)) sigma_f += this->reaction_xs(38, E);
 
     return sigma_f;
   }
@@ -232,17 +228,13 @@ class CENeutron {
 
     double sigma_f = 0.;
 
-    if (this->has_reaction(19))
-      sigma_f += this->reaction_xs(19, E, i);
+    if (this->has_reaction(19)) sigma_f += this->reaction_xs(19, E, i);
 
-    if (this->has_reaction(20))
-      sigma_f += this->reaction_xs(20, E, i);
+    if (this->has_reaction(20)) sigma_f += this->reaction_xs(20, E, i);
 
-    if (this->has_reaction(21))
-      sigma_f += this->reaction_xs(21, E, i);
+    if (this->has_reaction(21)) sigma_f += this->reaction_xs(21, E, i);
 
-    if (this->has_reaction(38))
-      sigma_f += this->reaction_xs(38, E, i);
+    if (this->has_reaction(38)) sigma_f += this->reaction_xs(38, E, i);
 
     return sigma_f;
   }
