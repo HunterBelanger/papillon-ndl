@@ -59,7 +59,6 @@ CENeutron::CENeutron(const ACE& ace)
       reactions_() {
   // Number of energy points
   uint32_t NE = ace.nxs(2);
-
   total_xs_ =
       std::make_shared<CrossSection>(ace, ace.ESZ() + NE, energy_grid_, false);
   disappearance_xs_ = std::make_shared<CrossSection>(ace, ace.ESZ() + 2 * NE,
@@ -198,10 +197,12 @@ void CENeutron::read_fission_data(const ACE& ace) {
   if (ace.jxs(1) > 0) {
     if (ace.xss(ace.NU()) > 0.) {
       // Either prompt or total given, but not both
-      if (ace.DNU() > 0) {  // Prompt is provided, as delayed is present
-        nu_prompt_ = read_nu(ace, ace.DNU());
+      if (ace.jxs(23) > 0) {
+        // Prompt is provided, as delayed is present
+        nu_prompt_ = read_nu(ace, ace.NU());
       } else {
-        nu_total_ = read_nu(ace, ace.DNU());
+        // No delayed, so this must be total
+        nu_total_ = read_nu(ace, ace.NU());
       }
     } else {
       // Both prompt and total given
@@ -265,7 +266,6 @@ std::shared_ptr<Function1D> CENeutron::read_tabular_nu(const ACE& ace,
   } else {
     std::vector<uint32_t> breaks = ace.xss<uint32_t>(i + 1, NR);
     std::vector<Interpolation> interps = ace.xss<Interpolation>(i + 1 + NR, NR);
-
     return std::make_shared<MultiRegion1D>(breaks, interps, energy, y);
   }
 }
