@@ -170,7 +170,7 @@ Reaction::Reaction(const ACE& ace, size_t indx, const EnergyGrid& egrid)
         }
 
         std::vector<double> energy = ace.xss(i + 5 + 2 * NR, NE);
-        std::vector<double> prob = ace.xss(i + 5 + 2 * NR, NE);
+        std::vector<double> prob = ace.xss(i + 5 + 2 * NR + NE, NE);
 
         if (NBT.size() == 1) {
           probability = std::make_shared<Region1D>(energy, prob, INT[0]);
