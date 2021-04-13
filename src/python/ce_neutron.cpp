@@ -33,6 +33,7 @@
  * */
 #include <pybind11/functional.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 
 #include <PapillonNDL/ce_neutron.hpp>
 
@@ -92,6 +93,7 @@ void init_CENeutron(py::module& m) {
       .def("n_delayed_groups", &CENeutron::n_delayed_groups)
       .def("delayed_group", &CENeutron::delayed_group)
       .def("sample_elastic_angle", &CENeutron::sample_elastic_angle)
+      .def("mt_list", &CENeutron::mt_list)
       .def("has_reaction", &CENeutron::has_reaction)
       .def("reaction", &CENeutron::reaction)
       .def("reaction_xs", py::overload_cast<uint32_t, double>(

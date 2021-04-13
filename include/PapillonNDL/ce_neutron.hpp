@@ -334,6 +334,11 @@ class CENeutron {
   }
 
   /**
+   * @brief Returns a list of all MT reactions present for the nuclide.
+   */
+  const std::vector<uint32_t>& mt_list() const {return mt_list_;}
+
+  /**
    * @brief Checks to see if a nucldie has a given reaction.
    * @param mt MT reaction to search for.
    */
@@ -395,6 +400,7 @@ class CENeutron {
   std::shared_ptr<Function1D> nu_delayed_;
   std::vector<DelayedGroup> delayed_groups_;
 
+  std::vector<uint32_t> mt_list_;
   std::unordered_map<uint32_t, Reaction> reactions_;
 
   // Private helper methods

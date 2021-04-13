@@ -56,6 +56,7 @@ CENeutron::CENeutron(const ACE& ace)
       nu_prompt_(nullptr),
       nu_delayed_(nullptr),
       delayed_groups_(),
+      mt_list_(),
       reactions_() {
   // Number of energy points
   uint32_t NE = ace.nxs(2);
@@ -78,8 +79,10 @@ CENeutron::CENeutron(const ACE& ace)
 
   // Read all reactions
   uint32_t NMT = ace.nxs(3);
+  mt_list_.resize(NMT, 0);
   for (uint32_t indx = 0; indx < NMT; indx++) {
     uint32_t MT = ace.xss<uint32_t>(ace.MTR() + indx);
+    mt_list_[indx] = MT;
     Reaction reac(ace, indx, energy_grid_);
     std::pair<uint32_t, Reaction> tmp_pair =
         std::make_pair(MT, Reaction(ace, indx, energy_grid_));
@@ -110,6 +113,7 @@ CENeutron::CENeutron(const ACE& ace, const CENeutron& nuclide)
       nu_prompt_(nullptr),
       nu_delayed_(nullptr),
       delayed_groups_(),
+      mt_list_(),
       reactions_() {
   // Make sure these are the same nuclide !
 
@@ -146,8 +150,10 @@ CENeutron::CENeutron(const ACE& ace, const CENeutron& nuclide)
 
   // Read all reactions
   uint32_t NMT = ace.nxs(3);
+  mt_list_.resize(NMT, 0);
   for (uint32_t indx = 0; indx < NMT; indx++) {
     uint32_t MT = ace.xss<uint32_t>(ace.MTR() + indx);
+    mt_list_[indx] = MT;
 
     if (!nuclide.has_reaction(MT)) {
       std::string mssg = "Nuclide::Nuclide: MT = " + std::to_string(MT) +
