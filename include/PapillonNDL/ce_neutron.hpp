@@ -343,8 +343,7 @@ class CENeutron {
    * @param mt MT reaction to search for.
    */
   bool has_reaction(uint32_t mt) const {
-    if (mt > 891 || reaction_indices_[mt] < 0) return false;
-    return true;
+    return (mt > 891 || reaction_indices_[mt] < 0) ? false : true;
   }
 
   /**
@@ -352,14 +351,12 @@ class CENeutron {
    * @param mt MT reaction to return.
    */
   const Reaction& reaction(uint32_t mt) const {
-    auto indx = reaction_indices_[mt];
-
-    if (indx == -1) {
+    if (mt > 891 || reaction_indices_[mt] < 0) {
       std::string mssg = "CENeutron::reaction: MT = " + std::to_string(mt) + " is not provided in ZAID = " + std::to_string(zaid_) + ".";
       throw PNDLException(mssg, __FILE__, __LINE__);
     }
-
-    return reactions_[indx];
+    
+    return reactions_[reaction_indices_[mt]];
   }
 
   /**
@@ -369,11 +366,11 @@ class CENeutron {
    * @param E Energy to evaluate cross section at.
    */
   double reaction_xs(uint32_t mt, double E) const {
-    if (!has_reaction(mt)) return 0.;
+    if (mt > 891) return 0.;
 
     auto indx = reaction_indices_[mt];
 
-    return reactions_[indx].xs(E);
+    return indx < 0 ? 0. : reactions_[indx].xs(E);
   }
 
   /**
@@ -384,11 +381,11 @@ class CENeutron {
    * @param i Index to the energy grid for energy E.
    */
   double reaction_xs(uint32_t mt, double E, size_t i) const {
-    if (!has_reaction(mt)) return 0.;
+    if (mt > 891) return 0.;
 
     auto indx = reaction_indices_[mt];
-
-    return reactions_[indx].xs(E, i);
+    
+    return indx < 0 ? 0. : reactions_[indx].xs(E, i);
   }
 
  private:
