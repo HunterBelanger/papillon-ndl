@@ -43,7 +43,7 @@
 #include <PapillonNDL/angle_distribution.hpp>
 #include <PapillonNDL/delayed_group.hpp>
 #include <PapillonNDL/reaction.hpp>
-#include <unordered_map>
+#include <array>
 
 namespace pndl {
 
@@ -343,7 +343,7 @@ class CENeutron {
    * @param mt MT reaction to search for.
    */
   bool has_reaction(uint32_t mt) const {
-    if (reactions_.find(mt) == reactions_.end()) return false;
+    if (mt > 891 || reaction_indices_[mt] < 0) return false;
     return true;
   }
 
@@ -352,7 +352,14 @@ class CENeutron {
    * @param mt MT reaction to return.
    */
   const Reaction& reaction(uint32_t mt) const {
-    return reactions_.find(mt)->second;
+    auto indx = reaction_indices_[mt];
+
+    if (indx == -1) {
+      std::string mssg = "CENeutron::reaction: MT = " + std::to_string(mt) + " is not provided in ZAID = " + std::to_string(zaid_) + ".";
+      throw PNDLException(mssg, __FILE__, __LINE__);
+    }
+
+    return reactions_[indx];
   }
 
   /**
@@ -364,7 +371,9 @@ class CENeutron {
   double reaction_xs(uint32_t mt, double E) const {
     if (!has_reaction(mt)) return 0.;
 
-    return reactions_.find(mt)->second.xs(E);
+    auto indx = reaction_indices_[mt];
+
+    return reactions_[indx].xs(E);
   }
 
   /**
@@ -377,7 +386,9 @@ class CENeutron {
   double reaction_xs(uint32_t mt, double E, size_t i) const {
     if (!has_reaction(mt)) return 0.;
 
-    return reactions_.find(mt)->second.xs(E, i);
+    auto indx = reaction_indices_[mt];
+
+    return reactions_[indx].xs(E, i);
   }
 
  private:
@@ -401,7 +412,8 @@ class CENeutron {
   std::vector<DelayedGroup> delayed_groups_;
 
   std::vector<uint32_t> mt_list_;
-  std::unordered_map<uint32_t, Reaction> reactions_;
+  std::array<int32_t, 892> reaction_indices_;
+  std::vector<Reaction> reactions_;
 
   // Private helper methods
   void read_fission_data(const ACE& ace);

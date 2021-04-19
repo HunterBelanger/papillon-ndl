@@ -57,6 +57,7 @@ CENeutron::CENeutron(const ACE& ace)
       nu_delayed_(nullptr),
       delayed_groups_(),
       mt_list_(),
+      reaction_indices_(),
       reactions_() {
   // Number of energy points
   uint32_t NE = ace.nxs(2);
@@ -79,14 +80,16 @@ CENeutron::CENeutron(const ACE& ace)
 
   // Read all reactions
   uint32_t NMT = ace.nxs(3);
+  reaction_indices_.fill(-1);
+  int32_t current_reaction_index = 0;
   mt_list_.resize(NMT, 0);
+  reactions_.reserve(NMT);
   for (uint32_t indx = 0; indx < NMT; indx++) {
     uint32_t MT = ace.xss<uint32_t>(ace.MTR() + indx);
     mt_list_[indx] = MT;
-    Reaction reac(ace, indx, energy_grid_);
-    std::pair<uint32_t, Reaction> tmp_pair =
-        std::make_pair(MT, Reaction(ace, indx, energy_grid_));
-    reactions_.emplace(tmp_pair);
+    reactions_.emplace_back(ace, indx, energy_grid_);
+    reaction_indices_[MT] = current_reaction_index;
+    current_reaction_index++;
   }
 
   if (fissile()) {
@@ -114,6 +117,7 @@ CENeutron::CENeutron(const ACE& ace, const CENeutron& nuclide)
       nu_delayed_(nullptr),
       delayed_groups_(),
       mt_list_(),
+      reaction_indices_(),
       reactions_() {
   // Make sure these are the same nuclide !
 
@@ -151,6 +155,9 @@ CENeutron::CENeutron(const ACE& ace, const CENeutron& nuclide)
   // Read all reactions
   uint32_t NMT = ace.nxs(3);
   mt_list_.resize(NMT, 0);
+  reaction_indices_.fill(-1);
+  int32_t current_reaction_index = 0;
+  reactions_.reserve(NMT);
   for (uint32_t indx = 0; indx < NMT; indx++) {
     uint32_t MT = ace.xss<uint32_t>(ace.MTR() + indx);
     mt_list_[indx] = MT;
@@ -161,10 +168,9 @@ CENeutron::CENeutron(const ACE& ace, const CENeutron& nuclide)
       throw PNDLException(mssg, __FILE__, __LINE__);
     }
 
-    Reaction reac(ace, indx, energy_grid_, nuclide.reaction(MT));
-    std::pair<uint32_t, Reaction> tmp_pair =
-        std::make_pair(MT, Reaction(ace, indx, energy_grid_));
-    reactions_.emplace(tmp_pair);
+    reactions_.emplace_back(ace, indx, energy_grid_, nuclide.reaction(MT));
+    reaction_indices_[MT] = current_reaction_index;
+    current_reaction_index++;
   }
 
   // Copy fission data from other nuclide
