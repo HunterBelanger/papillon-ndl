@@ -61,7 +61,7 @@ TabularEnergyAngle::TabularEnergyAngle(const ACE& ace, size_t i, size_t JED,
   for (uint32_t j = 0; j < NE; j++) {
     uint32_t loc = ace.DLW() + ace.xss<uint32_t>(i + 2 + 2 * NR + NE + j) - 1;
     try {
-      tables_.emplace_back(ace, loc);
+      tables_.emplace_back(ace, loc, JED);
     } catch (PNDLException& error) {
       std::string mssg =
           "TabularEnergyAngle::TabularEnergyAngle: Could not create "

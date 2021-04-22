@@ -133,7 +133,7 @@ void init_Kalbach(py::module& m) {
 
 void init_EnergyAngleTable(py::module& m) {
   py::class_<EnergyAngleTable>(m, "EnergyAngleTable")
-      .def(py::init<const ACE&, size_t>())
+      .def(py::init<const ACE&, size_t, size_t>())
       .def(py::init<const std::vector<double>&, const std::vector<double>&,
                     const std::vector<double>&, const std::vector<PCTable>&,
                     Interpolation>())
