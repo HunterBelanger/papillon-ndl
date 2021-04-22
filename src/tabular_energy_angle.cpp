@@ -35,7 +35,7 @@
 
 namespace pndl {
 
-TabularEnergyAngle::TabularEnergyAngle(const ACE& ace, size_t i,
+TabularEnergyAngle::TabularEnergyAngle(const ACE& ace, size_t i, size_t JED,
                                        std::shared_ptr<Tabulated1D> probability)
     : AngleEnergy(probability), incoming_energy_(), tables_() {
   // Get number of interpolation points

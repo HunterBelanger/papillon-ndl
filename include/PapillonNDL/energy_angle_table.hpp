@@ -55,8 +55,9 @@ class EnergyAngleTable {
   /**
    * @param ace ACE file to take data from.
    * @param i Starting index of distribution in the XSS array.
+   * @param JED Relative index for finding angular distributions.
    */
-  EnergyAngleTable(const ACE& ace, size_t i);
+  EnergyAngleTable(const ACE& ace, size_t i, size_t JED);
 
   /**
    * @param outgoing_energy Outgoing energy grid.

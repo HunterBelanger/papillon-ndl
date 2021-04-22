@@ -36,7 +36,7 @@
 
 namespace pndl {
 
-EnergyAngleTable::EnergyAngleTable(const ACE& ace, size_t i)
+EnergyAngleTable::EnergyAngleTable(const ACE& ace, size_t i, size_t JED)
     : energy_(), pdf_(), cdf_(), angles_(), interp_() {
   interp_ = ace.xss<Interpolation>(i);
   if ((interp_ != Interpolation::Histogram) &&
@@ -96,7 +96,7 @@ EnergyAngleTable::EnergyAngleTable(const ACE& ace, size_t i)
   std::vector<int32_t> locs = ace.xss<int32_t>(i + 2 + NP + NP + NP, NP);
   for (size_t j = 0; j < locs.size(); j++) {
     int32_t loc = locs[j];
-    size_t l = ace.DLW() + std::abs(loc) - 1;
+    size_t l = JED + std::abs(loc) - 1;
     try {
       angles_.emplace_back(ace, l);
     } catch (PNDLException& error) {
