@@ -2,3 +2,6 @@ build
 *.swp
 compile_commands.json
 .vscode
+.cache
+tags
+types_c.taghl
