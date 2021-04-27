@@ -33,10 +33,8 @@ Studio installed to compile the library. In addition, if you want to build the
 Python bindings for Windows, you need to ensure the Python development kit has been
 installed in Visual Studio as well.
 
-Building the unit tests (using ```-DPNDL_TESTS=ON``` when calling cmake)
-requires that Google test already be installed on the system, and is not
-provided. Tests are not built by default, and should only be needed for
-developers, therefore this is not required for most users.
+Tests are not built by default, and should only be needed for developers. You
+can turn them on by using ```-DPNDL_TESTS=ON``` with cmake.
 
 ## Install
 To build PapillonNDL on a Unix-like system, navigate to the directory where you
