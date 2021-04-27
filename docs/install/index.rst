@@ -95,14 +95,8 @@ cmake command. They are listed here:
 PNDL_PYTHON
   This is used to build the Python bindings. This is on by default!
 
-PNDL_GO_FASTER
-  If you feel the need for speed, and want to compile with ``-O3 -ffast-math``
-  (NOT recommended) then you can turn this on.
-
 PNDL_TESTS
-  This is used to build the unit tests. Doing so requires GTest to be installed
-  on your system. This should only be needed for developers, and is turnned
-  off by default.
+  This is used to build the unit tests, and is turned off by default.
 
 Several other standard cmake options will also be usefull in many cases, and
 are therefore listed here:

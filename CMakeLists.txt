@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.9)
+cmake_minimum_required(VERSION 3.11)
 
 project(PapillonNDL
   VERSION "0.2.0"
@@ -9,7 +9,6 @@ project(PapillonNDL
 include(CMakePackageConfigHelpers)
 
 # Add options
-option(PNDL_GO_FASTER "Enable -Ofast -ffast-math compiler optimizations" OFF)
 option(PNDL_PYTHON "Enable Python interface to PapillonNDL" ON)
 option(PNDL_TESTS "Build tests" OFF)
 
@@ -74,14 +73,8 @@ target_compile_features(PapillonNDL PRIVATE cxx_std_17)
 
 if(WIN32) # Comile options for Windows
   target_compile_options(PapillonNDL PRIVATE /W4)
-  target_compile_options(PapillonNDL PRIVATE $<$<CONFIG:DEBUG>:/DEBUG>)
-  target_compile_options(PapillonNDL PRIVATE $<$<CONFIG:RELEASE>:/O2>)
-  target_compile_options(PapillonNDL PRIVATE $<$<BOOL:PNDL_GO_FASTER>:/O2>)
 else() # Compile options for GCC and Clang on Unix-like systems
-  target_compile_options(PapillonNDL PRIVATE -W -Wall -Wextra -Wpedantic -Weffc++)
-  target_compile_options(PapillonNDL PRIVATE $<$<CONFIG:DEBUG>:-g>)
-  target_compile_options(PapillonNDL PRIVATE $<$<CONFIG:RELEASE>:-O2>)
-  target_compile_options(PapillonNDL PRIVATE $<$<BOOL:PNDL_GO_FASTER>:-Ofast -ffast-math>)
+  target_compile_options(PapillonNDL PRIVATE -W -Wall -Wextra -Wpedantic)
 endif()
 
 # If building tests, add the tests subdirectory
@@ -91,8 +84,23 @@ endif()
 
 # If building the Python bindings
 if(PNDL_PYTHON)
-  # TODO remove submodule and use FetchContent for pybind11
-  add_subdirectory(vendor/pybind11)
+  find_package(pybind11 QUIET)
+  if(NOT pybind11_FOUND)
+    message(STATUS "Could not find a local install of Pybind11")
+    message(STATUS "Will download Pybind11 instead")
+
+    include(FetchContent)
+
+    FetchContent_Declare(pybind11
+      GIT_REPOSITORY https://github.com/pybind/pybind11
+      GIT_TAG        v2.6.2
+    )
+
+    FetchContent_MakeAvailable(pybind11)
+  else()
+    message(STATUS "Using local install of Pybind11")
+  endif()
+
   find_package(Python REQUIRED)
 
   pybind11_add_module(pyPapillonNDL src/python/pyPapillonNDL.cpp

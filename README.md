@@ -19,7 +19,7 @@ may be found in the LICENSE-ENGLISH file. The CeCILLv2.1 is approved by the FSF.
 More information about this license may be found [here](https://cecill.info/).
 
 ## Dependencies
-To build and install the library a Unix-like operating system with cmake >= 3.9
+To build and install the library a Unix-like operating system with cmake >= 3.11
 is required, along with a C++ compiler which supports the C++17 standard. The
 recommended compiler is Clang >= 6 or GCC >= 7 should suffice. In order to
 build the Python interface, Python >= 3.5 should be installed on your system, in
