@@ -59,6 +59,7 @@ class shared_span {
   template <class InputIt>
   shared_span(InputIt first, InputIt last);
   shared_span(std::initializer_list<element_type> init);
+  shared_span(size_type Count, const_reference Value = T());
   shared_span(const shared_span& other, std::size_t Offset, std::size_t Count);
 
   shared_span(const shared_span& other) = default;
@@ -108,6 +109,13 @@ template <class InputIt>
 inline shared_span<T>::shared_span(InputIt first, InputIt last)
     : data_{nullptr}, begin_{0}, end_{0} {
   data_ = std::make_shared<std::vector<element_type>>(first, last);
+  begin_ = 0;
+  end_ = data_->size();
+}
+
+template<class T>
+inline shared_span<T>::shared_span(size_type Count, const_reference Value): data_{nullptr}, begin_{0}, end_{0} {
+  data_ = std::make_shared<std::vector<element_type>>(Count, Value);
   begin_ = 0;
   end_ = data_->size();
 }

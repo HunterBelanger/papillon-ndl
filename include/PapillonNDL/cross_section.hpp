@@ -124,9 +124,9 @@ class CrossSection {
    *          the energy grid.
    */
   double operator()(double E, size_t i) const {
-    if (E <= energy_values_.front())
+    if (i < index_)
       return values_.front();
-    else if (E >= energy_values_.back())
+    else if (i >= index_ + values_.size()-1)
       return values_.back();
 
     // Transform index from global grid to local grid
