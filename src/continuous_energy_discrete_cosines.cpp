@@ -35,6 +35,9 @@
 #include <PapillonNDL/pndl_exception.hpp>
 #include <PapillonNDL/region_1d.hpp>
 
+#include <iostream>
+#include <cmath>
+
 namespace pndl {
 
 ContinuousEnergyDiscreteCosines::ContinuousEnergyDiscreteCosines(const ACE& ace)
@@ -101,7 +104,7 @@ ContinuousEnergyDiscreteCosines::ContinuousEnergyDiscreteCosines(const ACE& ace)
       // in the outgoing energy grid is a VERY small negative number
       // (i.e. -2.0E-22). We can safely set these to zero without worry.
       if (tables_.back().pdf[oe] < 0. &&
-          std::abs(tables_.back().pdf[oe] < 1.E-20)) {
+          std::abs(tables_.back().pdf[oe]) < 1.E-20) {
         tables_.back().pdf[oe] = 0.;
       }
       l++;
@@ -252,14 +255,16 @@ AngleEnergyPacket ContinuousEnergyDiscreteCosines::sample_angle_energy(
 
   double mu_right = 1. - (mu_prime - 1.);
   if (k != Nmu - 1) {
-    mu_left =
+    mu_right =
         tables_[i].cosines[j][k + 1] +
         f * (tables_[i].cosines[j + 1][k + 1] - tables_[i].cosines[j][k + 1]);
   }
 
   // Now we smear
   double mu = mu_prime +
-              std::min(mu_prime - mu_left, mu_prime + mu_right) * (rng() - 0.5);
+              std::min(mu_prime - mu_left, mu_right - mu_prime) * (rng() - 0.5);
+
+  if (std::abs(mu) > 1.) mu = std::copysign(1., mu);
 
   return {mu, E_out};
 }

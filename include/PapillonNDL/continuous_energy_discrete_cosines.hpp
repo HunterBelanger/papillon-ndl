@@ -100,7 +100,14 @@ class ContinuousEnergyDiscreteCosines : public AngleEnergy {
   double sample_energy(const CEDCTable& table, double xi, size_t& j) const {
     double E_out = 0.;
     auto cdf_it = std::lower_bound(table.cdf.begin(), table.cdf.end(), xi);
+    if (cdf_it == table.cdf.begin()) {
+      E_out = table.energy.front();
+      j = 0;
+      return E_out;
+    }
     size_t l = std::distance(table.cdf.begin(), cdf_it) - 1;
+
+    l = std::min(l, table.energy.size() - 2);
 
     // Must account for case where pdf_[l] = pdf_[l+1], which means  that
     // the slope is zero, and m=0. This results in nan for the linear alg.
