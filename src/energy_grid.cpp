@@ -115,4 +115,32 @@ double EnergyGrid::min_energy() const { return energy_values_.front(); }
 
 double EnergyGrid::max_energy() const { return energy_values_.back(); }
 
+void EnergyGrid::hash_energy_grid(uint32_t NBINS) {
+    // Generate pointers for lethargy bins
+    u_min = std::log(energy_values_.front());
+    double u_max = std::log(energy_values_.back());
+    du = (u_max - u_min) / static_cast<double>(NBINS);
+    
+    bin_pointers_.clear();
+    bin_pointers_.reserve(NBINS + 1);
+
+    double E = energy_values_.front();
+    size_t i = 0;
+
+    // Start by storing index to u_min which is 0
+    bin_pointers_.push_back(0);
+
+    // Get energy index for each lethargy bin bound
+    for (size_t b = 1; b < NBINS + 1; b++) {
+      E *= std::exp(du);
+
+      i = std::distance(
+              energy_values_.begin(),
+              std::lower_bound(energy_values_.begin(), energy_values_.end(), E)) -
+          1;
+
+      bin_pointers_.push_back(static_cast<uint32_t>(i));
+    }
+  }
+
 }  // namespace pndl
