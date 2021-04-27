@@ -16,6 +16,11 @@ if(NOT GTest_FOUND)
   # We also don't need googlemock so we turn that off as well
   set(BUILD_GMOCK OFF CACHE BOOL "Builds the googlemock subproject")
 
+  if(WIN32)
+    # For Windows: Prevent overriding the parent project's compiler/linker settings
+    set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+  endif()
+
   include(FetchContent)
 
   FetchContent_Declare(GTest
