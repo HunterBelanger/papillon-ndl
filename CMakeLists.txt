@@ -79,6 +79,7 @@ endif()
 
 # If building tests, add the tests subdirectory
 if(PNDL_TESTS)
+  enable_testing()
   add_subdirectory(tests)
 endif()
 

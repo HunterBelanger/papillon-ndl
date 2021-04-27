@@ -37,6 +37,7 @@ add_executable(PapillonNDL-Tests
   region_1d_tests.cpp
   multi_region_1d_tests.cpp
 )
+add_test(PapillonNDL-Tests PapillonNDL-Tests)
 
 target_compile_features(PapillonNDL-Tests PRIVATE cxx_std_17)
 
@@ -48,3 +49,4 @@ if(WIN32) # Comile options for Windows
 else() # Compile options for GCC and Clang on Unix-like systems
   target_compile_options(PapillonNDL-Tests PRIVATE -W -Wall -Wextra -Wpedantic)
 endif()
+
