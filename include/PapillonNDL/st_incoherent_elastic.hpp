@@ -111,7 +111,7 @@ class STIncoherentElastic {
                  f * (cosines_[i + 1][j + 1] - cosines_[i][j + 1]);
     }
 
-    double mu = mu_prime + std::min(mu_prime - mu_left, mu_prime + mu_right) *
+    double mu = mu_prime + std::min(mu_prime - mu_left, mu_right - mu_prime) *
                                (rng() - 0.5);
 
     return {mu, E_in};
