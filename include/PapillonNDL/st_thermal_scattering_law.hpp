@@ -139,6 +139,14 @@ class STThermalScatteringLaw {
     return 0.;
   }
 
+  /**
+   * @breif Returns the total thermal scattering cross section.
+   * @param E Energy at which to evaluate the cross section.
+   */
+  double xs(double E) const {
+    return incoherent_inelastic_xs(E) + incoherent_elastic_xs(E) + coherent_elastic_xs(E); 
+  }
+
  private:
   uint32_t zaid_;
   double awr_;

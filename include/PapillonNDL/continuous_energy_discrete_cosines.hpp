@@ -99,15 +99,15 @@ class ContinuousEnergyDiscreteCosines : public AngleEnergy {
   // cosine of the scattering angle.
   double sample_energy(const CEDCTable& table, double xi, size_t& j) const {
     double E_out = 0.;
+    size_t l = 0;
     auto cdf_it = std::lower_bound(table.cdf.begin(), table.cdf.end(), xi);
     if (cdf_it == table.cdf.begin()) {
-      E_out = table.energy.front();
-      j = 0;
-      return E_out;
+      l = 0;
+    } else if (cdf_it == table.cdf.end()) {
+      l = table.energy.size() - 2; 
+    } else {
+      l = std::distance(table.cdf.begin(), cdf_it) - 1;
     }
-    size_t l = std::distance(table.cdf.begin(), cdf_it) - 1;
-
-    l = std::min(l, table.energy.size() - 2);
 
     // Must account for case where pdf_[l] = pdf_[l+1], which means  that
     // the slope is zero, and m=0. This results in nan for the linear alg.
@@ -136,8 +136,8 @@ class ContinuousEnergyDiscreteCosines : public AngleEnergy {
                (table.energy[l + 1] - table.energy[l]);
 
     return table.energy[l] +
-           (1. / m) * (std::sqrt(table.pdf[l] * table.pdf[l] +
-                                 2. * m * (xi - table.cdf[l])) -
+           (1. / m) * (std::sqrt(std::max(0.,table.pdf[l] * table.pdf[l] +
+                                 2. * m * (xi - table.cdf[l]))) -
                        table.pdf[l]);
   }
 };
