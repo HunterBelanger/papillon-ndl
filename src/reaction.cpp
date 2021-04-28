@@ -219,8 +219,8 @@ Reaction::Reaction(const ACE& ace, size_t indx, const EnergyGrid& egrid)
           angle_energy = std::make_shared<Kalbach>(ace, j, probability);
 
         } else if (law == 61) {  // Tabular Energy Angle
-          angle_energy =
-              std::make_shared<TabularEnergyAngle>(ace, j, ace.DLW(), probability);
+          angle_energy = std::make_shared<TabularEnergyAngle>(ace, j, ace.DLW(),
+                                                              probability);
 
         } else if (law == 66) {  // N-body
           angle_energy = std::make_shared<NBody>(ace, j, q_, probability);

@@ -126,7 +126,7 @@ class CrossSection {
   double operator()(double E, size_t i) const {
     if (i < index_)
       return values_.front();
-    else if (i >= index_ + values_.size()-1)
+    else if (i >= index_ + values_.size() - 1)
       return values_.back();
 
     // Transform index from global grid to local grid

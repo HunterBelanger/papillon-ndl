@@ -189,7 +189,9 @@ void init_ContinuousEnergyDiscreteCosines(py::module& m) {
       .def_readwrite("pdf", &ContinuousEnergyDiscreteCosines::CEDCTable::pdf)
       .def_readwrite("cdf", &ContinuousEnergyDiscreteCosines::CEDCTable::cdf)
       .def_readwrite("cosines",
-                     &ContinuousEnergyDiscreteCosines::CEDCTable::cosines);
+                     &ContinuousEnergyDiscreteCosines::CEDCTable::cosines)
+      .def("sample_energy",
+           &ContinuousEnergyDiscreteCosines::CEDCTable::sample_energy);
 
   py::class_<ContinuousEnergyDiscreteCosines, AngleEnergy,
              std::shared_ptr<ContinuousEnergyDiscreteCosines>>(

@@ -60,6 +60,16 @@ class ContinuousEnergyDiscreteCosines : public AngleEnergy {
     std::vector<double> cdf;    /**< CDF for the outgoing energy */
     std::vector<std::vector<double>>
         cosines; /**< Discrete scattering cosines for each outgoing energy */
+
+    /**
+     * @brief Samples and outgoing energy from the distributions while
+     *        also setting the value j to be the lower bound index
+     *        for sampling the scattering cosine latter on.
+     * @param xi Random variable on the unit interval [0,1).
+     * @param j Index which will be set to latter locate the proper
+     *          distribution for the scattering cosine.
+     */
+    double sample_energy(double xi, size_t& j) const;
   };
 
   AngleEnergyPacket sample_angle_energy(
@@ -93,53 +103,6 @@ class ContinuousEnergyDiscreteCosines : public AngleEnergy {
   std::vector<double> incoming_energy_;
   std::vector<CEDCTable> tables_;
   uint32_t Nmu;
-
-  // Table to use for determining outgoing energy, and j
-  // is the index into the cosine array, for sampling the
-  // cosine of the scattering angle.
-  double sample_energy(const CEDCTable& table, double xi, size_t& j) const {
-    double E_out = 0.;
-    size_t l = 0;
-    auto cdf_it = std::lower_bound(table.cdf.begin(), table.cdf.end(), xi);
-    if (cdf_it == table.cdf.begin()) {
-      l = 0;
-    } else if (cdf_it == table.cdf.end()) {
-      l = table.energy.size() - 2; 
-    } else {
-      l = std::distance(table.cdf.begin(), cdf_it) - 1;
-    }
-
-    // Must account for case where pdf_[l] = pdf_[l+1], which means  that
-    // the slope is zero, and m=0. This results in nan for the linear alg.
-    // To avoid this, must use histogram for that segment.
-    if (table.pdf[l] == table.pdf[l + 1]) {
-      E_out = histogram_interp_energy(table, xi, l);
-    } else {
-      E_out = linear_interp_energy(table, xi, l);
-    }
-
-    // Set j to be l, so we know which cosines to use latter
-    // when sampling the angle.
-    j = l;
-
-    return E_out;
-  }
-
-  double histogram_interp_energy(const CEDCTable& table, double xi,
-                                 size_t l) const {
-    return table.energy[l] + ((xi - table.cdf[l]) / table.pdf[l]);
-  }
-
-  double linear_interp_energy(const CEDCTable& table, double xi,
-                              size_t l) const {
-    double m = (table.pdf[l + 1] - table.pdf[l]) /
-               (table.energy[l + 1] - table.energy[l]);
-
-    return table.energy[l] +
-           (1. / m) * (std::sqrt(std::max(0.,table.pdf[l] * table.pdf[l] +
-                                 2. * m * (xi - table.cdf[l]))) -
-                       table.pdf[l]);
-  }
 };
 
 }  // namespace pndl

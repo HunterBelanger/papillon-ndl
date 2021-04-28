@@ -336,7 +336,7 @@ class CENeutron {
   /**
    * @brief Returns a list of all MT reactions present for the nuclide.
    */
-  const std::vector<uint32_t>& mt_list() const {return mt_list_;}
+  const std::vector<uint32_t>& mt_list() const { return mt_list_; }
 
   /**
    * @brief Checks to see if a nucldie has a given reaction.
@@ -352,10 +352,12 @@ class CENeutron {
    */
   const Reaction& reaction(uint32_t mt) const {
     if (mt > 891 || reaction_indices_[mt] < 0) {
-      std::string mssg = "CENeutron::reaction: MT = " + std::to_string(mt) + " is not provided in ZAID = " + std::to_string(zaid_) + ".";
+      std::string mssg = "CENeutron::reaction: MT = " + std::to_string(mt) +
+                         " is not provided in ZAID = " + std::to_string(zaid_) +
+                         ".";
       throw PNDLException(mssg, __FILE__, __LINE__);
     }
-    
+
     return reactions_[reaction_indices_[mt]];
   }
 
@@ -384,7 +386,7 @@ class CENeutron {
     if (mt > 891) return 0.;
 
     auto indx = reaction_indices_[mt];
-    
+
     return indx < 0 ? 0. : reactions_[indx].xs(E, i);
   }
 

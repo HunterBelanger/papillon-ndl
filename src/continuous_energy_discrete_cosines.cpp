@@ -34,9 +34,8 @@
 #include <PapillonNDL/continuous_energy_discrete_cosines.hpp>
 #include <PapillonNDL/pndl_exception.hpp>
 #include <PapillonNDL/region_1d.hpp>
-
-#include <iostream>
 #include <cmath>
+#include <iostream>
 
 namespace pndl {
 
@@ -225,12 +224,12 @@ AngleEnergyPacket ContinuousEnergyDiscreteCosines::sample_angle_energy(
   double xi = rng();  // Random variable for sampling outgoing energy
   if (rng() > f) {
     i = l;
-    E_hat = sample_energy(tables_[l], xi, j);
+    E_hat = tables_[l].sample_energy(xi, j);
     E_l_1 = E_i_1;
     E_l_M = E_i_M;
   } else {
     i = l + 1;
-    E_hat = sample_energy(tables_[l + 1], xi, j);
+    E_hat = tables_[l + 1].sample_energy(xi, j);
     E_l_1 = E_i_1_1;
     E_l_M = E_i_1_M;
   }
@@ -267,6 +266,40 @@ AngleEnergyPacket ContinuousEnergyDiscreteCosines::sample_angle_energy(
   if (std::abs(mu) > 1.) mu = std::copysign(1., mu);
 
   return {mu, E_out};
+}
+
+double ContinuousEnergyDiscreteCosines::CEDCTable::sample_energy(
+    double xi, size_t& j) const {
+  double E_out = 0.;
+  size_t l = 0;
+  auto cdf_it = std::lower_bound(cdf.begin(), cdf.end(), xi);
+  if (cdf_it == cdf.begin()) {
+    l = 0;
+  } else if (cdf_it == cdf.end()) {
+    l = energy.size() - 2;
+  } else {
+    l = std::distance(cdf.begin(), cdf_it) - 1;
+  }
+
+  // Must account for case where pdf_[l] = pdf_[l+1], which means  that
+  // the slope is zero, and m=0. This results in nan for the linear alg.
+  // To avoid this, must use histogram for that segment.
+  if (pdf[l] == pdf[l + 1]) {
+    E_out = energy[l] + ((xi - cdf[l]) / pdf[l]);
+  } else {
+    double m = (pdf[l + 1] - pdf[l]) / (energy[l + 1] - energy[l]);
+    E_out =
+        energy[l] +
+        (1. / m) *
+            (std::sqrt(std::max(0., pdf[l] * pdf[l] + 2. * m * (xi - cdf[l]))) -
+             pdf[l]);
+  }
+
+  // Set j to be l, so we know which cosines to use latter
+  // when sampling the angle.
+  j = l;
+
+  return E_out;
 }
 
 }  // namespace pndl

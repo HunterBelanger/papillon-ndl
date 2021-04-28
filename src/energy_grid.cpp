@@ -59,14 +59,11 @@ EnergyGrid::EnergyGrid(const ACE& ace, uint32_t NBINS)
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
 
-  hash_energy_grid(NBINS); 
+  hash_energy_grid(NBINS);
 }
 
 EnergyGrid::EnergyGrid(const std::vector<double>& energy, uint32_t NBINS)
-    : energy_values_(energy.size(), 0.),
-      bin_pointers_(),
-      u_min(),
-      du() {
+    : energy_values_(energy.size(), 0.), bin_pointers_(), u_min(), du() {
   if (!std::is_sorted(energy_values_.begin(), energy_values_.end())) {
     std::string mssg = "EnergyGrid::EnergyGrid: Energy values are not sorted.";
     throw PNDLException(mssg, __FILE__, __LINE__);
@@ -79,10 +76,10 @@ EnergyGrid::EnergyGrid(const std::vector<double>& energy, uint32_t NBINS)
   }
 
   for (std::size_t i = 0; i < energy.size(); i++) {
-    energy_values_[i] = static_cast<double>(energy[i]); 
+    energy_values_[i] = static_cast<double>(energy[i]);
   }
 
-  hash_energy_grid(NBINS); 
+  hash_energy_grid(NBINS);
 }
 
 EnergyGrid::EnergyGrid(const std::vector<float>& energy, uint32_t NBINS)
@@ -102,7 +99,7 @@ EnergyGrid::EnergyGrid(const std::vector<float>& energy, uint32_t NBINS)
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
 
-  hash_energy_grid(NBINS); 
+  hash_energy_grid(NBINS);
 }
 
 double EnergyGrid::operator[](size_t i) const { return energy_values_[i]; }
@@ -116,31 +113,31 @@ double EnergyGrid::min_energy() const { return energy_values_.front(); }
 double EnergyGrid::max_energy() const { return energy_values_.back(); }
 
 void EnergyGrid::hash_energy_grid(uint32_t NBINS) {
-    // Generate pointers for lethargy bins
-    u_min = std::log(energy_values_.front());
-    double u_max = std::log(energy_values_.back());
-    du = (u_max - u_min) / static_cast<double>(NBINS);
-    
-    bin_pointers_.clear();
-    bin_pointers_.reserve(NBINS + 1);
+  // Generate pointers for lethargy bins
+  u_min = std::log(energy_values_.front());
+  double u_max = std::log(energy_values_.back());
+  du = (u_max - u_min) / static_cast<double>(NBINS);
 
-    double E = energy_values_.front();
-    size_t i = 0;
+  bin_pointers_.clear();
+  bin_pointers_.reserve(NBINS + 1);
 
-    // Start by storing index to u_min which is 0
-    bin_pointers_.push_back(0);
+  double E = energy_values_.front();
+  size_t i = 0;
 
-    // Get energy index for each lethargy bin bound
-    for (size_t b = 1; b < NBINS + 1; b++) {
-      E *= std::exp(du);
+  // Start by storing index to u_min which is 0
+  bin_pointers_.push_back(0);
 
-      i = std::distance(
-              energy_values_.begin(),
-              std::lower_bound(energy_values_.begin(), energy_values_.end(), E)) -
-          1;
+  // Get energy index for each lethargy bin bound
+  for (size_t b = 1; b < NBINS + 1; b++) {
+    E *= std::exp(du);
 
-      bin_pointers_.push_back(static_cast<uint32_t>(i));
-    }
+    i = std::distance(
+            energy_values_.begin(),
+            std::lower_bound(energy_values_.begin(), energy_values_.end(), E)) -
+        1;
+
+    bin_pointers_.push_back(static_cast<uint32_t>(i));
   }
+}
 
 }  // namespace pndl
