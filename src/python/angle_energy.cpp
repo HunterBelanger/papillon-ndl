@@ -196,11 +196,12 @@ void init_ContinuousEnergyDiscreteCosines(py::module& m) {
   py::class_<ContinuousEnergyDiscreteCosines, AngleEnergy,
              std::shared_ptr<ContinuousEnergyDiscreteCosines>>(
       m, "ContinuousEnergyDiscreteCosines")
-      .def(py::init<const ACE&>())
+      .def(py::init<const ACE&, bool>())
       .def("sample_angle_energy",
            &ContinuousEnergyDiscreteCosines::sample_angle_energy)
       .def("incoming_energy", &ContinuousEnergyDiscreteCosines::incoming_energy)
       .def("size", &ContinuousEnergyDiscreteCosines::size)
       .def("tables", &ContinuousEnergyDiscreteCosines::tables)
-      .def("table", &ContinuousEnergyDiscreteCosines::table);
+      .def("table", &ContinuousEnergyDiscreteCosines::table)
+      .def("unit_based_interpolation", &ContinuousEnergyDiscreteCosines::unit_based_interpolation);
 }

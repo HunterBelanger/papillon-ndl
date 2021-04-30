@@ -53,8 +53,13 @@ class STThermalScatteringLaw {
  public:
   /**
    * @param ace ACE file which contains thermal scattering law.
+   * @param unit_based_interpolation If false (default value) and the incoherent
+   *        inelastic scattering distribution is continuous in energy, unit
+   *        based interpolation will not be applied. This is method used by
+   *        MCNP, Serpent, and OpenMC, so we have made it our default. If set to
+   *        true, unit based interpolation will be used.
    */
-  STThermalScatteringLaw(const ACE& ace);
+  STThermalScatteringLaw(const ACE& ace, bool unit_based_interpolation=false);
   ~STThermalScatteringLaw() = default;
 
   /**

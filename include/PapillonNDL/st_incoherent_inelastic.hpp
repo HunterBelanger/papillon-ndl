@@ -53,8 +53,12 @@ class STIncoherentInelastic {
  public:
   /**
    * @param ace ACE file which contains thermal scattering law.
+   * @param unit_based_interpolation If false (default value), the distribution
+   *        will be sampled without using unit-based interpolation, which is
+   *        the method used by MCNP, Serpent, and OpenMC. If set to true, unit
+   *        based interpolation will be applied to the sampling of the energy.
    */
-  STIncoherentInelastic(const ACE& ace);
+  STIncoherentInelastic(const ACE& ace, bool unit_based_interpolation=false);
   ~STIncoherentInelastic() = default;
 
   /**

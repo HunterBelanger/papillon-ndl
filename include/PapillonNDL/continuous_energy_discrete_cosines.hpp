@@ -47,8 +47,12 @@ class ContinuousEnergyDiscreteCosines : public AngleEnergy {
  public:
   /**
    * @param ace ACE file which contains thermal scattering law.
+   * @param unit_based_interpolation If false (default value), the distribution
+   *        will be sampled without using unit-based interpolation, which is
+   *        the method used by MCNP, Serpent, and OpenMC. If set to true, unit
+   *        based interpolation will be applied to the sampling of the energy.
    */
-  ContinuousEnergyDiscreteCosines(const ACE& ace);
+  ContinuousEnergyDiscreteCosines(const ACE& ace, bool unit_based_interpolation=false);
 
   /**
    * @brief Struct which contains the outgoing energy distribution and
@@ -98,11 +102,21 @@ class ContinuousEnergyDiscreteCosines : public AngleEnergy {
    * @param i Index to the incoming energy.
    */
   const CEDCTable& table(size_t i) const { return tables_[i]; }
+  
+  /**
+   * @brief Returns true if the distribution used unit-based interpolation
+   *        in sampling the scattering energy and angle, and false otherwise.
+   */
+  bool unit_based_interpolation() const { return unit_based_interpolation_; }
 
  private:
   std::vector<double> incoming_energy_;
   std::vector<CEDCTable> tables_;
   uint32_t Nmu;
+  bool unit_based_interpolation_;
+
+  AngleEnergyPacket sample_with_unit_based_interpolation(double E_in, std::function<double()> rng) const;
+  AngleEnergyPacket sample_without_unit_based_interpolation(double E_in, std::function<double()> rng) const;
 };
 
 }  // namespace pndl

@@ -47,7 +47,7 @@ using namespace pndl;
 void init_STIncoherentInelastic(py::module& m) {
   py::class_<STIncoherentInelastic, std::shared_ptr<STIncoherentInelastic>>(
       m, "STIncoherentInelastic")
-      .def(py::init<const ACE&>())
+      .def(py::init<const ACE&, bool>())
       .def("cross_section", &STIncoherentInelastic::cross_section)
       .def("xs", &STIncoherentInelastic::xs)
       .def("sample_angle_energy", &STIncoherentInelastic::sample_angle_energy)
@@ -77,7 +77,7 @@ void init_STInoherentElastic(py::module& m) {
 void init_STThermalScatteringLaw(py::module& m) {
   py::class_<STThermalScatteringLaw, std::shared_ptr<STThermalScatteringLaw>>(
       m, "STThermalScatteringLaw")
-      .def(py::init<const ACE&>())
+      .def(py::init<const ACE&, bool>())
       .def("zaid", &STThermalScatteringLaw::zaid)
       .def("awr", &STThermalScatteringLaw::awr)
       .def("temperature", &STThermalScatteringLaw::temperature)

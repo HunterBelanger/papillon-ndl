@@ -39,13 +39,14 @@
 
 namespace pndl {
 
-ContinuousEnergyDiscreteCosines::ContinuousEnergyDiscreteCosines(const ACE& ace)
+ContinuousEnergyDiscreteCosines::ContinuousEnergyDiscreteCosines(const ACE& ace, bool unit_based_interpolation)
     : AngleEnergy(std::make_shared<Region1D>(std::vector<double>({0., 200.}),
                                              std::vector<double>({1., 1.}),
                                              Interpolation::LinLin)),
       incoming_energy_(),
       tables_(),
-      Nmu(0) {
+      Nmu(0),
+      unit_based_interpolation_(unit_based_interpolation) {
   // Make sure the distributions is discrete cosines and energies
   int32_t nxs_7 = ace.nxs(6);
   if (nxs_7 != 2) {
@@ -127,8 +128,16 @@ ContinuousEnergyDiscreteCosines::ContinuousEnergyDiscreteCosines(const ACE& ace)
       outgoing energy index " + std::to_string(oe) + "."; throw
       PNDLException(mssg, __FILE__, __LINE__);
       }*/
-
-      if (tables_.back().cosines[oe].front() < -1.) {
+      
+      /* All of the cosines should of course be within the interval [-1,1],
+       * but I have found thermal scattering laws which is is blatantly not
+       * the case. One such example is the light water evaluation at 294K,
+       * where there is an upper limit of 1.225. Because of this, I have
+       * commented out these two checks. To ensure valid results, we must
+       * make sure that we validate the cosine range before returning
+       * sampled values.
+       * */
+      /*if (tables_.back().cosines[oe].front() < -1.) {
         std::string mssg =
             "ContinuousEnergyDiscreteCosines::ContinuousEnergyDiscreteCosines: "
             "Lowest scattering cosine is less than -1 for incoming energy "
@@ -146,7 +155,7 @@ ContinuousEnergyDiscreteCosines::ContinuousEnergyDiscreteCosines(const ACE& ace)
             std::to_string(ie) + ", outgoing energy index " +
             std::to_string(oe) + ".";
         throw PNDLException(mssg, __FILE__, __LINE__);
-      }
+      }*/
     }  // For all outgoing energies
 
     // Check outgoing energy distribution
@@ -189,7 +198,14 @@ ContinuousEnergyDiscreteCosines::ContinuousEnergyDiscreteCosines(const ACE& ace)
   }  // For all incident energies
 }
 
-AngleEnergyPacket ContinuousEnergyDiscreteCosines::sample_angle_energy(
+AngleEnergyPacket ContinuousEnergyDiscreteCosines::sample_angle_energy(double E_in, std::function<double()> rng) const {
+  if (!unit_based_interpolation_)
+    return sample_without_unit_based_interpolation(E_in, rng);
+  else
+    return sample_with_unit_based_interpolation(E_in, rng);
+}
+
+AngleEnergyPacket ContinuousEnergyDiscreteCosines::sample_with_unit_based_interpolation(
     double E_in, std::function<double()> rng) const {
   // First we sample the outgoing energy.
   // Determine the index of the bounding tabulated incoming energies
@@ -262,7 +278,82 @@ AngleEnergyPacket ContinuousEnergyDiscreteCosines::sample_angle_energy(
   // Now we smear
   double mu = mu_prime +
               std::min(mu_prime - mu_left, mu_right - mu_prime) * (rng() - 0.5);
+  
+  // This is very important as some ACE data has very bad scattering
+  // cosine values !
+  if (std::abs(mu) > 1.) mu = std::copysign(1., mu);
 
+  return {mu, E_out};
+}
+
+AngleEnergyPacket ContinuousEnergyDiscreteCosines::sample_without_unit_based_interpolation(
+    double E_in, std::function<double()> rng) const {
+  // First we sample the outgoing energy.
+  // Determine the index of the bounding tabulated incoming energies
+  size_t l;
+  double f;  // Interpolation factor
+  auto in_E_it =
+      std::lower_bound(incoming_energy_.begin(), incoming_energy_.end(), E_in);
+  if (in_E_it == incoming_energy_.begin()) {
+    l = 0;
+    f = 0.;
+  } else if (in_E_it == incoming_energy_.end()) {
+    l = incoming_energy_.size() - 2;
+    f = 1.;
+  } else {
+    l = std::distance(incoming_energy_.begin(), in_E_it) - 1;
+    f = (E_in - incoming_energy_[l]) /
+        (incoming_energy_[l + 1] - incoming_energy_[l]);
+  }
+  
+
+  // Always use closest incident energy data
+  if (f > 0.5) l++;
+  
+  // Sample outgoing energy
+  size_t i = l, j = 0;
+  double xi = rng();
+  double E_out = tables_[l].sample_energy(xi, j);
+  
+
+  // No idea why this is done this way in MCNP, Serpent, or OpenMC. A lot of 
+  // nuclear data was probably made to work right with this though, so we
+  // have it here.
+  if (E_out < 0.5 * incoming_energy_[l]) {
+    E_out *= 2.0*E_in/incoming_energy_[l] - 1.0;
+  } else {
+    E_out += E_in - incoming_energy_[l];
+  }
+
+  // Now we can go and sample the scattering cosine. This will be done with
+  // smearing. First we sample a random cosine index.
+  uint32_t k = Nmu * rng();
+  f = (xi - tables_[i].cdf[j]) / (tables_[i].cdf[j + 1] - tables_[i].cdf[j]);
+
+  double mu_prime =
+      tables_[i].cosines[j][k] +
+      f * (tables_[i].cosines[j + 1][k] - tables_[i].cosines[j][k]);
+
+  double mu_left = -1. - (mu_prime + 1.);
+  if (k != 0) {
+    mu_left =
+        tables_[i].cosines[j][k - 1] +
+        f * (tables_[i].cosines[j + 1][k - 1] - tables_[i].cosines[j][k - 1]);
+  }
+
+  double mu_right = 1. - (mu_prime - 1.);
+  if (k != Nmu - 1) {
+    mu_right =
+        tables_[i].cosines[j][k + 1] +
+        f * (tables_[i].cosines[j + 1][k + 1] - tables_[i].cosines[j][k + 1]);
+  }
+
+  // Now we smear
+  double mu = mu_prime +
+              std::min(mu_prime - mu_left, mu_right - mu_prime) * (rng() - 0.5);
+  
+  // This is very important as some ACE data has very bad scattering
+  // cosine values !
   if (std::abs(mu) > 1.) mu = std::copysign(1., mu);
 
   return {mu, E_out};
