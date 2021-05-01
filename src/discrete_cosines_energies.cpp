@@ -173,7 +173,7 @@ AngleEnergyPacket DiscreteCosinesEnergies::sample_angle_energy(
     return {outgoing_energies_.back()[j].cosines[k],
             outgoing_energies_.back()[j].energy};
   }
-  uint32_t i = std::distance(incoming_energy_.begin(), Eit) - 1;
+  size_t i = std::distance(incoming_energy_.begin(), Eit) - 1;
   double f = (E_in - incoming_energy_[i]) /
              (incoming_energy_[i + 1] - incoming_energy_[i]);
 

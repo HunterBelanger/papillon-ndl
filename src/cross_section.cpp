@@ -75,8 +75,15 @@ CrossSection::CrossSection(const ACE& ace, size_t i, const EnergyGrid& E_grid,
 CrossSection::CrossSection(const std::vector<double>& xs,
                            const EnergyGrid& E_grid, size_t index)
     : energy_values_(E_grid.grid()),
-      values_(xs.begin(), xs.end()),
+      values_(xs.size(), 0.),
       index_(static_cast<uint32_t>(index)) {
+
+  // Fill cross section values
+  for (size_t e = 0; e < xs.size(); e++) {
+    values_[e] = static_cast<float>(xs[e]); 
+  }
+  
+
   if (index_ >= energy_values_.size()) {
     std::string mssg =
         "CrossSection::CrossSection: Starting index is larger than size of the "
