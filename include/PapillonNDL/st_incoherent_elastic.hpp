@@ -94,7 +94,7 @@ class STIncoherentElastic {
     }
 
     // Sample random index for cosine
-    uint32_t j = Nmu * rng();
+    uint32_t j = static_cast<uint32_t>(Nmu * rng());
 
     double mu_prime =
         cosines_[i][j] + f * (cosines_[i + 1][j] - cosines_[i][j]);

@@ -254,7 +254,7 @@ AngleEnergyPacket ContinuousEnergyDiscreteCosines::sample_with_unit_based_interp
 
   // Now we can go and sample the scattering cosine. This will be done with
   // smearing. First we sample a random cosine index.
-  uint32_t k = Nmu * rng();
+  uint32_t k = static_cast<uint32_t>(Nmu * rng());
   f = (xi - tables_[i].cdf[j]) / (tables_[i].cdf[j + 1] - tables_[i].cdf[j]);
 
   double mu_prime =
@@ -327,7 +327,7 @@ AngleEnergyPacket ContinuousEnergyDiscreteCosines::sample_without_unit_based_int
 
   // Now we can go and sample the scattering cosine. This will be done with
   // smearing. First we sample a random cosine index.
-  uint32_t k = Nmu * rng();
+  uint32_t k = static_cast<uint32_t>(Nmu * rng());
   f = (xi - tables_[i].cdf[j]) / (tables_[i].cdf[j + 1] - tables_[i].cdf[j]);
 
   double mu_prime =

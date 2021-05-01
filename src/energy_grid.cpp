@@ -76,7 +76,7 @@ EnergyGrid::EnergyGrid(const std::vector<double>& energy, uint32_t NBINS)
   }
 
   for (std::size_t i = 0; i < energy.size(); i++) {
-    energy_values_[i] = static_cast<double>(energy[i]);
+    energy_values_[i] = static_cast<float>(energy[i]);
   }
 
   hash_energy_grid(NBINS);

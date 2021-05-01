@@ -35,6 +35,7 @@
 #include <PapillonNDL/pndl_exception.hpp>
 #include <PapillonNDL/region_1d.hpp>
 #include <algorithm>
+#include <cmath>
 
 namespace pndl {
 
@@ -133,10 +134,10 @@ DiscreteCosinesEnergies::DiscreteCosinesEnergies(const ACE& ace)
 AngleEnergyPacket DiscreteCosinesEnergies::sample_angle_energy(
     double E_in, std::function<double()> rng) const {
   uint32_t j = 0;
-  uint32_t k = Nmu * rng();
+  uint32_t k = static_cast<uint32_t>(Nmu * rng());
   // Sample j for the outgoing energy point
   if (!skewed_) {
-    j = Noe * rng();
+    j = static_cast<uint32_t>(Noe * rng());
   } else {
     // Unit probability so that the sum of the probability of all bins
     // is 1 under the skewed conditions.
@@ -148,7 +149,7 @@ AngleEnergyPacket DiscreteCosinesEnergies::sample_angle_energy(
     if (xi >= 5 * c && xi < 1. - 5 * c) {
       // Select any one of the inner values, all with equal probability.
       // We put the most probable first to make less comparisons.
-      j = (Noe - 4) * rng() + 2;
+      j = static_cast<uint32_t>((Noe - 4) * rng() + 2);
     } else if (xi < c) {
       j = 0;
     } else if (xi >= c && xi < 5 * c) {
@@ -183,6 +184,8 @@ AngleEnergyPacket DiscreteCosinesEnergies::sample_angle_energy(
   double mu_i_j_k = outgoing_energies_[i][j].cosines[k];
   double mu_i_1_j_k = outgoing_energies_[i + 1][j].cosines[k];
   double mu = mu_i_j_k + f * (mu_i_1_j_k - mu_i_j_k);
+
+  if (std::abs(mu) > 1.) mu = std::copysign(1., mu);
 
   return {mu, E};
 }
