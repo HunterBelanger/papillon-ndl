@@ -31,56 +31,35 @@
  * termes.
  *
  * */
+#include <random>
+#include <functional>
+
 #include <pybind11/functional.h>
 #include <pybind11/pybind11.h>
+
 
 namespace py = pybind11;
 
 // LCG parameters
-constexpr uint64_t g{2806196910506780709LL};  // multiplication
-constexpr uint64_t c{1};                      // additive factor, c
-constexpr uint64_t M{0x8000000000000000};     // 2^63
-constexpr uint64_t mask{0x7fffffffffffffff};  // 2^63 - 1
-constexpr double normalization{1.0 / M};      // 2^-63
-uint64_t rng_seed_ = 1;
-
-void seed(uint64_t s) { rng_seed_ = s; }
-
-uint32_t get_current_seed() { return rng_seed_; }
-
-void advance_seed(uint64_t n) {
-  n &= mask;
-
-  uint64_t g_tmp = g;
-  uint64_t c_tmp = c;
-  uint64_t g_new = 1;
-  uint64_t c_new = 0;
-
-  while (n > 0) {
-    if (n & 1) {
-      g_new *= g_tmp;
-      c_new = c_new * g_tmp + c_tmp;
-    }
-    c_tmp *= (g_tmp + 1);
-    g_tmp *= g_tmp;
-
-    n >>= 1;
-  }
-
-  rng_seed_ = (g_new * rng_seed_ + c_new) & mask;
-}
+static std::linear_congruential_engine<uint64_t, 2806196910506780709ULL, 1, 0x8000000000000000> lcg_engine;
+static std::uniform_real_distribution<double> unit_dist;
 
 double rang() {
-  rng_seed_ = (g * rng_seed_ + c) & mask;
-
-  return rng_seed_ * normalization;
+  return unit_dist(lcg_engine);
 }
 
 std::function<double()> rng(rang);
 
+void seed (uint64_t seed) {
+  lcg_engine.seed(seed);
+}
+
+void advance_seed(unsigned long long n) {
+  lcg_engine.discard(n);
+}
+
 void init_PRNG(py::module& m) {
   m.def("seed", &seed);
-  m.def("get_current_seed", &get_current_seed);
   m.def("advance_seed", &advance_seed);
   m.def("rang", &rang);
   m.attr("rng") = rng;
