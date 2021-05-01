@@ -91,7 +91,7 @@ class CENeutron {
   /**
    * @brief Returns the energy grid for the nuclide.
    */
-  const EnergyGrid& energy_grid() const;
+  std::shared_ptr<EnergyGrid> energy_grid() const;
 
   /**
    * @brief Returns a pointer to the total CrossSection for the nuclide.
@@ -140,7 +140,7 @@ class CENeutron {
    * @param E Energy to find in the energy grid.
    */
   size_t energy_grid_index(double E) const {
-    return energy_grid_.get_lower_index(E);
+    return energy_grid_->get_lower_index(E);
   }
 
   /**
@@ -396,7 +396,7 @@ class CENeutron {
   double temperature_;
   bool fissile_;
 
-  EnergyGrid energy_grid_;
+  std::shared_ptr<EnergyGrid> energy_grid_;
 
   std::shared_ptr<CrossSection> total_xs_;
   std::shared_ptr<CrossSection> disappearance_xs_;

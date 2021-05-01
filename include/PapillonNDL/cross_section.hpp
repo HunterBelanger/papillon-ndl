@@ -54,28 +54,29 @@ class CrossSection {
   /**
    * @param ace ACE file to take the data from.
    * @param i Index in the XSS block where the cross section starts.
-   * @param E_grid Energy grid associated with the cross section values.
+   * @param E_grid Pointer to EnergyGrid associated with the cross section
+   * values.
    * @param get_index Flag to indicate wether the cross section values begin
    *                  at i, or if the energy grid index is at i. Default
    *                  value is true.
    */
-  CrossSection(const ACE& ace, size_t i, const EnergyGrid& E_grid,
+  CrossSection(const ACE& ace, size_t i, std::shared_ptr<EnergyGrid> E_grid,
                bool get_index = true);
 
   /**
    * @param xs Vector containing the cross section values.
-   * @param E_grid Energy grid to use for the cross section.
+   * @param E_grid Pointer to EnergyGrid to use for the cross section.
    * @param index Starting index in the energy grid.
    */
-  CrossSection(const std::vector<double>& xs, const EnergyGrid& E_grid,
-               size_t index);
+  CrossSection(const std::vector<double>& xs,
+               std::shared_ptr<EnergyGrid> E_grid, size_t index);
 
   /**
    * @param xs Vector containing the cross section values.
-   * @param E_grid Energy grid to use for the cross section.
+   * @param E_grid Pointer to EnergyGrid to use for the cross section.
    * @param index Starting index in the energy grid.
    */
-  CrossSection(const std::vector<float>& xs, const EnergyGrid& E_grid,
+  CrossSection(const std::vector<float>& xs, std::shared_ptr<EnergyGrid> E_grid,
                size_t index);
   ~CrossSection() = default;
 
@@ -99,19 +100,22 @@ class CrossSection {
    * @param E Energy to evaluate the cross section at.
    */
   double operator()(double E) const {
-    if (E <= energy_values_.front())
+    if (E <= (*energy_grid_)[index_])
       return values_.front();
-    else if (E >= energy_values_.back())
+    else if (E >= energy_grid_->max_energy())
       return values_.back();
 
-    auto E_it =
-        std::lower_bound(energy_values_.begin(), energy_values_.end(), E);
-    size_t indx = std::distance(energy_values_.begin(), E_it) - 1;
+    const auto& egrid = energy_grid_->grid();
+    const auto erange_begin = egrid.begin() + index_;
+    const auto erange_end = egrid.end();
 
-    double sig_low = values_[indx];
-    double sig_hi = values_[indx + 1];
-    double E_low = energy_values_[indx];
-    double E_hi = energy_values_[indx + 1];
+    auto E_it = std::lower_bound(erange_begin, erange_end, E);
+    size_t i = std::distance(erange_begin, E_it) - 1;
+
+    double sig_low = values_[i];
+    double sig_hi = values_[i + 1];
+    double E_low = (*energy_grid_)[index_ + i];
+    double E_hi = (*energy_grid_)[index_ + i + 1];
 
     return ((E - E_low) / (E_hi - E_low)) * (sig_hi - sig_low) + sig_low;
   }
@@ -134,8 +138,8 @@ class CrossSection {
 
     double sig_low = values_[i];
     double sig_hi = values_[i + 1];
-    double E_low = energy_values_[i];
-    double E_hi = energy_values_[i + 1];
+    double E_low = (*energy_grid_)[index_ + i];
+    double E_hi = (*energy_grid_)[index_ + i + 1];
 
     return ((E - E_low) / (E_hi - E_low)) * (sig_hi - sig_low) + sig_low;
   }
@@ -190,7 +194,7 @@ class CrossSection {
   std::vector<float> energy() const;
 
  private:
-  shared_span<float> energy_values_;
+  std::shared_ptr<EnergyGrid> energy_grid_;
   std::vector<float> values_;
   uint32_t index_;
 };

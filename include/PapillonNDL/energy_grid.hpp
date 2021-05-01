@@ -40,7 +40,6 @@
  */
 
 #include <PapillonNDL/ace.hpp>
-#include <PapillonNDL/shared_span.hpp>
 #include <cmath>
 #include <vector>
 
@@ -88,9 +87,9 @@ class EnergyGrid {
   size_t size() const;
 
   /**
-   * @brief Returns the energy grid as a shared_span<float>
+   * @brief Returns a reference to the energy grid.
    */
-  shared_span<float> grid() const;
+  const std::vector<float>& grid() const;
 
   /**
    * @brief Returns the lowest energy in the grid.
@@ -135,7 +134,7 @@ class EnergyGrid {
   void hash_energy_grid(uint32_t NBINS);
 
  private:
-  shared_span<float> energy_values_;
+  std::vector<float> energy_values_;
   std::vector<uint32_t> bin_pointers_;
   double u_min, du;
 };

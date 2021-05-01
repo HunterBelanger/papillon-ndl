@@ -38,6 +38,7 @@
 #include <PapillonNDL/polynomial_1d.hpp>
 #include <PapillonNDL/region_1d.hpp>
 #include <PapillonNDL/uncorrelated.hpp>
+#include <memory>
 
 namespace pndl {
 
@@ -46,7 +47,7 @@ CENeutron::CENeutron(const ACE& ace)
       awr_(ace.awr()),
       temperature_(ace.temperature()),
       fissile_(ace.fissile()),
-      energy_grid_(ace),
+      energy_grid_(nullptr),
       total_xs_(nullptr),
       disappearance_xs_(nullptr),
       elastic_xs_(nullptr),
@@ -59,6 +60,9 @@ CENeutron::CENeutron(const ACE& ace)
       mt_list_(),
       reaction_indices_(),
       reactions_() {
+  // Construct energy grid
+  energy_grid_ = std::make_shared<EnergyGrid>(ace);
+
   // Number of energy points
   uint32_t NE = ace.nxs(2);
   total_xs_ =
@@ -106,7 +110,7 @@ CENeutron::CENeutron(const ACE& ace, const CENeutron& nuclide)
       awr_(ace.awr()),
       temperature_(ace.temperature()),
       fissile_(ace.fissile()),
-      energy_grid_(ace),
+      energy_grid_(nullptr),
       total_xs_(nullptr),
       disappearance_xs_(nullptr),
       elastic_xs_(nullptr),
@@ -119,8 +123,10 @@ CENeutron::CENeutron(const ACE& ace, const CENeutron& nuclide)
       mt_list_(),
       reaction_indices_(),
       reactions_() {
-  // Make sure these are the same nuclide !
+  // Construct energy grid
+  energy_grid_ = std::make_shared<EnergyGrid>(ace);
 
+  // Make sure these are the same nuclide !
   if (zaid_ != nuclide.zaid()) {
     std::string mssg =
         "Nuclide::Nuclide: ZAID of ACE doesn't match ZAID of nuclide.";
@@ -180,7 +186,9 @@ CENeutron::CENeutron(const ACE& ace, const CENeutron& nuclide)
   delayed_groups_ = nuclide.delayed_groups_;
 }
 
-const EnergyGrid& CENeutron::energy_grid() const { return energy_grid_; }
+std::shared_ptr<EnergyGrid> CENeutron::energy_grid() const {
+  return energy_grid_;
+}
 
 std::shared_ptr<CrossSection> CENeutron::total_cross_section() const {
   return total_xs_;

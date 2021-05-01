@@ -34,25 +34,24 @@
 #include <PapillonNDL/cross_section.hpp>
 #include <PapillonNDL/pndl_exception.hpp>
 #include <algorithm>
+#include <memory>
 
 namespace pndl {
 
-CrossSection::CrossSection(const ACE& ace, size_t i, const EnergyGrid& E_grid,
-                           bool get_index)
-    : energy_values_(E_grid.grid()), values_(), index_(0) {
+CrossSection::CrossSection(const ACE& ace, size_t i,
+                           std::shared_ptr<EnergyGrid> E_grid, bool get_index)
+    : energy_grid_(E_grid), values_(), index_(0) {
   uint32_t NE = ace.nxs(2);
   if (get_index) {
     index_ = ace.xss<uint32_t>(i) - 1;
     i++;
     NE = ace.xss<uint32_t>(i);
     i++;
-
-    energy_values_ = energy_values_.subspan(index_, NE);
   }
 
   values_ = ace.xss<float>(i, NE);
 
-  if (energy_values_.size() != values_.size()) {
+  if (energy_grid_->size() - index_ != values_.size()) {
     std::string mssg =
         "CrossSection::CrossSection: Different number of points in the energy "
         "grid and xs-values grid. Cross section begins at " +
@@ -73,8 +72,8 @@ CrossSection::CrossSection(const ACE& ace, size_t i, const EnergyGrid& E_grid,
 }
 
 CrossSection::CrossSection(const std::vector<double>& xs,
-                           const EnergyGrid& E_grid, size_t index)
-    : energy_values_(E_grid.grid()),
+                           std::shared_ptr<EnergyGrid> E_grid, size_t index)
+    : energy_grid_(E_grid),
       values_(xs.size(), 0.),
       index_(static_cast<uint32_t>(index)) {
   // Fill cross section values
@@ -82,14 +81,12 @@ CrossSection::CrossSection(const std::vector<double>& xs,
     values_[e] = static_cast<float>(xs[e]);
   }
 
-  if (index_ >= energy_values_.size()) {
+  if (index_ >= energy_grid_->size()) {
     std::string mssg =
         "CrossSection::CrossSection: Starting index is larger than size of the "
         "energy grid.";
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
-
-  energy_values_ = energy_values_.subspan(index_, energy_values_.size());
 
   for (size_t l = 0; l < values_.size(); l++) {
     if (values_[l] < 0.) {
@@ -101,7 +98,7 @@ CrossSection::CrossSection(const std::vector<double>& xs,
     }
   }
 
-  if (energy_values_.size() != values_.size()) {
+  if (energy_grid_->size() != values_.size()) {
     std::string mssg =
         "CrossSection::CrossSection: Different number of points in the energy "
         "grid and xs-values grid.";
@@ -110,18 +107,16 @@ CrossSection::CrossSection(const std::vector<double>& xs,
 }
 
 CrossSection::CrossSection(const std::vector<float>& xs,
-                           const EnergyGrid& E_grid, size_t index)
-    : energy_values_(E_grid.grid()),
+                           std::shared_ptr<EnergyGrid> E_grid, size_t index)
+    : energy_grid_(E_grid),
       values_(xs.begin(), xs.end()),
       index_(static_cast<uint32_t>(index)) {
-  if (index_ >= energy_values_.size()) {
+  if (index_ >= energy_grid_->size()) {
     std::string mssg =
         "CrossSection::CrossSection: Starting index is larger than size of the "
         "energy grid.";
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
-
-  energy_values_ = energy_values_.subspan(index_, energy_values_.size());
 
   for (size_t l = 0; l < values_.size(); l++) {
     if (values_[l] < 0.) {
@@ -133,7 +128,7 @@ CrossSection::CrossSection(const std::vector<float>& xs,
     }
   }
 
-  if (energy_values_.size() != values_.size()) {
+  if (energy_grid_->size() + index_ != values_.size()) {
     std::string mssg =
         "CrossSection::CrossSection: Different number of points in the energy "
         "grid and xs-values grid.";
@@ -145,14 +140,16 @@ size_t CrossSection::size() const { return values_.size(); }
 
 double CrossSection::xs(size_t i) const { return values_[i]; }
 
-double CrossSection::energy(size_t i) const { return energy_values_[i]; }
+double CrossSection::energy(size_t i) const {
+  return (*energy_grid_)[index_ + i];
+}
 
 uint32_t CrossSection::index() const { return index_; }
 
 const std::vector<float>& CrossSection::xs() const { return values_; }
 
 std::vector<float> CrossSection::energy() const {
-  return {energy_values_.begin(), energy_values_.end()};
+  return {energy_grid_->grid().begin() + index_, energy_grid_->grid().end()};
 }
 
 }  // namespace pndl

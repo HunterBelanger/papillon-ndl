@@ -39,9 +39,7 @@ namespace pndl {
 
 EnergyGrid::EnergyGrid(const ACE& ace, uint32_t NBINS)
     : energy_values_({0.}), bin_pointers_(), u_min(), du() {
-  std::vector<float> raw_egrid = ace.xss<float>(ace.ESZ(), ace.nxs(2));
-
-  energy_values_ = shared_span<float>(raw_egrid.begin(), raw_egrid.end());
+  energy_values_ = ace.xss<float>(ace.ESZ(), ace.nxs(2));
 
   if (!std::is_sorted(energy_values_.begin(), energy_values_.end())) {
     std::string mssg =
@@ -106,7 +104,7 @@ double EnergyGrid::operator[](size_t i) const { return energy_values_[i]; }
 
 size_t EnergyGrid::size() const { return energy_values_.size(); }
 
-shared_span<float> EnergyGrid::grid() const { return energy_values_; }
+const std::vector<float>& EnergyGrid::grid() const { return energy_values_; }
 
 double EnergyGrid::min_energy() const { return energy_values_.front(); }
 

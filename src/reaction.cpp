@@ -51,10 +51,12 @@
 #include <PapillonNDL/watt.hpp>
 #include <cmath>
 #include <iostream>
+#include <memory>
 
 namespace pndl {
 
-Reaction::Reaction(const ACE& ace, size_t indx, const EnergyGrid& egrid)
+Reaction::Reaction(const ACE& ace, size_t indx,
+                   std::shared_ptr<EnergyGrid> egrid)
     : mt_(),
       q_(),
       awr_(),
@@ -251,8 +253,8 @@ Reaction::Reaction(const ACE& ace, size_t indx, const EnergyGrid& egrid)
   }
 }
 
-Reaction::Reaction(const ACE& ace, size_t indx, const EnergyGrid& egrid,
-                   const Reaction& reac)
+Reaction::Reaction(const ACE& ace, size_t indx,
+                   std::shared_ptr<EnergyGrid> egrid, const Reaction& reac)
     : mt_(),
       q_(),
       awr_(),
