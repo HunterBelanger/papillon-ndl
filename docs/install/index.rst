@@ -8,17 +8,16 @@ Installation
 Build Requirements
 ------------------
 
-Linux
------
 To build the C++ library on linux, a C++ compiler is required, which supports
 the C++17 standard. Any remotely recent version of g++ or clang should fit
-the bill for this. You will also need cmake >= 3.9.
+the bill for this. On Windows, we recommend MSVC >= 19.15. You will also need
+cmake >= 3.11, whether you use Windows or linux.
 
 In addition, if you would like to build the Python API, you will also need to
 ensure that the Python development headers are installed on your system.
 
 Debian / Ubuntu / LinuxMint
-+++++++++++++++++++++++++++
+---------------------------
 To ensure you have all the build requirements on a Debian based system, run the
 following command:
 
@@ -27,7 +26,7 @@ following command:
   sudo apt install g++ cmake python3-dev
 
 Fedora / CentOS / RedHat
-++++++++++++++++++++++++
+------------------------
 To ensure you have all the build requirements on a RedHat based system, run the
 following command:
 
@@ -36,13 +35,20 @@ following command:
   sudo dnf install g++ cmake python3-devel
 
 Arch / Manjaro
-++++++++++++++++++++++++
+------------------------
 To ensure you have all the build requirements on an Arch based system, run the
 following command:
 
 .. code-block:: sh
 
   sudo pacman -S g++ cmake python3
+
+Windows
+--------
+There are no quick and easy commands to install the necessary dependencies on
+Windows sadly. You should insall Visual Studio 2019, and when performing the
+installation, be sure to also install the Python development libraries. You
+will also have to download and install cmake separately as well.
 
 ------------------
 Getting the Source
@@ -82,10 +88,13 @@ any tinkering, then just run these commands, and you should be good to go !
 .. code-block:: sh
 
   cd papillon-ndl
-  mkdir build && cd build
+  cmake -E make_directory build
+  cd build
   cmake -DCMAKE_BUILD_TYPE=Release ..
-  make -j
-  sudo make install
+  cmake --build . --target install
+
+On linux systems, you may need to add ``sudo`` to the beginning of the command,
+to allow cmake to install the files into the ``/usr/local`` directory.
 
 Build Options
 -------------
@@ -135,17 +144,3 @@ different however).
 
   This should only be a problem if you used the ``CMAKE_INSTALL_PREFIX`` option to
   install to a different location than the default.
-
--------
-Windows
--------
-Building PapillonNDL natively on Windows is possible, but not recommended. If
-possible, use the Windows subsystem for linux (WSL), and then follow the linux
-build instruction.
-
-If for some reason you MUST build it natively for Windows, then you will need
-to have Visual Studio 2019 installed. You must also have the Python developement
-kit installed, which can be done inside of Visual Studio. When you open the source
-directory inside of Visual Studio, it should automatically recognize the cmake
-file, and allow you to build the library. I do not use Windows, or VS, but I was
-able to build the library this way without a problem inside a Windows VM.

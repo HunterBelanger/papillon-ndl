@@ -19,35 +19,27 @@ may be found in the LICENSE-ENGLISH file. The CeCILLv2.1 is approved by the FSF.
 More information about this license may be found [here](https://cecill.info/).
 
 ## Dependencies
-To build and install the library a Unix-like operating system with cmake >= 3.11
-is required, along with a C++ compiler which supports the C++17 standard. The
-recommended compiler is Clang >= 6 or GCC >= 7 should suffice. In order to
-build the Python interface, Python >= 3.5 should be installed on your system, in
+The library may be built on Unix-like operating systems or on Windows. All that
+is required is cmake >= 3.11, and a C++ compiler which supports the C++17
+standard. For Unix-like systems, the recommended compilers are GCC >= 7 or
+Clang >= 6. On Windows, you should have MSVC >= 19.15. In order to build the
+Python interface, Python >= 3.5 should be installed on your system, in
 addition to the Python development libraries and header files.
-
-There are two posibilities for building the library on Windows. The first is to use
-the Windows Subsytem for Linux (WSL), where the library may be installed by following
-the simple Linux build instructions, typically without problem. The second option
-is to build the library to run natively on Windows. This requires having Visual
-Studio installed to compile the library. In addition, if you want to build the
-Python bindings for Windows, you need to ensure the Python development kit has been
-installed in Visual Studio as well.
 
 Tests are not built by default, and should only be needed for developers. You
 can turn them on by using ```-DPNDL_TESTS=ON``` with cmake.
 
 ## Install
-To build PapillonNDL on a Unix-like system, navigate to the directory where you
-would like to keep the source files, and then run the following commands:
+To build PapillonNDL, navigate to the directory where you would like to keep the
+source files, and then run the following commands:
 ```
 $ git clone https://github.com/HunterBelanger/papillon-ndl.git
 $ cd papillon-ndl
-$ mkdir build && cd build
+$ cmake -E make_director build
+$ cd build
 $ cmake -DCMAKE_BUILD_TYPE=Release ..
-$ sudo make install
+$ cmake --build . --target install
 ```
-This will install the libraries and header files to the UNIX default locations
-in ```/usr/local/```.
 
 If you do NOT want to build the Python bindings for PapillonNDL, then you should
 add the flag ```-DPNDL_PYTHON=OFF``` to the cmake command.
