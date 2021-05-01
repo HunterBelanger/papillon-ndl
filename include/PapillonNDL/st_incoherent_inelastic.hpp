@@ -58,7 +58,7 @@ class STIncoherentInelastic {
    *        the method used by MCNP, Serpent, and OpenMC. If set to true, unit
    *        based interpolation will be applied to the sampling of the energy.
    */
-  STIncoherentInelastic(const ACE& ace, bool unit_based_interpolation=false);
+  STIncoherentInelastic(const ACE& ace, bool unit_based_interpolation = false);
   ~STIncoherentInelastic() = default;
 
   /**

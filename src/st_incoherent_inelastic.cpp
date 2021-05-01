@@ -38,7 +38,8 @@
 
 namespace pndl {
 
-STIncoherentInelastic::STIncoherentInelastic(const ACE& ace, bool unit_based_interpolation)
+STIncoherentInelastic::STIncoherentInelastic(const ACE& ace,
+                                             bool unit_based_interpolation)
     : xs_(nullptr), angle_energy_(nullptr) {
   // Read the XS
   try {
@@ -61,7 +62,8 @@ STIncoherentInelastic::STIncoherentInelastic(const ACE& ace, bool unit_based_int
     if (nxs_7 == 0 || nxs_7 == 1) {
       angle_energy_ = std::make_shared<DiscreteCosinesEnergies>(ace);
     } else if (nxs_7 == 2) {
-      angle_energy_ = std::make_shared<ContinuousEnergyDiscreteCosines>(ace, unit_based_interpolation);
+      angle_energy_ = std::make_shared<ContinuousEnergyDiscreteCosines>(
+          ace, unit_based_interpolation);
     } else {
       std::string mssg =
           "STIncoherentInelastic::STIncoherentInelastic: Unknown distribution "

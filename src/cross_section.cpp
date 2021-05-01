@@ -77,12 +77,10 @@ CrossSection::CrossSection(const std::vector<double>& xs,
     : energy_values_(E_grid.grid()),
       values_(xs.size(), 0.),
       index_(static_cast<uint32_t>(index)) {
-
   // Fill cross section values
   for (size_t e = 0; e < xs.size(); e++) {
-    values_[e] = static_cast<float>(xs[e]); 
+    values_[e] = static_cast<float>(xs[e]);
   }
-  
 
   if (index_ >= energy_values_.size()) {
     std::string mssg =

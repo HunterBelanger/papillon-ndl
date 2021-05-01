@@ -203,5 +203,6 @@ void init_ContinuousEnergyDiscreteCosines(py::module& m) {
       .def("size", &ContinuousEnergyDiscreteCosines::size)
       .def("tables", &ContinuousEnergyDiscreteCosines::tables)
       .def("table", &ContinuousEnergyDiscreteCosines::table)
-      .def("unit_based_interpolation", &ContinuousEnergyDiscreteCosines::unit_based_interpolation);
+      .def("unit_based_interpolation",
+           &ContinuousEnergyDiscreteCosines::unit_based_interpolation);
 }

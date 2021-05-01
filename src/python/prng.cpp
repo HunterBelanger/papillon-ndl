@@ -31,32 +31,27 @@
  * termes.
  *
  * */
-#include <random>
-#include <functional>
-
 #include <pybind11/functional.h>
 #include <pybind11/pybind11.h>
 
+#include <functional>
+#include <random>
 
 namespace py = pybind11;
 
 // LCG parameters
-static std::linear_congruential_engine<uint64_t, 2806196910506780709ULL, 1, 0x8000000000000000> lcg_engine;
+static std::linear_congruential_engine<uint64_t, 2806196910506780709ULL, 1,
+                                       0x8000000000000000>
+    lcg_engine;
 static std::uniform_real_distribution<double> unit_dist;
 
-double rang() {
-  return unit_dist(lcg_engine);
-}
+double rang() { return unit_dist(lcg_engine); }
 
 std::function<double()> rng(rang);
 
-void seed (uint64_t seed) {
-  lcg_engine.seed(seed);
-}
+void seed(uint64_t seed) { lcg_engine.seed(seed); }
 
-void advance_seed(unsigned long long n) {
-  lcg_engine.discard(n);
-}
+void advance_seed(unsigned long long n) { lcg_engine.discard(n); }
 
 void init_PRNG(py::module& m) {
   m.def("seed", &seed);

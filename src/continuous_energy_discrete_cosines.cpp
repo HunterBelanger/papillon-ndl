@@ -39,7 +39,8 @@
 
 namespace pndl {
 
-ContinuousEnergyDiscreteCosines::ContinuousEnergyDiscreteCosines(const ACE& ace, bool unit_based_interpolation)
+ContinuousEnergyDiscreteCosines::ContinuousEnergyDiscreteCosines(
+    const ACE& ace, bool unit_based_interpolation)
     : AngleEnergy(std::make_shared<Region1D>(std::vector<double>({0., 200.}),
                                              std::vector<double>({1., 1.}),
                                              Interpolation::LinLin)),
@@ -128,7 +129,7 @@ ContinuousEnergyDiscreteCosines::ContinuousEnergyDiscreteCosines(const ACE& ace,
       outgoing energy index " + std::to_string(oe) + "."; throw
       PNDLException(mssg, __FILE__, __LINE__);
       }*/
-      
+
       /* All of the cosines should of course be within the interval [-1,1],
        * but I have found thermal scattering laws which is is blatantly not
        * the case. One such example is the light water evaluation at 294K,
@@ -198,14 +199,16 @@ ContinuousEnergyDiscreteCosines::ContinuousEnergyDiscreteCosines(const ACE& ace,
   }  // For all incident energies
 }
 
-AngleEnergyPacket ContinuousEnergyDiscreteCosines::sample_angle_energy(double E_in, std::function<double()> rng) const {
+AngleEnergyPacket ContinuousEnergyDiscreteCosines::sample_angle_energy(
+    double E_in, std::function<double()> rng) const {
   if (!unit_based_interpolation_)
     return sample_without_unit_based_interpolation(E_in, rng);
   else
     return sample_with_unit_based_interpolation(E_in, rng);
 }
 
-AngleEnergyPacket ContinuousEnergyDiscreteCosines::sample_with_unit_based_interpolation(
+AngleEnergyPacket
+ContinuousEnergyDiscreteCosines::sample_with_unit_based_interpolation(
     double E_in, std::function<double()> rng) const {
   // First we sample the outgoing energy.
   // Determine the index of the bounding tabulated incoming energies
@@ -278,7 +281,7 @@ AngleEnergyPacket ContinuousEnergyDiscreteCosines::sample_with_unit_based_interp
   // Now we smear
   double mu = mu_prime +
               std::min(mu_prime - mu_left, mu_right - mu_prime) * (rng() - 0.5);
-  
+
   // This is very important as some ACE data has very bad scattering
   // cosine values !
   if (std::abs(mu) > 1.) mu = std::copysign(1., mu);
@@ -286,7 +289,8 @@ AngleEnergyPacket ContinuousEnergyDiscreteCosines::sample_with_unit_based_interp
   return {mu, E_out};
 }
 
-AngleEnergyPacket ContinuousEnergyDiscreteCosines::sample_without_unit_based_interpolation(
+AngleEnergyPacket
+ContinuousEnergyDiscreteCosines::sample_without_unit_based_interpolation(
     double E_in, std::function<double()> rng) const {
   // First we sample the outgoing energy.
   // Determine the index of the bounding tabulated incoming energies
@@ -305,22 +309,20 @@ AngleEnergyPacket ContinuousEnergyDiscreteCosines::sample_without_unit_based_int
     f = (E_in - incoming_energy_[l]) /
         (incoming_energy_[l + 1] - incoming_energy_[l]);
   }
-  
 
   // Always use closest incident energy data
   if (f > 0.5) l++;
-  
+
   // Sample outgoing energy
   size_t i = l, j = 0;
   double xi = rng();
   double E_out = tables_[l].sample_energy(xi, j);
-  
 
-  // No idea why this is done this way in MCNP, Serpent, or OpenMC. A lot of 
+  // No idea why this is done this way in MCNP, Serpent, or OpenMC. A lot of
   // nuclear data was probably made to work right with this though, so we
   // have it here.
   if (E_out < 0.5 * incoming_energy_[l]) {
-    E_out *= 2.0*E_in/incoming_energy_[l] - 1.0;
+    E_out *= 2.0 * E_in / incoming_energy_[l] - 1.0;
   } else {
     E_out += E_in - incoming_energy_[l];
   }
@@ -351,7 +353,7 @@ AngleEnergyPacket ContinuousEnergyDiscreteCosines::sample_without_unit_based_int
   // Now we smear
   double mu = mu_prime +
               std::min(mu_prime - mu_left, mu_right - mu_prime) * (rng() - 0.5);
-  
+
   // This is very important as some ACE data has very bad scattering
   // cosine values !
   if (std::abs(mu) > 1.) mu = std::copysign(1., mu);

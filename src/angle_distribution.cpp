@@ -36,6 +36,7 @@
 #include <PapillonNDL/equiprobable_angle_bins.hpp>
 #include <PapillonNDL/isotropic.hpp>
 #include <PapillonNDL/pndl_exception.hpp>
+#include <cmath>
 
 namespace pndl {
 
@@ -131,10 +132,16 @@ double AngleDistribution::sample_angle(double E_in,
   size_t l = std::distance(energy_grid_.begin(), E_it);
   double f = (E_in - energy_grid_[l]) / (energy_grid_[l + 1] - energy_grid_[l]);
 
+  double mu = 0;
+
   if (rng() > f)
-    return laws_[l]->sample_mu(rng());
+    mu = laws_[l]->sample_mu(rng());
   else
-    return laws_[l + 1]->sample_mu(rng());
+    mu = laws_[l + 1]->sample_mu(rng());
+
+  if (std::abs(mu) > 1.) mu = std::copysign(1., mu);
+
+  return mu;
 }
 
 double AngleDistribution::pdf(double E_in, double mu) const {

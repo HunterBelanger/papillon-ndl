@@ -101,7 +101,11 @@ double EquiprobableAngleBins::sample_mu(double xi) const {
       static_cast<size_t>(std::floor(static_cast<double>(NBOUNDS) * xi));
   double C_b = bin * P_BIN;
   double mu_low = bounds_[bin];
-  return ((xi - C_b) / P_BIN) + mu_low;
+  double mu = ((xi - C_b) / P_BIN) + mu_low;
+
+  if (std::abs(mu) > 1.) mu = std::copysign(1, mu);
+
+  return mu;
 }
 
 double EquiprobableAngleBins::pdf(double mu) const {

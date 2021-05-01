@@ -59,7 +59,7 @@ class STThermalScatteringLaw {
    *        MCNP, Serpent, and OpenMC, so we have made it our default. If set to
    *        true, unit based interpolation will be used.
    */
-  STThermalScatteringLaw(const ACE& ace, bool unit_based_interpolation=false);
+  STThermalScatteringLaw(const ACE& ace, bool unit_based_interpolation = false);
   ~STThermalScatteringLaw() = default;
 
   /**

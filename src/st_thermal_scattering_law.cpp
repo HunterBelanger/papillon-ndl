@@ -35,7 +35,8 @@
 
 namespace pndl {
 
-STThermalScatteringLaw::STThermalScatteringLaw(const ACE& ace, bool unit_based_interpolation)
+STThermalScatteringLaw::STThermalScatteringLaw(const ACE& ace,
+                                               bool unit_based_interpolation)
     : zaid_(ace.zaid()),
       awr_(ace.awr()),
       temperature_(ace.temperature()),
@@ -45,7 +46,8 @@ STThermalScatteringLaw::STThermalScatteringLaw(const ACE& ace, bool unit_based_i
   // First try to read Incoherent Inelastic data, as all thermal scattering
   // laws have this
   try {
-    incoherent_inelastic_ = std::make_shared<STIncoherentInelastic>(ace, unit_based_interpolation);
+    incoherent_inelastic_ =
+        std::make_shared<STIncoherentInelastic>(ace, unit_based_interpolation);
   } catch (PNDLException& err) {
     std::string mssg =
         "STThermalScatteringLaw::STThermalScatteringLaw: Could not construct "
