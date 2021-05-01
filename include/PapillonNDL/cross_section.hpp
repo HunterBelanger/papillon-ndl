@@ -41,7 +41,8 @@
 
 #include <PapillonNDL/ace.hpp>
 #include <PapillonNDL/energy_grid.hpp>
-#include <PapillonNDL/shared_span.hpp>
+
+#include <memory>
 
 namespace pndl {
 
