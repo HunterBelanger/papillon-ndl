@@ -51,7 +51,8 @@ void init_STIncoherentInelastic(py::module& m) {
       .def("cross_section", &STIncoherentInelastic::cross_section)
       .def("xs", &STIncoherentInelastic::xs)
       .def("sample_angle_energy", &STIncoherentInelastic::sample_angle_energy)
-      .def("distribution", &STIncoherentInelastic::distribution);
+      .def("distribution", &STIncoherentInelastic::distribution)
+      .def("max_energy", &STIncoherentInelastic::max_energy);
 }
 
 void init_STCoherentElastic(py::module& m) {
@@ -81,6 +82,7 @@ void init_STThermalScatteringLaw(py::module& m) {
       .def("zaid", &STThermalScatteringLaw::zaid)
       .def("awr", &STThermalScatteringLaw::awr)
       .def("temperature", &STThermalScatteringLaw::temperature)
+      .def("max_energy", &STThermalScatteringLaw::max_energy)
       .def("has_coherent_elastic",
            &STThermalScatteringLaw::has_coherent_elastic)
       .def("has_incoherent_elastic",

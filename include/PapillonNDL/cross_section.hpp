@@ -41,7 +41,6 @@
 
 #include <PapillonNDL/ace.hpp>
 #include <PapillonNDL/energy_grid.hpp>
-
 #include <memory>
 
 namespace pndl {
@@ -113,10 +112,10 @@ class CrossSection {
     auto E_it = std::lower_bound(erange_begin, erange_end, E);
     size_t i = std::distance(erange_begin, E_it) - 1;
 
-    double sig_low = values_[i];
-    double sig_hi = values_[i + 1];
     double E_low = (*energy_grid_)[index_ + i];
     double E_hi = (*energy_grid_)[index_ + i + 1];
+    double sig_low = values_[i];
+    double sig_hi = values_[i + 1];
 
     return ((E - E_low) / (E_hi - E_low)) * (sig_hi - sig_low) + sig_low;
   }
@@ -137,10 +136,10 @@ class CrossSection {
     // Transform index from global grid to local grid
     i -= index_;
 
-    double sig_low = values_[i];
-    double sig_hi = values_[i + 1];
     double E_low = (*energy_grid_)[index_ + i];
     double E_hi = (*energy_grid_)[index_ + i + 1];
+    double sig_low = values_[i];
+    double sig_hi = values_[i + 1];
 
     return ((E - E_low) / (E_hi - E_low)) * (sig_hi - sig_low) + sig_low;
   }

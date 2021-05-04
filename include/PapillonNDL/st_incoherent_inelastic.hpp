@@ -74,6 +74,12 @@ class STIncoherentInelastic {
   double xs(double E) const { return (*this->xs_)(E); }
 
   /**
+   * @brief Retruns the maximum energy value which is tabulated for the
+   *        cross section.
+   */
+  double max_energy() const { return this->xs_->max_x(); }
+
+  /**
    * @brief Sample the angle-energy distribution.
    * @param E_in Incident energy in MeV.
    * @param rng Random number generation function.

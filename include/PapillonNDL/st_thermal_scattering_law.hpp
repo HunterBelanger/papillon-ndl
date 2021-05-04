@@ -78,6 +78,13 @@ class STThermalScatteringLaw {
   double temperature() const { return temperature_; }
 
   /**
+   * @brief Returns the maximum energy for the incoherent inelastic scattering
+   *        reaction. This value is typtically used as the cutoff for using
+   *        Sab tables in Monte Carlo codes.
+   */
+  double max_energy() const { return incoherent_inelastic_->max_energy(); }
+
+  /**
    * @brief Returns true if the nuclide has coherrent elastic scattering.
    */
   bool has_coherent_elastic() const {

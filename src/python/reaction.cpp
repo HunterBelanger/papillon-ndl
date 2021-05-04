@@ -44,7 +44,8 @@ using namespace pndl;
 void init_Reaction(py::module& m) {
   py::class_<Reaction>(m, "Reaction")
       .def(py::init<const ACE&, size_t, std::shared_ptr<EnergyGrid>>())
-      .def(py::init<const ACE&, size_t, std::shared_ptr<EnergyGrid>, const Reaction&>())
+      .def(py::init<const ACE&, size_t, std::shared_ptr<EnergyGrid>,
+                    const Reaction&>())
       .def("mt", &Reaction::mt)
       .def("q", &Reaction::q)
       .def("multiplicity",
