@@ -79,27 +79,27 @@ class EnergyGrid {
    * @brief Returns the ith energy in the grid in MeV.
    * @param i Index into energy grid.
    */
-  double operator[](size_t i) const;
+  double operator[](size_t i) const { return energy_values_[i]; }
 
   /**
    * @brief Number of points in the complete energy grid.
    */
-  size_t size() const;
+  size_t size() const { return energy_values_.size(); }
 
   /**
    * @brief Returns a reference to the energy grid.
    */
-  const std::vector<float>& grid() const;
+  const std::vector<float>& grid() const { return energy_values_; }
 
   /**
    * @brief Returns the lowest energy in the grid.
    */
-  double min_energy() const;
+  double min_energy() const { return energy_values_.front(); }
 
   /**
    * @brief Returns the highest energy in the grid.
    */
-  double max_energy() const;
+  double max_energy() const { return energy_values_.back(); }
 
   /**
    * @brief Finds the interpolation index for a given energy, using the

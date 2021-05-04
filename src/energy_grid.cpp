@@ -100,16 +100,6 @@ EnergyGrid::EnergyGrid(const std::vector<float>& energy, uint32_t NBINS)
   hash_energy_grid(NBINS);
 }
 
-double EnergyGrid::operator[](size_t i) const { return energy_values_[i]; }
-
-size_t EnergyGrid::size() const { return energy_values_.size(); }
-
-const std::vector<float>& EnergyGrid::grid() const { return energy_values_; }
-
-double EnergyGrid::min_energy() const { return energy_values_.front(); }
-
-double EnergyGrid::max_energy() const { return energy_values_.back(); }
-
 void EnergyGrid::hash_energy_grid(uint32_t NBINS) {
   // Generate pointers for lethargy bins
   u_min = std::log(energy_values_.front());
