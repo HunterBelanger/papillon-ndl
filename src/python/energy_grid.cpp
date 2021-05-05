@@ -45,7 +45,6 @@ void init_EnergyGrid(py::module& m) {
   py::class_<EnergyGrid, std::shared_ptr<EnergyGrid>>(m, "EnergyGrid")
       .def(py::init<const ACE&, uint32_t>())
       .def(py::init<const std::vector<double>&, uint32_t>())
-      .def(py::init<const std::vector<float>&, uint32_t>())
       .def("__getitem__", &EnergyGrid::operator[])
       .def("grid", &EnergyGrid::grid)
       .def("size", &EnergyGrid::size)

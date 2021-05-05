@@ -66,13 +66,6 @@ class EnergyGrid {
    */
   EnergyGrid(const std::vector<double>& energy, uint32_t NBINS = 8192);
 
-  /**
-   * @param energy Vector of all points in energy grid (sorted).
-   * @param NBINS Number of bins to hash the energy grid into. The
-   *              default value is 8192, which is the number of bins
-   *              used by MCNP.
-   */
-  EnergyGrid(const std::vector<float>& energy, uint32_t NBINS = 8192);
   ~EnergyGrid() = default;
 
   /**
@@ -89,7 +82,7 @@ class EnergyGrid {
   /**
    * @brief Returns a reference to the energy grid.
    */
-  const std::vector<float>& grid() const { return energy_values_; }
+  const std::vector<double>& grid() const { return energy_values_; }
 
   /**
    * @brief Returns the lowest energy in the grid.
@@ -134,7 +127,7 @@ class EnergyGrid {
   void hash_energy_grid(uint32_t NBINS);
 
  private:
-  std::vector<float> energy_values_;
+  std::vector<double> energy_values_;
   std::vector<uint32_t> bin_pointers_;
   double u_min, du;
 };

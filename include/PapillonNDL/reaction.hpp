@@ -134,7 +134,7 @@ class Reaction {
     double xi = rng();
     double sum = 0.;
     for (size_t d = 0; d < distributions_.size(); d++) {
-      sum += distributions_[d]->probability(E_in);
+      sum += (*probabilities_[d])(E_in);
       if (xi < sum) {
         AngleEnergyPacket out =
             distributions_[d]->sample_angle_energy(E_in, rng);
@@ -154,7 +154,7 @@ class Reaction {
   /**
    * @brief Returns a pointer to the CrossSection for the reaction.
    */
-  std::shared_ptr<CrossSection> cross_section() const;
+  std::shared_ptr<CrossSection> cross_section() const { return xs_; }
 
   /**
    * @brief Returns the vector of pointers to all distributions for the
@@ -162,6 +162,14 @@ class Reaction {
    */
   const std::vector<std::shared_ptr<AngleEnergy>>& distributions() const {
     return distributions_;
+  }
+
+  /**
+   * @brief Returns the vector of pointers to probabilities for each
+   *        distribution.
+   */
+  const std::vector<std::shared_ptr<Tabulated1D>>& probabilities() const {
+    return probabilities_;
   }
 
   /**
@@ -178,9 +186,17 @@ class Reaction {
   }
 
   /**
+   * @brief Returns the ith distribution's probability function.
+   * @param i Index of distribution to fetch.
+   */
+  std::shared_ptr<Tabulated1D> probability(size_t i) const {
+    return probabilities_[i];
+  }
+
+  /**
    * @brief Returns a pointer to the function for the reaction yield.
    */
-  std::shared_ptr<Function1D> yield() const;
+  std::shared_ptr<Function1D> yield() const { return yield_; }
 
  private:
   uint32_t mt_;
@@ -191,6 +207,7 @@ class Reaction {
   std::shared_ptr<CrossSection> xs_;
   std::shared_ptr<Function1D> yield_;
   std::vector<std::shared_ptr<AngleEnergy>> distributions_;
+  std::vector<std::shared_ptr<Tabulated1D>> probabilities_;
 };
 
 }  // namespace pndl

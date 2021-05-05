@@ -58,6 +58,8 @@ void init_Reaction(py::module& m) {
       .def("sample_angle_energy", &Reaction::sample_angle_energy)
       .def("cross_section", &Reaction::cross_section)
       .def("distributions", &Reaction::distributions)
+      .def("probabilities", &Reaction::probabilities)
       .def("distribution", &Reaction::distribution)
+      .def("probability", &Reaction::probability)
       .def("n_distributions", &Reaction::n_distributions);
 }

@@ -35,7 +35,7 @@ source files, and then run the following commands:
 ```
 $ git clone https://github.com/HunterBelanger/papillon-ndl.git
 $ cd papillon-ndl
-$ cmake -E make_director build
+$ cmake -E make_directory build
 $ cd build
 $ cmake -DCMAKE_BUILD_TYPE=Release ..
 $ cmake --build . --target install

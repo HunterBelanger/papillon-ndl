@@ -50,7 +50,7 @@ namespace pndl {
  * @brief Holds the Incoherent Elastic scattering data for a single nuclide
  *        at a single temperature.
  */
-class STIncoherentElastic {
+class STIncoherentElastic : public AngleEnergy {
  public:
   /**
    * @param ace ACE file which contains thermal scattering law.
@@ -70,12 +70,8 @@ class STIncoherentElastic {
    */
   double xs(double E) const { return (*this->xs_)(E); }
 
-  /**
-   * @brief Sample the angle-energy distribution.
-   * @param E_in Incident energy in MeV.
-   */
-  AngleEnergyPacket sample_angle_energy(double E_in,
-                                        std::function<double()> rng) const {
+  AngleEnergyPacket sample_angle_energy(
+      double E_in, std::function<double()> rng) const override final {
     // Get energy index
     auto Eit = std::lower_bound(incoming_energy_.begin(),
                                 incoming_energy_.end(), E_in);

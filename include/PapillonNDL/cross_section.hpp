@@ -71,13 +71,6 @@ class CrossSection {
   CrossSection(const std::vector<double>& xs,
                std::shared_ptr<EnergyGrid> E_grid, size_t index);
 
-  /**
-   * @param xs Vector containing the cross section values.
-   * @param E_grid Pointer to EnergyGrid to use for the cross section.
-   * @param index Starting index in the energy grid.
-   */
-  CrossSection(const std::vector<float>& xs, std::shared_ptr<EnergyGrid> E_grid,
-               size_t index);
   ~CrossSection() = default;
 
   /**
@@ -185,17 +178,17 @@ class CrossSection {
   /**
    * @brief Returns the cross section values as a vector of floats.
    */
-  const std::vector<float>& xs() const;
+  const std::vector<double>& xs() const;
 
   /**
    * @brief Returns a copy of the energy grid points for the cross section
    *        as a vector of floats.
    */
-  std::vector<float> energy() const;
+  std::vector<double> energy() const;
 
  private:
   std::shared_ptr<EnergyGrid> energy_grid_;
-  std::vector<float> values_;
+  std::vector<double> values_;
   uint32_t index_;
 };
 

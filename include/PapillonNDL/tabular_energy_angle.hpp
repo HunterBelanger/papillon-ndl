@@ -55,20 +55,16 @@ class TabularEnergyAngle : public AngleEnergy {
    * @param ace ACE file to take data from.
    * @param i Starting index of distribution in the XSS array.
    * @param JED Relative index for finding energy and angle distributions.
-   * @param probability Function for probability of validity.
    */
-  TabularEnergyAngle(const ACE& ace, size_t i, size_t JED,
-                     std::shared_ptr<Tabulated1D> probability);
+  TabularEnergyAngle(const ACE& ace, size_t i, size_t JED);
 
   /**
    * @param incoming_energy Incoming energy grid.
    * @param tables vector of EnergyAngleTable for each point in the
    *               incoming energy grid.
-   * @param probability Function for probability of validity.
    */
   TabularEnergyAngle(const std::vector<double>& incoming_energy,
-                     const std::vector<EnergyAngleTable>& tables,
-                     std::shared_ptr<Tabulated1D> probability);
+                     const std::vector<EnergyAngleTable>& tables);
   ~TabularEnergyAngle() = default;
 
   AngleEnergyPacket sample_angle_energy(

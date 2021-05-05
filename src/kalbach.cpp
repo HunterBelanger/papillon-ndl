@@ -36,9 +36,7 @@
 
 namespace pndl {
 
-Kalbach::Kalbach(const ACE& ace, size_t i,
-                 std::shared_ptr<Tabulated1D> probability)
-    : AngleEnergy(probability), incoming_energy_(), tables_() {
+Kalbach::Kalbach(const ACE& ace, size_t i) : incoming_energy_(), tables_() {
   // Get number of interpolation points
   uint32_t NR = ace.xss<uint32_t>(i);
   // Get number of energy points
@@ -76,11 +74,8 @@ Kalbach::Kalbach(const ACE& ace, size_t i,
 }
 
 Kalbach::Kalbach(const std::vector<double>& incoming_energy,
-                 const std::vector<KalbachTable>& tables,
-                 std::shared_ptr<Tabulated1D> probability)
-    : AngleEnergy(probability),
-      incoming_energy_(incoming_energy),
-      tables_(tables) {
+                 const std::vector<KalbachTable>& tables)
+    : incoming_energy_(incoming_energy), tables_(tables) {
   if (!std::is_sorted(incoming_energy_.begin(), incoming_energy_.end())) {
     std::string mssg = "Kalbach::Kalbach: Incoming energy grid is not sorted.";
     throw PNDLException(mssg, __FILE__, __LINE__);

@@ -55,11 +55,9 @@ class Uncorrelated : public AngleEnergy {
   /**
    * @param angle Angle distribution for all incoming energies.
    * @param energy Shared pointer to the energy distribution.
-   * @param probability Function for probability of validity.
    */
   Uncorrelated(std::shared_ptr<AngleDistribution> angle,
-               std::shared_ptr<EnergyLaw> energy,
-               std::shared_ptr<Tabulated1D> probability);
+               std::shared_ptr<EnergyLaw> energy);
   ~Uncorrelated() = default;
 
   AngleEnergyPacket sample_angle_energy(

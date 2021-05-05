@@ -42,14 +42,7 @@ namespace pndl {
 // DiscreteCosinesEnergies can only be used with STIncoherentInelastic,
 // and is the only distribution given, so the probability is always 1.
 DiscreteCosinesEnergies::DiscreteCosinesEnergies(const ACE& ace)
-    : AngleEnergy(std::make_shared<Region1D>(std::vector<double>({0., 200.}),
-                                             std::vector<double>({1., 1.}),
-                                             Interpolation::LinLin)),
-      incoming_energy_(),
-      outgoing_energies_(),
-      Noe(0),
-      Nmu(0),
-      skewed_(false) {
+    : incoming_energy_(), outgoing_energies_(), Noe(0), Nmu(0), skewed_(false) {
   // Make sure the distributions is discrete cosines and energies
   int32_t nxs_7 = ace.nxs(6);
 

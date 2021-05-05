@@ -39,9 +39,7 @@
 
 namespace pndl {
 
-NBody::NBody(const ACE& ace, size_t i, double iQ,
-             std::shared_ptr<Tabulated1D> probability)
-    : AngleEnergy(probability), n_(), Ap_(), A_(), Q_(iQ) {
+NBody::NBody(const ACE& ace, size_t i, double iQ) : n_(), Ap_(), A_(), Q_(iQ) {
   n_ = ace.xss<uint32_t>(i);
   Ap_ = ace.xss(i + 1);
   A_ = ace.awr();
@@ -71,9 +69,8 @@ NBody::NBody(const ACE& ace, size_t i, double iQ,
   }
 }
 
-NBody::NBody(uint16_t n, double Ap, double AWR, double Q,
-             std::shared_ptr<Tabulated1D> probability)
-    : AngleEnergy(probability), n_(n), Ap_(Ap), A_(AWR), Q_(Q) {
+NBody::NBody(uint16_t n, double Ap, double AWR, double Q)
+    : n_(n), Ap_(Ap), A_(AWR), Q_(Q) {
   if ((n_ != 3) && (n_ != 4) && (n_ != 5)) {
     std::string mssg =
         "NBody::NBody: n may only be 3, 4, or 5. Was given n = " +

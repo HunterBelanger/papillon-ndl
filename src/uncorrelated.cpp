@@ -37,9 +37,8 @@
 namespace pndl {
 
 Uncorrelated::Uncorrelated(std::shared_ptr<AngleDistribution> angle,
-                           std::shared_ptr<EnergyLaw> energy,
-                           std::shared_ptr<Tabulated1D> probability)
-    : AngleEnergy(probability), angle_(angle), energy_(energy) {
+                           std::shared_ptr<EnergyLaw> energy)
+    : angle_(angle), energy_(energy) {
   if (!angle_) {
     std::string mssg =
         "Uncorrelated::Uncorrelated: Provided angular distribution is nullptr.";

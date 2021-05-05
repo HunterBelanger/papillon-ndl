@@ -49,7 +49,7 @@ CrossSection::CrossSection(const ACE& ace, size_t i,
     i++;
   }
 
-  values_ = ace.xss<float>(i, NE);
+  values_ = ace.xss(i, NE);
 
   if (energy_grid_->size() - index_ != values_.size()) {
     std::string mssg =
@@ -73,14 +73,7 @@ CrossSection::CrossSection(const ACE& ace, size_t i,
 
 CrossSection::CrossSection(const std::vector<double>& xs,
                            std::shared_ptr<EnergyGrid> E_grid, size_t index)
-    : energy_grid_(E_grid),
-      values_(xs.size(), 0.),
-      index_(static_cast<uint32_t>(index)) {
-  // Fill cross section values
-  for (size_t e = 0; e < xs.size(); e++) {
-    values_[e] = static_cast<float>(xs[e]);
-  }
-
+    : energy_grid_(E_grid), values_(xs), index_(static_cast<uint32_t>(index)) {
   if (index_ >= energy_grid_->size()) {
     std::string mssg =
         "CrossSection::CrossSection: Starting index is larger than size of the "
@@ -98,37 +91,7 @@ CrossSection::CrossSection(const std::vector<double>& xs,
     }
   }
 
-  if (energy_grid_->size() != values_.size()) {
-    std::string mssg =
-        "CrossSection::CrossSection: Different number of points in the energy "
-        "grid and xs-values grid.";
-    throw PNDLException(mssg, __FILE__, __LINE__);
-  }
-}
-
-CrossSection::CrossSection(const std::vector<float>& xs,
-                           std::shared_ptr<EnergyGrid> E_grid, size_t index)
-    : energy_grid_(E_grid),
-      values_(xs.begin(), xs.end()),
-      index_(static_cast<uint32_t>(index)) {
-  if (index_ >= energy_grid_->size()) {
-    std::string mssg =
-        "CrossSection::CrossSection: Starting index is larger than size of the "
-        "energy grid.";
-    throw PNDLException(mssg, __FILE__, __LINE__);
-  }
-
-  for (size_t l = 0; l < values_.size(); l++) {
-    if (values_[l] < 0.) {
-      std::string mssg =
-          "CrossSection::CrossSection: Nevative cross section found at "
-          "element " +
-          std::to_string(l) + ".";
-      throw PNDLException(mssg, __FILE__, __LINE__);
-    }
-  }
-
-  if (energy_grid_->size() + index_ != values_.size()) {
+  if (energy_grid_->size() - index_ != values_.size()) {
     std::string mssg =
         "CrossSection::CrossSection: Different number of points in the energy "
         "grid and xs-values grid.";
@@ -146,9 +109,9 @@ double CrossSection::energy(size_t i) const {
 
 uint32_t CrossSection::index() const { return index_; }
 
-const std::vector<float>& CrossSection::xs() const { return values_; }
+const std::vector<double>& CrossSection::xs() const { return values_; }
 
-std::vector<float> CrossSection::energy() const {
+std::vector<double> CrossSection::energy() const {
   return {energy_grid_->grid().begin() + index_, energy_grid_->grid().end()};
 }
 

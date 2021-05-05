@@ -41,10 +41,7 @@ namespace pndl {
 
 ContinuousEnergyDiscreteCosines::ContinuousEnergyDiscreteCosines(
     const ACE& ace, bool unit_based_interpolation)
-    : AngleEnergy(std::make_shared<Region1D>(std::vector<double>({0., 200.}),
-                                             std::vector<double>({1., 1.}),
-                                             Interpolation::LinLin)),
-      incoming_energy_(),
+    : incoming_energy_(),
       tables_(),
       Nmu(0),
       unit_based_interpolation_(unit_based_interpolation) {

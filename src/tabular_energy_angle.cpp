@@ -35,9 +35,8 @@
 
 namespace pndl {
 
-TabularEnergyAngle::TabularEnergyAngle(const ACE& ace, size_t i, size_t JED,
-                                       std::shared_ptr<Tabulated1D> probability)
-    : AngleEnergy(probability), incoming_energy_(), tables_() {
+TabularEnergyAngle::TabularEnergyAngle(const ACE& ace, size_t i, size_t JED)
+    : incoming_energy_(), tables_() {
   // Get number of interpolation points
   uint32_t NR = ace.xss<uint32_t>(i);
   // Get number of energy points
@@ -78,11 +77,8 @@ TabularEnergyAngle::TabularEnergyAngle(const ACE& ace, size_t i, size_t JED,
 
 TabularEnergyAngle::TabularEnergyAngle(
     const std::vector<double>& incoming_energy,
-    const std::vector<EnergyAngleTable>& tables,
-    std::shared_ptr<Tabulated1D> probability)
-    : AngleEnergy(probability),
-      incoming_energy_(incoming_energy),
-      tables_(tables) {
+    const std::vector<EnergyAngleTable>& tables)
+    : incoming_energy_(incoming_energy), tables_(tables) {
   if (!std::is_sorted(incoming_energy_.begin(), incoming_energy_.end())) {
     std::string mssg =
         "TabularEnergyAngle::TabularEnergyAngle: Incoming energy grid is not "

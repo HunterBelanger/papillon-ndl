@@ -50,7 +50,7 @@ namespace pndl {
  * @brief Holds the Coherent Elastic scattering data for a single nuclide
  *        at a single temperature.
  */
-class STCoherentElastic {
+class STCoherentElastic : public AngleEnergy {
  public:
   /**
    * @param ace ACE file which contains thermal scattering law.
@@ -76,11 +76,8 @@ class STCoherentElastic {
     }
   }
 
-  /**
-   * @brief Sample the angle-energy distribution.
-   * @param E_in Incident energy in MeV.
-   */
-  AngleEnergyPacket sample_angle_energy(double E_in) const {
+  AngleEnergyPacket sample_angle_energy(
+      double E_in, std::function<double()> /*rng*/) const override final {
     // Get Bragg edge of scatter
     double Ei = 0.;
     if (E_in > bragg_edges_.front() && E_in < bragg_edges_.back()) {
