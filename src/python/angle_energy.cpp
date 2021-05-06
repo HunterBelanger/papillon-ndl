@@ -78,11 +78,11 @@ void init_AngleEnergy(py::module& m) {
 void init_Uncorrelated(py::module& m) {
   py::class_<Uncorrelated, AngleEnergy, std::shared_ptr<Uncorrelated>>(
       m, "Uncorrelated")
-      .def(py::init<std::shared_ptr<AngleDistribution>,
+      .def(py::init<const AngleDistribution&,
                     std::shared_ptr<EnergyLaw>>())
       .def("sample_angle_energy", &Uncorrelated::sample_angle_energy)
-      .def("angle", &Uncorrelated::angle)
-      .def("energy", &Uncorrelated::energy);
+      .def("angle", &Uncorrelated::angle, py::return_value_policy::reference_internal)
+      .def("energy", &Uncorrelated::energy, py::return_value_policy::reference_internal);
 }
 
 void init_NBody(py::module& m) {
@@ -216,7 +216,7 @@ void init_STInoherentElastic(py::module& m) {
   py::class_<STIncoherentElastic, AngleEnergy,
              std::shared_ptr<STIncoherentElastic>>(m, "STIncoherentElastic")
       .def(py::init<const ACE&>())
-      .def("xs", &STIncoherentElastic::xs)
+      .def("xs", &STIncoherentElastic::xs, py::return_value_policy::reference_internal)
       .def("sample_angle_energy", &STIncoherentElastic::sample_angle_energy)
       .def("incoming_energy", &STIncoherentElastic::incoming_energy)
       .def("cosines", &STIncoherentElastic::cosines);

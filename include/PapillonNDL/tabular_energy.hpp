@@ -55,7 +55,7 @@ class TabularEnergy : public EnergyLaw {
    * @param i Starting index of distribution in the XSS array.
    * @param JED Index offset to find the PDF and CDF tables.
    */
-  TabularEnergy(const ACE& ace, size_t i, size_t JED);
+  TabularEnergy(const ACE& ace, std::size_t i, std::size_t JED);
 
   /**
    * @param incoming_energy Incoming energy grid.
@@ -75,18 +75,18 @@ class TabularEnergy : public EnergyLaw {
    * @brief Reterns the incoming energy points in MeV for which a PCTable
    *        is stored.
    */
-  const std::vector<double>& incoming_energy() const;
+  const std::vector<double>& incoming_energy() const {return incoming_energy_;}
 
   /**
    * @brief Returns the ith PDF/CDF, corresponding to the ith incoming energy.
    * @param i Index in the incoming energy grid.
    */
-  const PCTable& table(size_t i) const;
+  const PCTable& table(std::size_t i) const {return tables_[i];}
 
   /**
    * @brief Returns the number of incoming energy points.
    */
-  size_t size() const;
+  std::size_t size() const {return incoming_energy_.size();}
 
  private:
   std::vector<double> incoming_energy_;

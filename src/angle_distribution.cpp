@@ -54,7 +54,7 @@ AngleDistribution::AngleDistribution(const ACE& ace, int locb)
 
   if (locb > 0) {
     // Set index
-    size_t i = ace.AND() + locb - 1;
+    std::size_t i = ace.AND() + locb - 1;
 
     // Get number of energies
     uint32_t NE = ace.xss<uint32_t>(i);
@@ -129,7 +129,7 @@ double AngleDistribution::sample_angle(double E_in,
   E_it--;
 
   // Get index of low energy
-  size_t l = std::distance(energy_grid_.begin(), E_it);
+  std::size_t l = std::distance(energy_grid_.begin(), E_it);
   double f = (E_in - energy_grid_[l]) / (energy_grid_[l + 1] - energy_grid_[l]);
 
   double mu = 0;
@@ -153,22 +153,10 @@ double AngleDistribution::pdf(double E_in, double mu) const {
   E_it--;
 
   // Get index of low energy
-  size_t l = std::distance(energy_grid_.begin(), E_it);
+  std::size_t l = std::distance(energy_grid_.begin(), E_it);
   double f = (E_in - energy_grid_[l]) / (energy_grid_[l + 1] - energy_grid_[l]);
 
   return (1. - f) * laws_[l]->pdf(mu) + f * laws_[l + 1]->pdf(mu);
-}
-
-size_t AngleDistribution::size() const { return energy_grid_.size(); }
-
-const std::vector<double>& AngleDistribution::energy() const {
-  return energy_grid_;
-}
-
-double AngleDistribution::energy(size_t i) const { return energy_grid_[i]; }
-
-std::shared_ptr<AngleLaw> AngleDistribution::law(size_t i) const {
-  return laws_[i];
 }
 
 }  // namespace pndl

@@ -60,56 +60,56 @@ class ACE {
   /**
    * @brief Gets the ZAID of nuclide represented.
    */
-  int32_t zaid() const;
+  int32_t zaid() const { return zaid_; }
 
   /**
    * @brief Gets the temperature for which the data was prepared, in kelvins.
    */
-  double temperature() const;
+  double temperature() const {return temperature_; }
 
   /**
    *  @brief Gets the Atomic Weight Ratio (AWR) of the nuclide.
    */
-  double awr() const;
+  double awr() const { return awr_; }
 
   /**
    * @brief Returns true for a fissile nuclide, false for a non-fissile nuclide.
    */
-  bool fissile() const;
+  bool fissile() const {return fissile_; }
 
   /**
    * @brief Retrieves an (int32_t, double) pair from the IZAW array.
    * @param i index to a pair in the IZAW array.
    *          Must be in the range [0,16).
    */
-  std::pair<int32_t, double> izaw(size_t i) const;
+  std::pair<int32_t, double> izaw(std::size_t i) const {return izaw_[i];}
 
   /**
    * @brief Retrieves a value from the NXS array.
    * @param i index to element in the NXS array.
    *          Must be in the range [0,16).
    */
-  int32_t nxs(size_t i) const;
+  int32_t nxs(std::size_t i) const {return nxs_[i];}
 
   /**
    * @brief Retrieves a value from the JXS array.
    * @param i index to element in the JXS array.
    *          Must be in the range [0,32).
    */
-  int32_t jxs(size_t i) const;
+  int32_t jxs(std::size_t i) const {return jxs_[i];}
 
   /**
    * @brief Retrieves a value from the XSS array as a double.
    * @param i index to element in the XSS array.
    */
-  double xss(size_t i) const;
+  double xss(std::size_t i) const {return xss_[i];}
 
   /**
    * @brief Retrieves a value from the XSS array, cast to type T.
    * @param i index to element in the XSS array.
    */
   template <class T>
-  T xss(size_t i) const {
+  T xss(std::size_t i) const {
     return static_cast<T>(xss_[i]);
   }
 
@@ -119,7 +119,7 @@ class ACE {
    * @param i Starting index in the IZAW array.
    * @param len Number of elements to return.
    */
-  std::vector<std::pair<int32_t, double>> izaw(size_t i, size_t len) const;
+  std::vector<std::pair<int32_t, double>> izaw(std::size_t i, std::size_t len) const;
 
   /**
    * @brief Retrieves a vector contianing a continuous segment of
@@ -127,7 +127,7 @@ class ACE {
    * @param i Starting index in the NXS array.
    * @param len Number of elements to return.
    */
-  std::vector<int32_t> nxs(size_t i, size_t len) const;
+  std::vector<int32_t> nxs(std::size_t i, std::size_t len) const;
 
   /**
    * @brief Retrieves a vector contianing a continuous segment of
@@ -135,7 +135,7 @@ class ACE {
    * @param i Starting index in the JXS array.
    * @param len Number of elements to return.
    */
-  std::vector<int32_t> jxs(size_t i, size_t len) const;
+  std::vector<int32_t> jxs(std::size_t i, std::size_t len) const;
 
   /**
    * @brief Retrieves a vector contianing a continuous segment of
@@ -143,7 +143,7 @@ class ACE {
    * @param i Starting index in the XSS array.
    * @param len Number of elements to return.
    */
-  std::vector<double> xss(size_t i, size_t len) const;
+  std::vector<double> xss(std::size_t i, std::size_t len) const;
 
   /**
    * @brief Retrieves a vector contianing a continuous segment of
@@ -152,10 +152,10 @@ class ACE {
    * @param len Number of elements to return.
    */
   template <class T>
-  std::vector<T> xss(size_t i, size_t len) const {
+  std::vector<T> xss(std::size_t i, std::size_t len) const {
     std::vector<T> tmp(len);
 
-    for (size_t j = 0; j < len; j++) {
+    for (std::size_t j = 0; j < len; j++) {
       tmp[j] = static_cast<T>(xss<T>(i + j));
     }
 
@@ -170,82 +170,82 @@ class ACE {
   /**
    * @brief Returns the index to the beginning of the ESZ block.
    */
-  int32_t ESZ() const;
+  int32_t ESZ() const { return esz_; }
 
   /**
    * @brief Returns the index to the beginning of the NU block.
    */
-  int32_t NU() const;
+  int32_t NU() const { return nu_; }
 
   /**
    * @brief Returns the index to the beginning of the MTR block.
    */
-  int32_t MTR() const;
+  int32_t MTR() const { return mtr_; }
 
   /**
    * @brief Returns the index to the beginning of the LQR block.
    */
-  int32_t LQR() const;
+  int32_t LQR() const { return lqr_; }
 
   /**
    * @brief Returns the index to the beginning of the TYR block.
    */
-  int32_t TYR() const;
+  int32_t TYR() const { return tyr_; }
 
   /**
    * @brief Returns the index to the beginning of the LSIG block.
    */
-  int32_t LSIG() const;
+  int32_t LSIG() const { return lsig_; }
 
   /**
    * @brief Returns the index to the beginning of the SIG block.
    */
-  int32_t SIG() const;
+  int32_t SIG() const { return sig_; }
 
   /**
    * @brief Returns the index to the beginning of the LAND block.
    */
-  int32_t LAND() const;
+  int32_t LAND() const { return land_; }
 
   /**
    * @brief Returns the index to the beginning of the AND block.
    */
-  int32_t AND() const;
+  int32_t AND() const { return and_; }
 
   /**
    * @brief Returns the index to the beginning of the LDLW block.
    */
-  int32_t LDLW() const;
+  int32_t LDLW() const { return ldlw_; }
 
   /**
    * @brief Returns the index to the beginning of the DLW block.
    */
-  int32_t DLW() const;
+  int32_t DLW() const { return dlw_; }
 
   /**
    * @brief Returns the index to the beginning of the DNEDL block.
    */
-  int32_t DNEDL() const;
+  int32_t DNEDL() const { return dnedl_; }
 
   /**
    * @brief Returns the index to the beginning of the DNED block.
    */
-  int32_t DNED() const;
+  int32_t DNED() const { return dned_; }
 
   /**
    * @brief Returns the index to the beginning of the DNU block.
    */
-  int32_t DNU() const;
+  int32_t DNU() const { return dnu_; }
 
   /**
    * @brief Returns the index to the beginning of the BDD block.
    */
-  int32_t BDD() const;
+  int32_t BDD() const { return bdd_; }
 
   /**
    * @brief Returns the index to the beginning of the GPD block.
    */
-  int32_t GPD() const;
+  int32_t GPD() const { return gpd_; }
 
  private:
   int32_t zaid_;

@@ -55,7 +55,7 @@ class Maxwellian : public EnergyLaw {
    * @param ace ACE file to take data from.
    * @param i Starting index of distribution in the XSS array.
    */
-  Maxwellian(const ACE& ace, size_t i);
+  Maxwellian(const ACE& ace, std::size_t i);
 
   /**
    * @param temeprature Tabulated1D function for the nuclear temperature.
@@ -71,15 +71,15 @@ class Maxwellian : public EnergyLaw {
   double pdf(double E_in, double E_out) const override final;
 
   /**
-   * @brief Returns a pointer to the table containg the effective temperature
+   * @brief Returns the table containg the effective temperature
    *        as a function of incoming energy.
    */
-  std::shared_ptr<Tabulated1D> temperature() const;
+  const Tabulated1D& temperature() const {return *temperature_;}
 
   /**
    * @brief Returns the the bin boundaries in a vector.
    */
-  double U() const;
+  double U() const {return restriction_energy_;}
 
  private:
   std::shared_ptr<Tabulated1D> temperature_;

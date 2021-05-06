@@ -46,8 +46,7 @@ void init_STIncoherentInelastic(py::module& m) {
   py::class_<STIncoherentInelastic, std::shared_ptr<STIncoherentInelastic>>(
       m, "STIncoherentInelastic")
       .def(py::init<const ACE&, bool>())
-      .def("cross_section", &STIncoherentInelastic::cross_section)
-      .def("xs", &STIncoherentInelastic::xs)
+      .def("xs", &STIncoherentInelastic::xs, py::return_value_policy::reference_internal)
       .def("sample_angle_energy", &STIncoherentInelastic::sample_angle_energy)
       .def("distribution", &STIncoherentInelastic::distribution)
       .def("max_energy", &STIncoherentInelastic::max_energy);

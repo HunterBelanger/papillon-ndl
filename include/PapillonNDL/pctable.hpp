@@ -57,7 +57,7 @@ class PCTable {
    * @param normalization Value by which all y-grid points will be divided.
    *                      Default value is 1.
    */
-  PCTable(const ACE& ace, size_t i, double normalization = 1.);
+  PCTable(const ACE& ace, std::size_t i, double normalization = 1.);
 
   /**
    * @param values Vector of values for which the PDF and CDF are provided.
@@ -76,7 +76,7 @@ class PCTable {
    */
   double sample_value(double xi) const {
     auto cdf_it = std::lower_bound(cdf_.begin(), cdf_.end(), xi);
-    size_t l = std::distance(cdf_.begin(), cdf_it);
+    std::size_t l = std::distance(cdf_.begin(), cdf_it);
     if (xi == *cdf_it) return values_[l];
 
     l--;
@@ -98,7 +98,7 @@ class PCTable {
     if (value < min_value() || value > max_value()) return 0.;
 
     auto val_it = std::lower_bound(values_.begin(), values_.end(), value);
-    size_t l = std::distance(values_.begin(), val_it);
+    std::size_t l = std::distance(values_.begin(), val_it);
     if (value == *val_it) return pdf_[l];
 
     l--;
@@ -122,7 +122,7 @@ class PCTable {
   /**
    * @brief Returns the number of grid points.
    */
-  size_t size() const { return values_.size(); }
+  std::size_t size() const { return values_.size(); }
 
   /**
    * @brief Returns a vector of the value grid points.
@@ -150,11 +150,11 @@ class PCTable {
   std::vector<double> cdf_;
   Interpolation interp_;
 
-  double histogram_interp(double xi, size_t l) const {
+  double histogram_interp(double xi, std::size_t l) const {
     return values_[l] + ((xi - cdf_[l]) / pdf_[l]);
   }
 
-  double linear_interp(double xi, size_t l) const {
+  double linear_interp(double xi, std::size_t l) const {
     double m = (pdf_[l + 1] - pdf_[l]) / (values_[l + 1] - values_[l]);
     return values_[l] +
            (1. / m) * (std::sqrt(pdf_[l] * pdf_[l] + 2. * m * (xi - cdf_[l])) -

@@ -38,7 +38,7 @@
 
 namespace pndl {
 
-GeneralEvaporation::GeneralEvaporation(const ACE& ace, size_t i)
+GeneralEvaporation::GeneralEvaporation(const ACE& ace, std::size_t i)
     : temperature_(), bin_bounds_() {
   uint32_t NR = ace.xss<uint32_t>(i);
   uint32_t NE = ace.xss<uint32_t>(i + 1 + 2 * NR);
@@ -106,7 +106,7 @@ double GeneralEvaporation::sample_energy(double E_in,
                                          std::function<double()> rng) const {
   double T = (*temperature_)(E_in);
   double xi1 = rng();
-  size_t bin = static_cast<size_t>(std::floor(bin_bounds_.size() * xi1));
+  std::size_t bin = static_cast<std::size_t>(std::floor(bin_bounds_.size() * xi1));
   double xi2 = rng();
   double Chi =
       (bin_bounds_[bin + 1] - bin_bounds_[bin]) * xi2 + bin_bounds_[bin];
@@ -120,8 +120,8 @@ double GeneralEvaporation::pdf(double E_in, double E_out) const {
   // Go find Chi in bins
   if (Chi < bin_bounds_.front() || Chi > bin_bounds_.back()) return 0.;
 
-  size_t bin = 0;
-  for (size_t i = 0; i < bin_bounds_.size() - 1; i++) {
+  std::size_t bin = 0;
+  for (std::size_t i = 0; i < bin_bounds_.size() - 1; i++) {
     if (bin_bounds_[i] <= Chi && bin_bounds_[i + 1] >= Chi) {
       bin = i;
       break;
@@ -134,14 +134,6 @@ double GeneralEvaporation::pdf(double E_in, double E_out) const {
   double prob_per_bin = 1. / nbins;
 
   return prob_per_bin / ((Chi_hi - Chi_low) * T);
-}
-
-std::shared_ptr<Tabulated1D> GeneralEvaporation::temperature() const {
-  return temperature_;
-}
-
-const std::vector<double>& GeneralEvaporation::bin_bounds() const {
-  return bin_bounds_;
 }
 
 }  // namespace pndl

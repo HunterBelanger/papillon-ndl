@@ -39,12 +39,14 @@
  * @author Hunter Belanger
  */
 
+#include <memory>
+
 namespace pndl {
 
 /**
  * @brief Interface to represent functions of a single variable.
  */
-class Function1D {
+class Function1D : public std::enable_shared_from_this<Function1D> {
  public:
   virtual ~Function1D() = default;
 

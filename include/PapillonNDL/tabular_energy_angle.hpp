@@ -56,7 +56,7 @@ class TabularEnergyAngle : public AngleEnergy {
    * @param i Starting index of distribution in the XSS array.
    * @param JED Relative index for finding energy and angle distributions.
    */
-  TabularEnergyAngle(const ACE& ace, size_t i, size_t JED);
+  TabularEnergyAngle(const ACE& ace, std::size_t i, std::size_t JED);
 
   /**
    * @param incoming_energy Incoming energy grid.
@@ -73,25 +73,31 @@ class TabularEnergyAngle : public AngleEnergy {
   /**
    * @brief Returns a vector to the grid of incoming energies.
    */
-  const std::vector<double>& incoming_energy() const;
+  const std::vector<double>& incoming_energy() const {
+    return incoming_energy_; 
+  }
 
   /**
    * @brief Returns the ith incoming energy in MeV.
    * @param i Index to the incoming energy grid.
    */
-  double incoming_energy(size_t i) const;
+  double incoming_energy(std::size_t i) const {
+    return incoming_energy_[i]; 
+  }
 
   /**
    * @brief Returns an EnergyAngleTable which contains the distributions
    *        for the ith incoming energy.
    * @param i Index to the incoming energy.
    */
-  const EnergyAngleTable& table(size_t i) const;
+  const EnergyAngleTable& table(std::size_t i) const {
+    return tables_[i]; 
+  }
 
   /**
    * @brief Returns the number of incoming energy points.
    */
-  size_t size() const;
+  std::size_t size() const { return incoming_energy_.size(); }
 
  private:
   std::vector<double> incoming_energy_;

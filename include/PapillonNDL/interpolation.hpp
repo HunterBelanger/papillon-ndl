@@ -114,8 +114,6 @@ struct Histogram {
   static void verify_y_grid(ForwardIt /*first*/, ForwardIt /*last*/) {
     // No requirements
   }
-
-  static const Interpolation interpolation = Interpolation::Histogram;
 };
 
 /**
@@ -155,8 +153,6 @@ struct LinLin {
   static void verify_y_grid(ForwardIt /*first*/, ForwardIt /*last*/) {
     // No requirements
   }
-
-  static const Interpolation interpolation = Interpolation::LinLin;
 };
 
 /**
@@ -198,8 +194,6 @@ struct LinLog {
   static void verify_y_grid(ForwardIt /*first*/, ForwardIt /*last*/) {
     // No requirements
   }
-
-  static const Interpolation interpolation = Interpolation::LinLog;
 };
 
 /**
@@ -243,8 +237,6 @@ struct LogLin {
       throw PNDLException(mssg, __FILE__, __LINE__);
     }
   }
-
-  static const Interpolation interpolation = Interpolation::LogLin;
 };
 
 /**
@@ -299,8 +291,6 @@ struct LogLog {
       throw PNDLException(mssg, __FILE__, __LINE__);
     }
   }
-
-  static const Interpolation interpolation = Interpolation::LogLog;
 };
 
 }  // namespace pndl

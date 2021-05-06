@@ -114,7 +114,7 @@ void init_TabularEnergy(py::module& m) {
       .def("sample_energy", &TabularEnergy::sample_energy)
       .def("pdf", &TabularEnergy::pdf)
       .def("incoming_energy", &TabularEnergy::incoming_energy)
-      .def("table", &TabularEnergy::table)
+      .def("table", &TabularEnergy::table, py::return_value_policy::copy)
       .def("size", &TabularEnergy::size);
 }
 
@@ -125,7 +125,7 @@ void init_GeneralEvaporation(py::module& m) {
       .def(py::init<std::shared_ptr<Tabulated1D>, const std::vector<double>&>())
       .def("sample_energy", &GeneralEvaporation::sample_energy)
       .def("pdf", &GeneralEvaporation::pdf)
-      .def("temperature", &GeneralEvaporation::temperature)
+      .def("temperature", &GeneralEvaporation::temperature, py::return_value_policy::reference_internal)
       .def("bin_bounds", &GeneralEvaporation::bin_bounds);
 }
 
@@ -136,7 +136,7 @@ void init_Evaporation(py::module& m) {
       .def(py::init<std::shared_ptr<Tabulated1D>, double>())
       .def("sample_energy", &Evaporation::sample_energy)
       .def("pdf", &Evaporation::pdf)
-      .def("temperature", &Evaporation::temperature)
+      .def("temperature", &Evaporation::temperature, py::return_value_policy::reference_internal)
       .def("U", &Evaporation::U);
 }
 
@@ -147,7 +147,7 @@ void init_Maxwellian(py::module& m) {
       .def(py::init<std::shared_ptr<Tabulated1D>, double>())
       .def("sample_energy", &Maxwellian::sample_energy)
       .def("pdf", &Maxwellian::pdf)
-      .def("temperature", &Maxwellian::temperature)
+      .def("temperature", &Maxwellian::temperature, py::return_value_policy::reference_internal)
       .def("U", &Maxwellian::U);
 }
 
@@ -158,7 +158,7 @@ void init_Watt(py::module& m) {
                     double>())
       .def("sample_energy", &Watt::sample_energy)
       .def("pdf", &Watt::pdf)
-      .def("a", &Watt::a)
-      .def("b", &Watt::b)
+      .def("a", &Watt::a, py::return_value_policy::reference_internal)
+      .def("b", &Watt::b, py::return_value_policy::reference_internal)
       .def("U", &Watt::U);
 }

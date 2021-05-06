@@ -53,7 +53,7 @@ class EquiprobableEnergyBins : public EnergyLaw {
    * @param ace ACE file to take data from.
    * @param i Starting index of distribution in the XSS array.
    */
-  EquiprobableEnergyBins(const ACE& ace, size_t i);
+  EquiprobableEnergyBins(const ACE& ace, std::size_t i);
 
   /**
    * @param incoming_energy Incoming energy grid.
@@ -73,18 +73,18 @@ class EquiprobableEnergyBins : public EnergyLaw {
    * @brief Returns a vector of the grid of incoming energy points for which
    *        an equiprobable bin set is stored.
    */
-  const std::vector<double>& incoming_energy() const;
+  const std::vector<double>& incoming_energy() const {return incoming_energy_;}
 
   /**
    * @brief Returns the ith set of bin boundaries as a vector.
    * @param i Index for the incoming energy grid.
    */
-  const std::vector<double>& bin_bounds(size_t i) const;
+  const std::vector<double>& bin_bounds(std::size_t i) const {return bin_sets_[i];}
 
   /**
    * @brief Returns the number of incoming energies / bin boundary sets stored.
    */
-  size_t size() const;
+  std::size_t size() const {return incoming_energy_.size();}
 
  private:
   std::vector<double> incoming_energy_;

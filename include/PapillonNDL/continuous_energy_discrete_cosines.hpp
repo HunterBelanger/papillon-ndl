@@ -74,7 +74,7 @@ class ContinuousEnergyDiscreteCosines : public AngleEnergy {
      * @param j Index which will be set to latter locate the proper
      *          distribution for the scattering cosine.
      */
-    double sample_energy(double xi, size_t& j) const;
+    double sample_energy(double xi, std::size_t& j) const;
   };
 
   AngleEnergyPacket sample_angle_energy(
@@ -90,7 +90,7 @@ class ContinuousEnergyDiscreteCosines : public AngleEnergy {
   /**
    * @brief Returns the number of incoming energy points.
    */
-  size_t size() const { return incoming_energy_.size(); }
+  std::size_t size() const { return incoming_energy_.size(); }
 
   /**
    * @brief Returns the vector of all CEDCTables.
@@ -102,7 +102,7 @@ class ContinuousEnergyDiscreteCosines : public AngleEnergy {
    *        for the ith incoming energy.
    * @param i Index to the incoming energy.
    */
-  const CEDCTable& table(size_t i) const { return tables_[i]; }
+  const CEDCTable& table(std::size_t i) const { return tables_[i]; }
 
   /**
    * @brief Returns true if the distribution used unit-based interpolation

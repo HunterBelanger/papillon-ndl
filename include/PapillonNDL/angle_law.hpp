@@ -39,12 +39,14 @@
  * @author Hunter Belanger
  */
 
+#include <memory>
+
 namespace pndl {
 
 /**
  * @brief Interface to represent an angular distribution for a single energy.
  */
-class AngleLaw {
+class AngleLaw : public std::enable_shared_from_this<AngleLaw> {
  public:
   virtual ~AngleLaw() = default;
 

@@ -57,7 +57,7 @@ class EnergyAngleTable {
    * @param i Starting index of distribution in the XSS array.
    * @param JED Relative index for finding angular distributions.
    */
-  EnergyAngleTable(const ACE& ace, size_t i, size_t JED);
+  EnergyAngleTable(const ACE& ace, std::size_t i, std::size_t JED);
 
   /**
    * @param outgoing_energy Outgoing energy grid.
@@ -74,8 +74,10 @@ class EnergyAngleTable {
                    Interpolation interp);
 
   /**
-   * @param
-   * @param interp Interpolation used for the PDF (Histogram or LinLin).
+   * @param outgoing_energy A PCTable cotaining the secondary energy
+   *                        distribution.
+   * @param angle_tables A vector a PCTable, one for each outgoing energy,
+   *                     each describing the cosine of the scattering angle.
    */
   EnergyAngleTable(const PCTable& outgoing_energy,
                    const std::vector<PCTable>& angle_tables);
@@ -85,7 +87,7 @@ class EnergyAngleTable {
     double E_out, mu;
     double xi = rng();
     auto cdf_it = std::lower_bound(cdf_.begin(), cdf_.end(), xi);
-    size_t l = std::distance(cdf_.begin(), cdf_it) - 1;
+    std::size_t l = std::distance(cdf_.begin(), cdf_it) - 1;
 
     // Must account for case where pdf_[l] = pdf_[l+1], which means  that
     // the slope is zero, and m=0. This results in nan for the linear alg.
@@ -148,12 +150,12 @@ class EnergyAngleTable {
    *        distribution for the ith outgoing energy.
    * @param i Index to the outgoing energy grid.
    */
-  const PCTable& angle_table(size_t i) const { return angles_[i]; }
+  const PCTable& angle_table(std::size_t i) const { return angles_[i]; }
 
   /**
    * @brief Returns the number of outgoing energy points / AngleTables.
    */
-  size_t size() const { return energy_.size(); }
+  std::size_t size() const { return energy_.size(); }
 
  private:
   std::vector<double> energy_;
@@ -162,11 +164,11 @@ class EnergyAngleTable {
   std::vector<PCTable> angles_;
   Interpolation interp_;
 
-  double histogram_interp_energy(double xi, size_t l) const {
+  double histogram_interp_energy(double xi, std::size_t l) const {
     return energy_[l] + ((xi - cdf_[l]) / pdf_[l]);
   }
 
-  double linear_interp_energy(double xi, size_t l) const {
+  double linear_interp_energy(double xi, std::size_t l) const {
     double m = (pdf_[l + 1] - pdf_[l]) / (energy_[l + 1] - energy_[l]);
 
     return energy_[l] +

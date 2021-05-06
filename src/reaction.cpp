@@ -55,7 +55,7 @@
 
 namespace pndl {
 
-Reaction::Reaction(const ACE& ace, size_t indx,
+Reaction::Reaction(const ACE& ace, std::size_t indx,
                    std::shared_ptr<EnergyGrid> egrid)
     : mt_(),
       q_(),
@@ -81,7 +81,7 @@ Reaction::Reaction(const ACE& ace, size_t indx,
     if (yld < 100.)
       yield_ = std::make_shared<Constant>(yld);
     else {
-      size_t i = ace.DLW() + static_cast<uint32_t>(yld) - 101;
+      std::size_t i = ace.DLW() + static_cast<uint32_t>(yld) - 101;
       uint32_t NR = ace.xss<uint32_t>(i);
       uint32_t NE = ace.xss<uint32_t>(i + 1 + 2 * NR);
       std::vector<double> energy = ace.xss(i + 2 + 2 * NR, NE);
@@ -145,7 +145,7 @@ Reaction::Reaction(const ACE& ace, size_t indx,
     try {
       // Get energy distribution location
       uint32_t locc = ace.xss<uint32_t>(ace.LDLW() + indx);
-      size_t i = ace.DLW() + locc - 1;
+      std::size_t i = ace.DLW() + locc - 1;
 
       // Location of next law (set any non-zero initial value)
       uint32_t lnw = 1;
@@ -155,7 +155,7 @@ Reaction::Reaction(const ACE& ace, size_t indx,
         // Get law info and location
         int law = ace.xss<int>(i + 1);
         uint32_t idat = ace.xss<uint32_t>(i + 2);
-        size_t j = ace.DLW() + idat - 1;
+        std::size_t j = ace.DLW() + idat - 1;
 
         // Get probability for law
         std::shared_ptr<Tabulated1D> probability(nullptr);
@@ -185,35 +185,35 @@ Reaction::Reaction(const ACE& ace, size_t indx,
         std::shared_ptr<AngleEnergy> angle_energy(nullptr);
         if (law == 1) {  // Equiprobable Energy Bins
           angle_energy = std::make_shared<Uncorrelated>(
-              angle, std::make_shared<EquiprobableEnergyBins>(ace, j));
+              *angle, std::make_shared<EquiprobableEnergyBins>(ace, j));
 
         } else if (law == 2) {  // Discrete Photon
           angle_energy = std::make_shared<Uncorrelated>(
-              angle, std::make_shared<DiscretePhoton>(ace, j));
+              *angle, std::make_shared<DiscretePhoton>(ace, j));
 
         } else if (law == 3) {  // Level Inelastic Scatter
           angle_energy = std::make_shared<Uncorrelated>(
-              angle, std::make_shared<LevelInelasticScatter>(ace, j));
+              *angle, std::make_shared<LevelInelasticScatter>(ace, j));
 
         } else if (law == 4) {  // Tabular Energy
           angle_energy = std::make_shared<Uncorrelated>(
-              angle, std::make_shared<TabularEnergy>(ace, j, ace.DLW()));
+              *angle, std::make_shared<TabularEnergy>(ace, j, ace.DLW()));
 
         } else if (law == 5) {  // General Evaporation
           angle_energy = std::make_shared<Uncorrelated>(
-              angle, std::make_shared<GeneralEvaporation>(ace, j));
+              *angle, std::make_shared<GeneralEvaporation>(ace, j));
 
         } else if (law == 7) {  // Maxwellian
           angle_energy = std::make_shared<Uncorrelated>(
-              angle, std::make_shared<Maxwellian>(ace, j));
+              *angle, std::make_shared<Maxwellian>(ace, j));
 
         } else if (law == 9) {  // Evaporation
           angle_energy = std::make_shared<Uncorrelated>(
-              angle, std::make_shared<Evaporation>(ace, j));
+              *angle, std::make_shared<Evaporation>(ace, j));
 
         } else if (law == 11) {  // Watt
           angle_energy = std::make_shared<Uncorrelated>(
-              angle, std::make_shared<Watt>(ace, j));
+              *angle, std::make_shared<Watt>(ace, j));
 
         } else if (law == 44) {  // Kalbach
           angle_energy = std::make_shared<Kalbach>(ace, j);
@@ -252,7 +252,7 @@ Reaction::Reaction(const ACE& ace, size_t indx,
   }
 }
 
-Reaction::Reaction(const ACE& ace, size_t indx,
+Reaction::Reaction(const ACE& ace, std::size_t indx,
                    std::shared_ptr<EnergyGrid> egrid, const Reaction& reac)
     : mt_(),
       q_(),
@@ -275,10 +275,10 @@ Reaction::Reaction(const ACE& ace, size_t indx,
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
 
-  frame_ = reac.frame();
-  yield_ = reac.yield();
-  distributions_ = reac.distributions();
-  probabilities_ = reac.probabilities();
+  frame_ = reac.frame_;
+  yield_ = reac.yield_;
+  distributions_ = reac.distributions_;
+  probabilities_ = reac.probabilities_;
 
   // Get XS from new ACE
   try {

@@ -35,7 +35,7 @@
 
 namespace pndl {
 
-TabularEnergy::TabularEnergy(const ACE& ace, size_t i, size_t JED)
+TabularEnergy::TabularEnergy(const ACE& ace, std::size_t i, std::size_t JED)
     : incoming_energy_(), tables_() {
   // Get number of interpolation points
   uint32_t NR = ace.xss<uint32_t>(i);
@@ -89,7 +89,7 @@ TabularEnergy::TabularEnergy(const std::vector<double>& incoming_energy,
 double TabularEnergy::sample_energy(double E_in,
                                     std::function<double()> rng) const {
   // Determine the index of the bounding tabulated incoming energies
-  size_t l;
+  std::size_t l;
   double f;  // Interpolation factor
   auto in_E_it =
       std::lower_bound(incoming_energy_.begin(), incoming_energy_.end(), E_in);
@@ -132,7 +132,7 @@ double TabularEnergy::sample_energy(double E_in,
 
 double TabularEnergy::pdf(double E_in, double E_out) const {
   // Determine the index of the bounding tabulated incoming energies
-  size_t l;
+  std::size_t l;
   double f;  // Interpolation factor
   auto in_E_it =
       std::lower_bound(incoming_energy_.begin(), incoming_energy_.end(), E_in);
@@ -176,13 +176,5 @@ double TabularEnergy::pdf(double E_in, double E_out) const {
 
   return pdf;
 }
-
-const std::vector<double>& TabularEnergy::incoming_energy() const {
-  return incoming_energy_;
-}
-
-const PCTable& TabularEnergy::table(size_t i) const { return tables_[i]; }
-
-size_t TabularEnergy::size() const { return incoming_energy_.size(); }
 
 }  // namespace pndl

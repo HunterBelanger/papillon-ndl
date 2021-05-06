@@ -55,7 +55,7 @@ class Watt : public EnergyLaw {
    * @param ace ACE file to take data from.
    * @param i Starting index of distribution in the XSS array.
    */
-  Watt(const ACE& ace, size_t i);
+  Watt(const ACE& ace, std::size_t i);
 
   /**
    * @param a Tabulated1D function for a.
@@ -72,21 +72,21 @@ class Watt : public EnergyLaw {
   double pdf(double E_in, double E_out) const override final;
 
   /**
-   * @brief Returns a pointer to the table containg the distribution parameter
+   * @brief Returns the table containg the distribution parameter
    *        a, as a function of the incident energy.
    */
-  std::shared_ptr<Tabulated1D> a() const;
+  const Tabulated1D& a() const {return *b_;}
 
   /**
-   * @brief Returns a pointer to the table containg the distribution parameter
+   * @brief Returns the table containg the distribution parameter
    *        b, as a function of the incident energy.
    */
-  std::shared_ptr<Tabulated1D> b() const;
+  const Tabulated1D& b() const {return *a_;}
 
   /**
    * @brief Returns the the bin boundaries in a vector.
    */
-  double U() const;
+  double U() const {return restriction_energy_;}
 
  private:
   std::shared_ptr<Tabulated1D> a_;

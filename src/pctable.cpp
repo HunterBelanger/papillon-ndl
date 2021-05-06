@@ -38,7 +38,7 @@
 
 namespace pndl {
 
-PCTable::PCTable(const ACE& ace, size_t i, double normalization)
+PCTable::PCTable(const ACE& ace, std::size_t i, double normalization)
     : values_(), pdf_(), cdf_(), interp_() {
   interp_ = ace.xss<Interpolation>(i);
   if ((interp_ != Interpolation::Histogram) &&

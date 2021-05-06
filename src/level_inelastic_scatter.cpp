@@ -36,7 +36,7 @@
 
 namespace pndl {
 
-LevelInelasticScatter::LevelInelasticScatter(const ACE& ace, size_t i)
+LevelInelasticScatter::LevelInelasticScatter(const ACE& ace, std::size_t i)
     : C1_(), C2_() {
   C1_ = ace.xss(i);
   C2_ = ace.xss(i + 1);
@@ -71,9 +71,5 @@ double LevelInelasticScatter::pdf(double E_in, double E_out) const {
   if (std::abs(E_out - smp_E_out) > 1.E-15) return 0.;
   return 1.;
 }
-
-double LevelInelasticScatter::C1() const { return C1_; }
-
-double LevelInelasticScatter::C2() const { return C2_; }
 
 }  // namespace pndl

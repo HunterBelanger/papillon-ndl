@@ -46,6 +46,8 @@ extern void init_Polynomial1D(py::module&);
 extern void init_Tabulated1D(py::module&);
 extern void init_Region1D(py::module&);
 extern void init_MultiRegion1D(py::module&);
+extern void init_Sum1D(py::module&);
+extern void init_Difference1D(py::module&);
 extern void init_AngleLaw(py::module&);
 extern void init_Isotropic(py::module&);
 extern void init_EquiprobableAngleBins(py::module&);
@@ -92,6 +94,8 @@ PYBIND11_MODULE(pyPapillonNDL, m) {
   init_Tabulated1D(m);
   init_Region1D(m);
   init_MultiRegion1D(m);
+  init_Sum1D(m);
+  init_Difference1D(m);
   init_AngleLaw(m);
   init_Isotropic(m);
   init_EquiprobableAngleBins(m);

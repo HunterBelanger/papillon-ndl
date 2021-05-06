@@ -90,13 +90,13 @@ void EnergyGrid::hash_energy_grid(uint32_t NBINS) {
   bin_pointers_.reserve(NBINS + 1);
 
   double E = energy_values_.front();
-  size_t i = 0;
+  std::size_t i = 0;
 
   // Start by storing index to u_min which is 0
   bin_pointers_.push_back(0);
 
   // Get energy index for each lethargy bin bound
-  for (size_t b = 1; b < NBINS + 1; b++) {
+  for (std::size_t b = 1; b < NBINS + 1; b++) {
     E *= std::exp(du);
 
     i = std::distance(

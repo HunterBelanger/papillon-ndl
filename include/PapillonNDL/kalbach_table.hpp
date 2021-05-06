@@ -56,7 +56,7 @@ class KalbachTable {
    * @param ace ACE file to take data from.
    * @param i Starting index of distribution in the XSS array.
    */
-  KalbachTable(const ACE& ace, size_t i);
+  KalbachTable(const ACE& ace, std::size_t i);
 
   /**
    * @param energy Outgoing energy grid.
@@ -74,7 +74,7 @@ class KalbachTable {
 
   double sample_energy(double xi) const {
     auto cdf_it = std::lower_bound(cdf_.begin(), cdf_.end(), xi);
-    size_t l = std::distance(cdf_.begin(), cdf_it);
+    std::size_t l = std::distance(cdf_.begin(), cdf_it);
     if (xi == *cdf_it) return energy_[l];
     l--;
 
@@ -108,7 +108,7 @@ class KalbachTable {
       return R_.back();
     else {
       auto E_it = std::lower_bound(energy_.begin(), energy_.end(), E);
-      size_t l = std::distance(energy_.begin(), E_it) - 1;
+      std::size_t l = std::distance(energy_.begin(), E_it) - 1;
 
       if (interp_ == Interpolation::Histogram) {
         return Histogram::interpolate(E, energy_[l], R_[l], energy_[l + 1],
@@ -131,7 +131,7 @@ class KalbachTable {
       return A_.back();
     else {
       auto E_it = std::lower_bound(energy_.begin(), energy_.end(), E);
-      size_t l = std::distance(energy_.begin(), E_it) - 1;
+      std::size_t l = std::distance(energy_.begin(), E_it) - 1;
 
       if (interp_ == Interpolation::Histogram) {
         return Histogram::interpolate(E, energy_[l], A_[l], energy_[l + 1],
@@ -181,7 +181,7 @@ class KalbachTable {
   /**
    * @brief Returns the number of outgoing energy points / AngleTables.
    */
-  size_t size() const { return energy_.size(); }
+  std::size_t size() const { return energy_.size(); }
 
  private:
   std::vector<double> energy_;
@@ -191,11 +191,11 @@ class KalbachTable {
   std::vector<double> A_;
   Interpolation interp_;
 
-  double histogram_interp_energy(double xi, size_t l) const {
+  double histogram_interp_energy(double xi, std::size_t l) const {
     return energy_[l] + ((xi - cdf_[l]) / pdf_[l]);
   }
 
-  double linear_interp_energy(double xi, size_t l) const {
+  double linear_interp_energy(double xi, std::size_t l) const {
     double m = (pdf_[l + 1] - pdf_[l]) / (energy_[l + 1] - energy_[l]);
     return energy_[l] +
            (1. / m) * (std::sqrt(pdf_[l] * pdf_[l] + 2. * m * (xi - cdf_[l])) -

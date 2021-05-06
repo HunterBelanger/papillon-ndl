@@ -39,7 +39,7 @@
 
 namespace pndl {
 
-NBody::NBody(const ACE& ace, size_t i, double iQ) : n_(), Ap_(), A_(), Q_(iQ) {
+NBody::NBody(const ACE& ace, std::size_t i, double iQ) : n_(), Ap_(), A_(), Q_(iQ) {
   n_ = ace.xss<uint32_t>(i);
   Ap_ = ace.xss(i + 1);
   A_ = ace.awr();
@@ -135,13 +135,5 @@ double NBody::maxwellian_spectrum(std::function<double()>& rng) const {
 
   return -(std::log(xi1) + std::log(xi2) * std::cos(a) * std::cos(a));
 }
-
-uint32_t NBody::n() const { return n_; }
-
-double NBody::Ap() const { return Ap_; }
-
-double NBody::A() const { return A_; }
-
-double NBody::Q() const { return Q_; }
 
 }  // namespace pndl

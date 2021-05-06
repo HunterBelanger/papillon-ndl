@@ -55,7 +55,7 @@ class Evaporation : public EnergyLaw {
    * @param ace ACE file to take data from.
    * @param i Starting index of distribution in the XSS array.
    */
-  Evaporation(const ACE& ace, size_t i);
+  Evaporation(const ACE& ace, std::size_t i);
 
   /**
    * @param temeprature Tabulated1D function for the nuclear temperature.
@@ -71,15 +71,15 @@ class Evaporation : public EnergyLaw {
   double pdf(double E_in, double E_out) const override final;
 
   /**
-   * @brief Returns a pointer to the table containg the effective temperature
+   * @brief Returns the table containg the effective temperature
    *        as a function of incoming energy.
    */
-  std::shared_ptr<Tabulated1D> temperature() const;
+  const Tabulated1D& temperature() const {return *temperature_;}
 
   /**
    * @brief Returns the value of the cuttoff energy of the distribution in MeV.
    */
-  double U() const;
+  double U() const {return restriction_energy_;}
 
  private:
   std::shared_ptr<Tabulated1D> temperature_;

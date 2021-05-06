@@ -44,6 +44,7 @@
 #include <PapillonNDL/delayed_group.hpp>
 #include <PapillonNDL/reaction.hpp>
 #include <array>
+#include <memory>
 
 namespace pndl {
 
@@ -91,246 +92,65 @@ class CENeutron {
   /**
    * @brief Returns the energy grid for the nuclide.
    */
-  std::shared_ptr<EnergyGrid> energy_grid() const;
+  const EnergyGrid& energy_grid() const { return *energy_grid_; }
 
   /**
-   * @brief Returns a pointer to the total CrossSection for the nuclide.
+   * @brief Returns the total CrossSection for the nuclide.
    */
-  std::shared_ptr<CrossSection> total_cross_section() const;
+  const CrossSection& total_xs() const { return *total_xs_; }
 
   /**
-   * @brief Returns a pointer to the elastic scattering CrossSection for the
+   * @brief Returns the elastic scattering CrossSection for the
    * nuclide.
    */
-  std::shared_ptr<CrossSection> elastic_cross_section() const;
+  const CrossSection& elastic_xs() const { return *elastic_xs_; }
 
   /**
-   * @brief Returns a pointer to the disappearance CrossSection for the nuclide.
+   * @brief Returns the fission CrossSection for the nuclide.
    */
-  std::shared_ptr<CrossSection> disappearance_cross_section() const;
+  const CrossSection& fission_xs() const { return *fission_xs_; }
 
   /**
-   * @brief Returns a pointer to the photon production CrossSection for the
-   * nuclide.
+   * @brief Returns the disappearance CrossSection for the nuclide.
    */
-  std::shared_ptr<CrossSection> photon_production_cross_section() const;
+  const CrossSection& disappearance_xs() const {return *disappearance_xs_; }
+  
+  /**
+   * @brief Returns the photon production CrossSection for the nuclide.
+   */
+  const CrossSection& photon_production_xs() const { return *photon_production_xs_; }
 
   /**
-   * @brief Returns a pointer to the function for total nu.
+   * @brief Returns the function for total nu.
    */
-  std::shared_ptr<Function1D> nu_total() const { return nu_total_; }
+  const Function1D& nu_total() const { return *nu_total_; }
 
   /**
-   * @brief Returns a pointer to the function for prompt nu.
+   * @brief Returns the function for prompt nu.
    */
-  std::shared_ptr<Function1D> nu_prompt() const { return nu_prompt_; }
+  const Function1D& nu_prompt() const { return *nu_prompt_; }
 
   /**
-   * @brief Returns a pointer to the function for delayed nu.
+   * @brief Returns the function for delayed nu.
    */
-  std::shared_ptr<Function1D> nu_delayed() const { return nu_delayed_; }
+  const Function1D& nu_delayed() const { return *nu_delayed_; }
 
   /**
-   * @brief Returns a pointer to the AngleDistribution for elastic scattering.
+   * @brief Returns the AngleDistribution for elastic scattering.
    */
-  std::shared_ptr<AngleDistribution> elastic_angle_distribution() const;
-
-  /**
-   * @brief Retrieves the index in the energy grid for an energy.
-   * @param E Energy to find in the energy grid.
-   */
-  size_t energy_grid_index(double E) const {
-    return energy_grid_->get_lower_index(E);
-  }
-
-  /**
-   * @brief Evaluates the total cross section at E using bisection search.
-   * @param E Energy.
-   */
-  double total_xs(double E) const { return total_xs_->evaluate(E); }
-
-  /**
-   * @brief Evaluates the total cross section at energy E and index i.
-   * @param E Energy.
-   * @param i Index to the energy grid.
-   */
-  double total_xs(double E, size_t i) const {
-    return total_xs_->evaluate(E, i);
-  }
-
-  /**
-   * @brief Evaluates the elastic scattering cross section at E using bisection
-   * search.
-   * @param E Energy.
-   */
-  double elastic_xs(double E) const { return elastic_xs_->evaluate(E); }
-
-  /**
-   * @brief Evaluates the elastic scattering cross section at energy E and index
-   * i.
-   * @param E Energy.
-   * @param i Index to the energy grid.
-   */
-  double elastic_xs(double E, size_t i) const {
-    return elastic_xs_->evaluate(E, i);
-  }
-
-  /**
-   * @brief Evaluates the disappearance cross section at E using bisection
-   * search.
-   * @param E Energy.
-   */
-  double disappearance_xs(double E) const {
-    return disappearance_xs_->evaluate(E);
-  }
-
-  /**
-   * @brief Evaluates the disappearance cross section at energy E and index i.
-   * @param E Energy.
-   * @param i Index to the energy grid.
-   */
-  double disappearance_xs(double E, size_t i) const {
-    return disappearance_xs_->evaluate(E, i);
-  }
-
-  /**
-   * @brief Evaluates the total fission cross section at E using bisection
-   * search.
-   * @param E Energy.
-   */
-  double fission_xs(double E) const {
-    if (!this->fissile_) return 0.;
-
-    if (this->has_reaction(18)) return this->reaction_xs(18, E);
-
-    double sigma_f = 0.;
-
-    if (this->has_reaction(19)) sigma_f += this->reaction_xs(19, E);
-
-    if (this->has_reaction(20)) sigma_f += this->reaction_xs(20, E);
-
-    if (this->has_reaction(21)) sigma_f += this->reaction_xs(21, E);
-
-    if (this->has_reaction(38)) sigma_f += this->reaction_xs(38, E);
-
-    return sigma_f;
-  }
-
-  /**
-   * @brief Evaluates the total fission cross section at energy E and index i.
-   * @param E Energy.
-   * @param i Index to the energy grid.
-   */
-  double fission_xs(double E, size_t i) const {
-    if (!this->fissile_) return 0.;
-
-    if (this->has_reaction(18)) return this->reaction_xs(18, E, i);
-
-    double sigma_f = 0.;
-
-    if (this->has_reaction(19)) sigma_f += this->reaction_xs(19, E, i);
-
-    if (this->has_reaction(20)) sigma_f += this->reaction_xs(20, E, i);
-
-    if (this->has_reaction(21)) sigma_f += this->reaction_xs(21, E, i);
-
-    if (this->has_reaction(38)) sigma_f += this->reaction_xs(38, E, i);
-
-    return sigma_f;
-  }
-
-  /**
-   * @brief Evaluates the photon production cross section at E using bisection
-   * search.
-   * @param E Energy.
-   */
-  double photon_production_xs(double E) const {
-    // Need to check photon production XS exists, as this one is not
-    // necessarily present.
-    if (photon_production_xs_) return photon_production_xs_->evaluate(E);
-    return 0.;
-  }
-
-  /**
-   * @brief Evaluates the photon production cross section at energy E and index
-   * i.
-   * @param E Energy.
-   * @param i Index to the energy grid.
-   */
-  double photon_production_xs(double E, size_t i) const {
-    // Need to check photon production XS exists, as this one is not
-    // necessarily present.
-    if (photon_production_xs_) return photon_production_xs_->evaluate(E, i);
-    return 0.;
-  }
-
-  /**
-   * @brief Returns the total average number of fission neutron at energy E.
-   * @param E Energy in MeV.
-   */
-  double nu_total(double E) const {
-    if (nu_total_)
-      return (*nu_total_)(E);
-
-    else if (nu_prompt_ && nu_delayed_)
-      return (*nu_prompt_)(E) + (*nu_delayed_)(E);
-
-    else if (nu_delayed_)
-      return (*nu_delayed_)(E);
-
-    return 0.;
-  }
-
-  /**
-   * @brief Returns the average number of prompt fission neutron at energy E.
-   * @param E Energy in MeV.
-   */
-  double nu_prompt(double E) const {
-    if (nu_prompt_) return (*nu_prompt_)(E);
-
-    // If no prompt, that means no delayed data either, so all
-    // neutrons are treated as prompt.
-    else if (nu_total_)
-      return (*nu_total_)(E);
-
-    return 0.;
-  }
-
-  /**
-   * @brief Returns the average number of delayed fission neutron at energy E.
-   * @param E Energy in MeV.
-   */
-  double nu_delayed(double E) const {
-    if (nu_delayed_)
-      return (*nu_delayed_)(E);
-
-    else if (nu_total_ && nu_prompt_)
-      return (*nu_total_)(E) - (*nu_prompt_)(E);
-
-    return 0.;
-  }
+  const AngleDistribution& elastic_angle_distribution() const { return *elastic_angle_; }
 
   /**
    * @brief Returns the number of delayed neutron groups.
    */
-  size_t n_delayed_groups() const { return delayed_groups_.size(); }
+  std::size_t n_delayed_groups() const { return delayed_groups_.size(); }
 
   /**
    * @brief Returns the ith delayed group data.
    * @param i Index of the delayed group.
    */
-  const DelayedGroup& delayed_group(size_t i) const {
+  const DelayedGroup& delayed_group(std::size_t i) const {
     return delayed_groups_[i];
-  }
-
-  /**
-   * @brief Samples a scattering angle from the elastic scattering angular
-   *        distribution.
-   * @param E Incident energy.
-   * @param rng Random number generation function.
-   */
-  double sample_elastic_angle(double E, std::function<double()> rng) const {
-    return elastic_angle_->sample_angle(E, rng);
   }
 
   /**
@@ -361,35 +181,6 @@ class CENeutron {
     return reactions_[reaction_indices_[mt]];
   }
 
-  /**
-   * @brief Returns the cross section for a perscriped reaction at a
-   *        provided energy. Uses bisection search.
-   * @param mt MT value of the reaction.
-   * @param E Energy to evaluate cross section at.
-   */
-  double reaction_xs(uint32_t mt, double E) const {
-    if (mt > 891) return 0.;
-
-    auto indx = reaction_indices_[mt];
-
-    return indx < 0 ? 0. : reactions_[indx].xs(E);
-  }
-
-  /**
-   * @brief Returns the cross section for a perscriped reaction at a
-   *        provided energy, and energy grid index.
-   * @param mt MT value of the reaction.
-   * @param E Energy to evaluate cross section at.
-   * @param i Index to the energy grid for energy E.
-   */
-  double reaction_xs(uint32_t mt, double E, size_t i) const {
-    if (mt > 891) return 0.;
-
-    auto indx = reaction_indices_[mt];
-
-    return indx < 0 ? 0. : reactions_[indx].xs(E, i);
-  }
-
  private:
   uint32_t zaid_;
   double awr_;
@@ -397,10 +188,10 @@ class CENeutron {
   bool fissile_;
 
   std::shared_ptr<EnergyGrid> energy_grid_;
-
   std::shared_ptr<CrossSection> total_xs_;
   std::shared_ptr<CrossSection> disappearance_xs_;
   std::shared_ptr<CrossSection> elastic_xs_;
+  std::shared_ptr<CrossSection> fission_xs_;
   std::shared_ptr<CrossSection> photon_production_xs_;
 
   std::shared_ptr<AngleDistribution> elastic_angle_;
@@ -416,9 +207,10 @@ class CENeutron {
 
   // Private helper methods
   void read_fission_data(const ACE& ace);
-  std::shared_ptr<Function1D> read_nu(const ACE& ace, size_t i);
-  std::shared_ptr<Function1D> read_polynomial_nu(const ACE& ace, size_t i);
-  std::shared_ptr<Function1D> read_tabular_nu(const ACE& ace, size_t i);
+  std::shared_ptr<Function1D> read_nu(const ACE& ace, std::size_t i);
+  std::shared_ptr<Function1D> read_polynomial_nu(const ACE& ace, std::size_t i);
+  std::shared_ptr<Function1D> read_tabular_nu(const ACE& ace, std::size_t i);
+  std::shared_ptr<CrossSection> compute_fission_xs();
 };
 
 }  // namespace pndl

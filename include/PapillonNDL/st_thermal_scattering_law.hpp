@@ -137,7 +137,7 @@ class STThermalScatteringLaw {
    * @param E Energy at which to evaluate the cross section.
    */
   double incoherent_elastic_xs(double E) const {
-    if (incoherent_elastic_) return incoherent_elastic_->xs(E);
+    if (incoherent_elastic_) return incoherent_elastic_->xs()(E);
     return 0.;
   }
 
@@ -147,7 +147,7 @@ class STThermalScatteringLaw {
    * @param E Energy at which to evaluate the cross section.
    */
   double incoherent_inelastic_xs(double E) const {
-    if (incoherent_inelastic_) return incoherent_inelastic_->xs(E);
+    if (incoherent_inelastic_) return incoherent_inelastic_->xs()(E);
     return 0.;
   }
 

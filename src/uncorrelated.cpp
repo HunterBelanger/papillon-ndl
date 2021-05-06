@@ -36,14 +36,10 @@
 
 namespace pndl {
 
-Uncorrelated::Uncorrelated(std::shared_ptr<AngleDistribution> angle,
+Uncorrelated::Uncorrelated(const AngleDistribution& angle,
                            std::shared_ptr<EnergyLaw> energy)
     : angle_(angle), energy_(energy) {
-  if (!angle_) {
-    std::string mssg =
-        "Uncorrelated::Uncorrelated: Provided angular distribution is nullptr.";
-    throw PNDLException(mssg, __FILE__, __LINE__);
-  } else if (!energy_) {
+  if (!energy_) {
     std::string mssg =
         "Uncorrelated::Uncorrelated: Provided energy distribution is nullptr.";
     throw PNDLException(mssg, __FILE__, __LINE__);
@@ -52,15 +48,9 @@ Uncorrelated::Uncorrelated(std::shared_ptr<AngleDistribution> angle,
 
 AngleEnergyPacket Uncorrelated::sample_angle_energy(
     double E_in, std::function<double()> rng) const {
-  double mu = angle_->sample_angle(E_in, rng);
+  double mu = angle_.sample_angle(E_in, rng);
   double E_out = energy_->sample_energy(E_in, rng);
   return {mu, E_out};
 }
-
-std::shared_ptr<AngleDistribution> Uncorrelated::angle() const {
-  return angle_;
-}
-
-std::shared_ptr<EnergyLaw> Uncorrelated::energy() const { return energy_; }
 
 }  // namespace pndl

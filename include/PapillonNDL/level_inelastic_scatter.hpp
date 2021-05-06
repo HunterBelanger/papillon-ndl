@@ -54,7 +54,7 @@ class LevelInelasticScatter : public EnergyLaw {
    * @param ace ACE file to take data from.
    * @param i Starting index of distribution in the XSS array.
    */
-  LevelInelasticScatter(const ACE& ace, size_t i);
+  LevelInelasticScatter(const ACE& ace, std::size_t i);
 
   /**
    * @param Q Q-value of the reaction.
@@ -71,12 +71,12 @@ class LevelInelasticScatter : public EnergyLaw {
   /**
    * @brief Returns first parameter which is (A+1)*abs(Q)/A.
    */
-  double C1() const;
+  double C1() const {return C1_;}
 
   /**
    * @brief Returns second parameter which is (A/(A+1))^2.
    */
-  double C2() const;
+  double C2() const {return C2_;}
 
  private:
   double C1_;

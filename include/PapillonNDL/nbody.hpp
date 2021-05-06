@@ -55,7 +55,7 @@ class NBody : public AngleEnergy {
    * @param i Starting index of distribution in the XSS array.
    * @param iQ Q-value for the reaction.
    */
-  NBody(const ACE& ace, size_t i, double iQ);
+  NBody(const ACE& ace, std::size_t i, double iQ);
 
   /**
    * @param n Number of particles (3, 4, or 5).
@@ -72,22 +72,22 @@ class NBody : public AngleEnergy {
   /**
    * @brief Returns the number of bodies.
    */
-  uint32_t n() const;
+  uint32_t n() const { return n_; }
 
   /**
    * @brief Returns the total AWR for all of the particles.
    */
-  double Ap() const;
+  double Ap() const { return Ap_; }
 
   /**
    * @brief Returns the AWR of the nuclide in question.
    */
-  double A() const;
+  double A() const { return A_; }
 
   /**
    * @brief Returns the Q-value for the reaction in MeV.
    */
-  double Q() const;
+  double Q() const { return Q_; }
 
  private:
   uint32_t n_;

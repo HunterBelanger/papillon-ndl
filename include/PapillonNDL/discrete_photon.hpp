@@ -54,7 +54,7 @@ class DiscretePhoton : public EnergyLaw {
    * @param ace ACE file to take data from.
    * @param i Starting index of distribution in XSS array.
    */
-  DiscretePhoton(const ACE& ace, size_t i) : lp(), A(), Eg() {
+  DiscretePhoton(const ACE& ace, std::size_t i) : lp(), A(), Eg() {
     lp = ace.xss<int>(i);
     Eg = ace.xss(i + 1);
     A = ace.awr();

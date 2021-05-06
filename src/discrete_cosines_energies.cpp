@@ -88,12 +88,12 @@ DiscreteCosinesEnergies::DiscreteCosinesEnergies(const ACE& ace)
   int32_t i = ace.jxs(2) - 1;
 
   // Go through all incident energies
-  for (size_t ie = 0; ie < Ne; ie++) {
+  for (std::size_t ie = 0; ie < Ne; ie++) {
     // Add the empy vector of all discrete energies
     outgoing_energies_.push_back({});
 
     // Get all outgoing energies for the current incident energy
-    for (size_t oe = 0; oe < Noe; oe++) {
+    for (std::size_t oe = 0; oe < Noe; oe++) {
       double E_out = ace.xss(i);
       // Check E_out
       if (E_out <= 0.) {
@@ -107,7 +107,7 @@ DiscreteCosinesEnergies::DiscreteCosinesEnergies(const ACE& ace)
 
       std::vector<double> mu = ace.xss(i, Nmu);
       // Check mu grid
-      for (size_t j = 0; j < Nmu; j++) {
+      for (std::size_t j = 0; j < Nmu; j++) {
         if (mu[j] < -1. || mu[j] > 1.) {
           std::string mssg =
               "DiscreteCosinesEnergies::DiscreteCosinesEnergies: Invalid "
@@ -166,7 +166,7 @@ AngleEnergyPacket DiscreteCosinesEnergies::sample_angle_energy(
     return {outgoing_energies_.back()[j].cosines[k],
             outgoing_energies_.back()[j].energy};
   }
-  size_t i = std::distance(incoming_energy_.begin(), Eit) - 1;
+  std::size_t i = std::distance(incoming_energy_.begin(), Eit) - 1;
   double f = (E_in - incoming_energy_[i]) /
              (incoming_energy_[i + 1] - incoming_energy_[i]);
 

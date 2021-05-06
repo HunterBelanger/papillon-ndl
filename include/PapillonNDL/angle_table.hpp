@@ -53,7 +53,7 @@ class AngleTable : public AngleLaw {
    * @param ace ACE file to take data from.
    * @param i Starting index of distribution in the XSS array.
    */
-  AngleTable(const ACE& ace, size_t i);
+  AngleTable(const ACE& ace, std::size_t i);
 
   /**
    * @param cosines Conines of scattering angle which are tabulated.
@@ -74,33 +74,33 @@ class AngleTable : public AngleLaw {
 
   double sample_mu(double xi) const override final;
 
-  double pdf(double mu) const override final;
+  double pdf(double mu) const override final {return distribution_.pdf(mu);}
 
   /**
    * @brief Returns the number of points in the tabulated data.
    */
-  size_t size() const;
+  std::size_t size() const {return distribution_.size();}
 
   /**
    * @brief Returns the vector of the cosine points.
    */
-  const std::vector<double>& cosines() const;
+  const std::vector<double>& cosines() const {return distribution_.values();}
 
   /**
    * @brief Returns the vector of the PDF values.
    */
-  const std::vector<double>& pdf() const;
+  const std::vector<double>& pdf() const {return distribution_.pdf();}
 
   /**
    * @brief Returns the vector of the CDF values.
    */
-  const std::vector<double>& cdf() const;
+  const std::vector<double>& cdf() const {return distribution_.cdf();}
 
   /**
    * @brief Returns the type of interpolation used on the table
    *        (Histogram or LinLin).
    */
-  Interpolation interpolation() const;
+  Interpolation interpolation() const {return distribution_.interpolation();}
 
  private:
   PCTable distribution_;

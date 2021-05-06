@@ -31,42 +31,64 @@
  * termes.
  *
  * */
-#ifndef PAPILLON_NDL_ENERGY_LAW_H
-#define PAPILLON_NDL_ENERGY_LAW_H
+#ifndef PAPILLON_NDL_DIFFERENCE_1D_H
+#define PAPILLON_NDL_DIFFERENCE_1D_H
 
 /**
  * @file
  * @author Hunter Belanger
  */
 
-#include <functional>
+#include <PapillonNDL/function_1d.hpp>
+#include <PapillonNDL/pndl_exception.hpp>
 #include <memory>
 
 namespace pndl {
 
 /**
- * @brief Interface to represent uncorrelated energy distributions.
+ * @brief Class to represent functions which is the difference of two
+ *        other functions.
  */
-class EnergyLaw : public std::enable_shared_from_this<EnergyLaw> {
+class Difference1D : public Function1D {
  public:
-  virtual ~EnergyLaw() = default;
+  /**
+   * @brief Function will be evaluated as term1(x) - term2(x).
+   * @param term1 Pointer to the function for the first term.
+   * @param term2 Pointer to the function for the second term.
+   */
+  Difference1D(std::shared_ptr<Function1D> term1, std::shared_ptr<Function1D> term2): term_1_(term1), term_2_(term2) {
+    if (!term_1_) {
+      std::string mssg = "Difference1D::Difference1D: Term 1 is nullptr.";
+      throw PNDLException(mssg, __FILE__, __LINE__); 
+    }
+
+    if (!term_2_) {
+      std::string mssg = "Difference1D::Difference1D: Term 2 is nullptr.";
+      throw PNDLException(mssg, __FILE__, __LINE__); 
+    }
+  }
+
+  double operator()(double x) const override final {
+    return (*term_1_)(x) - (*term_2_)(x); 
+  }
+
+  double integrate(double x_low, double x_hi) const override final {
+    return term_1_->integrate(x_low, x_hi) - term_2_->integrate(x_low, x_hi); 
+  }
+  
+  /**
+   * @brief Returns the first function in the difference.
+   */
+  const Function1D& term_1() const { return *term_1_; }
 
   /**
-   * @brief Samples an energy (in MeV) from the distribution.
-   * @param E_in Incident energy in MeV.
-   * @param rng Random number generation function.
+   * @brief Returns the second function in the difference.
    */
-  virtual double sample_energy(double E_in,
-                               std::function<double()> rng) const = 0;
+  const Function1D& term_2() const { return *term_2_; }
 
-  /**
-   * @brief Samples the PDF for the energy transfer from E_in to E_out where
-   *        E_in is provided in the lab frame, and E_out is provided in the
-   *        frame of the reaction data.
-   * @param E_in Incoming energy.
-   * @param E_out Outgoing energy.
-   */
-  virtual double pdf(double E_in, double E_out) const = 0;
+ private:
+  std::shared_ptr<Function1D> term_1_;
+  std::shared_ptr<Function1D> term_2_;
 };
 
 }  // namespace pndl

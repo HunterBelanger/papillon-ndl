@@ -48,18 +48,12 @@ void init_Reaction(py::module& m) {
                     const Reaction&>())
       .def("mt", &Reaction::mt)
       .def("q", &Reaction::q)
-      .def("multiplicity",
-           py::overload_cast<double>(&Reaction::yield, py::const_))
-      .def("multiplicity", py::overload_cast<>(&Reaction::yield, py::const_))
+      .def("multiplicity", &Reaction::yield)
       .def("threshold", &Reaction::threshold)
       .def("frame", &Reaction::frame)
-      .def("xs", py::overload_cast<double>(&Reaction::xs, py::const_))
-      .def("xs", py::overload_cast<double, size_t>(&Reaction::xs, py::const_))
+      .def("xs", &Reaction::xs)
       .def("sample_angle_energy", &Reaction::sample_angle_energy)
-      .def("cross_section", &Reaction::cross_section)
-      .def("distributions", &Reaction::distributions)
-      .def("probabilities", &Reaction::probabilities)
       .def("distribution", &Reaction::distribution)
       .def("probability", &Reaction::probability)
-      .def("n_distributions", &Reaction::n_distributions);
+      .def("size", &Reaction::size);
 }

@@ -74,7 +74,7 @@ class Region1D : public Tabulated1D {
     auto hi_it = low_it;
     hi_it++;
 
-    size_t i = low_it - x_.begin();
+    std::size_t i = low_it - x_.begin();
 
     double x1 = *low_it;
     double x2 = *hi_it;
@@ -118,7 +118,7 @@ class Region1D : public Tabulated1D {
       auto hi_it = low_it;
       hi_it++;
 
-      size_t i = low_it - x_.begin();
+      std::size_t i = low_it - x_.begin();
 
       double x1 = *low_it;
       double x2 = *hi_it;
@@ -164,7 +164,7 @@ class Region1D : public Tabulated1D {
   /**
    * @brief Returns the number of (x,y) pairs.
    */
-  size_t size() const { return x_.size(); }
+  std::size_t size() const { return x_.size(); }
 
   /**
    * @brief Returns the lowest x value.

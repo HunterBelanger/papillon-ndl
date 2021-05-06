@@ -39,6 +39,8 @@
 #include <PapillonNDL/polynomial_1d.hpp>
 #include <PapillonNDL/region_1d.hpp>
 #include <PapillonNDL/tabulated_1d.hpp>
+#include <PapillonNDL/sum_1d.hpp>
+#include <PapillonNDL/difference_1d.hpp>
 
 namespace py = pybind11;
 
@@ -156,4 +158,24 @@ void init_MultiRegion1D(py::module& m) {
       .def("size", &MultiRegion1D::size)
       .def("min_x", &MultiRegion1D::min_x)
       .def("max_x", &MultiRegion1D::max_x);
+}
+
+void init_Sum1D(py::module& m) {
+  py::class_<Sum1D, Function1D, std::shared_ptr<Sum1D>>(
+      m, "Sum1D")
+      .def(py::init<std::shared_ptr<Function1D>, std::shared_ptr<Function1D>>())
+      .def("__call__", &Sum1D::operator())
+      .def("integrate", &Sum1D::integrate)
+      .def("term_1", &Sum1D::term_1)
+      .def("term_2", &Sum1D::term_2);
+}
+
+void init_Difference1D(py::module& m) {
+  py::class_<Difference1D, Function1D, std::shared_ptr<Difference1D>>(
+      m, "Difference1D")
+      .def(py::init<std::shared_ptr<Function1D>, std::shared_ptr<Function1D>>())
+      .def("__call__", &Difference1D::operator())
+      .def("integrate", &Difference1D::integrate)
+      .def("term_1", &Difference1D::term_1)
+      .def("term_2", &Difference1D::term_2);
 }
