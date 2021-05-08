@@ -45,6 +45,8 @@
 #include <PapillonNDL/st_incoherent_elastic.hpp>
 #include <PapillonNDL/tabular_energy_angle.hpp>
 #include <PapillonNDL/uncorrelated.hpp>
+#include <PapillonNDL/multiple_distribution.hpp>
+#include <PapillonNDL/absorption.hpp>
 
 namespace py = pybind11;
 
@@ -81,7 +83,7 @@ void init_Uncorrelated(py::module& m) {
       .def(py::init<const AngleDistribution&,
                     std::shared_ptr<EnergyLaw>>())
       .def("sample_angle_energy", &Uncorrelated::sample_angle_energy)
-      .def("angle", &Uncorrelated::angle, py::return_value_policy::reference_internal)
+      .def("angle", &Uncorrelated::angle)
       .def("energy", &Uncorrelated::energy, py::return_value_policy::reference_internal);
 }
 
@@ -216,8 +218,27 @@ void init_STInoherentElastic(py::module& m) {
   py::class_<STIncoherentElastic, AngleEnergy,
              std::shared_ptr<STIncoherentElastic>>(m, "STIncoherentElastic")
       .def(py::init<const ACE&>())
-      .def("xs", &STIncoherentElastic::xs, py::return_value_policy::reference_internal)
+      .def("xs", py::overload_cast<>(&STIncoherentElastic::xs, py::const_), py::return_value_policy::reference_internal)
+      .def("xs", py::overload_cast<double>(&STIncoherentElastic::xs, py::const_))
       .def("sample_angle_energy", &STIncoherentElastic::sample_angle_energy)
       .def("incoming_energy", &STIncoherentElastic::incoming_energy)
       .def("cosines", &STIncoherentElastic::cosines);
+}
+
+void init_MultipleDistribution(py::module& m) {
+  py::class_<MultipleDistribution, AngleEnergy,
+             std::shared_ptr<MultipleDistribution>>(m, "MultipleDistribution")
+      .def(py::init<const std::vector<std::shared_ptr<AngleEnergy>>&,
+                    const std::vector<std::shared_ptr<Tabulated1D>>&>())
+      .def("sample_angle_energy", &MultipleDistribution::sample_angle_energy)
+      .def("size", &MultipleDistribution::size)
+      .def("distribution", &MultipleDistribution::distribution, py::return_value_policy::reference_internal)
+      .def("probability", &MultipleDistribution::probability, py::return_value_policy::reference_internal);
+}
+
+void init_Absorption(py::module& m) {
+  py::class_<Absorption, AngleEnergy,
+             std::shared_ptr<Absorption>>(m, "Absorption")
+      .def(py::init<>())
+      .def("sample_angle_energy", &Absorption::sample_angle_energy);
 }

@@ -31,35 +31,30 @@
  * termes.
  *
  * */
-#include <PapillonNDL/pndl_exception.hpp>
-#include <PapillonNDL/st_coherent_elastic.hpp>
+#ifndef PAPILLON_NDL_ABSORPTION_H
+#define PAPILLON_NDL_ABSORPTION_H
+
+#include <PapillonNDL/angle_energy.hpp>
+
+/**
+ * @file
+ * @author Hunter Belanger
+ */
 
 namespace pndl {
 
-STCoherentElastic::STCoherentElastic(const ACE& ace)
-    : bragg_edges_(), structure_factor_sum_() {
-  // Fist make sure ACE file does indeed give coherent elastic scattering
-  int32_t elastic_mode = ace.nxs(4);
-  if (elastic_mode == 4) {
-    // Get index to Bragg edge and structure data
-    int32_t i = ace.jxs(3) - 1;
-    uint32_t Ne = ace.xss<uint32_t>(i);
-    bragg_edges_ = ace.xss(i + 1, Ne);
-    structure_factor_sum_ = ace.xss(i + 1 + Ne, Ne);
+  /**
+   * @brief A distribution to represent absorption.
+   */
+  class Absorption : public AngleEnergy {
+    public:
+      Absorption() {}
 
-    // Make sure Bragg edges are all positive and sorted
-    if (!std::is_sorted(bragg_edges_.begin(), bragg_edges_.end())) {
-      std::string mssg =
-          "STCoherentElastic::STCoherentElastic: Bragg edges are not sorted.";
-      throw PNDLException(mssg, __FILE__, __LINE__);
-    }
+      AngleEnergyPacket sample_angle_energy(double /*E_in*/, std::function<double()> /*rng*/) const override final {
+        return {1., 0.};
+      }
+  };
 
-    if (bragg_edges_.front() < 0.) {
-      std::string mssg =
-          "STCoherentElastic::STCoherentElastic: Negative Bragg edges found.";
-      throw PNDLException(mssg, __FILE__, __LINE__);
-    }
-  }
 }
 
-}  // namespace pndl
+#endif

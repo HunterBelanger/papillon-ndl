@@ -55,13 +55,13 @@ void init_CENeutron(py::module& m) {
       .def("fission_xs", &CENeutron::fission_xs)
       .def("disappearance_xs", &CENeutron::disappearance_xs)
       .def("photon_production_xs", &CENeutron::photon_production_xs)
-      .def("elastic_angle_distribution", &CENeutron::elastic_angle_distribution, py::return_value_policy::reference_internal)
-      .def("nu_total", &CENeutron::nu_total)
-      .def("nu_prompt", &CENeutron::nu_prompt)
-      .def("nu_delayed", &CENeutron::nu_delayed)
+      .def("elastic_angle_distribution", &CENeutron::elastic_angle_distribution)
+      .def("nu_total", &CENeutron::nu_total, py::return_value_policy::reference_internal)
+      .def("nu_prompt", &CENeutron::nu_prompt, py::return_value_policy::reference_internal)
+      .def("nu_delayed", &CENeutron::nu_delayed, py::return_value_policy::reference_internal)
       .def("n_delayed_groups", &CENeutron::n_delayed_groups)
-      .def("delayed_group", &CENeutron::delayed_group, py::return_value_policy::copy)
+      .def("delayed_group", &CENeutron::delayed_group)
       .def("mt_list", &CENeutron::mt_list)
       .def("has_reaction", &CENeutron::has_reaction)
-      .def("reaction", &CENeutron::reaction, py::return_value_policy::copy);
+      .def("reaction", &CENeutron::reaction);
 }

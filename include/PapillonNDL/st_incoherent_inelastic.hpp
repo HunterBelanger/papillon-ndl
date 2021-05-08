@@ -67,6 +67,15 @@ class STIncoherentInelastic {
   const Region1D& xs() const { return *xs_; }
 
   /**
+   * @brief Evaluates the incoherent inelastic scattering cross section
+   *        at energy E.
+   * @param E Incident energy at which to evaluate the cross section in MeV.
+   */
+  double xs(double E) const {
+    return xs_->evaluate(E); 
+  }
+
+  /**
    * @brief Retruns the maximum energy value which is tabulated for the
    *        cross section.
    */

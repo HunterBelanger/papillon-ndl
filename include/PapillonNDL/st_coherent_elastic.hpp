@@ -59,11 +59,13 @@ class STCoherentElastic : public AngleEnergy {
   ~STCoherentElastic() = default;
 
   /**
-   * @brief Evaluates the incoherent inelastic scattering cross section
+   * @brief Evaluates the coherent elastic scattering cross section
    *        at energy E.
    * @param E Incident energy at which to evaluate the cross section in MeV.
    */
   double xs(double E) const {
+    if (bragg_edges_.size() == 0) return 0.;
+
     if (E > bragg_edges_.front() && E < bragg_edges_.back()) {
       // Get index for lower bragg edge
       auto Eit = std::lower_bound(bragg_edges_.begin(), bragg_edges_.end(), E);
@@ -78,6 +80,8 @@ class STCoherentElastic : public AngleEnergy {
 
   AngleEnergyPacket sample_angle_energy(
       double E_in, std::function<double()> /*rng*/) const override final {
+    if (bragg_edges_.size() == 0) return {1., 0.};
+
     // Get Bragg edge of scatter
     double Ei = 0.;
     if (E_in > bragg_edges_.front() && E_in < bragg_edges_.back()) {

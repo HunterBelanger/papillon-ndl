@@ -70,6 +70,8 @@ extern void init_KalbachTable(py::module&);
 extern void init_Kalbach(py::module&);
 extern void init_DiscreteCosinesEnergies(py::module&);
 extern void init_ContinuousEnergyDiscreteCosines(py::module& m);
+extern void init_MultipleDistribution(py::module& m);
+extern void init_Absorption(py::module& m);
 extern void init_STIncoherentInelastic(py::module& m);
 extern void init_STCoherentElastic(py::module& m);
 extern void init_STInoherentElastic(py::module& m);
@@ -118,6 +120,8 @@ PYBIND11_MODULE(pyPapillonNDL, m) {
   init_Kalbach(m);
   init_DiscreteCosinesEnergies(m);
   init_ContinuousEnergyDiscreteCosines(m);
+  init_MultipleDistribution(m);
+  init_Absorption(m);
   init_STIncoherentInelastic(m);
   init_STCoherentElastic(m);
   init_STInoherentElastic(m);

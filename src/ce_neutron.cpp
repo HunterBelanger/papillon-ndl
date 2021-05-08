@@ -316,7 +316,7 @@ std::shared_ptr<CrossSection> CENeutron::compute_fission_xs() {
   }
 
   if (this->has_reaction(18)) {
-    return this->reaction(18).xs_; 
+    return std::make_shared<CrossSection>(this->reaction(18).xs()); 
   }
 
   // Life is difficult. We need to sum the products.

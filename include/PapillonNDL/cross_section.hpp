@@ -49,7 +49,7 @@ namespace pndl {
  * @brief Contains the linearly interpolable cross section data for
  *        a single MT.
  */
-class CrossSection : public std::enable_shared_from_this<CrossSection> {
+class CrossSection {
   // CrossSection instances should mainly be shared pointers in this
   // library. This is because sometimes certain cross sections aren't
   // present (such as photon production), and this is represented as a
@@ -93,14 +93,14 @@ class CrossSection : public std::enable_shared_from_this<CrossSection> {
    * @param i Index from associated energy grid.
    */
   double operator[](std::size_t i) const {
-    if (single_value_) return values_.front();
+    if (single_value_) return values_->front();
 
     if (i < index_)
       return 0.;
-    else if (i >= index_ + values_.size())
-      return values_.back();
+    else if (i >= index_ + values_->size())
+      return values_->back();
 
-    return values_[i - index_];
+    return (*values_)[i - index_];
   }
 
   /**
@@ -111,13 +111,13 @@ class CrossSection : public std::enable_shared_from_this<CrossSection> {
   double operator()(double E) const {
     if (single_value_) {
       if (E < energy_grid_->min_energy()) return 0.;
-      return values_.front();
+      return values_->front();
     }
 
     if (E <= (*energy_grid_)[index_])
       return 0.;
     else if (E >= energy_grid_->max_energy())
-      return values_.back();
+      return values_->back();
 
     const auto& egrid = energy_grid_->grid();
     const auto erange_begin = egrid.begin() + index_;
@@ -128,8 +128,8 @@ class CrossSection : public std::enable_shared_from_this<CrossSection> {
 
     double E_low = egrid[index_ + i];
     double E_hi = egrid[index_ + i + 1];
-    double sig_low = values_[i];
-    double sig_hi = values_[i + 1];
+    double sig_low = (*values_)[i];
+    double sig_hi = (*values_)[i + 1];
 
     return ((E - E_low) / (E_hi - E_low)) * (sig_hi - sig_low) + sig_low;
   }
@@ -144,23 +144,52 @@ class CrossSection : public std::enable_shared_from_this<CrossSection> {
   double operator()(double E, std::size_t i) const {
     if (single_value_) {
       if (E < energy_grid_->min_energy()) return 0.;
-      return values_.front();
+      return values_->front();
     }
 
     if (i < index_)
       return 0.;
-    else if (i >= index_ + values_.size() - 1)
-      return values_.back();
+    else if (i >= index_ + values_->size() - 1)
+      return values_->back();
 
     // Transform index from global grid to local grid
     i -= index_;
 
     double E_low = (*energy_grid_)[index_ + i];
     double E_hi = (*energy_grid_)[index_ + i + 1];
-    double sig_low = values_[i];
-    double sig_hi = values_[i + 1];
+    double sig_low = (*values_)[i];
+    double sig_hi = (*values_)[i + 1];
 
     return ((E - E_low) / (E_hi - E_low)) * (sig_hi - sig_low) + sig_low;
+  }
+
+  /**
+   * @brief Evaluates the cross section at a given energy, with the
+   *        grid point already provided.
+   * @param E Energy to evaluate the cross section at.
+   * @param i Index of the points for interpolation in the frame of
+   *          the energy grid.
+   * @param El The value of the energy grid at index i.
+   * @param Eh The value of the energy grid at index i+1.
+   */
+  double operator()(double E, std::size_t i, double El, double Eh) const {
+    if (single_value_) {
+      if (E < energy_grid_->min_energy()) return 0.;
+      return values_->front();
+    }
+
+    if (i < index_)
+      return 0.;
+    else if (i >= index_ + values_->size() - 1)
+      return values_->back();
+
+    // Transform index from global grid to local grid
+    i -= index_;
+
+    double sig_low = (*values_)[i];
+    double sig_hi = (*values_)[i + 1];
+
+    return ((E - El) / (Eh - El)) * (sig_hi - sig_low) + sig_low;
   }
 
   /**
@@ -180,6 +209,19 @@ class CrossSection : public std::enable_shared_from_this<CrossSection> {
   double evaluate(double E, std::size_t i) const { return this->operator()(E, i); }
 
   /**
+   * @brief Evaluates the cross section at a given energy, with the
+   *        grid point already provided.
+   * @param E Energy to evaluate the cross section at.
+   * @param i Index of the points for interpolation in the frame of
+   *          the energy grid.
+   * @param El The value of the energy grid at index i.
+   * @param Eh The value of the energy grid at index i+1.
+   */
+  double evaluate(double E, std::size_t i, double El, double Eh) const { 
+    return this->operator()(E, i, El, Eh);
+  }
+
+  /**
    * @brief Returns index in the energy grid at which the cross section
    *        values begin.
    */
@@ -188,12 +230,12 @@ class CrossSection : public std::enable_shared_from_this<CrossSection> {
   /**
    * @brief Number of points in the cross section.
    */
-  std::size_t size() const { return values_.size(); }
+  std::size_t size() const { return values_->size(); }
 
   /**
    * @brief Returns the ith cross section value.
    */
-  double xs(std::size_t i) const { return values_[i]; }
+  double xs(std::size_t i) const { return (*values_)[i]; }
 
   /**
    * @brief Returns the ith energy value, which corresponds with
@@ -204,7 +246,7 @@ class CrossSection : public std::enable_shared_from_this<CrossSection> {
   /**
    * @brief Returns the cross section values as a vector of floats.
    */
-  const std::vector<double>& xs() const { return values_; }
+  const std::vector<double>& xs() const { return *values_; }
 
   /**
    * @brief Returns a copy of the energy grid points for the cross section
@@ -214,7 +256,7 @@ class CrossSection : public std::enable_shared_from_this<CrossSection> {
 
  private:
   std::shared_ptr<EnergyGrid> energy_grid_;
-  std::vector<double> values_;
+  std::shared_ptr<std::vector<double>> values_;
   std::size_t index_;
   bool single_value_;
 };

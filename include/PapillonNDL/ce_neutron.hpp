@@ -171,7 +171,7 @@ class CENeutron {
    * @param mt MT reaction to return.
    */
   const Reaction& reaction(uint32_t mt) const {
-    if (mt > 891 || reaction_indices_[mt] < 0) {
+    if (!this->has_reaction(mt)) {
       std::string mssg = "CENeutron::reaction: MT = " + std::to_string(mt) +
                          " is not provided in ZAID = " + std::to_string(zaid_) +
                          ".";

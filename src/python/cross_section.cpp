@@ -51,9 +51,13 @@ void init_CrossSection(py::module& m) {
            py::overload_cast<double>(&CrossSection::operator(), py::const_))
       .def("__call__", py::overload_cast<double, size_t>(
                            &CrossSection::operator(), py::const_))
+      .def("__call__", py::overload_cast<double, size_t, double, double>(
+                           &CrossSection::operator(), py::const_))
       .def("evaluate",
            py::overload_cast<double>(&CrossSection::evaluate, py::const_))
       .def("evaluate", py::overload_cast<double, size_t>(
+                           &CrossSection::evaluate, py::const_))
+      .def("evaluate", py::overload_cast<double, size_t, double, double>(
                            &CrossSection::evaluate, py::const_))
       .def("size", &CrossSection::size)
       .def("index", &CrossSection::index)

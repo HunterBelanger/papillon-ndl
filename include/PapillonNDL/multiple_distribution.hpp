@@ -31,35 +31,53 @@
  * termes.
  *
  * */
-#include <PapillonNDL/pndl_exception.hpp>
-#include <PapillonNDL/st_coherent_elastic.hpp>
+#ifndef PAPILLON_NDL_MULTIPLE_DISTRIBUTION_H
+#define PAPILLON_NDL_MULTIPLE_DISTRIBUTION_H
+
+#include <PapillonNDL/angle_energy.hpp>
+#include <PapillonNDL/tabulated_1d.hpp>
+#include <vector>
+
+/**
+ * @file
+ * @author Hunter Belanger
+ */
 
 namespace pndl {
 
-STCoherentElastic::STCoherentElastic(const ACE& ace)
-    : bragg_edges_(), structure_factor_sum_() {
-  // Fist make sure ACE file does indeed give coherent elastic scattering
-  int32_t elastic_mode = ace.nxs(4);
-  if (elastic_mode == 4) {
-    // Get index to Bragg edge and structure data
-    int32_t i = ace.jxs(3) - 1;
-    uint32_t Ne = ace.xss<uint32_t>(i);
-    bragg_edges_ = ace.xss(i + 1, Ne);
-    structure_factor_sum_ = ace.xss(i + 1 + Ne, Ne);
+  /**
+   * @brief A dsitribution which is composed of mutliple possible
+   *        distributions, each with a tabulated probability.
+   */
+  class MultipleDistribution : public AngleEnergy {
+    public:
+      MultipleDistribution(const std::vector<std::shared_ptr<AngleEnergy>>& distributions,
+                           const std::vector<std::shared_ptr<Tabulated1D>>& probabilities);
 
-    // Make sure Bragg edges are all positive and sorted
-    if (!std::is_sorted(bragg_edges_.begin(), bragg_edges_.end())) {
-      std::string mssg =
-          "STCoherentElastic::STCoherentElastic: Bragg edges are not sorted.";
-      throw PNDLException(mssg, __FILE__, __LINE__);
-    }
+      AngleEnergyPacket sample_angle_energy(double E_in, std::function<double()> rng) const override final;
 
-    if (bragg_edges_.front() < 0.) {
-      std::string mssg =
-          "STCoherentElastic::STCoherentElastic: Negative Bragg edges found.";
-      throw PNDLException(mssg, __FILE__, __LINE__);
-    }
-  }
+      /**
+       * @brief Returns the number of distributions for the reaction.
+       */
+      std::size_t size() const {return distributions_.size();}
+      
+      /**
+       * @brief Returns the ith distribution for the reaction.
+       * @param i Index of distribution to fetch.
+       */
+      const AngleEnergy& distribution(std::size_t i) const {return *distributions_[i];}
+
+      /**
+       * @brief Returns the ith distribution's probability function.
+       * @param i Index of distribution to fetch.
+       */
+      const Tabulated1D& probability(std::size_t i) const {return *probabilities_[i];}
+    
+    private:
+      std::vector<std::shared_ptr<AngleEnergy>> distributions_;
+      std::vector<std::shared_ptr<Tabulated1D>> probabilities_;
+  };
+
 }
 
-}  // namespace pndl
+#endif

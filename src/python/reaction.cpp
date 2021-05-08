@@ -52,8 +52,6 @@ void init_Reaction(py::module& m) {
       .def("threshold", &Reaction::threshold)
       .def("frame", &Reaction::frame)
       .def("xs", &Reaction::xs)
-      .def("sample_angle_energy", &Reaction::sample_angle_energy)
-      .def("distribution", &Reaction::distribution)
-      .def("probability", &Reaction::probability)
-      .def("size", &Reaction::size);
+      .def("sample_neutron_angle_energy", &Reaction::sample_neutron_angle_energy)
+      .def("neutron_distribution", &Reaction::neutron_distribution, py::return_value_policy::reference_internal);
 }

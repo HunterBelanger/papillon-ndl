@@ -98,31 +98,17 @@ class Reaction {
   const Function1D& yield() const { return *yield_; }
 
   /**
-   * @brief Samples and angle and energy from the reactions product
-   *        distribution.
+   * @brief Samples and angle and energy from the neutron reaction
+   *        product distribution.
    * @param E_in Incident energy in MeV.
    * @param rng Random number generation function.
    */
-  AngleEnergyPacket sample_angle_energy(double E_in,
+  AngleEnergyPacket sample_neutron_angle_energy(double E_in,
                                         std::function<double()> rng) const {
-    if (distributions_.size() == 0 || E_in < threshold_) return {0., 0.};
+    if (E_in < threshold_) return {0., 0.};
 
-    // First select distribution
-    double xi = rng();
-    double sum = 0.;
-    for (std::size_t d = 0; d < distributions_.size(); d++) {
-      sum += (*probabilities_[d])(E_in);
-      if (xi < sum) {
-        AngleEnergyPacket out =
-            distributions_[d]->sample_angle_energy(E_in, rng);
-        if (frame_ == Frame::CM) cm_to_lab(E_in, awr_, out);
-        return out;
-      }
-    }
+    AngleEnergyPacket out = neutron_distribution_->sample_angle_energy(E_in, rng);
 
-    // Shouldn't get here, but if we do, use the last distribution
-    AngleEnergyPacket out =
-        distributions_.back()->sample_angle_energy(E_in, rng);
     if (frame_ == Frame::CM) cm_to_lab(E_in, awr_, out);
 
     return out;
@@ -134,24 +120,10 @@ class Reaction {
   const CrossSection& xs() const { return *xs_; }
 
   /**
-   * @brief Returns the number of distributions for the reaction.
+   * @brief Returns the distribution for neutron reaction products.
    */
-  std::size_t size() const { return distributions_.size(); }
-
-  /**
-   * @brief Returns the ith distribution for the reaction.
-   * @param i Index of distribution to fetch.
-   */
-  const AngleEnergy& distribution(std::size_t i) const {
-    return *distributions_[i];
-  }
-
-  /**
-   * @brief Returns the ith distribution's probability function.
-   * @param i Index of distribution to fetch.
-   */
-  const Tabulated1D& probability(std::size_t i) const {
-    return *probabilities_[i];
+  const AngleEnergy& neutron_distribution() const {
+    return *neutron_distribution_;
   }
 
  private:
@@ -162,10 +134,10 @@ class Reaction {
   Frame frame_;
   std::shared_ptr<CrossSection> xs_;
   std::shared_ptr<Function1D> yield_;
-  std::vector<std::shared_ptr<AngleEnergy>> distributions_;
-  std::vector<std::shared_ptr<Tabulated1D>> probabilities_;
+  std::shared_ptr<AngleEnergy> neutron_distribution_;
 
-  friend class CENeutron;
+  // Private helper methods
+  void load_neutron_distributions(const ACE& ace, std::size_t indx, std::vector<std::shared_ptr<AngleEnergy>>& distributions, std::vector<std::shared_ptr<Tabulated1D>>& probabilities);
 };
 
 }  // namespace pndl

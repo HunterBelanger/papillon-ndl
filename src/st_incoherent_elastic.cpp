@@ -40,67 +40,68 @@ STIncoherentElastic::STIncoherentElastic(const ACE& ace)
     : xs_(nullptr), Nmu(0), incoming_energy_(), cosines_() {
   // Fist make sure ACE file does indeed give coherent elastic scattering
   int32_t elastic_mode = ace.nxs(4);
-  if (elastic_mode == 4) {
-    std::string mssg =
-        "STIncoherentElastic::STIncoherentElastic: Provided ACE file does not "
-        "have incoherent elastic scattering.";
-    throw PNDLException(mssg, __FILE__, __LINE__);
+  if (elastic_mode == 4 || ace.jxs(3) == 0) {
+    // Make a zero xs incase a user try to get the XS
+    std::vector<double> E(2, 0.);
+    E[1] = 100.;
+    std::vector<double> xs_vals(2, 0.);
+    xs_ = std::make_shared<Region1D>(E, xs_vals, Interpolation::Histogram);
+  } else {
+    // Get index to incident energy
+    int32_t i = ace.jxs(3) - 1;
+    uint32_t Ne = ace.xss<uint32_t>(i);
+    incoming_energy_ = ace.xss(i + 1, Ne);
+    std::vector<double> xs_vals = ace.xss(i + 1 + Ne, Ne);
+
+    // Make sure no negative XS values
+    for (size_t j = 0; j < xs_vals.size(); j++) {
+      if (xs_vals[j] < 0.) {
+        std::string mssg =
+            "STIncoherentElastic::STIncoherentElastic: Negative cross section "
+            "found at index " +
+            std::to_string(j) + ".";
+        throw PNDLException(mssg, __FILE__, __LINE__);
+      }
+    }
+
+    xs_ = std::make_shared<Region1D>(incoming_energy_, xs_vals,
+                                    Interpolation::LinLin);
+
+    // Read scattering cosines
+    Nmu = static_cast<uint32_t>(ace.nxs(5) + 1);
+    i = ace.jxs(5) - 1;
+    for (size_t ie = 0; ie < Ne; ie++) {
+      std::vector<double> cosines_for_ie = ace.xss(i, Nmu);
+      i += Nmu;
+
+      // Check cosines
+      if (!std::is_sorted(cosines_for_ie.begin(), cosines_for_ie.end())) {
+        std::string mssg =
+            "STIncoherentElastic::STIncoherentElastic: Cosines are not sored for "
+            "incoming energy index " +
+            std::to_string(ie) + ".";
+        throw PNDLException(mssg, __FILE__, __LINE__);
+      }
+
+      if (cosines_for_ie.front() < -1.) {
+        std::string mssg =
+            "STIncoherentElastic::STIncoherentElastic: Lowest cosine is less "
+            "than -1 for incoming energy index " +
+            std::to_string(ie) + ".";
+        throw PNDLException(mssg, __FILE__, __LINE__);
+      }
+
+      if (cosines_for_ie.back() > 1.) {
+        std::string mssg =
+            "STIncoherentElastic::STIncoherentElastic: Largest cosine is greater "
+            "than 1 for incoming eneergy index " +
+            std::to_string(ie) + ".";
+        throw PNDLException(mssg, __FILE__, __LINE__);
+      }
+
+      cosines_.push_back(cosines_for_ie);
+    }  // For all incoming energies
   }
-
-  // Get index to Bragg edge and structure data
-  int32_t i = ace.jxs(3) - 1;
-  uint32_t Ne = ace.xss<uint32_t>(i);
-  incoming_energy_ = ace.xss(i + 1, Ne);
-  std::vector<double> xs_vals = ace.xss(i + 1 + Ne, Ne);
-
-  // Make sure no negative XS values
-  for (size_t j = 0; j < xs_vals.size(); j++) {
-    if (xs_vals[j] < 0.) {
-      std::string mssg =
-          "STIncoherentElastic::STIncoherentElastic: Negative cross section "
-          "found at index " +
-          std::to_string(j) + ".";
-      throw PNDLException(mssg, __FILE__, __LINE__);
-    }
-  }
-
-  xs_ = std::make_shared<Region1D>(incoming_energy_, xs_vals,
-                                   Interpolation::LinLin);
-
-  // Read scattering cosines
-  Nmu = static_cast<uint32_t>(ace.nxs(5) + 1);
-  i = ace.jxs(5) - 1;
-  for (size_t ie = 0; ie < Ne; ie++) {
-    std::vector<double> cosines_for_ie = ace.xss(i, Nmu);
-    i += Nmu;
-
-    // Check cosines
-    if (!std::is_sorted(cosines_for_ie.begin(), cosines_for_ie.end())) {
-      std::string mssg =
-          "STIncoherentElastic::STIncoherentElastic: Cosines are not sored for "
-          "incoming energy index " +
-          std::to_string(ie) + ".";
-      throw PNDLException(mssg, __FILE__, __LINE__);
-    }
-
-    if (cosines_for_ie.front() < -1.) {
-      std::string mssg =
-          "STIncoherentElastic::STIncoherentElastic: Lowest cosine is less "
-          "than -1 for incoming energy index " +
-          std::to_string(ie) + ".";
-      throw PNDLException(mssg, __FILE__, __LINE__);
-    }
-
-    if (cosines_for_ie.back() > 1.) {
-      std::string mssg =
-          "STIncoherentElastic::STIncoherentElastic: Largest cosine is greater "
-          "than 1 for incoming eneergy index " +
-          std::to_string(ie) + ".";
-      throw PNDLException(mssg, __FILE__, __LINE__);
-    }
-
-    cosines_.push_back(cosines_for_ie);
-  }  // For all incoming energies
 }
 
 }  // namespace pndl
