@@ -44,3 +44,9 @@ add_executable(Function1DTests function_1d.cpp)
 target_compile_features(Function1DTests PRIVATE cxx_std_17)
 target_link_libraries(Function1DTests PUBLIC PapillonNDL gtest_main)
 add_test(Function1DTests Function1DTests)
+
+# PCTable Tests
+add_executable(PCTableTests pctable.cpp)
+target_compile_features(PCTableTests PRIVATE cxx_std_17)
+target_link_libraries(PCTableTests PUBLIC PapillonNDL gtest_main)
+add_test(PCTableTests PCTableTests)
