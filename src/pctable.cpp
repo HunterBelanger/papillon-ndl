@@ -49,7 +49,13 @@ PCTable::PCTable(const ACE& ace, std::size_t i, double normalization)
                        std::to_string(i) + ".";
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
+
   uint32_t NP = ace.xss<uint32_t>(i + 1);
+  if (NP == 0) {
+    std::string mssg = "PCTable::PCTable: Cannot create a table with zero points.";
+    throw PNDLException(mssg, __FILE__, __LINE__);  
+  }
+
   values_ = ace.xss(i + 2, NP);
   // Apply normalization to values
   for (auto& v : values_) v *= normalization;
@@ -112,6 +118,11 @@ PCTable::PCTable(const std::vector<double>& values,
     std::string mssg =
         "PCTable::PCTable: Values, PDF, and CDF must have the same length.";
     throw PNDLException(mssg, __FILE__, __LINE__);
+  }
+
+  if (values_.size() == 0) {
+    std::string mssg = "PCTable::PCTable: Cannot create a table with zero points.";
+    throw PNDLException(mssg, __FILE__, __LINE__);  
   }
 
   if (!std::is_sorted(values_.begin(), values_.end())) {

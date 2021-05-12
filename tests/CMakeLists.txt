@@ -50,3 +50,9 @@ add_executable(PCTableTests pctable.cpp)
 target_compile_features(PCTableTests PRIVATE cxx_std_17)
 target_link_libraries(PCTableTests PUBLIC PapillonNDL gtest_main)
 add_test(PCTableTests PCTableTests)
+
+# AngleLaw Tests
+add_executable(AngleLawTests angle_law.cpp)
+target_compile_features(AngleLawTests PRIVATE cxx_std_17)
+target_link_libraries(AngleLawTests PUBLIC PapillonNDL gtest_main)
+add_test(AngleLawTests AngleLawTests)

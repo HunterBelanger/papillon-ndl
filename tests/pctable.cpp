@@ -118,6 +118,8 @@ TEST(PCTable, ValuesGrid) {
 
   const auto& vals = lin.values();
 
+  ASSERT_EQ(vals.size(), vl.size());
+
   for (std::size_t i = 0; i < vals.size(); i++) {
     EXPECT_DOUBLE_EQ(vals[i], vl[i]);
   }
@@ -131,6 +133,8 @@ TEST(PCTable, PDFGrid) {
 
   const auto& vals = lin.pdf();
 
+  ASSERT_EQ(vals.size(), pl.size());
+
   for (std::size_t i = 0; i < vals.size(); i++) {
     EXPECT_DOUBLE_EQ(vals[i], pl[i]);
   }
@@ -143,6 +147,8 @@ TEST(PCTable, CDFGrid) {
   PCTable lin(vl, pl, cl, Interpolation::LinLin);
 
   const auto& vals = lin.cdf();
+
+  ASSERT_EQ(vals.size(), cl.size());
 
   for (std::size_t i = 0; i < vals.size(); i++) {
     EXPECT_DOUBLE_EQ(vals[i], cl[i]);
