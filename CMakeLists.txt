@@ -13,8 +13,7 @@ option(PNDL_PYTHON "Enable Python interface to PapillonNDL" ON)
 option(PNDL_TESTS "Build tests" OFF)
 
 # List of source files for PapillonNDL
-set(PNDL_SOURCE_LIST src/frame.cpp
-                     src/region_1d.cpp
+set(PNDL_SOURCE_LIST src/region_1d.cpp
                      src/multi_region_1d.cpp
                      src/polynomial_1d.cpp
                      src/ace.cpp

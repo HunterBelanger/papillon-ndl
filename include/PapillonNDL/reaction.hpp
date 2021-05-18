@@ -109,7 +109,7 @@ class Reaction {
 
     AngleEnergyPacket out = neutron_distribution_->sample_angle_energy(E_in, rng);
 
-    if (frame_ == Frame::CM) cm_to_lab(E_in, awr_, out);
+    if (frame_ == Frame::CM) CMToLab::transform(E_in, awr_, out);
 
     return out;
   }

@@ -41,6 +41,7 @@
 
 #include <PapillonNDL/angle_energy.hpp>
 #include <cstdint>
+#include <cmath>
 
 namespace pndl {
 
@@ -54,15 +55,54 @@ enum class Frame : uint32_t {
 };
 
 /**
- * @brief Converts the data contained in ae from the center of mass frame
- *        to the lab frame, in place.
- * @param E Initial energy in lab frame.
- * @param A AWR of nuclide.
- * @param ae Sampled outgoing angle and energy in the Center of Mass
- *           frame. These values will be changed in place to the angle
- *           and energy in the Lab frame.
+ * @brief A struct contianing helper methods to convert scattering angle and
+ *        energies provided in the center of mass frame, to the lab frame.
  */
-void cm_to_lab(double E, double A, AngleEnergyPacket& ae);
+struct CMToLab {
+  
+  /**
+   * @brief Transfrom mu and Eout from the CM frame to the Lab frame.
+   * @param Ein Incident energy of the particle.
+   * @param A Atomic weight ratio of the target nuclide.
+   * @param mu Scattering angle in the center of mass frame. The value
+   *           is changed to the scattering angle in the lab frame
+   *           upon return.
+   * @param Eout Scattering energy in the center of mass frame. The value
+   *             is changed to the scattering energy in the lab frame
+   *             upon return.
+   */ 
+  static void transform(double Ein, double A, double& mu, double& Eout) {
+    double Eout_lab = Eout + (Ein + 2. * mu * (A + 1.) * std::sqrt(Ein * Eout)) /
+                            std::pow(A + 1., 2.); 
+
+    mu = mu * std::sqrt(Eout / Eout_lab) + (1. / (A + 1.)) * std::sqrt(Ein / Eout_lab);
+
+    Eout = Eout_lab;
+  }
+  
+  /**
+   * @brief Transfrom an AngleEnergyPacket from the CM frame to the Lab frame.
+   * @param Ein Incident energy of the particle.
+   * @param A Atomic weight ratio of the target nuclide.
+   * @param ae AngleEnergyPacket which initially contains the scattering angle
+   *           and energy in the CM frame, which is changed to the lab frame
+   *           upon return.
+   */
+  static void transform(double Ein, double A, AngleEnergyPacket& ae) {
+    double E_cm = ae.energy;
+    double mu_cm = ae.cosine_angle;
+
+    double E_lab = E_cm + (Ein + 2. * mu_cm * (A + 1.) * std::sqrt(Ein * E_cm)) /
+                              std::pow(A + 1., 2.);
+
+    double mu_lab =
+        mu_cm * std::sqrt(E_cm / E_lab) + (1. / (A + 1.)) * std::sqrt(Ein / E_lab);
+
+    ae.cosine_angle = mu_lab;
+    ae.energy = E_lab;
+  }
+
+};
 
 }  // namespace pndl
 
