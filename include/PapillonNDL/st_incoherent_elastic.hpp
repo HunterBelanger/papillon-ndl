@@ -68,9 +68,7 @@ class STIncoherentElastic : public AngleEnergy {
    *        at energy E.
    * @param E Incident energy at which to evaluate the cross section in MeV.
    */
-  double xs(double E) const {
-    return xs_->evaluate(E); 
-  }
+  double xs(double E) const { return xs_->evaluate(E); }
 
   AngleEnergyPacket sample_angle_energy(
       double E_in, std::function<double()> rng) const override final {

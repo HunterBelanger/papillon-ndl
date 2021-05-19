@@ -56,7 +56,7 @@ class CrossSection {
   // nullptr. It also makes it easier to load a nuclide and just grab
   // the elastic scattering xs should someone want to do DBRC or
   // something like that.
-  
+
  public:
   /**
    * @param ace ACE file to take the data from.
@@ -67,8 +67,8 @@ class CrossSection {
    *                  at i, or if the energy grid index is at i. Default
    *                  value is true.
    */
-  CrossSection(const ACE& ace, std::size_t i, std::shared_ptr<EnergyGrid> E_grid,
-               bool get_index = true);
+  CrossSection(const ACE& ace, std::size_t i,
+               std::shared_ptr<EnergyGrid> E_grid, bool get_index = true);
 
   /**
    * @param xs Vector containing the cross section values.
@@ -77,7 +77,7 @@ class CrossSection {
    */
   CrossSection(const std::vector<double>& xs,
                std::shared_ptr<EnergyGrid> E_grid, std::size_t index);
-  
+
   /**
    * @param xs Value for the cross section at all points in the provided
    *           energy grid.
@@ -206,7 +206,9 @@ class CrossSection {
    * @param i Index of the points for interpolation in the frame of
    *          the energy grid.
    */
-  double evaluate(double E, std::size_t i) const { return this->operator()(E, i); }
+  double evaluate(double E, std::size_t i) const {
+    return this->operator()(E, i);
+  }
 
   /**
    * @brief Evaluates the cross section at a given energy, with the
@@ -217,7 +219,7 @@ class CrossSection {
    * @param El The value of the energy grid at index i.
    * @param Eh The value of the energy grid at index i+1.
    */
-  double evaluate(double E, std::size_t i, double El, double Eh) const { 
+  double evaluate(double E, std::size_t i, double El, double Eh) const {
     return this->operator()(E, i, El, Eh);
   }
 

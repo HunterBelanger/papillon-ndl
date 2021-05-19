@@ -31,6 +31,7 @@
  * termes.
  *
  * */
+#include <PapillonNDL/absorption.hpp>
 #include <PapillonNDL/angle_distribution.hpp>
 #include <PapillonNDL/constant.hpp>
 #include <PapillonNDL/discrete_photon.hpp>
@@ -41,6 +42,7 @@
 #include <PapillonNDL/level_inelastic_scatter.hpp>
 #include <PapillonNDL/maxwellian.hpp>
 #include <PapillonNDL/multi_region_1d.hpp>
+#include <PapillonNDL/multiple_distribution.hpp>
 #include <PapillonNDL/nbody.hpp>
 #include <PapillonNDL/pndl_exception.hpp>
 #include <PapillonNDL/reaction.hpp>
@@ -49,8 +51,6 @@
 #include <PapillonNDL/tabular_energy_angle.hpp>
 #include <PapillonNDL/uncorrelated.hpp>
 #include <PapillonNDL/watt.hpp>
-#include <PapillonNDL/multiple_distribution.hpp>
-#include <PapillonNDL/absorption.hpp>
 #include <cmath>
 #include <iostream>
 #include <memory>
@@ -130,10 +130,11 @@ Reaction::Reaction(const ACE& ace, std::size_t indx,
 
     try {
       load_neutron_distributions(ace, indx, distributions, probabilities);
-      
+
       // Make the final distribution
       if (distributions.size() > 1) {
-        neutron_distribution_ = std::make_shared<MultipleDistribution>(distributions, probabilities);
+        neutron_distribution_ = std::make_shared<MultipleDistribution>(
+            distributions, probabilities);
       } else {
         neutron_distribution_ = distributions.front();
       }
@@ -191,8 +192,10 @@ Reaction::Reaction(const ACE& ace, std::size_t indx,
   }
 }
 
-void Reaction::load_neutron_distributions(const ACE& ace, std::size_t indx, std::vector<std::shared_ptr<AngleEnergy>>& distributions,
-                                          std::vector<std::shared_ptr<Tabulated1D>>& probabilities) {
+void Reaction::load_neutron_distributions(
+    const ACE& ace, std::size_t indx,
+    std::vector<std::shared_ptr<AngleEnergy>>& distributions,
+    std::vector<std::shared_ptr<Tabulated1D>>& probabilities) {
   // Get angle distribution location
   int locb = ace.xss<int>(ace.LAND() + indx + 1);
 
@@ -288,22 +291,25 @@ void Reaction::load_neutron_distributions(const ACE& ace, std::size_t indx, std:
       angle_energy = std::make_shared<Kalbach>(ace, j);
 
     } else if (law == 61) {  // Tabular Energy Angle
-      angle_energy =
-          std::make_shared<TabularEnergyAngle>(ace, j, ace.DLW());
+      angle_energy = std::make_shared<TabularEnergyAngle>(ace, j, ace.DLW());
 
     } else if (law == 66) {  // N-body
       angle_energy = std::make_shared<NBody>(ace, j, q_);
 
     } else if ((law > 0 && law < 6) || law == 7 || law == 9 || law == 11) {
       // Didn't have angle distribution
-      std::string mssg = "Reaction::Reaction: No anglular distribution provided to acompany law " + std::to_string(law) + " in reaction MT=" + std::to_string(mt_) + " in ZAID=" + std::to_string(ace.zaid()) + ".";
+      std::string mssg =
+          "Reaction::Reaction: No anglular distribution provided to acompany "
+          "law " +
+          std::to_string(law) + " in reaction MT=" + std::to_string(mt_) +
+          " in ZAID=" + std::to_string(ace.zaid()) + ".";
       throw PNDLException(mssg, __FILE__, __LINE__);
     } else {
       // Unknown or unsuported law
       std::string mssg = "Reaction::Reaction: Unkown energy law " +
-                          std::to_string(law) +
-                          " in reaction MT=" + std::to_string(mt_) +
-                          " in ZAID=" + std::to_string(ace.zaid()) + ".";
+                         std::to_string(law) +
+                         " in reaction MT=" + std::to_string(mt_) +
+                         " in ZAID=" + std::to_string(ace.zaid()) + ".";
       throw PNDLException(mssg, __FILE__, __LINE__);
     }
 

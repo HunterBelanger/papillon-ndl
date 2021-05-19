@@ -41,8 +41,8 @@
 
 #include <PapillonNDL/ace.hpp>
 #include <cmath>
-#include <vector>
 #include <memory>
+#include <vector>
 
 namespace pndl {
 
@@ -55,7 +55,7 @@ class EnergyGrid : public std::enable_shared_from_this<EnergyGrid> {
   // EnergyGrid inherits from std::enable_shared_from_this, so that
   // Pybind11 can take the references to the energy gird, and form
   // proper shared pointers.
-  
+
  public:
   /**
    * @param ace ACE file from which to take the energy grid.
@@ -121,8 +121,8 @@ class EnergyGrid : public std::enable_shared_from_this<EnergyGrid> {
     uint32_t hi_indx = bin_pointers_[bin + 1] + 1;
 
     std::size_t ind = std::lower_bound(energy_values_.begin() + low_indx,
-                                  energy_values_.begin() + hi_indx, E) -
-                 energy_values_.begin() - 1;
+                                       energy_values_.begin() + hi_indx, E) -
+                      energy_values_.begin() - 1;
 
     return ind;
   }

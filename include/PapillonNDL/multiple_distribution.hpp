@@ -45,39 +45,45 @@
 
 namespace pndl {
 
+/**
+ * @brief A dsitribution which is composed of mutliple possible
+ *        distributions, each with a tabulated probability.
+ */
+class MultipleDistribution : public AngleEnergy {
+ public:
+  MultipleDistribution(
+      const std::vector<std::shared_ptr<AngleEnergy>>& distributions,
+      const std::vector<std::shared_ptr<Tabulated1D>>& probabilities);
+
+  AngleEnergyPacket sample_angle_energy(
+      double E_in, std::function<double()> rng) const override final;
+
   /**
-   * @brief A dsitribution which is composed of mutliple possible
-   *        distributions, each with a tabulated probability.
+   * @brief Returns the number of distributions for the reaction.
    */
-  class MultipleDistribution : public AngleEnergy {
-    public:
-      MultipleDistribution(const std::vector<std::shared_ptr<AngleEnergy>>& distributions,
-                           const std::vector<std::shared_ptr<Tabulated1D>>& probabilities);
+  std::size_t size() const { return distributions_.size(); }
 
-      AngleEnergyPacket sample_angle_energy(double E_in, std::function<double()> rng) const override final;
+  /**
+   * @brief Returns the ith distribution for the reaction.
+   * @param i Index of distribution to fetch.
+   */
+  const AngleEnergy& distribution(std::size_t i) const {
+    return *distributions_[i];
+  }
 
-      /**
-       * @brief Returns the number of distributions for the reaction.
-       */
-      std::size_t size() const {return distributions_.size();}
-      
-      /**
-       * @brief Returns the ith distribution for the reaction.
-       * @param i Index of distribution to fetch.
-       */
-      const AngleEnergy& distribution(std::size_t i) const {return *distributions_[i];}
+  /**
+   * @brief Returns the ith distribution's probability function.
+   * @param i Index of distribution to fetch.
+   */
+  const Tabulated1D& probability(std::size_t i) const {
+    return *probabilities_[i];
+  }
 
-      /**
-       * @brief Returns the ith distribution's probability function.
-       * @param i Index of distribution to fetch.
-       */
-      const Tabulated1D& probability(std::size_t i) const {return *probabilities_[i];}
-    
-    private:
-      std::vector<std::shared_ptr<AngleEnergy>> distributions_;
-      std::vector<std::shared_ptr<Tabulated1D>> probabilities_;
-  };
+ private:
+  std::vector<std::shared_ptr<AngleEnergy>> distributions_;
+  std::vector<std::shared_ptr<Tabulated1D>> probabilities_;
+};
 
-}
+}  // namespace pndl
 
 #endif

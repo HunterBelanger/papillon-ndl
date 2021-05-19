@@ -48,10 +48,13 @@ void init_Reaction(py::module& m) {
                     const Reaction&>())
       .def("mt", &Reaction::mt)
       .def("q", &Reaction::q)
-      .def("multiplicity", &Reaction::yield, py::return_value_policy::reference_internal)
+      .def("multiplicity", &Reaction::yield,
+           py::return_value_policy::reference_internal)
       .def("threshold", &Reaction::threshold)
       .def("frame", &Reaction::frame)
       .def("xs", &Reaction::xs)
-      .def("sample_neutron_angle_energy", &Reaction::sample_neutron_angle_energy)
-      .def("neutron_distribution", &Reaction::neutron_distribution, py::return_value_policy::reference_internal);
+      .def("sample_neutron_angle_energy",
+           &Reaction::sample_neutron_angle_energy)
+      .def("neutron_distribution", &Reaction::neutron_distribution,
+           py::return_value_policy::reference_internal);
 }

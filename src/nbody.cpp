@@ -39,7 +39,8 @@
 
 namespace pndl {
 
-NBody::NBody(const ACE& ace, std::size_t i, double iQ) : n_(), Ap_(), A_(), Q_(iQ) {
+NBody::NBody(const ACE& ace, std::size_t i, double iQ)
+    : n_(), Ap_(), A_(), Q_(iQ) {
   n_ = ace.xss<uint32_t>(i);
   Ap_ = ace.xss(i + 1);
   A_ = ace.awr();

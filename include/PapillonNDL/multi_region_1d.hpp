@@ -82,22 +82,22 @@ class MultiRegion1D : public Tabulated1D {
    *        which are stored as Region1D objects.
    * @param i Index to the interpolation segment.
    */
-  const Region1D& operator[](std::size_t i) const {return regions_[i];}
+  const Region1D& operator[](std::size_t i) const { return regions_[i]; }
 
   /**
    * @brief Returns the number of interpolation regions.
    */
-  std::size_t size() const {return regions_.size();}
+  std::size_t size() const { return regions_.size(); }
 
   /**
    * @brief Returns the lowest x value.
    */
-  double min_x() const {return regions_.front().min_x();}
+  double min_x() const { return regions_.front().min_x(); }
 
   /**
    * @brief Returns the highest x value.
    */
-  double max_x() const {return regions_.back().max_x();}
+  double max_x() const { return regions_.back().max_x(); }
 
  private:
   std::vector<Region1D> regions_;

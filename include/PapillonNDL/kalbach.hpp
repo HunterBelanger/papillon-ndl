@@ -75,25 +75,21 @@ class Kalbach : public AngleEnergy {
    * @brief Returns a vector to the grid of incoming energies.
    */
   const std::vector<double>& incoming_energy() const {
-    return incoming_energy_; 
+    return incoming_energy_;
   }
 
   /**
    * @brief Returns the ith incoming energy in MeV.
    * @param i Index to the incoming energy grid.
    */
-  double incoming_energy(std::size_t i) const {
-    return incoming_energy_[i]; 
-  }
+  double incoming_energy(std::size_t i) const { return incoming_energy_[i]; }
 
   /**
    * @brief Returns a KalbachTable which contains the distributions
    *        for the ith incoming energy.
    * @param i Index to the incoming energy.
    */
-  const KalbachTable& table(std::size_t i) const {
-    return tables_[i]; 
-  }
+  const KalbachTable& table(std::size_t i) const { return tables_[i]; }
 
   /**
    * @brief Returns the number of incoming energy points.

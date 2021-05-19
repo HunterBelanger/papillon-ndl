@@ -105,7 +105,8 @@ class PCTable {
 
     if (interp_ == Interpolation::Histogram) return pdf_[l];
 
-    return LinLin::interpolate(value, values_[l], pdf_[l], values_[l + 1], pdf_[l + 1]);
+    return LinLin::interpolate(value, values_[l], pdf_[l], values_[l + 1],
+                               pdf_[l + 1]);
   }
 
   /**

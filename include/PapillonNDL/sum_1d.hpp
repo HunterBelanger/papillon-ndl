@@ -55,26 +55,27 @@ class Sum1D : public Function1D {
    * @param term1 Pointer to the function for the first term.
    * @param term2 Pointer to the function for the second term.
    */
-  Sum1D(std::shared_ptr<Function1D> term1, std::shared_ptr<Function1D> term2): term_1_(term1), term_2_(term2) {
+  Sum1D(std::shared_ptr<Function1D> term1, std::shared_ptr<Function1D> term2)
+      : term_1_(term1), term_2_(term2) {
     if (!term_1_) {
       std::string mssg = "Sum1D::Sum1D: Term 1 is nullptr.";
-      throw PNDLException(mssg, __FILE__, __LINE__); 
+      throw PNDLException(mssg, __FILE__, __LINE__);
     }
 
     if (!term_2_) {
       std::string mssg = "Sum1D::Sum1D: Term 2 is nullptr.";
-      throw PNDLException(mssg, __FILE__, __LINE__); 
+      throw PNDLException(mssg, __FILE__, __LINE__);
     }
   }
 
   double operator()(double x) const override final {
-    return (*term_1_)(x) + (*term_2_)(x); 
+    return (*term_1_)(x) + (*term_2_)(x);
   }
 
   double integrate(double x_low, double x_hi) const override final {
-    return term_1_->integrate(x_low, x_hi) + term_2_->integrate(x_low, x_hi); 
+    return term_1_->integrate(x_low, x_hi) + term_2_->integrate(x_low, x_hi);
   }
-  
+
   /**
    * @brief Returns the first function in the sum.
    */

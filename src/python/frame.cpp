@@ -43,14 +43,16 @@ using namespace pndl;
 
 void init_Frame(py::module& m) {
   py::enum_<Frame>(m, "Frame").value("Lab", Frame::Lab).value("CM", Frame::CM);
-  
+
   // Because fundamental types (i.e. float) are imutable in Python, we need
   // to bind a lambda function which returns a tuple for the first transform
   // overload.
   py::class_<CMToLab>(m, "CMToLab")
-      .def("transform", [](double Ein, double A, double mu, double Eout){
-                          CMToLab::transform(Ein, A, mu, Eout);
-                          return std::make_tuple(mu, Eout);
-                        })
-      .def("transform", py::overload_cast<double, double, AngleEnergyPacket&>(&CMToLab::transform));
+      .def("transform",
+           [](double Ein, double A, double mu, double Eout) {
+             CMToLab::transform(Ein, A, mu, Eout);
+             return std::make_tuple(mu, Eout);
+           })
+      .def("transform", py::overload_cast<double, double, AngleEnergyPacket&>(
+                            &CMToLab::transform));
 }

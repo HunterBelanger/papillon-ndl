@@ -236,7 +236,7 @@ ContinuousEnergyDiscreteCosines::sample_with_unit_based_interpolation(
 
   double E_hat = E_in;
   double E_l_1, E_l_M;
-  std::size_t i, j;        // Indicies for getting the angle latter.
+  std::size_t i, j;   // Indicies for getting the angle latter.
   double xi = rng();  // Random variable for sampling outgoing energy
   if (rng() > f) {
     i = l;

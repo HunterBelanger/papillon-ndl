@@ -74,12 +74,12 @@ class GeneralEvaporation : public EnergyLaw {
    * @brief Returns the table containg the effective temperature
    *        as a function of incoming energy.
    */
-  const Tabulated1D& temperature() const {return *temperature_;}
+  const Tabulated1D& temperature() const { return *temperature_; }
 
   /**
    * @brief Returns the the bin boundaries in a vector.
    */
-  const std::vector<double>& bin_bounds() const {return bin_bounds_;}
+  const std::vector<double>& bin_bounds() const { return bin_bounds_; }
 
  private:
   std::shared_ptr<Tabulated1D> temperature_;

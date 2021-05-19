@@ -75,18 +75,18 @@ class Watt : public EnergyLaw {
    * @brief Returns the table containg the distribution parameter
    *        a, as a function of the incident energy.
    */
-  const Tabulated1D& a() const {return *b_;}
+  const Tabulated1D& a() const { return *b_; }
 
   /**
    * @brief Returns the table containg the distribution parameter
    *        b, as a function of the incident energy.
    */
-  const Tabulated1D& b() const {return *a_;}
+  const Tabulated1D& b() const { return *a_; }
 
   /**
    * @brief Returns the the bin boundaries in a vector.
    */
-  double U() const {return restriction_energy_;}
+  double U() const { return restriction_energy_; }
 
  private:
   std::shared_ptr<Tabulated1D> a_;

@@ -35,7 +35,8 @@
 
 namespace pndl {
 
-TabularEnergyAngle::TabularEnergyAngle(const ACE& ace, std::size_t i, std::size_t JED)
+TabularEnergyAngle::TabularEnergyAngle(const ACE& ace, std::size_t i,
+                                       std::size_t JED)
     : incoming_energy_(), tables_() {
   // Get number of interpolation points
   uint32_t NR = ace.xss<uint32_t>(i);

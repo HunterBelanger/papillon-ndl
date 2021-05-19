@@ -71,12 +71,12 @@ class LevelInelasticScatter : public EnergyLaw {
   /**
    * @brief Returns first parameter which is (A+1)*abs(Q)/A.
    */
-  double C1() const {return C1_;}
+  double C1() const { return C1_; }
 
   /**
    * @brief Returns second parameter which is (A/(A+1))^2.
    */
-  double C2() const {return C2_;}
+  double C2() const { return C2_; }
 
  private:
   double C1_;

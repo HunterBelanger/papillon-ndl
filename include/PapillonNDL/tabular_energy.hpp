@@ -75,18 +75,20 @@ class TabularEnergy : public EnergyLaw {
    * @brief Reterns the incoming energy points in MeV for which a PCTable
    *        is stored.
    */
-  const std::vector<double>& incoming_energy() const {return incoming_energy_;}
+  const std::vector<double>& incoming_energy() const {
+    return incoming_energy_;
+  }
 
   /**
    * @brief Returns the ith PDF/CDF, corresponding to the ith incoming energy.
    * @param i Index in the incoming energy grid.
    */
-  const PCTable& table(std::size_t i) const {return tables_[i];}
+  const PCTable& table(std::size_t i) const { return tables_[i]; }
 
   /**
    * @brief Returns the number of incoming energy points.
    */
-  std::size_t size() const {return incoming_energy_.size();}
+  std::size_t size() const { return incoming_energy_.size(); }
 
  private:
   std::vector<double> incoming_energy_;

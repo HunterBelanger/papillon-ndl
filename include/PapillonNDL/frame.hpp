@@ -40,8 +40,8 @@
  */
 
 #include <PapillonNDL/angle_energy.hpp>
-#include <cstdint>
 #include <cmath>
+#include <cstdint>
 
 namespace pndl {
 
@@ -59,7 +59,6 @@ enum class Frame : uint32_t {
  *        energies provided in the center of mass frame, to the lab frame.
  */
 struct CMToLab {
-  
   /**
    * @brief Transfrom mu and Eout from the CM frame to the Lab frame.
    * @param Ein Incident energy of the particle.
@@ -70,16 +69,18 @@ struct CMToLab {
    * @param Eout Scattering energy in the center of mass frame. The value
    *             is changed to the scattering energy in the lab frame
    *             upon return.
-   */ 
+   */
   static void transform(double Ein, double A, double& mu, double& Eout) {
-    double Eout_lab = Eout + (Ein + 2. * mu * (A + 1.) * std::sqrt(Ein * Eout)) /
-                            std::pow(A + 1., 2.); 
+    double Eout_lab =
+        Eout + (Ein + 2. * mu * (A + 1.) * std::sqrt(Ein * Eout)) /
+                   std::pow(A + 1., 2.);
 
-    mu = mu * std::sqrt(Eout / Eout_lab) + (1. / (A + 1.)) * std::sqrt(Ein / Eout_lab);
+    mu = mu * std::sqrt(Eout / Eout_lab) +
+         (1. / (A + 1.)) * std::sqrt(Ein / Eout_lab);
 
     Eout = Eout_lab;
   }
-  
+
   /**
    * @brief Transfrom an AngleEnergyPacket from the CM frame to the Lab frame.
    * @param Ein Incident energy of the particle.
@@ -92,16 +93,16 @@ struct CMToLab {
     double E_cm = ae.energy;
     double mu_cm = ae.cosine_angle;
 
-    double E_lab = E_cm + (Ein + 2. * mu_cm * (A + 1.) * std::sqrt(Ein * E_cm)) /
-                              std::pow(A + 1., 2.);
+    double E_lab =
+        E_cm + (Ein + 2. * mu_cm * (A + 1.) * std::sqrt(Ein * E_cm)) /
+                   std::pow(A + 1., 2.);
 
-    double mu_lab =
-        mu_cm * std::sqrt(E_cm / E_lab) + (1. / (A + 1.)) * std::sqrt(Ein / E_lab);
+    double mu_lab = mu_cm * std::sqrt(E_cm / E_lab) +
+                    (1. / (A + 1.)) * std::sqrt(Ein / E_lab);
 
     ae.cosine_angle = mu_lab;
     ae.energy = E_lab;
   }
-
 };
 
 }  // namespace pndl

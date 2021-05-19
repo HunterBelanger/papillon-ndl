@@ -74,12 +74,12 @@ class Maxwellian : public EnergyLaw {
    * @brief Returns the table containg the effective temperature
    *        as a function of incoming energy.
    */
-  const Tabulated1D& temperature() const {return *temperature_;}
+  const Tabulated1D& temperature() const { return *temperature_; }
 
   /**
    * @brief Returns the the bin boundaries in a vector.
    */
-  double U() const {return restriction_energy_;}
+  double U() const { return restriction_energy_; }
 
  private:
   std::shared_ptr<Tabulated1D> temperature_;

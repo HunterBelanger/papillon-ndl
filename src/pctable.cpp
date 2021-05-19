@@ -52,8 +52,9 @@ PCTable::PCTable(const ACE& ace, std::size_t i, double normalization)
 
   uint32_t NP = ace.xss<uint32_t>(i + 1);
   if (NP == 0) {
-    std::string mssg = "PCTable::PCTable: Cannot create a table with zero points.";
-    throw PNDLException(mssg, __FILE__, __LINE__);  
+    std::string mssg =
+        "PCTable::PCTable: Cannot create a table with zero points.";
+    throw PNDLException(mssg, __FILE__, __LINE__);
   }
 
   values_ = ace.xss(i + 2, NP);
@@ -121,8 +122,9 @@ PCTable::PCTable(const std::vector<double>& values,
   }
 
   if (values_.size() == 0) {
-    std::string mssg = "PCTable::PCTable: Cannot create a table with zero points.";
-    throw PNDLException(mssg, __FILE__, __LINE__);  
+    std::string mssg =
+        "PCTable::PCTable: Cannot create a table with zero points.";
+    throw PNDLException(mssg, __FILE__, __LINE__);
   }
 
   if (!std::is_sorted(values_.begin(), values_.end())) {

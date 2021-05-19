@@ -72,8 +72,12 @@ CrossSection::CrossSection(const ACE& ace, std::size_t i,
 }
 
 CrossSection::CrossSection(const std::vector<double>& xs,
-                           std::shared_ptr<EnergyGrid> E_grid, std::size_t index)
-    : energy_grid_(E_grid), values_(nullptr), index_(static_cast<uint32_t>(index)), single_value_(false) {
+                           std::shared_ptr<EnergyGrid> E_grid,
+                           std::size_t index)
+    : energy_grid_(E_grid),
+      values_(nullptr),
+      index_(static_cast<uint32_t>(index)),
+      single_value_(false) {
   values_ = std::make_shared<std::vector<double>>(xs);
 
   if (index_ >= energy_grid_->size()) {
@@ -101,8 +105,9 @@ CrossSection::CrossSection(const std::vector<double>& xs,
   }
 }
 
-CrossSection::CrossSection(double xs, std::shared_ptr<EnergyGrid> E_grid): energy_grid_(E_grid), values_(nullptr), index_(0), single_value_(true) {
-  std::vector<double> xs_tmp {xs};
+CrossSection::CrossSection(double xs, std::shared_ptr<EnergyGrid> E_grid)
+    : energy_grid_(E_grid), values_(nullptr), index_(0), single_value_(true) {
+  std::vector<double> xs_tmp{xs};
   values_ = std::make_shared<std::vector<double>>(xs_tmp);
 
   if (values_->front() < 0.) {

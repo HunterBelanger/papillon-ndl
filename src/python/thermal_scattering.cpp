@@ -46,8 +46,10 @@ void init_STIncoherentInelastic(py::module& m) {
   py::class_<STIncoherentInelastic, std::shared_ptr<STIncoherentInelastic>>(
       m, "STIncoherentInelastic")
       .def(py::init<const ACE&, bool>())
-      .def("xs", py::overload_cast<>(&STIncoherentInelastic::xs, py::const_), py::return_value_policy::reference_internal)
-      .def("xs", py::overload_cast<double>(&STIncoherentInelastic::xs, py::const_))
+      .def("xs", py::overload_cast<>(&STIncoherentInelastic::xs, py::const_),
+           py::return_value_policy::reference_internal)
+      .def("xs",
+           py::overload_cast<double>(&STIncoherentInelastic::xs, py::const_))
       .def("sample_angle_energy", &STIncoherentInelastic::sample_angle_energy)
       .def("distribution", &STIncoherentInelastic::distribution)
       .def("max_energy", &STIncoherentInelastic::max_energy);
@@ -66,8 +68,11 @@ void init_STThermalScatteringLaw(py::module& m) {
            &STThermalScatteringLaw::has_coherent_elastic)
       .def("has_incoherent_elastic",
            &STThermalScatteringLaw::has_incoherent_elastic)
-      .def("coherent_elastic", &STThermalScatteringLaw::coherent_elastic, py::return_value_policy::reference_internal)
-      .def("incoherent_elastic", &STThermalScatteringLaw::incoherent_elastic, py::return_value_policy::reference_internal)
+      .def("coherent_elastic", &STThermalScatteringLaw::coherent_elastic,
+           py::return_value_policy::reference_internal)
+      .def("incoherent_elastic", &STThermalScatteringLaw::incoherent_elastic,
+           py::return_value_policy::reference_internal)
       .def("incoherent_inelastic",
-           &STThermalScatteringLaw::incoherent_inelastic, py::return_value_policy::reference_internal);
+           &STThermalScatteringLaw::incoherent_inelastic,
+           py::return_value_policy::reference_internal);
 }

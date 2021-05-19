@@ -71,9 +71,7 @@ class STIncoherentInelastic {
    *        at energy E.
    * @param E Incident energy at which to evaluate the cross section in MeV.
    */
-  double xs(double E) const {
-    return xs_->evaluate(E); 
-  }
+  double xs(double E) const { return xs_->evaluate(E); }
 
   /**
    * @brief Retruns the maximum energy value which is tabulated for the

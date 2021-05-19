@@ -125,7 +125,8 @@ void init_GeneralEvaporation(py::module& m) {
       .def(py::init<std::shared_ptr<Tabulated1D>, const std::vector<double>&>())
       .def("sample_energy", &GeneralEvaporation::sample_energy)
       .def("pdf", &GeneralEvaporation::pdf)
-      .def("temperature", &GeneralEvaporation::temperature, py::return_value_policy::reference_internal)
+      .def("temperature", &GeneralEvaporation::temperature,
+           py::return_value_policy::reference_internal)
       .def("bin_bounds", &GeneralEvaporation::bin_bounds);
 }
 
@@ -136,7 +137,8 @@ void init_Evaporation(py::module& m) {
       .def(py::init<std::shared_ptr<Tabulated1D>, double>())
       .def("sample_energy", &Evaporation::sample_energy)
       .def("pdf", &Evaporation::pdf)
-      .def("temperature", &Evaporation::temperature, py::return_value_policy::reference_internal)
+      .def("temperature", &Evaporation::temperature,
+           py::return_value_policy::reference_internal)
       .def("U", &Evaporation::U);
 }
 
@@ -147,7 +149,8 @@ void init_Maxwellian(py::module& m) {
       .def(py::init<std::shared_ptr<Tabulated1D>, double>())
       .def("sample_energy", &Maxwellian::sample_energy)
       .def("pdf", &Maxwellian::pdf)
-      .def("temperature", &Maxwellian::temperature, py::return_value_policy::reference_internal)
+      .def("temperature", &Maxwellian::temperature,
+           py::return_value_policy::reference_internal)
       .def("U", &Maxwellian::U);
 }
 

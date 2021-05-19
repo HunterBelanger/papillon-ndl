@@ -35,12 +35,12 @@
 #include <pybind11/stl.h>
 
 #include <PapillonNDL/constant.hpp>
+#include <PapillonNDL/difference_1d.hpp>
 #include <PapillonNDL/multi_region_1d.hpp>
 #include <PapillonNDL/polynomial_1d.hpp>
 #include <PapillonNDL/region_1d.hpp>
-#include <PapillonNDL/tabulated_1d.hpp>
 #include <PapillonNDL/sum_1d.hpp>
-#include <PapillonNDL/difference_1d.hpp>
+#include <PapillonNDL/tabulated_1d.hpp>
 
 namespace py = pybind11;
 
@@ -167,8 +167,7 @@ void init_MultiRegion1D(py::module& m) {
 }
 
 void init_Sum1D(py::module& m) {
-  py::class_<Sum1D, Function1D, std::shared_ptr<Sum1D>>(
-      m, "Sum1D")
+  py::class_<Sum1D, Function1D, std::shared_ptr<Sum1D>>(m, "Sum1D")
       .def(py::init<std::shared_ptr<Function1D>, std::shared_ptr<Function1D>>())
       .def("__call__", &Sum1D::operator())
       .def("evaluate", &Sum1D::evaluate)

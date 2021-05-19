@@ -65,7 +65,7 @@ STIncoherentElastic::STIncoherentElastic(const ACE& ace)
     }
 
     xs_ = std::make_shared<Region1D>(incoming_energy_, xs_vals,
-                                    Interpolation::LinLin);
+                                     Interpolation::LinLin);
 
     // Read scattering cosines
     Nmu = static_cast<uint32_t>(ace.nxs(5) + 1);
@@ -77,7 +77,8 @@ STIncoherentElastic::STIncoherentElastic(const ACE& ace)
       // Check cosines
       if (!std::is_sorted(cosines_for_ie.begin(), cosines_for_ie.end())) {
         std::string mssg =
-            "STIncoherentElastic::STIncoherentElastic: Cosines are not sored for "
+            "STIncoherentElastic::STIncoherentElastic: Cosines are not sored "
+            "for "
             "incoming energy index " +
             std::to_string(ie) + ".";
         throw PNDLException(mssg, __FILE__, __LINE__);
@@ -93,7 +94,8 @@ STIncoherentElastic::STIncoherentElastic(const ACE& ace)
 
       if (cosines_for_ie.back() > 1.) {
         std::string mssg =
-            "STIncoherentElastic::STIncoherentElastic: Largest cosine is greater "
+            "STIncoherentElastic::STIncoherentElastic: Largest cosine is "
+            "greater "
             "than 1 for incoming eneergy index " +
             std::to_string(ie) + ".";
         throw PNDLException(mssg, __FILE__, __LINE__);

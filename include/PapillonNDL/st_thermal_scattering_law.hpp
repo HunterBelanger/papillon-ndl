@@ -87,16 +87,12 @@ class STThermalScatteringLaw {
   /**
    * @brief Returns true if the nuclide has coherrent elastic scattering.
    */
-  bool has_coherent_elastic() const {
-    return has_coherent_elastic_;
-  }
+  bool has_coherent_elastic() const { return has_coherent_elastic_; }
 
   /**
    * @brief Returns true if the nuclide has incoherrent elastic scattering.
    */
-  bool has_incoherent_elastic() const {
-    return has_incoherent_elastic_;
-  }
+  bool has_incoherent_elastic() const { return has_incoherent_elastic_; }
 
   /**
    * @brief Returns the STCoherentElastic instance.

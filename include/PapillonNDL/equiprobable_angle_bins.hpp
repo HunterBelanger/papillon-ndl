@@ -68,12 +68,12 @@ class EquiprobableAngleBins : public AngleLaw {
   /**
    * @brief Returns the number of bin boundaries (number of bins + 1);
    */
-  std::size_t size() const {return bounds_.size();}
+  std::size_t size() const { return bounds_.size(); }
 
   /**
    * @brief Returns the vector with the bin boundaries.
    */
-  const std::vector<double>& bin_bounds() const {return bounds_;}
+  const std::vector<double>& bin_bounds() const { return bounds_; }
 
  private:
   std::vector<double> bounds_;

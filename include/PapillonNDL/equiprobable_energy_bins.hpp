@@ -73,18 +73,22 @@ class EquiprobableEnergyBins : public EnergyLaw {
    * @brief Returns a vector of the grid of incoming energy points for which
    *        an equiprobable bin set is stored.
    */
-  const std::vector<double>& incoming_energy() const {return incoming_energy_;}
+  const std::vector<double>& incoming_energy() const {
+    return incoming_energy_;
+  }
 
   /**
    * @brief Returns the ith set of bin boundaries as a vector.
    * @param i Index for the incoming energy grid.
    */
-  const std::vector<double>& bin_bounds(std::size_t i) const {return bin_sets_[i];}
+  const std::vector<double>& bin_bounds(std::size_t i) const {
+    return bin_sets_[i];
+  }
 
   /**
    * @brief Returns the number of incoming energies / bin boundary sets stored.
    */
-  std::size_t size() const {return incoming_energy_.size();}
+  std::size_t size() const { return incoming_energy_.size(); }
 
  private:
   std::vector<double> incoming_energy_;

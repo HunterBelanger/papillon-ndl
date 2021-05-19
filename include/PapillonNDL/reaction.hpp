@@ -103,11 +103,12 @@ class Reaction {
    * @param E_in Incident energy in MeV.
    * @param rng Random number generation function.
    */
-  AngleEnergyPacket sample_neutron_angle_energy(double E_in,
-                                        std::function<double()> rng) const {
+  AngleEnergyPacket sample_neutron_angle_energy(
+      double E_in, std::function<double()> rng) const {
     if (E_in < threshold_) return {0., 0.};
 
-    AngleEnergyPacket out = neutron_distribution_->sample_angle_energy(E_in, rng);
+    AngleEnergyPacket out =
+        neutron_distribution_->sample_angle_energy(E_in, rng);
 
     if (frame_ == Frame::CM) CMToLab::transform(E_in, awr_, out);
 
@@ -137,7 +138,10 @@ class Reaction {
   std::shared_ptr<AngleEnergy> neutron_distribution_;
 
   // Private helper methods
-  void load_neutron_distributions(const ACE& ace, std::size_t indx, std::vector<std::shared_ptr<AngleEnergy>>& distributions, std::vector<std::shared_ptr<Tabulated1D>>& probabilities);
+  void load_neutron_distributions(
+      const ACE& ace, std::size_t indx,
+      std::vector<std::shared_ptr<AngleEnergy>>& distributions,
+      std::vector<std::shared_ptr<Tabulated1D>>& probabilities);
 };
 
 }  // namespace pndl

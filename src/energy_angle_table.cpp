@@ -36,7 +36,8 @@
 
 namespace pndl {
 
-EnergyAngleTable::EnergyAngleTable(const ACE& ace, std::size_t i, std::size_t JED)
+EnergyAngleTable::EnergyAngleTable(const ACE& ace, std::size_t i,
+                                   std::size_t JED)
     : energy_(), pdf_(), cdf_(), angles_(), interp_() {
   interp_ = ace.xss<Interpolation>(i);
   if ((interp_ != Interpolation::Histogram) &&

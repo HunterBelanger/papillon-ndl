@@ -56,9 +56,12 @@ void init_CENeutron(py::module& m) {
       .def("disappearance_xs", &CENeutron::disappearance_xs)
       .def("photon_production_xs", &CENeutron::photon_production_xs)
       .def("elastic_angle_distribution", &CENeutron::elastic_angle_distribution)
-      .def("nu_total", &CENeutron::nu_total, py::return_value_policy::reference_internal)
-      .def("nu_prompt", &CENeutron::nu_prompt, py::return_value_policy::reference_internal)
-      .def("nu_delayed", &CENeutron::nu_delayed, py::return_value_policy::reference_internal)
+      .def("nu_total", &CENeutron::nu_total,
+           py::return_value_policy::reference_internal)
+      .def("nu_prompt", &CENeutron::nu_prompt,
+           py::return_value_policy::reference_internal)
+      .def("nu_delayed", &CENeutron::nu_delayed,
+           py::return_value_policy::reference_internal)
       .def("n_delayed_groups", &CENeutron::n_delayed_groups)
       .def("delayed_group", &CENeutron::delayed_group)
       .def("mt_list", &CENeutron::mt_list)

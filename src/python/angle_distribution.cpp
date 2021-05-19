@@ -54,5 +54,6 @@ void init_AngleDistribution(py::module& m) {
            py::overload_cast<>(&AngleDistribution::energy, py::const_))
       .def("energy",
            py::overload_cast<size_t>(&AngleDistribution::energy, py::const_))
-      .def("law", &AngleDistribution::law, py::return_value_policy::reference_internal);
+      .def("law", &AngleDistribution::law,
+           py::return_value_policy::reference_internal);
 }

@@ -36,7 +36,8 @@
 
 namespace pndl {
 
-Kalbach::Kalbach(const ACE& ace, std::size_t i) : incoming_energy_(), tables_() {
+Kalbach::Kalbach(const ACE& ace, std::size_t i)
+    : incoming_energy_(), tables_() {
   // Get number of interpolation points
   uint32_t NR = ace.xss<uint32_t>(i);
   // Get number of energy points

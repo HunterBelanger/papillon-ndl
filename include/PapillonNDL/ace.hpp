@@ -65,7 +65,7 @@ class ACE {
   /**
    * @brief Gets the temperature for which the data was prepared, in kelvins.
    */
-  double temperature() const {return temperature_; }
+  double temperature() const { return temperature_; }
 
   /**
    *  @brief Gets the Atomic Weight Ratio (AWR) of the nuclide.
@@ -75,34 +75,34 @@ class ACE {
   /**
    * @brief Returns true for a fissile nuclide, false for a non-fissile nuclide.
    */
-  bool fissile() const {return fissile_; }
+  bool fissile() const { return fissile_; }
 
   /**
    * @brief Retrieves an (int32_t, double) pair from the IZAW array.
    * @param i index to a pair in the IZAW array.
    *          Must be in the range [0,16).
    */
-  std::pair<int32_t, double> izaw(std::size_t i) const {return izaw_[i];}
+  std::pair<int32_t, double> izaw(std::size_t i) const { return izaw_[i]; }
 
   /**
    * @brief Retrieves a value from the NXS array.
    * @param i index to element in the NXS array.
    *          Must be in the range [0,16).
    */
-  int32_t nxs(std::size_t i) const {return nxs_[i];}
+  int32_t nxs(std::size_t i) const { return nxs_[i]; }
 
   /**
    * @brief Retrieves a value from the JXS array.
    * @param i index to element in the JXS array.
    *          Must be in the range [0,32).
    */
-  int32_t jxs(std::size_t i) const {return jxs_[i];}
+  int32_t jxs(std::size_t i) const { return jxs_[i]; }
 
   /**
    * @brief Retrieves a value from the XSS array as a double.
    * @param i index to element in the XSS array.
    */
-  double xss(std::size_t i) const {return xss_[i];}
+  double xss(std::size_t i) const { return xss_[i]; }
 
   /**
    * @brief Retrieves a value from the XSS array, cast to type T.
@@ -119,7 +119,8 @@ class ACE {
    * @param i Starting index in the IZAW array.
    * @param len Number of elements to return.
    */
-  std::vector<std::pair<int32_t, double>> izaw(std::size_t i, std::size_t len) const;
+  std::vector<std::pair<int32_t, double>> izaw(std::size_t i,
+                                               std::size_t len) const;
 
   /**
    * @brief Retrieves a vector contianing a continuous segment of

@@ -165,7 +165,8 @@ ACE::ACE(std::string fname)
   dned_ = jxs_[26] - 1;
 }
 
-std::vector<std::pair<int32_t, double>> ACE::izaw(std::size_t i, std::size_t len) const {
+std::vector<std::pair<int32_t, double>> ACE::izaw(std::size_t i,
+                                                  std::size_t len) const {
   return {izaw_.begin() + i, izaw_.begin() + i + len};
 }
 

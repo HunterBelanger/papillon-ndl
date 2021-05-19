@@ -113,12 +113,14 @@ class CENeutron {
   /**
    * @brief Returns the disappearance CrossSection for the nuclide.
    */
-  const CrossSection& disappearance_xs() const {return *disappearance_xs_; }
-  
+  const CrossSection& disappearance_xs() const { return *disappearance_xs_; }
+
   /**
    * @brief Returns the photon production CrossSection for the nuclide.
    */
-  const CrossSection& photon_production_xs() const { return *photon_production_xs_; }
+  const CrossSection& photon_production_xs() const {
+    return *photon_production_xs_;
+  }
 
   /**
    * @brief Returns the function for total nu.
@@ -138,7 +140,9 @@ class CENeutron {
   /**
    * @brief Returns the AngleDistribution for elastic scattering.
    */
-  const AngleDistribution& elastic_angle_distribution() const { return *elastic_angle_; }
+  const AngleDistribution& elastic_angle_distribution() const {
+    return *elastic_angle_;
+  }
 
   /**
    * @brief Returns the number of delayed neutron groups.

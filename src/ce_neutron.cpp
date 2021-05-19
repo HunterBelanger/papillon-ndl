@@ -33,12 +33,12 @@
  * */
 #include <PapillonNDL/ce_neutron.hpp>
 #include <PapillonNDL/constant.hpp>
+#include <PapillonNDL/difference_1d.hpp>
 #include <PapillonNDL/multi_region_1d.hpp>
 #include <PapillonNDL/pndl_exception.hpp>
 #include <PapillonNDL/polynomial_1d.hpp>
 #include <PapillonNDL/region_1d.hpp>
 #include <PapillonNDL/sum_1d.hpp>
-#include <PapillonNDL/difference_1d.hpp>
 #include <PapillonNDL/uncorrelated.hpp>
 #include <memory>
 #include <system_error>
@@ -82,7 +82,7 @@ CENeutron::CENeutron(const ACE& ace)
     photon_production_xs_ =
         std::make_shared<CrossSection>(ace, ace.GPD(), energy_grid_, false);
   } else {
-    photon_production_xs_ = std::make_shared<CrossSection>(0., energy_grid_); 
+    photon_production_xs_ = std::make_shared<CrossSection>(0., energy_grid_);
   }
 
   // Make elastic AngleDistribution
@@ -110,8 +110,8 @@ CENeutron::CENeutron(const ACE& ace)
     nu_prompt_ = std::make_shared<Constant>(0.);
     nu_delayed_ = std::make_shared<Constant>(0.);
   }
-  
-  fission_xs_ = compute_fission_xs(); 
+
+  fission_xs_ = compute_fission_xs();
 }
 
 CENeutron::CENeutron(const ACE& ace, const CENeutron& nuclide)
@@ -233,30 +233,30 @@ void CENeutron::read_fission_data(const ACE& ace) {
 
   // First we make nu_total_
   if (total) {
-    nu_total_ = total; 
+    nu_total_ = total;
   } else if (prompt && delayed) {
-    nu_total_ = std::make_shared<Sum1D>(prompt, delayed); 
+    nu_total_ = std::make_shared<Sum1D>(prompt, delayed);
   } else if (delayed) {
-    nu_total_ = delayed; 
+    nu_total_ = delayed;
   } else {
-    // Should never get here, but just in case 
+    // Should never get here, but just in case
     nu_total_ = std::make_shared<Constant>(0.);
   }
 
   // Now we make nu_prompt_
   if (prompt) {
-    nu_prompt_ = prompt; 
+    nu_prompt_ = prompt;
   } else {
-    nu_prompt_ = nu_total_; 
+    nu_prompt_ = nu_total_;
   }
 
   // And finally, delayed
   if (delayed) {
-    nu_delayed_ = delayed; 
-  } else if(total && prompt) {
-    nu_delayed_ = std::make_shared<Difference1D>(total, prompt); 
+    nu_delayed_ = delayed;
+  } else if (total && prompt) {
+    nu_delayed_ = std::make_shared<Difference1D>(total, prompt);
   } else {
-    nu_delayed_ = std::make_shared<Constant>(0.); 
+    nu_delayed_ = std::make_shared<Constant>(0.);
   }
 
   // Read all delayed group data
@@ -311,38 +311,38 @@ std::shared_ptr<Function1D> CENeutron::read_tabular_nu(const ACE& ace,
 }
 
 std::shared_ptr<CrossSection> CENeutron::compute_fission_xs() {
-  if(!fissile_) {
-    return std::make_shared<CrossSection>(0., energy_grid_); 
+  if (!fissile_) {
+    return std::make_shared<CrossSection>(0., energy_grid_);
   }
 
   if (this->has_reaction(18)) {
-    return std::make_shared<CrossSection>(this->reaction(18).xs()); 
+    return std::make_shared<CrossSection>(this->reaction(18).xs());
   }
 
   // Life is difficult. We need to sum the products.
-  std::size_t lowest_index = energy_grid_->size(); 
+  std::size_t lowest_index = energy_grid_->size();
   if (this->has_reaction(19)) {
     if (this->reaction(19).xs().index() < lowest_index) {
-      lowest_index = this->reaction(19).xs().index(); 
-    } 
+      lowest_index = this->reaction(19).xs().index();
+    }
   }
 
   if (this->has_reaction(20)) {
     if (this->reaction(20).xs().index() < lowest_index) {
-      lowest_index = this->reaction(20).xs().index(); 
-    } 
+      lowest_index = this->reaction(20).xs().index();
+    }
   }
 
   if (this->has_reaction(21)) {
     if (this->reaction(21).xs().index() < lowest_index) {
-      lowest_index = this->reaction(21).xs().index(); 
-    } 
+      lowest_index = this->reaction(21).xs().index();
+    }
   }
 
   if (this->has_reaction(38)) {
     if (this->reaction(38).xs().index() < lowest_index) {
-      lowest_index = this->reaction(38).xs().index(); 
-    } 
+      lowest_index = this->reaction(38).xs().index();
+    }
   }
 
   // We now know what energy point to start at. We can initialize the vector.
@@ -350,19 +350,19 @@ std::shared_ptr<CrossSection> CENeutron::compute_fission_xs() {
 
   for (std::size_t i = lowest_index; i < energy_grid_->size(); i++) {
     if (this->has_reaction(19)) {
-      fiss_xs[i - lowest_index] += this->reaction(19).xs()[i]; 
-    } 
+      fiss_xs[i - lowest_index] += this->reaction(19).xs()[i];
+    }
 
     if (this->has_reaction(20)) {
-      fiss_xs[i - lowest_index] += this->reaction(20).xs()[i]; 
+      fiss_xs[i - lowest_index] += this->reaction(20).xs()[i];
     }
 
     if (this->has_reaction(21)) {
-      fiss_xs[i - lowest_index] += this->reaction(21).xs()[i]; 
+      fiss_xs[i - lowest_index] += this->reaction(21).xs()[i];
     }
 
     if (this->has_reaction(38)) {
-      fiss_xs[i - lowest_index] += this->reaction(38).xs()[i]; 
+      fiss_xs[i - lowest_index] += this->reaction(38).xs()[i];
     }
   }
 

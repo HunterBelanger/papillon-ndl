@@ -74,33 +74,33 @@ class AngleTable : public AngleLaw {
 
   double sample_mu(double xi) const override final;
 
-  double pdf(double mu) const override final {return distribution_.pdf(mu);}
+  double pdf(double mu) const override final { return distribution_.pdf(mu); }
 
   /**
    * @brief Returns the number of points in the tabulated data.
    */
-  std::size_t size() const {return distribution_.size();}
+  std::size_t size() const { return distribution_.size(); }
 
   /**
    * @brief Returns the vector of the cosine points.
    */
-  const std::vector<double>& cosines() const {return distribution_.values();}
+  const std::vector<double>& cosines() const { return distribution_.values(); }
 
   /**
    * @brief Returns the vector of the PDF values.
    */
-  const std::vector<double>& pdf() const {return distribution_.pdf();}
+  const std::vector<double>& pdf() const { return distribution_.pdf(); }
 
   /**
    * @brief Returns the vector of the CDF values.
    */
-  const std::vector<double>& cdf() const {return distribution_.cdf();}
+  const std::vector<double>& cdf() const { return distribution_.cdf(); }
 
   /**
    * @brief Returns the type of interpolation used on the table
    *        (Histogram or LinLin).
    */
-  Interpolation interpolation() const {return distribution_.interpolation();}
+  Interpolation interpolation() const { return distribution_.interpolation(); }
 
  private:
   PCTable distribution_;

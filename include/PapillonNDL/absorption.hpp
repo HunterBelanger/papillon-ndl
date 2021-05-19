@@ -43,18 +43,19 @@
 
 namespace pndl {
 
-  /**
-   * @brief A distribution to represent absorption.
-   */
-  class Absorption : public AngleEnergy {
-    public:
-      Absorption() {}
+/**
+ * @brief A distribution to represent absorption.
+ */
+class Absorption : public AngleEnergy {
+ public:
+  Absorption() {}
 
-      AngleEnergyPacket sample_angle_energy(double /*E_in*/, std::function<double()> /*rng*/) const override final {
-        return {1., 0.};
-      }
-  };
+  AngleEnergyPacket sample_angle_energy(
+      double /*E_in*/, std::function<double()> /*rng*/) const override final {
+    return {1., 0.};
+  }
+};
 
-}
+}  // namespace pndl
 
 #endif
