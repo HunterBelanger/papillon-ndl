@@ -46,7 +46,7 @@
 namespace pndl {
 
 /**
- * @brief Class to represent functions which is a sum of two
+ * @brief Class to represent a function which is a sum of two
  *        other functions.
  */
 class Sum1D : public Function1D {

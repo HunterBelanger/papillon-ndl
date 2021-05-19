@@ -33,3 +33,13 @@ MultiRegion1D
 -------------
 
 .. doxygenclass:: pndl::MultiRegion1D
+
+Sum1D
+-----
+
+.. doxygenclass:: pndl::Sum1D
+
+Difference1D
+------------
+
+.. doxygenclass:: pndl::Difference1D

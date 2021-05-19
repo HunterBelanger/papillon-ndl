@@ -46,7 +46,7 @@
 namespace pndl {
 
 /**
- * @brief Class to represent functions which is the difference of two
+ * @brief Class to represent a function which is the difference of two
  *        other functions.
  */
 class Difference1D : public Function1D {

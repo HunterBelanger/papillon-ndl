@@ -9,6 +9,11 @@ AngleEnergyPacket
 
 .. doxygenstruct:: pndl::AngleEnergyPacket
 
+MultipleDistribution
+--------------------
+
+.. doxygenclass:: pndl::MultipleDistribution
+
 AngleEnergy
 -----------
 
