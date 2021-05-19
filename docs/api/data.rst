@@ -28,3 +28,23 @@ DelayedGroup
 ------------
 
 .. doxygenclass:: pndl::DelayedGroup
+
+STThermalScatteringLaw
+----------------------
+
+.. doxygenclass:: pndl::STThermalScatteringLaw
+
+STCoherentElastic
+-----------------
+
+.. doxygenclass:: pndl::STCoherentElastic
+
+STIncoherentElastic
+-------------------
+
+.. doxygenclass:: pndl::STIncoherentElastic
+
+STIncoherentInelastic
+---------------------
+
+.. doxygenclass:: pndl::STIncoherentInelastic

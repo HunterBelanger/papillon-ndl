@@ -19,10 +19,10 @@ Frame
 
 .. doxygenenum:: pndl::Frame
 
-cm_to_lab
----------
+CMToLab
+-------
 
-.. doxygenfunction:: pndl::cm_to_lab
+.. doxygenstruct:: pndl::CMToLab
 
 Interpolation
 -------------

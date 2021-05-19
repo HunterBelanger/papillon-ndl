@@ -43,3 +43,13 @@ Kalbach
 -------
 
 .. doxygenclass:: pndl::Kalbach
+
+DiscreteCosinesEnergies
+-----------------------
+
+.. doxygenclass:: pndl::DiscreteCosinesEnergies
+
+ContinuousEnergyDiscreteCosines
+-------------------------------
+
+.. doxygenclass:: pndl::ContinuousEnergyDiscreteCosines
