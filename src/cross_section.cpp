@@ -38,9 +38,9 @@
 
 namespace pndl {
 
-CrossSection::CrossSection(const ACE& ace, size_t i,
+CrossSection::CrossSection(const ACE& ace, std::size_t i,
                            std::shared_ptr<EnergyGrid> E_grid, bool get_index)
-    : energy_grid_(E_grid), values_(), index_(0) {
+    : energy_grid_(E_grid), values_(nullptr), index_(0), single_value_(false) {
   uint32_t NE = ace.nxs(2);
   if (get_index) {
     index_ = ace.xss<uint32_t>(i) - 1;
@@ -49,9 +49,9 @@ CrossSection::CrossSection(const ACE& ace, size_t i,
     i++;
   }
 
-  values_ = ace.xss(i, NE);
+  values_ = std::make_shared<std::vector<double>>(ace.xss(i, NE));
 
-  if (energy_grid_->size() - index_ != values_.size()) {
+  if (energy_grid_->size() - index_ != values_->size()) {
     std::string mssg =
         "CrossSection::CrossSection: Different number of points in the energy "
         "grid and xs-values grid. Cross section begins at " +
@@ -59,8 +59,8 @@ CrossSection::CrossSection(const ACE& ace, size_t i,
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
 
-  for (size_t l = 0; l < values_.size(); l++) {
-    if (values_[l] < 0.) {
+  for (std::size_t l = 0; l < values_->size(); l++) {
+    if ((*values_)[l] < 0.) {
       std::string mssg =
           "CrossSection::CrossSection: Negative cross section found at "
           "element " +
@@ -72,8 +72,14 @@ CrossSection::CrossSection(const ACE& ace, size_t i,
 }
 
 CrossSection::CrossSection(const std::vector<double>& xs,
-                           std::shared_ptr<EnergyGrid> E_grid, size_t index)
-    : energy_grid_(E_grid), values_(xs), index_(static_cast<uint32_t>(index)) {
+                           std::shared_ptr<EnergyGrid> E_grid,
+                           std::size_t index)
+    : energy_grid_(E_grid),
+      values_(nullptr),
+      index_(static_cast<uint32_t>(index)),
+      single_value_(false) {
+  values_ = std::make_shared<std::vector<double>>(xs);
+
   if (index_ >= energy_grid_->size()) {
     std::string mssg =
         "CrossSection::CrossSection: Starting index is larger than size of the "
@@ -81,8 +87,8 @@ CrossSection::CrossSection(const std::vector<double>& xs,
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
 
-  for (size_t l = 0; l < values_.size(); l++) {
-    if (values_[l] < 0.) {
+  for (std::size_t l = 0; l < values_->size(); l++) {
+    if ((*values_)[l] < 0.) {
       std::string mssg =
           "CrossSection::CrossSection: Negative cross section found at "
           "element " +
@@ -91,7 +97,7 @@ CrossSection::CrossSection(const std::vector<double>& xs,
     }
   }
 
-  if (energy_grid_->size() - index_ != values_.size()) {
+  if (energy_grid_->size() - index_ != values_->size()) {
     std::string mssg =
         "CrossSection::CrossSection: Different number of points in the energy "
         "grid and xs-values grid.";
@@ -99,17 +105,17 @@ CrossSection::CrossSection(const std::vector<double>& xs,
   }
 }
 
-size_t CrossSection::size() const { return values_.size(); }
+CrossSection::CrossSection(double xs, std::shared_ptr<EnergyGrid> E_grid)
+    : energy_grid_(E_grid), values_(nullptr), index_(0), single_value_(true) {
+  std::vector<double> xs_tmp{xs};
+  values_ = std::make_shared<std::vector<double>>(xs_tmp);
 
-double CrossSection::xs(size_t i) const { return values_[i]; }
-
-double CrossSection::energy(size_t i) const {
-  return (*energy_grid_)[index_ + i];
+  if (values_->front() < 0.) {
+    std::string mssg =
+        "CrossSection::CrossSection: Negative cross section value provided.";
+    throw PNDLException(mssg, __FILE__, __LINE__);
+  }
 }
-
-uint32_t CrossSection::index() const { return index_; }
-
-const std::vector<double>& CrossSection::xs() const { return values_; }
 
 std::vector<double> CrossSection::energy() const {
   return {energy_grid_->grid().begin() + index_, energy_grid_->grid().end()};

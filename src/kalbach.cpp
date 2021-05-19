@@ -36,7 +36,8 @@
 
 namespace pndl {
 
-Kalbach::Kalbach(const ACE& ace, size_t i) : incoming_energy_(), tables_() {
+Kalbach::Kalbach(const ACE& ace, std::size_t i)
+    : incoming_energy_(), tables_() {
   // Get number of interpolation points
   uint32_t NR = ace.xss<uint32_t>(i);
   // Get number of energy points
@@ -93,7 +94,7 @@ Kalbach::Kalbach(const std::vector<double>& incoming_energy,
 AngleEnergyPacket Kalbach::sample_angle_energy(
     double E_in, std::function<double()> rng) const {
   // Determine the index of the bounding tabulated incoming energies
-  size_t l;
+  std::size_t l;
   double f;  // Interpolation factor
   auto in_E_it =
       std::lower_bound(incoming_energy_.begin(), incoming_energy_.end(), E_in);
@@ -150,15 +151,5 @@ AngleEnergyPacket Kalbach::sample_angle_energy(
 
   return {mu, E_out};
 }
-
-const std::vector<double>& Kalbach::incoming_energy() const {
-  return incoming_energy_;
-}
-
-double Kalbach::incoming_energy(size_t i) const { return incoming_energy_[i]; }
-
-const KalbachTable& Kalbach::table(size_t i) const { return tables_[i]; }
-
-size_t Kalbach::size() const { return incoming_energy_.size(); }
 
 }  // namespace pndl

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.11)
 
-project(PapillonNDL-Tests
+project(PapillonNDLTests
   DESCRIPTION "Tests for PapillonNDL library"
   LANGUAGES CXX
 )
@@ -33,25 +33,26 @@ else()
   message(STATUS "Using local install of GTest")
 endif()
 
-# Create PapillonNDL library target
-add_executable(PapillonNDL-Tests
-  main.cpp
-  interpolation_tests.cpp
-  integration_tests.cpp
-  polynomial_1d_tests.cpp
-  region_1d_tests.cpp
-  multi_region_1d_tests.cpp
-)
-add_test(PapillonNDL-Tests PapillonNDL-Tests)
+# Interpolation Tests
+add_executable(InterpolationTests interpolation.cpp)
+target_compile_features(InterpolationTests PRIVATE cxx_std_17)
+target_link_libraries(InterpolationTests PUBLIC PapillonNDL gtest_main)
+add_test(InterpolationTests InterpolationTests)
 
-target_compile_features(PapillonNDL-Tests PRIVATE cxx_std_17)
+# Function1D Tests
+add_executable(Function1DTests function_1d.cpp)
+target_compile_features(Function1DTests PRIVATE cxx_std_17)
+target_link_libraries(Function1DTests PUBLIC PapillonNDL gtest_main)
+add_test(Function1DTests Function1DTests)
 
-# Need to "link" agains cereal (this includes it's header files)
-target_link_libraries(PapillonNDL-Tests PUBLIC PapillonNDL gtest)
+# PCTable Tests
+add_executable(PCTableTests pctable.cpp)
+target_compile_features(PCTableTests PRIVATE cxx_std_17)
+target_link_libraries(PCTableTests PUBLIC PapillonNDL gtest_main)
+add_test(PCTableTests PCTableTests)
 
-if(WIN32) # Comile options for Windows
-  target_compile_options(PapillonNDL-Tests PRIVATE /W4)
-else() # Compile options for GCC and Clang on Unix-like systems
-  target_compile_options(PapillonNDL-Tests PRIVATE -W -Wall -Wextra -Wpedantic)
-endif()
-
+# AngleLaw Tests
+add_executable(AngleLawTests angle_law.cpp)
+target_compile_features(AngleLawTests PRIVATE cxx_std_17)
+target_link_libraries(AngleLawTests PUBLIC PapillonNDL gtest_main)
+add_test(AngleLawTests AngleLawTests)

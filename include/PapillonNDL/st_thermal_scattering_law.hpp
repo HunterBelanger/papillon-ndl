@@ -87,68 +87,32 @@ class STThermalScatteringLaw {
   /**
    * @brief Returns true if the nuclide has coherrent elastic scattering.
    */
-  bool has_coherent_elastic() const {
-    if (coherent_elastic_) return true;
-    return false;
-  }
+  bool has_coherent_elastic() const { return has_coherent_elastic_; }
 
   /**
    * @brief Returns true if the nuclide has incoherrent elastic scattering.
    */
-  bool has_incoherent_elastic() const {
-    if (incoherent_elastic_) return true;
-    return false;
+  bool has_incoherent_elastic() const { return has_incoherent_elastic_; }
+
+  /**
+   * @brief Returns the STCoherentElastic instance.
+   */
+  const STCoherentElastic& coherent_elastic() const {
+    return *coherent_elastic_;
   }
 
   /**
-   * @brief Returns pointer to the STCoherentElastic instance.
+   * @brief Returns the STIncoherentElastic instance.
    */
-  std::shared_ptr<STCoherentElastic> coherent_elastic() const {
-    return coherent_elastic_;
+  const STIncoherentElastic& incoherent_elastic() const {
+    return *incoherent_elastic_;
   }
 
   /**
-   * @brief Returns pointer to the STIncoherentElastic instance.
+   * @brief Returns the STIncoherentInelastic instance.
    */
-  std::shared_ptr<STIncoherentElastic> incoherent_elastic() const {
-    return incoherent_elastic_;
-  }
-
-  /**
-   * @brief Returns pointer to the STIncoherentInelastic instance.
-   */
-  std::shared_ptr<STIncoherentInelastic> incoherent_inelastic() const {
-    return incoherent_inelastic_;
-  }
-
-  /**
-   * @brief Returns the value of the coherent elastic scattering
-   *        cross section.
-   * @param E Energy at which to evaluate the cross section.
-   */
-  double coherent_elastic_xs(double E) const {
-    if (coherent_elastic_) return coherent_elastic_->xs(E);
-    return 0.;
-  }
-
-  /**
-   * @brief Returns the value of the incoherent elastic scattering
-   *        cross section.
-   * @param E Energy at which to evaluate the cross section.
-   */
-  double incoherent_elastic_xs(double E) const {
-    if (incoherent_elastic_) return incoherent_elastic_->xs(E);
-    return 0.;
-  }
-
-  /**
-   * @brief Returns the value of the incoherent inelastic scattering
-   *        cross section.
-   * @param E Energy at which to evaluate the cross section.
-   */
-  double incoherent_inelastic_xs(double E) const {
-    if (incoherent_inelastic_) return incoherent_inelastic_->xs(E);
-    return 0.;
+  const STIncoherentInelastic& incoherent_inelastic() const {
+    return *incoherent_inelastic_;
   }
 
   /**
@@ -156,14 +120,18 @@ class STThermalScatteringLaw {
    * @param E Energy at which to evaluate the cross section.
    */
   double xs(double E) const {
-    return incoherent_inelastic_xs(E) + incoherent_elastic_xs(E) +
-           coherent_elastic_xs(E);
+    double ii = incoherent_inelastic_->xs(E);
+    double ie = incoherent_elastic_->xs(E);
+    double ce = coherent_elastic_->xs(E);
+    return ii + ie + ce;
   }
 
  private:
   uint32_t zaid_;
   double awr_;
   double temperature_;
+  bool has_coherent_elastic_;
+  bool has_incoherent_elastic_;
 
   std::shared_ptr<STCoherentElastic> coherent_elastic_;
   std::shared_ptr<STIncoherentElastic> incoherent_elastic_;

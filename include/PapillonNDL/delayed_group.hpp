@@ -60,7 +60,7 @@ class DelayedGroup {
    *          in the XSS block.
    * @param g Delayed group index.
    */
-  DelayedGroup(const ACE& ace, size_t i, size_t g);
+  DelayedGroup(const ACE& ace, std::size_t i, std::size_t g);
   ~DelayedGroup() = default;
 
   /**
@@ -69,17 +69,10 @@ class DelayedGroup {
   double decay_constant() const { return decay_constant_; }
 
   /**
-   * @brief Returns pointer to the Tabulated1D function for the probability
+   * @brief Returns the Tabulated1D function for the probability
    *        of selecting the delayed group for a given energy.
    */
-  std::shared_ptr<Tabulated1D> probability() const { return probability_; }
-
-  /**
-   * @brief Evaluates the probability of selecting the delayed group
-   *        at incident energy E.
-   * @param E Incident energy in MeV.
-   */
-  double probability(double E) const { return (*probability_)(E); }
+  const Tabulated1D& probability() const { return *probability_; }
 
   /**
    * @brief Samples and energy from the delayed group distribution.
@@ -91,9 +84,9 @@ class DelayedGroup {
   }
 
   /**
-   * @brief Returns a pointer to the EnergyLaw for the group.
+   * @brief Returns the EnergyLaw for the group.
    */
-  std::shared_ptr<EnergyLaw> energy() const { return energy_; }
+  const EnergyLaw& energy() const { return *energy_; }
 
  private:
   double decay_constant_;

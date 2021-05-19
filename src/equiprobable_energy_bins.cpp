@@ -38,7 +38,7 @@
 
 namespace pndl {
 
-EquiprobableEnergyBins::EquiprobableEnergyBins(const ACE& ace, size_t i)
+EquiprobableEnergyBins::EquiprobableEnergyBins(const ACE& ace, std::size_t i)
     : incoming_energy_(), bin_sets_() {
   // Get number of interpolation points
   uint32_t NR = ace.xss<uint32_t>(i);
@@ -62,12 +62,12 @@ EquiprobableEnergyBins::EquiprobableEnergyBins(const ACE& ace, size_t i)
   uint32_t NET = ace.xss<uint32_t>(i + 2 + 2 * NR + NE);
 
   // Read energy bins
-  for (size_t j = 0; j < NE; j++) {
+  for (std::size_t j = 0; j < NE; j++) {
     bin_sets_.push_back(ace.xss(i + 3 + 2 * NR + NE + j * NET, NET));
   }
 
   // Make sure that each bin set is sorted
-  for (size_t j = 0; j < bin_sets_.size(); j++) {
+  for (std::size_t j = 0; j < bin_sets_.size(); j++) {
     if (!std::is_sorted(bin_sets_[j].begin(), bin_sets_[j].end())) {
       std::string mssg = "EquiprobableEnergyBins::EquiprobableEnergyBins: " +
                          std::to_string(j) +
@@ -98,7 +98,7 @@ EquiprobableEnergyBins::EquiprobableEnergyBins(
   }
 
   // Make sure that each bin set is sorted
-  for (size_t j = 0; j < bin_sets_.size(); j++) {
+  for (std::size_t j = 0; j < bin_sets_.size(); j++) {
     if (!std::is_sorted(bin_sets_[j].begin(), bin_sets_[j].end())) {
       std::string mssg = "EquiprobableEnergyBins::EquiprobableEnergyBins: " +
                          std::to_string(j) + " bin bounds are not sorted.";
@@ -118,7 +118,7 @@ double EquiprobableEnergyBins::sample_energy(
     return sample_bins(rng(), rng(), bin_sets_.back());
   }
 
-  size_t l = std::distance(incoming_energy_.begin(), in_E_it);
+  std::size_t l = std::distance(incoming_energy_.begin(), in_E_it);
   l--;
 
   double f = (E_in - incoming_energy_[l]) /
@@ -141,7 +141,7 @@ double EquiprobableEnergyBins::pdf(double E_in, double E_out) const {
     return pdf_bins(E_out, bin_sets_.back());
   }
 
-  size_t l = std::distance(incoming_energy_.begin(), in_E_it);
+  std::size_t l = std::distance(incoming_energy_.begin(), in_E_it);
   l--;
 
   double f = (E_in - incoming_energy_[l]) /
@@ -153,7 +153,7 @@ double EquiprobableEnergyBins::pdf(double E_in, double E_out) const {
 
 double EquiprobableEnergyBins::sample_bins(
     double xi1, double xi2, const std::vector<double>& bounds) const {
-  size_t bin = static_cast<size_t>(std::floor(bounds.size() * xi1));
+  std::size_t bin = static_cast<std::size_t>(std::floor(bounds.size() * xi1));
   return (bounds[bin + 1] - bounds[bin]) * xi2 + bounds[bin];
 }
 
@@ -161,8 +161,8 @@ double EquiprobableEnergyBins::pdf_bins(
     double E_out, const std::vector<double>& bounds) const {
   if (E_out < bounds.front() || E_out > bounds.back()) return 0;
 
-  size_t bin = 0;
-  for (size_t i = 0; i < bounds.size() - 1; i++) {
+  std::size_t bin = 0;
+  for (std::size_t i = 0; i < bounds.size() - 1; i++) {
     if (bounds[i] <= E_out && bounds[i + 1] >= E_out) {
       bin = i;
       break;
@@ -175,15 +175,5 @@ double EquiprobableEnergyBins::pdf_bins(
   double E_hi = bounds[bin + 1];
   return prob_per_bin / (E_hi - E_low);
 }
-
-const std::vector<double>& EquiprobableEnergyBins::incoming_energy() const {
-  return incoming_energy_;
-}
-
-const std::vector<double>& EquiprobableEnergyBins::bin_bounds(size_t i) const {
-  return bin_sets_[i];
-}
-
-size_t EquiprobableEnergyBins::size() const { return incoming_energy_.size(); }
 
 }  // namespace pndl

@@ -40,7 +40,7 @@
 
 namespace pndl {
 
-Maxwellian::Maxwellian(const ACE& ace, size_t i)
+Maxwellian::Maxwellian(const ACE& ace, std::size_t i)
     : temperature_(), restriction_energy_() {
   uint32_t NR = ace.xss<uint32_t>(i);
   uint32_t NE = ace.xss<uint32_t>(i + 1 + 2 * NR);
@@ -117,11 +117,5 @@ double Maxwellian::pdf(double E_in, double E_out) const {
                                      std::sqrt(du / T) * std::exp(-du / T));
   return (std::sqrt(E_out) / I) * std::exp(-E_out / T);
 }
-
-std::shared_ptr<Tabulated1D> Maxwellian::temperature() const {
-  return temperature_;
-}
-
-double Maxwellian::U() const { return restriction_energy_; }
 
 }  // namespace pndl

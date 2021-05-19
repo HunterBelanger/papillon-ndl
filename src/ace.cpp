@@ -165,56 +165,30 @@ ACE::ACE(std::string fname)
   dned_ = jxs_[26] - 1;
 }
 
-int32_t ACE::zaid() const { return zaid_; }
-double ACE::temperature() const { return temperature_; }
-double ACE::awr() const { return awr_; }
-bool ACE::fissile() const { return fissile_; }
-
-std::pair<int32_t, double> ACE::izaw(size_t i) const { return izaw_[i]; }
-int32_t ACE::nxs(size_t i) const { return nxs_[i]; }
-int32_t ACE::jxs(size_t i) const { return jxs_[i]; }
-double ACE::xss(size_t i) const { return xss_[i]; }
-
-std::vector<std::pair<int32_t, double>> ACE::izaw(size_t i, size_t len) const {
+std::vector<std::pair<int32_t, double>> ACE::izaw(std::size_t i,
+                                                  std::size_t len) const {
   return {izaw_.begin() + i, izaw_.begin() + i + len};
 }
 
-std::vector<int32_t> ACE::nxs(size_t i, size_t len) const {
+std::vector<int32_t> ACE::nxs(std::size_t i, std::size_t len) const {
   return {nxs_.begin() + i, nxs_.begin() + i + len};
 }
 
-std::vector<int32_t> ACE::jxs(size_t i, size_t len) const {
+std::vector<int32_t> ACE::jxs(std::size_t i, std::size_t len) const {
   return {jxs_.begin() + i, jxs_.begin() + i + len};
 }
 
-std::vector<double> ACE::xss(size_t i, size_t len) const {
+std::vector<double> ACE::xss(std::size_t i, std::size_t len) const {
   return {xss_.begin() + i, xss_.begin() + i + len};
 }
 
 const double* ACE::xss_data() const { return xss_.data(); }
 
-int32_t ACE::ESZ() const { return esz_; }
-int32_t ACE::NU() const { return nu_; }
-int32_t ACE::MTR() const { return mtr_; }
-int32_t ACE::LQR() const { return lqr_; }
-int32_t ACE::TYR() const { return tyr_; }
-int32_t ACE::LSIG() const { return lsig_; }
-int32_t ACE::SIG() const { return sig_; }
-int32_t ACE::LAND() const { return land_; }
-int32_t ACE::AND() const { return and_; }
-int32_t ACE::LDLW() const { return ldlw_; }
-int32_t ACE::DLW() const { return dlw_; }
-int32_t ACE::DNEDL() const { return dnedl_; }
-int32_t ACE::DNED() const { return dned_; }
-int32_t ACE::DNU() const { return dnu_; }
-int32_t ACE::BDD() const { return bdd_; }
-int32_t ACE::GPD() const { return gpd_; }
-
 static std::vector<std::string> split_line(std::string line) {
   std::vector<std::string> out;
 
   std::string tmp = "";
-  for (size_t i = 0; i < line.size(); i++) {
+  for (std::size_t i = 0; i < line.size(); i++) {
     if (line[i] != ' ')
       tmp += line[i];
     else {

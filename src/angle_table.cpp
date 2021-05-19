@@ -36,7 +36,7 @@
 
 namespace pndl {
 
-AngleTable::AngleTable(const ACE& ace, size_t i) : distribution_(ace, i) {
+AngleTable::AngleTable(const ACE& ace, std::size_t i) : distribution_(ace, i) {
   if (distribution_.min_value() < -1.) {
     std::string mssg =
         "AngleTable::AngleTable: Lowest posible cosine value is -1. Lowest "
@@ -99,26 +99,6 @@ double AngleTable::sample_mu(double xi) const {
   double mu = distribution_.sample_value(xi);
   if (std::abs(mu) > 1.) mu = std::copysign(1., mu);
   return mu;
-}
-
-double AngleTable::pdf(double mu) const { return distribution_.pdf(mu); }
-
-size_t AngleTable::size() const { return distribution_.size(); }
-
-const std::vector<double>& AngleTable::cosines() const {
-  return distribution_.values();
-}
-
-const std::vector<double>& AngleTable::pdf() const {
-  return distribution_.pdf();
-}
-
-const std::vector<double>& AngleTable::cdf() const {
-  return distribution_.cdf();
-}
-
-Interpolation AngleTable::interpolation() const {
-  return distribution_.interpolation();
 }
 
 }  // namespace pndl

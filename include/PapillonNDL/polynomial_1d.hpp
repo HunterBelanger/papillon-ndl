@@ -62,13 +62,13 @@ class Polynomial1D : public Function1D {
   /**
    * @brief Returns the order of the polynomial.
    */
-  size_t order() const;
+  std::size_t order() const { return coefficients_.size() - 1; }
 
   /**
    * @brief Returns the coefficient for the ith order term.
    * @param i Order of the term.
    */
-  double coefficient(size_t i) const;
+  double coefficient(std::size_t i) const { return coefficients_[i]; }
 
  private:
   std::vector<double> coefficients_;

@@ -53,7 +53,7 @@ class EquiprobableAngleBins : public AngleLaw {
    * @param ace ACE file to take data from.
    * @param i Starting index of distribution in the XSS array.
    */
-  EquiprobableAngleBins(const ACE& ace, size_t i);
+  EquiprobableAngleBins(const ACE& ace, std::size_t i);
 
   /**
    * @param bounds Vector of 33 bin bounds.
@@ -68,12 +68,12 @@ class EquiprobableAngleBins : public AngleLaw {
   /**
    * @brief Returns the number of bin boundaries (number of bins + 1);
    */
-  size_t size() const;
+  std::size_t size() const { return bounds_.size(); }
 
   /**
    * @brief Returns the vector with the bin boundaries.
    */
-  const std::vector<double>& bin_bounds() const;
+  const std::vector<double>& bin_bounds() const { return bounds_; }
 
  private:
   std::vector<double> bounds_;

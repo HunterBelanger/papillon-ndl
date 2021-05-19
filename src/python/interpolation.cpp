@@ -47,6 +47,4 @@ void init_Interpolation(py::module& m) {
       .value("LinLog", Interpolation::LinLog)
       .value("LogLin", Interpolation::LogLin)
       .value("LogLog", Interpolation::LogLog);
-
-  // TODO interpolation classes
 }

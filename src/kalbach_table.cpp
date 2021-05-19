@@ -36,7 +36,7 @@
 
 namespace pndl {
 
-KalbachTable::KalbachTable(const ACE& ace, size_t i)
+KalbachTable::KalbachTable(const ACE& ace, std::size_t i)
     : energy_(), pdf_(), cdf_(), R_(), A_(), interp_() {
   interp_ = ace.xss<Interpolation>(i);
   if ((interp_ != Interpolation::Histogram) &&

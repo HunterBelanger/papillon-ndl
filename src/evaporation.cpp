@@ -38,7 +38,7 @@
 
 namespace pndl {
 
-Evaporation::Evaporation(const ACE& ace, size_t i)
+Evaporation::Evaporation(const ACE& ace, std::size_t i)
     : temperature_(), restriction_energy_() {
   uint32_t NR = ace.xss<uint32_t>(i);
   uint32_t NE = ace.xss<uint32_t>(i + 1 + 2 * NR);
@@ -115,11 +115,5 @@ double Evaporation::pdf(double E_in, double E_out) const {
   double I = T * T * (1. - std::exp(-du / T) * (1. + (du / T)));
   return (E_out / I) * std::exp(-E_out / T);
 }
-
-std::shared_ptr<Tabulated1D> Evaporation::temperature() const {
-  return temperature_;
-}
-
-double Evaporation::U() const { return restriction_energy_; }
 
 }  // namespace pndl

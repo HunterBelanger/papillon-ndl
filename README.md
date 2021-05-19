@@ -15,7 +15,7 @@ PapillonNDL is provided under the terms and conditions of the CeCILLv2.1
 license. This is a French equivalent of the GPLv3 license, and is explicitly
 compatible with both the GPLv2 and v3. The French version of this license is
 provided in the LICENSE file, along with the equally valid English version, which
-may be found in the LICENSE-ENGLISH file. The CeCILLv2.1 is approved by the FSF.
+may be found in the CeCILLv2.1-English file. The CeCILLv2.1 is approved by the FSF.
 More information about this license may be found [here](https://cecill.info/).
 
 ## Dependencies

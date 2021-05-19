@@ -38,7 +38,7 @@
 
 namespace pndl {
 
-PCTable::PCTable(const ACE& ace, size_t i, double normalization)
+PCTable::PCTable(const ACE& ace, std::size_t i, double normalization)
     : values_(), pdf_(), cdf_(), interp_() {
   interp_ = ace.xss<Interpolation>(i);
   if ((interp_ != Interpolation::Histogram) &&
@@ -49,7 +49,14 @@ PCTable::PCTable(const ACE& ace, size_t i, double normalization)
                        std::to_string(i) + ".";
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
+
   uint32_t NP = ace.xss<uint32_t>(i + 1);
+  if (NP == 0) {
+    std::string mssg =
+        "PCTable::PCTable: Cannot create a table with zero points.";
+    throw PNDLException(mssg, __FILE__, __LINE__);
+  }
+
   values_ = ace.xss(i + 2, NP);
   // Apply normalization to values
   for (auto& v : values_) v *= normalization;
@@ -111,6 +118,12 @@ PCTable::PCTable(const std::vector<double>& values,
   if ((values_.size() != pdf_.size()) || (pdf_.size() != cdf_.size())) {
     std::string mssg =
         "PCTable::PCTable: Values, PDF, and CDF must have the same length.";
+    throw PNDLException(mssg, __FILE__, __LINE__);
+  }
+
+  if (values_.size() == 0) {
+    std::string mssg =
+        "PCTable::PCTable: Cannot create a table with zero points.";
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
 

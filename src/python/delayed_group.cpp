@@ -44,10 +44,9 @@ void init_DelayedGroup(py::module& m) {
   py::class_<DelayedGroup>(m, "DelayedGroup")
       .def(py::init<const ACE&, size_t, size_t>())
       .def("decay_constant", &DelayedGroup::decay_constant)
-      .def("probability",
-           py::overload_cast<>(&DelayedGroup::probability, py::const_))
-      .def("probability",
-           py::overload_cast<double>(&DelayedGroup::probability, py::const_))
+      .def("probability", &DelayedGroup::probability,
+           py::return_value_policy::reference_internal)
       .def("sample_energy", &DelayedGroup::sample_energy)
-      .def("energy", &DelayedGroup::energy);
+      .def("energy", &DelayedGroup::energy,
+           py::return_value_policy::reference_internal);
 }

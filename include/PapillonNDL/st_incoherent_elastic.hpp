@@ -59,19 +59,21 @@ class STIncoherentElastic : public AngleEnergy {
   ~STIncoherentElastic() = default;
 
   /**
-   * @brief Returns a pointer to the cross section function.
+   * @brief Returns the cross section function.
    */
-  std::shared_ptr<Region1D> cross_section() const { return xs_; }
+  const Region1D& xs() const { return *xs_; }
 
   /**
-   * @brief Evaluates the incoherent inelastic scattering cross section
+   * @brief Evaluates the incoherent elastic scattering cross section
    *        at energy E.
    * @param E Incident energy at which to evaluate the cross section in MeV.
    */
-  double xs(double E) const { return (*this->xs_)(E); }
+  double xs(double E) const { return xs_->evaluate(E); }
 
   AngleEnergyPacket sample_angle_energy(
       double E_in, std::function<double()> rng) const override final {
+    if (incoming_energy_.size() == 0) return {1., 0.};
+
     // Get energy index
     auto Eit = std::lower_bound(incoming_energy_.begin(),
                                 incoming_energy_.end(), E_in);

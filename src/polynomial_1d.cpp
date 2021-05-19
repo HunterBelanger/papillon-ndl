@@ -66,8 +66,4 @@ double Polynomial1D::integrate(double x_low, double x_hi) const {
   return integral_hi - integral_low;
 }
 
-size_t Polynomial1D::order() const { return coefficients_.size() - 1; }
-
-double Polynomial1D::coefficient(size_t i) const { return coefficients_[i]; }
-
 }  // namespace pndl

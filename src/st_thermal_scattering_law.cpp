@@ -40,6 +40,8 @@ STThermalScatteringLaw::STThermalScatteringLaw(const ACE& ace,
     : zaid_(ace.zaid()),
       awr_(ace.awr()),
       temperature_(ace.temperature()),
+      has_coherent_elastic_(false),
+      has_incoherent_elastic_(false),
       coherent_elastic_(nullptr),
       incoherent_elastic_(nullptr),
       incoherent_inelastic_(nullptr) {
@@ -72,6 +74,8 @@ STThermalScatteringLaw::STThermalScatteringLaw(const ACE& ace,
         err.add_to_exception(mssg, __FILE__, __LINE__);
         throw err;
       }
+      has_coherent_elastic_ = true;
+      incoherent_elastic_ = std::make_shared<STIncoherentElastic>(ace);
     } else {
       // Incoherent
       try {
@@ -83,7 +87,12 @@ STThermalScatteringLaw::STThermalScatteringLaw(const ACE& ace,
         err.add_to_exception(mssg, __FILE__, __LINE__);
         throw err;
       }
+      has_incoherent_elastic_ = true;
+      coherent_elastic_ = std::make_shared<STCoherentElastic>(ace);
     }
+  } else {
+    incoherent_elastic_ = std::make_shared<STIncoherentElastic>(ace);
+    coherent_elastic_ = std::make_shared<STCoherentElastic>(ace);
   }
 }
 }  // namespace pndl

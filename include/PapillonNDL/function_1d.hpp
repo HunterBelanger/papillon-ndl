@@ -39,12 +39,14 @@
  * @author Hunter Belanger
  */
 
+#include <memory>
+
 namespace pndl {
 
 /**
  * @brief Interface to represent functions of a single variable.
  */
-class Function1D {
+class Function1D : public std::enable_shared_from_this<Function1D> {
  public:
   virtual ~Function1D() = default;
 
@@ -53,6 +55,12 @@ class Function1D {
    * @param x Value at which to evaluate the function.
    */
   virtual double operator()(double x) const = 0;
+
+  /**
+   * @brief Evaluates the function for a given value.
+   * @param x Value at which to evaluate the function.
+   */
+  double evaluate(double x) const { return (*this)(x); }
 
   /**
    * @brief Computes the definite integral of the function between

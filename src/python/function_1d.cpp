@@ -35,9 +35,11 @@
 #include <pybind11/stl.h>
 
 #include <PapillonNDL/constant.hpp>
+#include <PapillonNDL/difference_1d.hpp>
 #include <PapillonNDL/multi_region_1d.hpp>
 #include <PapillonNDL/polynomial_1d.hpp>
 #include <PapillonNDL/region_1d.hpp>
+#include <PapillonNDL/sum_1d.hpp>
 #include <PapillonNDL/tabulated_1d.hpp>
 
 namespace py = pybind11;
@@ -94,6 +96,7 @@ void init_Function1D(py::module& m) {
       m, "Function1D")
       .def(py::init<>())
       .def("__call__", &Function1D::operator())
+      .def("evaluate", &Function1D::evaluate)
       .def("integrate", &Function1D::integrate);
 }
 
@@ -101,6 +104,7 @@ void init_Constant(py::module& m) {
   py::class_<Constant, Function1D, std::shared_ptr<Constant>>(m, "Constant")
       .def(py::init<double>())
       .def("__call__", &Constant::operator())
+      .def("evaluate", &Constant::evaluate)
       .def("integrate", &Constant::integrate);
 }
 
@@ -109,6 +113,7 @@ void init_Polynomial1D(py::module& m) {
       m, "Polynomial1D")
       .def(py::init<const std::vector<double>&>())
       .def("__call__", &Polynomial1D::operator())
+      .def("evaluate", &Polynomial1D::evaluate)
       .def("integrate", &Polynomial1D::integrate)
       .def("order", &Polynomial1D::order)
       .def("coefficient", &Polynomial1D::coefficient);
@@ -119,6 +124,7 @@ void init_Tabulated1D(py::module& m) {
       m, "Tabulated1D")
       .def(py::init<>())
       .def("__call__", &Tabulated1D::operator())
+      .def("evaluate", &Tabulated1D::evaluate)
       .def("breakpoints", &Tabulated1D::breakpoints)
       .def("interpolation", &Tabulated1D::interpolation)
       .def("x", &Tabulated1D::x)
@@ -130,6 +136,7 @@ void init_Region1D(py::module& m) {
       .def(py::init<const std::vector<double>&, const std::vector<double>&,
                     Interpolation>())
       .def("__call__", &Region1D::operator())
+      .def("evaluate", &Region1D::evaluate)
       .def("integrate", &Region1D::integrate)
       .def("breakpoints", &Region1D::breakpoints)
       .def("interpolation", &Region1D::interpolation)
@@ -148,6 +155,7 @@ void init_MultiRegion1D(py::module& m) {
                     const std::vector<Interpolation>&,
                     const std::vector<double>&, const std::vector<double>&>())
       .def("__call__", &MultiRegion1D::operator())
+      .def("evaluate", &MultiRegion1D::evaluate)
       .def("integrate", &MultiRegion1D::integrate)
       .def("breakpoints", &MultiRegion1D::breakpoints)
       .def("interpolation", &MultiRegion1D::interpolation)
@@ -156,4 +164,25 @@ void init_MultiRegion1D(py::module& m) {
       .def("size", &MultiRegion1D::size)
       .def("min_x", &MultiRegion1D::min_x)
       .def("max_x", &MultiRegion1D::max_x);
+}
+
+void init_Sum1D(py::module& m) {
+  py::class_<Sum1D, Function1D, std::shared_ptr<Sum1D>>(m, "Sum1D")
+      .def(py::init<std::shared_ptr<Function1D>, std::shared_ptr<Function1D>>())
+      .def("__call__", &Sum1D::operator())
+      .def("evaluate", &Sum1D::evaluate)
+      .def("integrate", &Sum1D::integrate)
+      .def("term_1", &Sum1D::term_1)
+      .def("term_2", &Sum1D::term_2);
+}
+
+void init_Difference1D(py::module& m) {
+  py::class_<Difference1D, Function1D, std::shared_ptr<Difference1D>>(
+      m, "Difference1D")
+      .def(py::init<std::shared_ptr<Function1D>, std::shared_ptr<Function1D>>())
+      .def("__call__", &Difference1D::operator())
+      .def("evaluate", &Difference1D::evaluate)
+      .def("integrate", &Difference1D::integrate)
+      .def("term_1", &Difference1D::term_1)
+      .def("term_2", &Difference1D::term_2);
 }

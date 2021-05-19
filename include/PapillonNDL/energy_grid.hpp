@@ -41,14 +41,21 @@
 
 #include <PapillonNDL/ace.hpp>
 #include <cmath>
+#include <memory>
 #include <vector>
 
 namespace pndl {
 
 /**
- * @brief Holds the hashed energy grid of a Nuclide.
+ * @brief Holds the hashed energy grid of a Nuclide. An energy grid should
+ *        ALWAYS be instantiated as an std::shared_ptr, because a copy is kept
+ *        inside all CrossSection instances.
  */
-class EnergyGrid {
+class EnergyGrid : public std::enable_shared_from_this<EnergyGrid> {
+  // EnergyGrid inherits from std::enable_shared_from_this, so that
+  // Pybind11 can take the references to the energy gird, and form
+  // proper shared pointers.
+
  public:
   /**
    * @param ace ACE file from which to take the energy grid.
@@ -72,12 +79,12 @@ class EnergyGrid {
    * @brief Returns the ith energy in the grid in MeV.
    * @param i Index into energy grid.
    */
-  double operator[](size_t i) const { return energy_values_[i]; }
+  double operator[](std::size_t i) const { return energy_values_[i]; }
 
   /**
    * @brief Number of points in the complete energy grid.
    */
-  size_t size() const { return energy_values_.size(); }
+  std::size_t size() const { return energy_values_.size(); }
 
   /**
    * @brief Returns a reference to the energy grid.
@@ -99,7 +106,7 @@ class EnergyGrid {
    *        hashing algorithm for speed.
    * @param E Energy for which to find the index.
    */
-  size_t get_lower_index(double E) const {
+  std::size_t get_lower_index(double E) const {
     if (E <= energy_values_.front()) {
       return 0;
     } else if (E >= energy_values_.back()) {
@@ -113,9 +120,9 @@ class EnergyGrid {
     uint32_t low_indx = bin_pointers_[bin];
     uint32_t hi_indx = bin_pointers_[bin + 1] + 1;
 
-    size_t ind = std::lower_bound(energy_values_.begin() + low_indx,
-                                  energy_values_.begin() + hi_indx, E) -
-                 energy_values_.begin() - 1;
+    std::size_t ind = std::lower_bound(energy_values_.begin() + low_indx,
+                                       energy_values_.begin() + hi_indx, E) -
+                      energy_values_.begin() - 1;
 
     return ind;
   }

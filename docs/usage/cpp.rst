@@ -51,9 +51,9 @@ these cross sections for U235 at 3MeV, then we can do
 
 .. code-block:: c++
 
-  double tot_xs_at_3mev = U235.total_xs(3.);
-  double abs_xs_at_3mev = U235.disappearance_xs(3.);
-  double ela_xs_at_3mev = U235.elastic_xs(3.);
+  double tot_xs_at_3mev = U235.total_xs()(3.);
+  double abs_xs_at_3mev = U235.disappearance_xs()(3.);
+  double ela_xs_at_3mev = U235.elastic_xs()(3.);
 
 The standard unit of energy in PapillonNDL is MeV. All energies are given in
 MeV, and it expects all arguments which are an energy to be in units of MeV.
@@ -67,11 +67,11 @@ pass that index to the cross section evaluation call.
 
   // Finds index in the energy grid for 3 MeV, using 
   // hashing algorithm for speed.
-  size_t i = U235.energy_grid_index(3.);
+  size_t i = U235.energy_grid().get_lower_index(3.);
 
-  tot_xs_at_3mev = U235.total_xs(3., i);
-  abs_xs_at_3mev = U235.disappearance_xs(3., i);
-  ela_xs_at_3mev = U235.elastic_xs(3., i);
+  tot_xs_at_3mev = U235.total_xs()(3., i);
+  abs_xs_at_3mev = U235.disappearance_xs()(3., i);
+  ela_xs_at_3mev = U235.elastic_xs()(3., i);
 
 This method produces the same results, but is faster overall, and should be
 used when performance counts.
@@ -85,11 +85,9 @@ reaction
   // Check to see if U235 has the MT=18 (fission) reaction defined.
   bool has_18 = U235.has_reaction(18);
 
-  double fiss_xs_at_3mev = U235.reaction_xs(18, 3., i);
+  double fiss_xs_at_3mev = U235.reaction(18).xs()(3., i);
 
-Passing the index ``i`` is optional, but of course is faster. One can
-also skip checking to see if the MT is defined. If it isn't, the
-``reaction_xs`` method will return 0.
+Passing the index ``i`` is optional, but of course is faster.
 
 -------------------------------
 Sampling Reaction Distributions
@@ -104,19 +102,19 @@ reaction; Here, we will look at the (n,2n) reaction (MT=16):
 
   // I know that U235 has MT=16, so we don't need to check that
   // it exists, but this should be done in general !
-  const pndl::Reaction& U235_n2n = U236.reaction(16);
+  const pndl::Reaction& U235_n2n = U235.reaction(16);
 
   double E_min = U235_n2n.threshold();
 
   // Here, we get the xs at 6MeV, as 3MeV is bellow the threshold
   // for this reaction !
-  double n2n_xs_at_3mev = U235_n2n.xs(6., i);
+  double n2n_xs_at_3mev = U235_n2n.xs()(6., i);
 
   double Qval = U235_n2n.q();
 
   // For MT=16, the yield is always 2, no matter the energy, but
   // some reactions have energy dependent yields.
-  double n_out = U235_n2n.yield(6.); 
+  double n_out = U235_n2n.yield()(6.); 
 
 In the above example, we have been able to get lots of data about the
 reaction, such as the Q-value, the minimum energy at which is occurs,
@@ -144,7 +142,7 @@ an outgoing angle and energy in the laboratory frame with
 
 .. code-block:: c++
 
-  pndl::AngleEnergyPacket out = U235_n2n.sample_angle_energy(6., rng);
+  pndl::AngleEnergyPacket out = U235_n2n.sample_neutron_angle_energy(6., rng);
 
 The cosine of the scattering angle is then stored in ``out.cosine_angle``,
 and the energy is in ``out.energy``.
@@ -164,10 +162,9 @@ provided in the CENeutron class.
 
   // Total number of fission neutrons for fissions induced by 3 MeV
   // neutrons.
-  double nu = U235.nu_total(3.);
-
-  double nu_prmpt = U235.nu_prompt(3.);
-  double nu_delyd = U235.nu_delayed(3.);
+  double nu = U235.nu_total()(3.);
+  double nu_prmpt = U235.nu_prompt()(3.);
+  double nu_delyd = U235.nu_delayed()(3.);
 
 Information for a delayed neutron group is also available in a DelayedGroup class:
 
@@ -184,7 +181,7 @@ Information for a delayed neutron group is also available in a DelayedGroup clas
 
   // The probability of a fission neutron being in the given group is a
   // function of the incident energy
-  double prob_dg1 = dg1.probability(3.);
+  double prob_dg1 = dg1.probability()(3.);
 
 It is always assumed that the neutrons born from a delayed group have an
 isotropic angular distribution. As such, we only sample the energy from

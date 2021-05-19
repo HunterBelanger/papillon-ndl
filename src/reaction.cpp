@@ -31,6 +31,7 @@
  * termes.
  *
  * */
+#include <PapillonNDL/absorption.hpp>
 #include <PapillonNDL/angle_distribution.hpp>
 #include <PapillonNDL/constant.hpp>
 #include <PapillonNDL/discrete_photon.hpp>
@@ -41,6 +42,7 @@
 #include <PapillonNDL/level_inelastic_scatter.hpp>
 #include <PapillonNDL/maxwellian.hpp>
 #include <PapillonNDL/multi_region_1d.hpp>
+#include <PapillonNDL/multiple_distribution.hpp>
 #include <PapillonNDL/nbody.hpp>
 #include <PapillonNDL/pndl_exception.hpp>
 #include <PapillonNDL/reaction.hpp>
@@ -55,7 +57,7 @@
 
 namespace pndl {
 
-Reaction::Reaction(const ACE& ace, size_t indx,
+Reaction::Reaction(const ACE& ace, std::size_t indx,
                    std::shared_ptr<EnergyGrid> egrid)
     : mt_(),
       q_(),
@@ -64,8 +66,7 @@ Reaction::Reaction(const ACE& ace, size_t indx,
       frame_(),
       xs_(nullptr),
       yield_(nullptr),
-      distributions_(),
-      probabilities_() {
+      neutron_distribution_(nullptr) {
   // Get MT, Q, and AWR
   mt_ = ace.xss<uint32_t>(ace.MTR() + indx);
   q_ = ace.xss(ace.LQR() + indx);
@@ -81,7 +82,7 @@ Reaction::Reaction(const ACE& ace, size_t indx,
     if (yld < 100.)
       yield_ = std::make_shared<Constant>(yld);
     else {
-      size_t i = ace.DLW() + static_cast<uint32_t>(yld) - 101;
+      std::size_t i = ace.DLW() + static_cast<uint32_t>(yld) - 101;
       uint32_t NR = ace.xss<uint32_t>(i);
       uint32_t NE = ace.xss<uint32_t>(i + 1 + 2 * NR);
       std::vector<double> energy = ace.xss(i + 2 + 2 * NR, NE);
@@ -123,136 +124,35 @@ Reaction::Reaction(const ACE& ace, size_t indx,
 
   // Get secondary info if yld != 0 (not an absorption reaction)
   if (yld != 0.) {
-    // Get angle distribution location
-    int locb = ace.xss<int>(ace.LAND() + indx + 1);
-
-    std::shared_ptr<AngleDistribution> angle(nullptr);
-
-    // Get angulardistribution if it exists.
-    if (locb >= 0) {
-      try {
-        angle = std::make_shared<AngleDistribution>(ace, locb);
-      } catch (PNDLException& error) {
-        std::string mssg =
-            "Reaction::Reaction: Could not create secondary angular "
-            "distribution for MT = " +
-            std::to_string(mt_) + ".";
-        error.add_to_exception(mssg, __FILE__, __LINE__);
-        throw error;
-      }
-    }
+    // Temorary vectors to contain the possbile distributions
+    std::vector<std::shared_ptr<AngleEnergy>> distributions;
+    std::vector<std::shared_ptr<Tabulated1D>> probabilities;
 
     try {
-      // Get energy distribution location
-      uint32_t locc = ace.xss<uint32_t>(ace.LDLW() + indx);
-      size_t i = ace.DLW() + locc - 1;
+      load_neutron_distributions(ace, indx, distributions, probabilities);
 
-      // Location of next law (set any non-zero initial value)
-      uint32_t lnw = 1;
-      while (lnw != 0) {
-        lnw = ace.xss<uint32_t>(i);
-
-        // Get law info and location
-        int law = ace.xss<int>(i + 1);
-        uint32_t idat = ace.xss<uint32_t>(i + 2);
-        size_t j = ace.DLW() + idat - 1;
-
-        // Get probability for law
-        std::shared_ptr<Tabulated1D> probability(nullptr);
-        uint32_t NR = ace.xss<uint32_t>(i + 3);
-        uint32_t NE = ace.xss<uint32_t>(i + 4 + 2 * NR);
-        std::vector<uint32_t> NBT;
-        std::vector<Interpolation> INT;
-
-        if (NR == 0) {
-          NBT = {NE};
-          INT = {Interpolation::LinLin};
-        } else {
-          NBT = ace.xss<uint32_t>(i + 4, NR);
-          INT = ace.xss<Interpolation>(i + 4 + NR, NR);
-        }
-
-        std::vector<double> energy = ace.xss(i + 5 + 2 * NR, NE);
-        std::vector<double> prob = ace.xss(i + 5 + 2 * NR + NE, NE);
-
-        if (NBT.size() == 1) {
-          probability = std::make_shared<Region1D>(energy, prob, INT[0]);
-        } else {
-          probability = std::make_shared<MultiRegion1D>(NBT, INT, energy, prob);
-        }
-
-        // Build law accordinly
-        std::shared_ptr<AngleEnergy> angle_energy(nullptr);
-        if (law == 1) {  // Equiprobable Energy Bins
-          angle_energy = std::make_shared<Uncorrelated>(
-              angle, std::make_shared<EquiprobableEnergyBins>(ace, j));
-
-        } else if (law == 2) {  // Discrete Photon
-          angle_energy = std::make_shared<Uncorrelated>(
-              angle, std::make_shared<DiscretePhoton>(ace, j));
-
-        } else if (law == 3) {  // Level Inelastic Scatter
-          angle_energy = std::make_shared<Uncorrelated>(
-              angle, std::make_shared<LevelInelasticScatter>(ace, j));
-
-        } else if (law == 4) {  // Tabular Energy
-          angle_energy = std::make_shared<Uncorrelated>(
-              angle, std::make_shared<TabularEnergy>(ace, j, ace.DLW()));
-
-        } else if (law == 5) {  // General Evaporation
-          angle_energy = std::make_shared<Uncorrelated>(
-              angle, std::make_shared<GeneralEvaporation>(ace, j));
-
-        } else if (law == 7) {  // Maxwellian
-          angle_energy = std::make_shared<Uncorrelated>(
-              angle, std::make_shared<Maxwellian>(ace, j));
-
-        } else if (law == 9) {  // Evaporation
-          angle_energy = std::make_shared<Uncorrelated>(
-              angle, std::make_shared<Evaporation>(ace, j));
-
-        } else if (law == 11) {  // Watt
-          angle_energy = std::make_shared<Uncorrelated>(
-              angle, std::make_shared<Watt>(ace, j));
-
-        } else if (law == 44) {  // Kalbach
-          angle_energy = std::make_shared<Kalbach>(ace, j);
-
-        } else if (law == 61) {  // Tabular Energy Angle
-          angle_energy =
-              std::make_shared<TabularEnergyAngle>(ace, j, ace.DLW());
-
-        } else if (law == 66) {  // N-body
-          angle_energy = std::make_shared<NBody>(ace, j, q_);
-
-        } else {
-          // Unknown or unsuported law
-          std::string mssg = "Reaction::Reaction: Unkown energy law " +
-                             std::to_string(law) +
-                             " in reaction MT=" + std::to_string(mt_) +
-                             " in ZAID=" + std::to_string(ace.zaid()) + ".";
-          throw PNDLException(mssg, __FILE__, __LINE__);
-        }
-
-        // Save law to list of all distributions
-        distributions_.push_back(angle_energy);
-        probabilities_.push_back(probability);
-
-        // Get i for next distribution (if there is one)
-        i = ace.DLW() + lnw - 1;
-      }  // while lnw != 0
+      // Make the final distribution
+      if (distributions.size() > 1) {
+        neutron_distribution_ = std::make_shared<MultipleDistribution>(
+            distributions, probabilities);
+      } else {
+        neutron_distribution_ = distributions.front();
+      }
     } catch (PNDLException& error) {
       std::string mssg =
-          "Reaction::Reaction: Could not create secondary angle-energy "
+          "Reaction::Reaction: Could not create secondary neutron angle-energy "
           "distribution for MT = " +
           std::to_string(mt_) + ".";
       error.add_to_exception(mssg, __FILE__, __LINE__);
       throw error;
     }
+  } else {
+    // This is an absorption reaction
+    neutron_distribution_ = std::make_shared<Absorption>();
   }
 }
 
-Reaction::Reaction(const ACE& ace, size_t indx,
+Reaction::Reaction(const ACE& ace, std::size_t indx,
                    std::shared_ptr<EnergyGrid> egrid, const Reaction& reac)
     : mt_(),
       q_(),
@@ -261,8 +161,7 @@ Reaction::Reaction(const ACE& ace, size_t indx,
       frame_(),
       xs_(nullptr),
       yield_(nullptr),
-      distributions_(),
-      probabilities_() {
+      neutron_distribution_(nullptr) {
   // Get MT, Q, and AWR
   mt_ = ace.xss<uint32_t>(ace.MTR() + indx);
   q_ = ace.xss(ace.LQR() + indx);
@@ -275,10 +174,9 @@ Reaction::Reaction(const ACE& ace, size_t indx,
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
 
-  frame_ = reac.frame();
-  yield_ = reac.yield();
-  distributions_ = reac.distributions();
-  probabilities_ = reac.probabilities();
+  frame_ = reac.frame_;
+  yield_ = reac.yield_;
+  neutron_distribution_ = reac.neutron_distribution_;
 
   // Get XS from new ACE
   try {
@@ -292,6 +190,136 @@ Reaction::Reaction(const ACE& ace, size_t indx,
     error.add_to_exception(mssg, __FILE__, __LINE__);
     throw error;
   }
+}
+
+void Reaction::load_neutron_distributions(
+    const ACE& ace, std::size_t indx,
+    std::vector<std::shared_ptr<AngleEnergy>>& distributions,
+    std::vector<std::shared_ptr<Tabulated1D>>& probabilities) {
+  // Get angle distribution location
+  int locb = ace.xss<int>(ace.LAND() + indx + 1);
+
+  std::shared_ptr<AngleDistribution> angle(nullptr);
+
+  // Get angulardistribution if it exists.
+  if (locb >= 0) {
+    try {
+      angle = std::make_shared<AngleDistribution>(ace, locb);
+    } catch (PNDLException& error) {
+      std::string mssg =
+          "Reaction::Reaction: Could not create secondary angular "
+          "distribution for MT = " +
+          std::to_string(mt_) + ".";
+      error.add_to_exception(mssg, __FILE__, __LINE__);
+      throw error;
+    }
+  }
+
+  // Get energy distribution location
+  uint32_t locc = ace.xss<uint32_t>(ace.LDLW() + indx);
+  std::size_t i = ace.DLW() + locc - 1;
+
+  // Location of next law (set any non-zero initial value)
+  uint32_t lnw = 1;
+  while (lnw != 0) {
+    lnw = ace.xss<uint32_t>(i);
+
+    // Get law info and location
+    int law = ace.xss<int>(i + 1);
+    uint32_t idat = ace.xss<uint32_t>(i + 2);
+    std::size_t j = ace.DLW() + idat - 1;
+
+    // Get probability for law
+    std::shared_ptr<Tabulated1D> probability(nullptr);
+    uint32_t NR = ace.xss<uint32_t>(i + 3);
+    uint32_t NE = ace.xss<uint32_t>(i + 4 + 2 * NR);
+    std::vector<uint32_t> NBT;
+    std::vector<Interpolation> INT;
+
+    if (NR == 0) {
+      NBT = {NE};
+      INT = {Interpolation::LinLin};
+    } else {
+      NBT = ace.xss<uint32_t>(i + 4, NR);
+      INT = ace.xss<Interpolation>(i + 4 + NR, NR);
+    }
+
+    std::vector<double> energy = ace.xss(i + 5 + 2 * NR, NE);
+    std::vector<double> prob = ace.xss(i + 5 + 2 * NR + NE, NE);
+
+    if (NBT.size() == 1) {
+      probability = std::make_shared<Region1D>(energy, prob, INT[0]);
+    } else {
+      probability = std::make_shared<MultiRegion1D>(NBT, INT, energy, prob);
+    }
+
+    // Build law accordinly
+    std::shared_ptr<AngleEnergy> angle_energy(nullptr);
+    if (law == 1 && angle) {  // Equiprobable Energy Bins
+      angle_energy = std::make_shared<Uncorrelated>(
+          *angle, std::make_shared<EquiprobableEnergyBins>(ace, j));
+
+    } else if (law == 2 && angle) {  // Discrete Photon
+      angle_energy = std::make_shared<Uncorrelated>(
+          *angle, std::make_shared<DiscretePhoton>(ace, j));
+
+    } else if (law == 3 && angle) {  // Level Inelastic Scatter
+      angle_energy = std::make_shared<Uncorrelated>(
+          *angle, std::make_shared<LevelInelasticScatter>(ace, j));
+
+    } else if (law == 4 && angle) {  // Tabular Energy
+      angle_energy = std::make_shared<Uncorrelated>(
+          *angle, std::make_shared<TabularEnergy>(ace, j, ace.DLW()));
+
+    } else if (law == 5 && angle) {  // General Evaporation
+      angle_energy = std::make_shared<Uncorrelated>(
+          *angle, std::make_shared<GeneralEvaporation>(ace, j));
+
+    } else if (law == 7 && angle) {  // Maxwellian
+      angle_energy = std::make_shared<Uncorrelated>(
+          *angle, std::make_shared<Maxwellian>(ace, j));
+
+    } else if (law == 9 && angle) {  // Evaporation
+      angle_energy = std::make_shared<Uncorrelated>(
+          *angle, std::make_shared<Evaporation>(ace, j));
+
+    } else if (law == 11 && angle) {  // Watt
+      angle_energy = std::make_shared<Uncorrelated>(
+          *angle, std::make_shared<Watt>(ace, j));
+
+    } else if (law == 44) {  // Kalbach
+      angle_energy = std::make_shared<Kalbach>(ace, j);
+
+    } else if (law == 61) {  // Tabular Energy Angle
+      angle_energy = std::make_shared<TabularEnergyAngle>(ace, j, ace.DLW());
+
+    } else if (law == 66) {  // N-body
+      angle_energy = std::make_shared<NBody>(ace, j, q_);
+
+    } else if ((law > 0 && law < 6) || law == 7 || law == 9 || law == 11) {
+      // Didn't have angle distribution
+      std::string mssg =
+          "Reaction::Reaction: No anglular distribution provided to acompany "
+          "law " +
+          std::to_string(law) + " in reaction MT=" + std::to_string(mt_) +
+          " in ZAID=" + std::to_string(ace.zaid()) + ".";
+      throw PNDLException(mssg, __FILE__, __LINE__);
+    } else {
+      // Unknown or unsuported law
+      std::string mssg = "Reaction::Reaction: Unkown energy law " +
+                         std::to_string(law) +
+                         " in reaction MT=" + std::to_string(mt_) +
+                         " in ZAID=" + std::to_string(ace.zaid()) + ".";
+      throw PNDLException(mssg, __FILE__, __LINE__);
+    }
+
+    // Save law to list of all distributions
+    distributions.push_back(angle_energy);
+    probabilities.push_back(probability);
+
+    // Get i for next distribution (if there is one)
+    i = ace.DLW() + lnw - 1;
+  }  // while lnw != 0
 }
 
 }  // namespace pndl

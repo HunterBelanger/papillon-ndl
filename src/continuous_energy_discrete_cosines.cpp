@@ -79,7 +79,7 @@ ContinuousEnergyDiscreteCosines::ContinuousEnergyDiscreteCosines(
   std::vector<uint32_t> Noes = ace.xss<uint32_t>(i + Ne, Ne);
 
   // Go through all incident energies
-  for (size_t ie = 0; ie < Ne; ie++) {
+  for (std::size_t ie = 0; ie < Ne; ie++) {
     // Get the number of outgoing energies for this incident energy
     uint32_t Noe = Noes[ie];
     uint32_t l = locs[ie];
@@ -94,7 +94,7 @@ ContinuousEnergyDiscreteCosines::ContinuousEnergyDiscreteCosines(
     tables_.back().cosines.resize(Noe, std::vector<double>(Nmu, 0.));
 
     // Go through all outgoing energies
-    for (size_t oe = 0; oe < Noe; oe++) {
+    for (std::size_t oe = 0; oe < Noe; oe++) {
       tables_.back().energy[oe] = ace.xss(l);
       l++;
       tables_.back().pdf[oe] = ace.xss(l);
@@ -110,7 +110,7 @@ ContinuousEnergyDiscreteCosines::ContinuousEnergyDiscreteCosines(
       l++;
 
       // Get all angles
-      for (size_t m = 0; m < Nmu; m++) {
+      for (std::size_t m = 0; m < Nmu; m++) {
         tables_.back().cosines[oe][m] = ace.xss(l);
         l++;
       }
@@ -182,7 +182,7 @@ ContinuousEnergyDiscreteCosines::ContinuousEnergyDiscreteCosines(
       throw PNDLException(mssg, __FILE__, __LINE__);
     }
 
-    for (size_t z = 0; z < Noe; z++) {
+    for (std::size_t z = 0; z < Noe; z++) {
       if (tables_.back().pdf[z] < 0.) {
         std::string mssg =
             "ContinuousEnergyDiscreteCosines::ContinuousEnergyDiscreteCosines: "
@@ -209,7 +209,7 @@ ContinuousEnergyDiscreteCosines::sample_with_unit_based_interpolation(
     double E_in, std::function<double()> rng) const {
   // First we sample the outgoing energy.
   // Determine the index of the bounding tabulated incoming energies
-  size_t l;
+  std::size_t l;
   double f;  // Interpolation factor
   auto in_E_it =
       std::lower_bound(incoming_energy_.begin(), incoming_energy_.end(), E_in);
@@ -236,7 +236,7 @@ ContinuousEnergyDiscreteCosines::sample_with_unit_based_interpolation(
 
   double E_hat = E_in;
   double E_l_1, E_l_M;
-  size_t i, j;        // Indicies for getting the angle latter.
+  std::size_t i, j;   // Indicies for getting the angle latter.
   double xi = rng();  // Random variable for sampling outgoing energy
   if (rng() > f) {
     i = l;
@@ -291,7 +291,7 @@ ContinuousEnergyDiscreteCosines::sample_without_unit_based_interpolation(
     double E_in, std::function<double()> rng) const {
   // First we sample the outgoing energy.
   // Determine the index of the bounding tabulated incoming energies
-  size_t l;
+  std::size_t l;
   double f;  // Interpolation factor
   auto in_E_it =
       std::lower_bound(incoming_energy_.begin(), incoming_energy_.end(), E_in);
@@ -311,7 +311,7 @@ ContinuousEnergyDiscreteCosines::sample_without_unit_based_interpolation(
   if (f > 0.5) l++;
 
   // Sample outgoing energy
-  size_t i = l, j = 0;
+  std::size_t i = l, j = 0;
   double xi = rng();
   double E_out = tables_[l].sample_energy(xi, j);
 
@@ -359,9 +359,9 @@ ContinuousEnergyDiscreteCosines::sample_without_unit_based_interpolation(
 }
 
 double ContinuousEnergyDiscreteCosines::CEDCTable::sample_energy(
-    double xi, size_t& j) const {
+    double xi, std::size_t& j) const {
   double E_out = 0.;
-  size_t l = 0;
+  std::size_t l = 0;
   auto cdf_it = std::lower_bound(cdf.begin(), cdf.end(), xi);
   if (cdf_it == cdf.begin()) {
     l = 0;

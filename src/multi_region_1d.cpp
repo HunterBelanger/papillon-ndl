@@ -51,7 +51,7 @@ MultiRegion1D::MultiRegion1D(const std::vector<Region1D>& regions)
   }
 
   // Ensure all regions are ordered and not overlapping
-  for (size_t i = 0; i < regions_.size(); i++) {
+  for (std::size_t i = 0; i < regions_.size(); i++) {
     if (i != regions_.size() - 1) {
       if (regions_[i].min_x() >= regions_[i + 1].min_x() ||
           regions_[i].max_x() != regions_[i + 1].min_x()) {
@@ -95,9 +95,9 @@ MultiRegion1D::MultiRegion1D(const std::vector<uint32_t>& NBT,
   }
 
   // Make 1D regions of all intervals
-  size_t low = 0;
-  size_t hi = 0;
-  for (size_t i = 0; i < NBT.size(); i++) {
+  std::size_t low = 0;
+  std::size_t hi = 0;
+  for (std::size_t i = 0; i < NBT.size(); i++) {
     hi = NBT[i];
 
     try {
@@ -180,10 +180,6 @@ double MultiRegion1D::integrate(double x_low, double x_hi) const {
   return integral;
 }
 
-const Region1D& MultiRegion1D::operator[](size_t i) const {
-  return regions_[i];
-}
-
 std::vector<uint32_t> MultiRegion1D::breakpoints() const {
   std::vector<uint32_t> brks;
 
@@ -227,11 +223,5 @@ std::vector<double> MultiRegion1D::y() const {
 
   return y_;
 }
-
-size_t MultiRegion1D::size() const { return regions_.size(); }
-
-double MultiRegion1D::min_x() const { return regions_.front().min_x(); }
-
-double MultiRegion1D::max_x() const { return regions_.back().max_x(); }
 
 }  // namespace pndl

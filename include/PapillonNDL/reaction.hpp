@@ -58,7 +58,7 @@ class Reaction {
    * @param indx Reaction index in the MT array.
    * @param egrid Pointer to the EnergyGrid for the nuclide.
    */
-  Reaction(const ACE& ace, size_t indx, std::shared_ptr<EnergyGrid> egrid);
+  Reaction(const ACE& ace, std::size_t indx, std::shared_ptr<EnergyGrid> egrid);
 
   /**
    * @param ace ACE file to take cross section from.
@@ -66,7 +66,7 @@ class Reaction {
    * @param egrid Pointer to the EnergyGrid for the nuclide.
    * @param reac Reaction object to take distributions from.
    */
-  Reaction(const ACE& ace, size_t indx, std::shared_ptr<EnergyGrid> egrid,
+  Reaction(const ACE& ace, std::size_t indx, std::shared_ptr<EnergyGrid> egrid,
            const Reaction& reac);
 
   ~Reaction() = default;
@@ -82,12 +82,6 @@ class Reaction {
   double q() const { return q_; }
 
   /**
-   * @brief Returns the reaction yield for an incident energy.
-   * @param E incident energy in MeV.
-   */
-  double yield(double E) const { return (*yield_)(E); }
-
-  /**
    * @brief Returns the threshold energy for the reaction.
    */
   double threshold() const { return threshold_; }
@@ -99,104 +93,39 @@ class Reaction {
   Frame frame() const { return frame_; }
 
   /**
-   * @brief Returns the reaction cross section for a given energy.
-   *        Used bisection search.
-   * @param E Energy to evaluate the cross section at.
+   * @brief Returns the function for the reaction yield.
    */
-  double xs(double E) const {
-    if (E < threshold_) return 0.;
-
-    return xs_->evaluate(E);
-  }
+  const Function1D& yield() const { return *yield_; }
 
   /**
-   * @brief Returns the reaction cross section for a given energy.
-   * @param E Energy to evaluate the cross section at.
-   * @param i Index for the energy grid.
-   */
-  double xs(double E, size_t i) const {
-    if (E < threshold_) return 0.;
-
-    return xs_->evaluate(E, i);
-  }
-
-  /**
-   * @brief Samples and angle and energy from the reactions product
-   *        distribution.
+   * @brief Samples and angle and energy from the neutron reaction
+   *        product distribution.
    * @param E_in Incident energy in MeV.
    * @param rng Random number generation function.
    */
-  AngleEnergyPacket sample_angle_energy(double E_in,
-                                        std::function<double()> rng) const {
-    if (distributions_.size() == 0 || E_in < threshold_) return {0., 0.};
+  AngleEnergyPacket sample_neutron_angle_energy(
+      double E_in, std::function<double()> rng) const {
+    if (E_in < threshold_) return {0., 0.};
 
-    // First select distribution
-    double xi = rng();
-    double sum = 0.;
-    for (size_t d = 0; d < distributions_.size(); d++) {
-      sum += (*probabilities_[d])(E_in);
-      if (xi < sum) {
-        AngleEnergyPacket out =
-            distributions_[d]->sample_angle_energy(E_in, rng);
-        if (frame_ == Frame::CM) cm_to_lab(E_in, awr_, out);
-        return out;
-      }
-    }
-
-    // Shouldn't get here, but if we do, use the last distribution
     AngleEnergyPacket out =
-        distributions_.back()->sample_angle_energy(E_in, rng);
-    if (frame_ == Frame::CM) cm_to_lab(E_in, awr_, out);
+        neutron_distribution_->sample_angle_energy(E_in, rng);
+
+    if (frame_ == Frame::CM) CMToLab::transform(E_in, awr_, out);
 
     return out;
   }
 
   /**
-   * @brief Returns a pointer to the CrossSection for the reaction.
+   * @brief Returns the CrossSection for the reaction.
    */
-  std::shared_ptr<CrossSection> cross_section() const { return xs_; }
+  const CrossSection& xs() const { return *xs_; }
 
   /**
-   * @brief Returns the vector of pointers to all distributions for the
-   *        reaction.
+   * @brief Returns the distribution for neutron reaction products.
    */
-  const std::vector<std::shared_ptr<AngleEnergy>>& distributions() const {
-    return distributions_;
+  const AngleEnergy& neutron_distribution() const {
+    return *neutron_distribution_;
   }
-
-  /**
-   * @brief Returns the vector of pointers to probabilities for each
-   *        distribution.
-   */
-  const std::vector<std::shared_ptr<Tabulated1D>>& probabilities() const {
-    return probabilities_;
-  }
-
-  /**
-   * @brief Returns the number of distributions for the reaction.
-   */
-  size_t n_distributions() const { return distributions_.size(); }
-
-  /**
-   * @brief Returns the ith distributions for the reaction.
-   * @param i Index of distribution to fetch.
-   */
-  std::shared_ptr<AngleEnergy> distribution(size_t i) const {
-    return distributions_[i];
-  }
-
-  /**
-   * @brief Returns the ith distribution's probability function.
-   * @param i Index of distribution to fetch.
-   */
-  std::shared_ptr<Tabulated1D> probability(size_t i) const {
-    return probabilities_[i];
-  }
-
-  /**
-   * @brief Returns a pointer to the function for the reaction yield.
-   */
-  std::shared_ptr<Function1D> yield() const { return yield_; }
 
  private:
   uint32_t mt_;
@@ -206,8 +135,13 @@ class Reaction {
   Frame frame_;
   std::shared_ptr<CrossSection> xs_;
   std::shared_ptr<Function1D> yield_;
-  std::vector<std::shared_ptr<AngleEnergy>> distributions_;
-  std::vector<std::shared_ptr<Tabulated1D>> probabilities_;
+  std::shared_ptr<AngleEnergy> neutron_distribution_;
+
+  // Private helper methods
+  void load_neutron_distributions(
+      const ACE& ace, std::size_t indx,
+      std::vector<std::shared_ptr<AngleEnergy>>& distributions,
+      std::vector<std::shared_ptr<Tabulated1D>>& probabilities);
 };
 
 }  // namespace pndl

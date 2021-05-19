@@ -31,42 +31,29 @@
  * termes.
  *
  * */
-#ifndef PAPILLON_NDL_ENERGY_LAW_H
-#define PAPILLON_NDL_ENERGY_LAW_H
+#ifndef PAPILLON_NDL_ABSORPTION_H
+#define PAPILLON_NDL_ABSORPTION_H
+
+#include <PapillonNDL/angle_energy.hpp>
 
 /**
  * @file
  * @author Hunter Belanger
  */
 
-#include <functional>
-#include <memory>
-
 namespace pndl {
 
 /**
- * @brief Interface to represent uncorrelated energy distributions.
+ * @brief A distribution to represent absorption.
  */
-class EnergyLaw : public std::enable_shared_from_this<EnergyLaw> {
+class Absorption : public AngleEnergy {
  public:
-  virtual ~EnergyLaw() = default;
+  Absorption() {}
 
-  /**
-   * @brief Samples an energy (in MeV) from the distribution.
-   * @param E_in Incident energy in MeV.
-   * @param rng Random number generation function.
-   */
-  virtual double sample_energy(double E_in,
-                               std::function<double()> rng) const = 0;
-
-  /**
-   * @brief Samples the PDF for the energy transfer from E_in to E_out where
-   *        E_in is provided in the lab frame, and E_out is provided in the
-   *        frame of the reaction data.
-   * @param E_in Incoming energy.
-   * @param E_out Outgoing energy.
-   */
-  virtual double pdf(double E_in, double E_out) const = 0;
+  AngleEnergyPacket sample_angle_energy(
+      double /*E_in*/, std::function<double()> /*rng*/) const override final {
+    return {1., 0.};
+  }
 };
 
 }  // namespace pndl

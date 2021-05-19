@@ -31,23 +31,59 @@
  * termes.
  *
  * */
-#include <PapillonNDL/frame.hpp>
-#include <cmath>
+#ifndef PAPILLON_NDL_MULTIPLE_DISTRIBUTION_H
+#define PAPILLON_NDL_MULTIPLE_DISTRIBUTION_H
+
+#include <PapillonNDL/angle_energy.hpp>
+#include <PapillonNDL/tabulated_1d.hpp>
+#include <vector>
+
+/**
+ * @file
+ * @author Hunter Belanger
+ */
 
 namespace pndl {
 
-void cm_to_lab(double E, double A, AngleEnergyPacket& ae) {
-  double E_cm = ae.energy;
-  double mu_cm = ae.cosine_angle;
+/**
+ * @brief A dsitribution which is composed of mutliple possible
+ *        distributions, each with a tabulated probability.
+ */
+class MultipleDistribution : public AngleEnergy {
+ public:
+  MultipleDistribution(
+      const std::vector<std::shared_ptr<AngleEnergy>>& distributions,
+      const std::vector<std::shared_ptr<Tabulated1D>>& probabilities);
 
-  double E_lab = E_cm + (E + 2. * mu_cm * (A + 1.) * std::sqrt(E * E_cm)) /
-                            std::pow(A + 1., 2.);
+  AngleEnergyPacket sample_angle_energy(
+      double E_in, std::function<double()> rng) const override final;
 
-  double mu_lab =
-      mu_cm * std::sqrt(E_cm / E_lab) + (1. / (A + 1.)) * std::sqrt(E / E_lab);
+  /**
+   * @brief Returns the number of distributions for the reaction.
+   */
+  std::size_t size() const { return distributions_.size(); }
 
-  ae.cosine_angle = mu_lab;
-  ae.energy = E_lab;
-}
+  /**
+   * @brief Returns the ith distribution for the reaction.
+   * @param i Index of distribution to fetch.
+   */
+  const AngleEnergy& distribution(std::size_t i) const {
+    return *distributions_[i];
+  }
+
+  /**
+   * @brief Returns the ith distribution's probability function.
+   * @param i Index of distribution to fetch.
+   */
+  const Tabulated1D& probability(std::size_t i) const {
+    return *probabilities_[i];
+  }
+
+ private:
+  std::vector<std::shared_ptr<AngleEnergy>> distributions_;
+  std::vector<std::shared_ptr<Tabulated1D>> probabilities_;
+};
 
 }  // namespace pndl
+
+#endif

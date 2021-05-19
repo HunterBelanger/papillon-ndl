@@ -35,7 +35,8 @@
 
 namespace pndl {
 
-TabularEnergyAngle::TabularEnergyAngle(const ACE& ace, size_t i, size_t JED)
+TabularEnergyAngle::TabularEnergyAngle(const ACE& ace, std::size_t i,
+                                       std::size_t JED)
     : incoming_energy_(), tables_() {
   // Get number of interpolation points
   uint32_t NR = ace.xss<uint32_t>(i);
@@ -98,7 +99,7 @@ TabularEnergyAngle::TabularEnergyAngle(
 AngleEnergyPacket TabularEnergyAngle::sample_angle_energy(
     double E_in, std::function<double()> rng) const {
   // Determine the index of the bounding tabulated incoming energies
-  size_t l;
+  std::size_t l;
   double f;  // Interpolation factor
   auto in_E_it =
       std::lower_bound(incoming_energy_.begin(), incoming_energy_.end(), E_in);
@@ -145,19 +146,5 @@ AngleEnergyPacket TabularEnergyAngle::sample_angle_energy(
 
   return {mu, E_out};
 }
-
-const std::vector<double>& TabularEnergyAngle::incoming_energy() const {
-  return incoming_energy_;
-}
-
-double TabularEnergyAngle::incoming_energy(size_t i) const {
-  return incoming_energy_[i];
-}
-
-const EnergyAngleTable& TabularEnergyAngle::table(size_t i) const {
-  return tables_[i];
-}
-
-size_t TabularEnergyAngle::size() const { return incoming_energy_.size(); }
 
 }  // namespace pndl

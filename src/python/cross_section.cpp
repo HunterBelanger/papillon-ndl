@@ -45,14 +45,19 @@ void init_CrossSection(py::module& m) {
       .def(py::init<const ACE&, size_t, std::shared_ptr<EnergyGrid>, bool>())
       .def(py::init<const std::vector<double>&, std::shared_ptr<EnergyGrid>,
                     size_t>())
+      .def(py::init<double, std::shared_ptr<EnergyGrid>>())
       .def("__getitem__", &CrossSection::operator[])
       .def("__call__",
            py::overload_cast<double>(&CrossSection::operator(), py::const_))
       .def("__call__", py::overload_cast<double, size_t>(
                            &CrossSection::operator(), py::const_))
+      .def("__call__", py::overload_cast<double, size_t, double, double>(
+                           &CrossSection::operator(), py::const_))
       .def("evaluate",
            py::overload_cast<double>(&CrossSection::evaluate, py::const_))
       .def("evaluate", py::overload_cast<double, size_t>(
+                           &CrossSection::evaluate, py::const_))
+      .def("evaluate", py::overload_cast<double, size_t, double, double>(
                            &CrossSection::evaluate, py::const_))
       .def("size", &CrossSection::size)
       .def("index", &CrossSection::index)

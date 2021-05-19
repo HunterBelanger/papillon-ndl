@@ -46,7 +46,7 @@
 
 namespace pndl {
 
-DelayedGroup::DelayedGroup(const ACE& ace, size_t i, size_t g)
+DelayedGroup::DelayedGroup(const ACE& ace, std::size_t i, std::size_t g)
     : decay_constant_(), probability_(nullptr), energy_(nullptr) {
   // Read Decay Constant for group
   decay_constant_ = ace.xss(i);
@@ -73,7 +73,7 @@ DelayedGroup::DelayedGroup(const ACE& ace, size_t i, size_t g)
 
   // Get energy distribution location
   uint32_t locc = ace.xss<uint32_t>(ace.DNEDL() + g - 1);
-  size_t l = ace.DNED() + locc - 1;
+  std::size_t l = ace.DNED() + locc - 1;
 
   // TODO currently ignore extra distribuitons, only read first one
   // Write a warning for now
@@ -86,7 +86,7 @@ DelayedGroup::DelayedGroup(const ACE& ace, size_t i, size_t g)
 
   int law = ace.xss<int>(l + 1);
   uint32_t idat = ace.xss<uint32_t>(l + 2);
-  size_t j = ace.DNED() + idat - 1;
+  std::size_t j = ace.DNED() + idat - 1;
 
   if (law == 1) {  // Equiprobable Energy Bins
     energy_ = std::make_shared<EquiprobableEnergyBins>(ace, j);

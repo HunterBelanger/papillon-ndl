@@ -84,26 +84,26 @@ class AngleDistribution {
   /**
    * @brief Returns the number of energies/angular distributions stored.
    */
-  size_t size() const;
+  std::size_t size() const { return energy_grid_.size(); }
 
   /**
    * @brief Reference to the vector of energy values (in MeV)
    *        which have an angular distribution.
    */
-  const std::vector<double>& energy() const;
+  const std::vector<double>& energy() const { return energy_grid_; }
 
   /**
    * @brief Gets the ith energy point (in MeV) which has an angular
    * distribution.
    * @param i Index in the energy grid.
    */
-  double energy(size_t i) const;
+  double energy(std::size_t i) const { return energy_grid_[i]; }
 
   /**
    * @brief Gets a pointer to the angular distribution for the ith energy point.
    * @param i Index in the energy grid.
    */
-  std::shared_ptr<AngleLaw> law(size_t i) const;
+  const AngleLaw& law(std::size_t i) const { return *laws_[i]; }
 
  private:
   std::vector<double> energy_grid_;

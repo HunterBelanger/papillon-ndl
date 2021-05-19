@@ -40,8 +40,8 @@
 
 namespace pndl {
 
-Watt::Watt(const ACE& ace, size_t i) : a_(), b_(), restriction_energy_() {
-  size_t original_i = i;
+Watt::Watt(const ACE& ace, std::size_t i) : a_(), b_(), restriction_energy_() {
+  std::size_t original_i = i;
   uint32_t NR = ace.xss<uint32_t>(i);
   uint32_t NE = ace.xss<uint32_t>(i + 1 + 2 * NR);
   std::vector<uint32_t> NBT_a;
@@ -159,11 +159,5 @@ double Watt::pdf(double E_in, double E_out) const {
   I -= a * std::exp(-du / a) * std::sinh(std::sqrt(b * du));
   return (std::exp(-E_out / a) / I) * std::sinh(std::sqrt(b * E_out));
 }
-
-std::shared_ptr<Tabulated1D> Watt::a() const { return a_; }
-
-std::shared_ptr<Tabulated1D> Watt::b() const { return b_; }
-
-double Watt::U() const { return restriction_energy_; }
 
 }  // namespace pndl

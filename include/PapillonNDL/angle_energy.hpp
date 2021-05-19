@@ -56,7 +56,7 @@ struct AngleEnergyPacket {
 /**
  * @brief Interface to represent any secondary angle-energy distribution.
  */
-class AngleEnergy {
+class AngleEnergy : public std::enable_shared_from_this<AngleEnergy> {
  public:
   virtual ~AngleEnergy() = default;
 
