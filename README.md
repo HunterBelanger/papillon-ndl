@@ -1,4 +1,5 @@
 # Papillon Nuclear Data Library
+![CMake Workflow](https://github.com/HunterBelanger/papillon-ndl/actions/workflows/cmake.yml/badge.svg)
 [![Documentation Status](https://readthedocs.org/projects/papillon-ndl/badge/?version=latest)](https://papillon-ndl.readthedocs.io/en/latest/?badge=latest)
 [![License](https://img.shields.io/badge/License-CeCILL%20v2.1-brightgreen)](https://cecill.info/index.en.html)
 
