@@ -48,7 +48,7 @@ void init_Reaction(py::module& m) {
                     const Reaction&>())
       .def("mt", &Reaction::mt)
       .def("q", &Reaction::q)
-      .def("multiplicity", &Reaction::yield)
+      .def("multiplicity", &Reaction::yield, py::return_value_policy::reference_internal)
       .def("threshold", &Reaction::threshold)
       .def("frame", &Reaction::frame)
       .def("xs", &Reaction::xs)
