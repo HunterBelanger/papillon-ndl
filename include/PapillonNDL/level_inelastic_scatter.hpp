@@ -69,7 +69,7 @@ class LevelInelasticScatter : public EnergyLaw {
   double pdf(double E_in, double E_out) const override final;
 
   /**
-   * @brief Returns first parameter which is (A+1)*abs(Q)/A.
+   * @brief Returns first parameter which is -(A+1)*Q/A.
    */
   double C1() const { return C1_; }
 
