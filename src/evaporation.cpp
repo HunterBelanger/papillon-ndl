@@ -107,7 +107,7 @@ double Evaporation::sample_energy(double E_in,
   return E_out;
 }
 
-double Evaporation::pdf(double E_in, double E_out) const {
+std::optional<double> Evaporation::pdf(double E_in, double E_out) const {
   double du = E_in - restriction_energy_;
   if (E_out < 0. || E_out > du) return 0.;
 

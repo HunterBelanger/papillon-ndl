@@ -41,6 +41,7 @@
 
 #include <PapillonNDL/ace.hpp>
 #include <PapillonNDL/energy_law.hpp>
+#include <optional>
 
 namespace pndl {
 
@@ -67,7 +68,7 @@ class EquiprobableEnergyBins : public EnergyLaw {
   double sample_energy(double E_in,
                        std::function<double()> rng) const override final;
 
-  double pdf(double E_in, double E_out) const override final;
+  std::optional<double> pdf(double E_in, double E_out) const override final;
 
   /**
    * @brief Returns a vector of the grid of incoming energy points for which

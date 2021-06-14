@@ -43,6 +43,7 @@
 #include <PapillonNDL/energy_law.hpp>
 #include <PapillonNDL/tabulated_1d.hpp>
 #include <memory>
+#include <optional>
 
 namespace pndl {
 
@@ -68,7 +69,7 @@ class GeneralEvaporation : public EnergyLaw {
   double sample_energy(double E_in,
                        std::function<double()> rng) const override final;
 
-  double pdf(double E_in, double E_out) const override final;
+  std::optional<double> pdf(double E_in, double E_out) const override final;
 
   /**
    * @brief Returns the table containg the effective temperature

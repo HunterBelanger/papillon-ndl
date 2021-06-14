@@ -41,6 +41,7 @@
 
 #include <functional>
 #include <memory>
+#include <optional>
 
 namespace pndl {
 
@@ -62,11 +63,12 @@ class EnergyLaw : public std::enable_shared_from_this<EnergyLaw> {
   /**
    * @brief Samples the PDF for the energy transfer from E_in to E_out where
    *        E_in is provided in the lab frame, and E_out is provided in the
-   *        frame of the reaction data.
+   *        frame of the reaction data. Returned as an std::optional<double>,
+   *        as some EnergyLaw types have no defined PDF.
    * @param E_in Incoming energy.
    * @param E_out Outgoing energy.
    */
-  virtual double pdf(double E_in, double E_out) const = 0;
+  virtual std::optional<double> pdf(double E_in, double E_out) const = 0;
 };
 
 }  // namespace pndl

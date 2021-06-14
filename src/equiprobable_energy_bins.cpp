@@ -35,6 +35,7 @@
 #include <PapillonNDL/pndl_exception.hpp>
 #include <algorithm>
 #include <cmath>
+#include <optional>
 
 namespace pndl {
 
@@ -131,7 +132,8 @@ double EquiprobableEnergyBins::sample_energy(
   }
 }
 
-double EquiprobableEnergyBins::pdf(double E_in, double E_out) const {
+std::optional<double> EquiprobableEnergyBins::pdf(double E_in,
+                                                  double E_out) const {
   // Determine the index of the bounding tabulated incoming energies
   auto in_E_it =
       std::lower_bound(incoming_energy_.begin(), incoming_energy_.end(), E_in);

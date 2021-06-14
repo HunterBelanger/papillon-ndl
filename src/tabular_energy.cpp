@@ -130,7 +130,7 @@ double TabularEnergy::sample_energy(double E_in,
   return E_out;
 }
 
-double TabularEnergy::pdf(double E_in, double E_out) const {
+std::optional<double> TabularEnergy::pdf(double E_in, double E_out) const {
   // Determine the index of the bounding tabulated incoming energies
   std::size_t l;
   double f;  // Interpolation factor

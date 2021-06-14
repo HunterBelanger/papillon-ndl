@@ -114,7 +114,7 @@ double GeneralEvaporation::sample_energy(double E_in,
   return Chi * T;
 }
 
-double GeneralEvaporation::pdf(double E_in, double E_out) const {
+std::optional<double> GeneralEvaporation::pdf(double E_in, double E_out) const {
   double T = (*temperature_)(E_in);
   double Chi = E_out / T;
 

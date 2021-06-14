@@ -147,7 +147,7 @@ double Watt::sample_energy(double E_in, std::function<double()> rng) const {
   return E_out;
 }
 
-double Watt::pdf(double E_in, double E_out) const {
+std::optional<double> Watt::pdf(double E_in, double E_out) const {
   double du = E_in - restriction_energy_;
   if (E_out < 0. || E_out > du) return 0.;
 

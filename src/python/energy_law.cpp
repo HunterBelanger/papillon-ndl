@@ -58,7 +58,7 @@ class PyEnergyLaw : public EnergyLaw {
     PYBIND11_OVERRIDE_PURE(double, EnergyLaw, sample_energy, E_in, rng);
   }
 
-  double pdf(double E_in, double E_out) const override {
+  std::optional<double> pdf(double E_in, double E_out) const override {
     PYBIND11_OVERRIDE_PURE(double, EnergyLaw, pdf, E_in, E_out);
   }
 };
