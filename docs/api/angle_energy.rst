@@ -9,15 +9,15 @@ AngleEnergyPacket
 
 .. doxygenstruct:: pndl::AngleEnergyPacket
 
-MultipleDistribution
---------------------
-
-.. doxygenclass:: pndl::MultipleDistribution
-
 AngleEnergy
 -----------
 
 .. doxygenclass:: pndl::AngleEnergy
+
+MultipleDistribution
+--------------------
+
+.. doxygenclass:: pndl::MultipleDistribution
 
 Uncorrelated
 ------------
