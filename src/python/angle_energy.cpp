@@ -47,6 +47,7 @@
 #include <PapillonNDL/st_incoherent_elastic.hpp>
 #include <PapillonNDL/tabular_energy_angle.hpp>
 #include <PapillonNDL/uncorrelated.hpp>
+#include <optional>
 
 namespace py = pybind11;
 
@@ -68,13 +69,26 @@ class PyAngleEnergy : public AngleEnergy {
     PYBIND11_OVERRIDE_PURE(AngleEnergyPacket, AngleEnergy, sample_angle_energy,
                            E_in, rng);
   }
+
+  std::optional<double> angle_pdf(double E_in, double mu) const override {
+    PYBIND11_OVERRIDE_PURE(std::optional<double>, AngleEnergy, angle_pdf, E_in,
+                           mu);
+  }
+
+  std::optional<double> pdf(double E_in, double mu,
+                            double E_out) const override {
+    PYBIND11_OVERRIDE_PURE(std::optional<double>, AngleEnergy, pdf, E_in, mu,
+                           E_out);
+  }
 };
 
 void init_AngleEnergy(py::module& m) {
   py::class_<AngleEnergy, PyAngleEnergy, std::shared_ptr<AngleEnergy>>(
       m, "AngleEnergy")
       .def(py::init<>())
-      .def("sample_angle_energy", &AngleEnergy::sample_angle_energy);
+      .def("sample_angle_energy", &AngleEnergy::sample_angle_energy)
+      .def("angle_pdf", &AngleEnergy::angle_pdf)
+      .def("pdf", &AngleEnergy::pdf);
 }
 
 void init_Uncorrelated(py::module& m) {
@@ -84,7 +98,9 @@ void init_Uncorrelated(py::module& m) {
       .def("sample_angle_energy", &Uncorrelated::sample_angle_energy)
       .def("angle", &Uncorrelated::angle)
       .def("energy", &Uncorrelated::energy,
-           py::return_value_policy::reference_internal);
+           py::return_value_policy::reference_internal)
+      .def("angle_pdf", &Uncorrelated::angle_pdf)
+      .def("pdf", &Uncorrelated::pdf);
 }
 
 void init_NBody(py::module& m) {
@@ -94,7 +110,9 @@ void init_NBody(py::module& m) {
       .def("n", &NBody::n)
       .def("Ap", &NBody::Ap)
       .def("A", &NBody::A)
-      .def("Q", &NBody::Q);
+      .def("Q", &NBody::Q)
+      .def("angle_pdf", &NBody::angle_pdf)
+      .def("pdf", &NBody::pdf);
 }
 
 void init_KalbachTable(py::module& m) {
@@ -107,7 +125,10 @@ void init_KalbachTable(py::module& m) {
       .def("min_energy", &KalbachTable::min_energy)
       .def("max_energy", &KalbachTable::max_energy)
       .def("energy", &KalbachTable::energy)
-      .def("pdf", &KalbachTable::pdf)
+      .def("pdf", py::overload_cast<>(&KalbachTable::pdf, py::const_))
+      .def("pdf",
+           py::overload_cast<double, double>(&KalbachTable::pdf, py::const_))
+      .def("angle_pdf", &KalbachTable::angle_pdf)
       .def("cdf", &KalbachTable::cdf)
       .def("R", py::overload_cast<double>(&KalbachTable::R, py::const_))
       .def("R", py::overload_cast<>(&KalbachTable::R, py::const_))
@@ -126,7 +147,9 @@ void init_Kalbach(py::module& m) {
       .def("incoming_energy",
            py::overload_cast<size_t>(&Kalbach::incoming_energy, py::const_))
       .def("table", &Kalbach::table)
-      .def("size", &Kalbach::size);
+      .def("size", &Kalbach::size)
+      .def("angle_pdf", &Kalbach::angle_pdf)
+      .def("pdf", &Kalbach::pdf);
 }
 
 void init_EnergyAngleTable(py::module& m) {
@@ -141,7 +164,10 @@ void init_EnergyAngleTable(py::module& m) {
       .def("max_energy", &EnergyAngleTable::max_energy)
       .def("interpolation", &EnergyAngleTable::interpolation)
       .def("energy", &EnergyAngleTable::energy)
-      .def("pdf", &EnergyAngleTable::pdf)
+      .def("pdf", py::overload_cast<>(&EnergyAngleTable::pdf, py::const_))
+      .def("pdf", py::overload_cast<double, double>(&EnergyAngleTable::pdf,
+                                                    py::const_))
+      .def("angle_pdf", &EnergyAngleTable::angle_pdf)
       .def("cdf", &EnergyAngleTable::cdf)
       .def("size", &EnergyAngleTable::size)
       .def("angle_table", &EnergyAngleTable::angle_table);
@@ -160,7 +186,9 @@ void init_TabularEnergyAngle(py::module& m) {
            py::overload_cast<size_t>(&TabularEnergyAngle::incoming_energy,
                                      py::const_))
       .def("table", &TabularEnergyAngle::table)
-      .def("size", &TabularEnergyAngle::size);
+      .def("size", &TabularEnergyAngle::size)
+      .def("angle_pdf", &TabularEnergyAngle::angle_pdf)
+      .def("pdf", &TabularEnergyAngle::pdf);
 }
 
 void init_DiscreteCosinesEnergies(py::module& m) {
@@ -176,7 +204,9 @@ void init_DiscreteCosinesEnergies(py::module& m) {
       .def("sample_angle_energy", &DiscreteCosinesEnergies::sample_angle_energy)
       .def("skewed", &DiscreteCosinesEnergies::skewed)
       .def("incoming_energy", &DiscreteCosinesEnergies::incoming_energy)
-      .def("outgoing_energies", &DiscreteCosinesEnergies::outgoing_energies);
+      .def("outgoing_energies", &DiscreteCosinesEnergies::outgoing_energies)
+      .def("angle_pdf", &DiscreteCosinesEnergies::angle_pdf)
+      .def("pdf", &DiscreteCosinesEnergies::pdf);
 }
 
 void init_ContinuousEnergyDiscreteCosines(py::module& m) {
@@ -201,7 +231,9 @@ void init_ContinuousEnergyDiscreteCosines(py::module& m) {
       .def("tables", &ContinuousEnergyDiscreteCosines::tables)
       .def("table", &ContinuousEnergyDiscreteCosines::table)
       .def("unit_based_interpolation",
-           &ContinuousEnergyDiscreteCosines::unit_based_interpolation);
+           &ContinuousEnergyDiscreteCosines::unit_based_interpolation)
+      .def("angle_pdf", &ContinuousEnergyDiscreteCosines::angle_pdf)
+      .def("pdf", &ContinuousEnergyDiscreteCosines::pdf);
 }
 
 void init_STCoherentElastic(py::module& m) {
@@ -211,7 +243,9 @@ void init_STCoherentElastic(py::module& m) {
       .def("xs", &STCoherentElastic::xs)
       .def("sample_angle_energy", &STCoherentElastic::sample_angle_energy)
       .def("bragg_edges", &STCoherentElastic::bragg_edges)
-      .def("structure_factor_sum", &STCoherentElastic::structure_factor_sum);
+      .def("structure_factor_sum", &STCoherentElastic::structure_factor_sum)
+      .def("angle_pdf", &STCoherentElastic::angle_pdf)
+      .def("pdf", &STCoherentElastic::pdf);
 }
 
 void init_STInoherentElastic(py::module& m) {
@@ -224,7 +258,9 @@ void init_STInoherentElastic(py::module& m) {
            py::overload_cast<double>(&STIncoherentElastic::xs, py::const_))
       .def("sample_angle_energy", &STIncoherentElastic::sample_angle_energy)
       .def("incoming_energy", &STIncoherentElastic::incoming_energy)
-      .def("cosines", &STIncoherentElastic::cosines);
+      .def("cosines", &STIncoherentElastic::cosines)
+      .def("angle_pdf", &STIncoherentElastic::angle_pdf)
+      .def("pdf", &STIncoherentElastic::pdf);
 }
 
 void init_MultipleDistribution(py::module& m) {
@@ -237,12 +273,16 @@ void init_MultipleDistribution(py::module& m) {
       .def("distribution", &MultipleDistribution::distribution,
            py::return_value_policy::reference_internal)
       .def("probability", &MultipleDistribution::probability,
-           py::return_value_policy::reference_internal);
+           py::return_value_policy::reference_internal)
+      .def("angle_pdf", &MultipleDistribution::angle_pdf)
+      .def("pdf", &MultipleDistribution::pdf);
 }
 
 void init_Absorption(py::module& m) {
   py::class_<Absorption, AngleEnergy, std::shared_ptr<Absorption>>(m,
                                                                    "Absorption")
       .def(py::init<>())
-      .def("sample_angle_energy", &Absorption::sample_angle_energy);
+      .def("sample_angle_energy", &Absorption::sample_angle_energy)
+      .def("angle_pdf", &Absorption::angle_pdf)
+      .def("pdf", &Absorption::pdf);
 }

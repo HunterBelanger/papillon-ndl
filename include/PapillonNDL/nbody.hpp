@@ -69,6 +69,11 @@ class NBody : public AngleEnergy {
   AngleEnergyPacket sample_angle_energy(
       double E_in, std::function<double()> rng) const override final;
 
+  std::optional<double> angle_pdf(double E_in, double mu) const override final;
+
+  std::optional<double> pdf(double E_in, double mu,
+                            double E_out) const override final;
+
   /**
    * @brief Returns the number of bodies.
    */

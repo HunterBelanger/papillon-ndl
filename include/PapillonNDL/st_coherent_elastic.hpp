@@ -43,6 +43,7 @@
 #include <PapillonNDL/angle_energy.hpp>
 #include <PapillonNDL/region_1d.hpp>
 #include <algorithm>
+#include <optional>
 
 namespace pndl {
 
@@ -99,6 +100,16 @@ class STCoherentElastic : public AngleEnergy {
     double mu = 1. - (2. * Ei / E_in);
 
     return {mu, E_in};
+  }
+
+  std::optional<double> angle_pdf(double /*E_in*/,
+                                  double /*mu*/) const override final {
+    return std::nullopt;
+  }
+
+  std::optional<double> pdf(double /*E_in*/, double /*mu*/,
+                            double /*E_out*/) const override final {
+    return std::nullopt;
   }
 
   /**

@@ -37,6 +37,7 @@
 #include <PapillonNDL/tabulated_1d.hpp>
 #include <functional>
 #include <memory>
+#include <optional>
 
 /**
  * @file
@@ -69,6 +70,27 @@ class AngleEnergy : public std::enable_shared_from_this<AngleEnergy> {
    */
   virtual AngleEnergyPacket sample_angle_energy(
       double E_in, std::function<double()> rng) const = 0;
+
+  /**
+   * @brief Evaluates the marginal PDF for having a scattering cosine of mu at
+   *        incoming energy E_in. Returns an std::optional<double>, as it may
+   *        not always be possible to obtain the marginal PDF.
+   * @param E_in Incoming energy.
+   * @param mu Scattering cosine.
+   */
+  virtual std::optional<double> angle_pdf(double E_in, double mu) const = 0;
+
+  /**
+   * @brief Evaluates the joint PDF for having a scattering cosine of mu at
+   *        incoming energy E_in, and exit energy E_out. Returns an
+   *        std::optional<double>, as it may not always be possible to
+   *        calculate the joint PDF.
+   * @param E_in Incoming energy.
+   * @param mu Scattering cosine.
+   * @param E_out Exit energy.
+   */
+  virtual std::optional<double> pdf(double E_in, double mu,
+                                    double E_out) const = 0;
 };
 
 }  // namespace pndl

@@ -392,4 +392,14 @@ double ContinuousEnergyDiscreteCosines::CEDCTable::sample_energy(
   return E_out;
 }
 
+std::optional<double> ContinuousEnergyDiscreteCosines::angle_pdf(
+    double /*E_in*/, double /*mu*/) const {
+  return std::nullopt;
+}
+
+std::optional<double> ContinuousEnergyDiscreteCosines::pdf(
+    double /*E_in*/, double /*mu*/, double /*E_out*/) const {
+  return std::nullopt;
+}
+
 }  // namespace pndl

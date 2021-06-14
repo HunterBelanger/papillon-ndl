@@ -53,4 +53,23 @@ AngleEnergyPacket Uncorrelated::sample_angle_energy(
   return {mu, E_out};
 }
 
+std::optional<double> Uncorrelated::angle_pdf(double E_in, double mu) const {
+  return angle_.pdf(E_in, mu);
+}
+
+std::optional<double> Uncorrelated::pdf(double E_in, double mu,
+                                        double E_out) const {
+  std::optional<double> energy_pdf = energy_->pdf(E_in, E_out);
+
+  if (!energy_pdf) {
+    return std::nullopt;
+  }
+
+  double angle_pdf = angle_.pdf(E_in, mu);
+
+  energy_pdf.value() *= angle_pdf;
+
+  return energy_pdf;
+}
+
 }  // namespace pndl

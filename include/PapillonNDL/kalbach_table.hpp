@@ -144,6 +144,68 @@ class KalbachTable {
   }
 
   /**
+   * @breif Evaluates the PDF of scattering with angle mu, and any exit energy.
+   * @param mu Cosine of scattering angle.
+   */
+  double angle_pdf(double mu) const {
+    auto mu_p = [](double a, double r, double mu) {
+      return 0.5 * (a / std::sinh(a)) *
+             (std::cosh(a * mu) + r * std::sinh(a * mu));
+    };
+
+    double pdf_out = 0.;
+
+    for (std::size_t i = 0; i < pdf_.size() - 1; i++) {
+      if (interp_ == Interpolation::Histogram) {
+        pdf_out +=
+            mu_p(A_[i], R_[i], mu) * pdf_[i] * (energy_[i + 1] - energy_[i]);
+      } else {
+        pdf_out += 0.5 * (energy_[i + 1] - energy_[i]) *
+                   (mu_p(A_[i], R_[i], mu) * pdf_[i] +
+                    mu_p(A_[i + 1], R_[i + 1], mu) * pdf_[i + 1]);
+      }
+    }
+
+    return pdf_out;
+  }
+
+  /**
+   * @breif Evaluates the PDF of scattering with angle mu, and exit energy
+   *        E_out.
+   * @param mu Cosine of scattering angle.
+   * @param E_out Exit energy.
+   */
+  double pdf(double mu, double E_out) const {
+    auto mu_p = [](double a, double r, double mu) {
+      return 0.5 * (a / std::sinh(a)) *
+             (std::cosh(a * mu) + r * std::sinh(a * mu));
+    };
+
+    auto E_it = std::lower_bound(energy_.begin(), energy_.end(), E_out);
+    if (E_it == energy_.end()) {
+      return 0.;
+    } else if (E_it == energy_.begin() && E_out < energy_.front()) {
+      return 0.;
+    }
+    std::size_t l = std::distance(energy_.begin(), E_it);
+    if (E_out != *E_it) l--;
+
+    if (interp_ == Interpolation::Histogram) {
+      double mu_pdf = mu_p(A_[l], R_[l], mu);
+      double E_pdf = pdf_[l];
+      return mu_pdf * E_pdf;
+    } else {
+      double f = (E_out - energy_[l]) / (energy_[l + 1] - energy_[l]);
+      double out_pdf = 0;
+
+      out_pdf += f * mu_p(A_[l + 1], R_[l + 1], mu) * pdf_[l + 1];
+      out_pdf += (1. - f) * mu_p(A_[l], R_[l], mu) * pdf_[l];
+
+      return out_pdf;
+    }
+  }
+
+  /**
    * @brief Returns a vector of the outgoing energy points.
    */
   const std::vector<double>& energy() const { return energy_; }

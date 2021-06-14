@@ -71,6 +71,15 @@ EnergyAngleTable::EnergyAngleTable(const ACE& ace, std::size_t i,
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
 
+  if (cdf_[0] != 0.) {
+    std::string mssg =
+        "EnergyAngleTable::EnergyAngleTable: First CDF entry is not 0, but " +
+        std::to_string(cdf_[0]) +
+        ". Index of EnergyAngleTable in XSS block is " + std::to_string(i) +
+        ".";
+    throw PNDLException(mssg, __FILE__, __LINE__);
+  }
+
   if (cdf_[cdf_.size() - 1] != 1.) {
     // If last element is close to 1, just set it to exactly 1
     if (std::abs(cdf_[cdf_.size() - 1] - 1.) < 1.E-7) {
@@ -79,7 +88,8 @@ EnergyAngleTable::EnergyAngleTable(const ACE& ace, std::size_t i,
       std::string mssg =
           "EnergyAngleTable::EnergyAngleTable: Last CDF entry is not 1, but " +
           std::to_string(cdf_[cdf_.size() - 1]) +
-          ". Index of KalbachTable in XSS block is " + std::to_string(i) + ".";
+          ". Index of EnergyAngleTable in XSS block is " + std::to_string(i) +
+          ".";
       throw PNDLException(mssg, __FILE__, __LINE__);
     }
   }
@@ -139,6 +149,13 @@ EnergyAngleTable::EnergyAngleTable(const std::vector<double>& outgoing_energy,
 
   if (!std::is_sorted(cdf_.begin(), cdf_.end())) {
     std::string mssg = "EnergyAngleTable::EnergyAngleTable: CDF is not sorted.";
+    throw PNDLException(mssg, __FILE__, __LINE__);
+  }
+
+  if (cdf_[0] != 0.) {
+    std::string mssg =
+        "EnergyAngleTable::EnergyAngleTable: First CDF entry is not 0, but " +
+        std::to_string(cdf_[0]) + ".";
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
 

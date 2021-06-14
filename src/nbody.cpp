@@ -137,4 +137,33 @@ double NBody::maxwellian_spectrum(std::function<double()>& rng) const {
   return -(std::log(xi1) + std::log(xi2) * std::cos(a) * std::cos(a));
 }
 
+std::optional<double> NBody::angle_pdf(double /*E_in*/, double /*mu*/) const {
+  // NBody is isotropic in the CM frame
+  return 0.5;
+}
+
+std::optional<double> NBody::pdf(double E_in, double /*mu*/,
+                                 double E_out) const {
+  double Emax = ((Ap_ + 1.) / Ap_) * ((A_ / (A_ + 1.)) * E_in + Q_);
+  double C = 0;
+  switch (n_) {
+    case 3:
+      C = 4. / (PI * Emax * Emax);
+      break;
+
+    case 4:
+      C = 105. / (32. * std::pow(Emax, 7. / 2.));
+      break;
+
+    case 5:
+      C = 256. / (14. * PI * std::pow(Emax, 5.));
+      break;
+  }
+
+  double p = C * std::sqrt(E_out) *
+             std::pow(Emax - E_out, (3. * static_cast<double>(n_) / 2.) - 4.);
+
+  return p;
+}
+
 }  // namespace pndl

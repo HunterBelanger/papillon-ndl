@@ -36,6 +36,7 @@
 #include <PapillonNDL/region_1d.hpp>
 #include <algorithm>
 #include <cmath>
+#include <optional>
 
 namespace pndl {
 
@@ -181,6 +182,17 @@ AngleEnergyPacket DiscreteCosinesEnergies::sample_angle_energy(
   if (std::abs(mu) > 1.) mu = std::copysign(1., mu);
 
   return {mu, E};
+}
+
+std::optional<double> DiscreteCosinesEnergies::angle_pdf(double /*E_in*/,
+                                                         double /*mu*/) const {
+  return std::nullopt;
+}
+
+std::optional<double> DiscreteCosinesEnergies::pdf(double /*E_in*/,
+                                                   double /*mu*/,
+                                                   double /*E_out*/) const {
+  return std::nullopt;
 }
 
 }  // namespace pndl

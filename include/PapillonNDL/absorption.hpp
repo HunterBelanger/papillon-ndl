@@ -35,6 +35,8 @@
 #define PAPILLON_NDL_ABSORPTION_H
 
 #include <PapillonNDL/angle_energy.hpp>
+#include <cstddef>
+#include <optional>
 
 /**
  * @file
@@ -53,6 +55,16 @@ class Absorption : public AngleEnergy {
   AngleEnergyPacket sample_angle_energy(
       double /*E_in*/, std::function<double()> /*rng*/) const override final {
     return {1., 0.};
+  }
+
+  std::optional<double> angle_pdf(double /*E_in*/,
+                                  double /*mu*/) const override final {
+    return std::nullopt;
+  }
+
+  std::optional<double> pdf(double /*E_in*/, double /*mu*/,
+                            double /*E_out*/) const override final {
+    return std::nullopt;
   }
 };
 

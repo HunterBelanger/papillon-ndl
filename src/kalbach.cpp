@@ -152,4 +152,79 @@ AngleEnergyPacket Kalbach::sample_angle_energy(
   return {mu, E_out};
 }
 
+std::optional<double> Kalbach::angle_pdf(double E_in, double mu) const {
+  // Determine the index of the bounding tabulated incoming energies
+  std::size_t l;
+  double f;  // Interpolation factor
+  auto in_E_it =
+      std::lower_bound(incoming_energy_.begin(), incoming_energy_.end(), E_in);
+  if (in_E_it == incoming_energy_.begin()) {
+    l = 0;
+    f = 0.;
+  } else if (in_E_it == incoming_energy_.end()) {
+    l = incoming_energy_.size() - 2;
+    f = 1.;
+  } else {
+    l = std::distance(incoming_energy_.begin(), in_E_it) - 1;
+    f = (E_in - incoming_energy_[l]) /
+        (incoming_energy_[l + 1] - incoming_energy_[l]);
+  }
+
+  double pdf_out = 0.;
+
+  // Do the l table portion
+  pdf_out += (1. - f) * tables_[l].angle_pdf(mu);
+
+  // Do the l+1 table portion
+  pdf_out += f * tables_[l + 1].angle_pdf(mu);
+
+  return pdf_out;
+}
+
+std::optional<double> Kalbach::pdf(double E_in, double mu, double E_out) const {
+  // Determine the index of the bounding tabulated incoming energies
+  std::size_t l;
+  double f;  // Interpolation factor
+  auto in_E_it =
+      std::lower_bound(incoming_energy_.begin(), incoming_energy_.end(), E_in);
+  if (in_E_it == incoming_energy_.begin()) {
+    l = 0;
+    f = 0.;
+  } else if (in_E_it == incoming_energy_.end()) {
+    l = incoming_energy_.size() - 2;
+    f = 1.;
+  } else {
+    l = std::distance(incoming_energy_.begin(), in_E_it) - 1;
+    f = (E_in - incoming_energy_[l]) /
+        (incoming_energy_[l + 1] - incoming_energy_[l]);
+  }
+
+  // Sample outgoing energy, and get R and A for mu
+  double E_i_1 = tables_[l].min_energy();
+  double E_i_M = tables_[l].max_energy();
+  double E_i_1_1 = tables_[l + 1].min_energy();
+  double E_i_1_M = tables_[l + 1].max_energy();
+  double Emin = E_i_1 + f * (E_i_1_1 - E_i_1);
+  double Emax = E_i_M + f * (E_i_1_M - E_i_M);
+
+  double E_hat = E_in;
+  double E_l_1 = 0., E_l_M = 0.;
+
+  double pdf_out = 0.;
+
+  // Do the l table portion
+  E_l_1 = E_i_1;
+  E_l_M = E_i_M;
+  E_hat = ((E_out - Emin) / (Emax - Emin)) * (E_l_M - E_l_1) + E_l_1;
+  pdf_out += (1. - f) * tables_[l].pdf(mu, E_hat);
+
+  // Do the l+1 table portion
+  E_l_1 = E_i_1_1;
+  E_l_M = E_i_1_M;
+  E_hat = ((E_out - Emin) / (Emax - Emin)) * (E_l_M - E_l_1) + E_l_1;
+  pdf_out += f * tables_[l + 1].pdf(mu, E_hat);
+
+  return pdf_out;
+}
+
 }  // namespace pndl

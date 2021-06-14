@@ -33,6 +33,7 @@
  * */
 #include <PapillonNDL/multiple_distribution.hpp>
 #include <PapillonNDL/pndl_exception.hpp>
+#include <optional>
 
 namespace pndl {
 
@@ -84,4 +85,37 @@ AngleEnergyPacket MultipleDistribution::sample_angle_energy(
   // Shouldn't get here, but if we do, use the last distribution
   return distributions_.back()->sample_angle_energy(E_in, rng);
 }
+
+std::optional<double> MultipleDistribution::angle_pdf(double E_in,
+                                                      double mu) const {
+  double a_pdf = 0.;
+  for (std::size_t d = 0; d < distributions_.size(); d++) {
+    std::optional<double> E_in_pdf = distributions_[d]->angle_pdf(E_in, mu);
+
+    if (!E_in_pdf) {
+      return std::nullopt;
+    }
+
+    a_pdf += (*probabilities_[d])(E_in)*E_in_pdf.value();
+  }
+
+  return a_pdf;
+}
+
+std::optional<double> MultipleDistribution::pdf(double E_in, double mu,
+                                                double E_out) const {
+  double j_pdf = 0.;
+  for (std::size_t d = 0; d < distributions_.size(); d++) {
+    std::optional<double> E_in_pdf = distributions_[d]->pdf(E_in, mu, E_out);
+
+    if (!E_in_pdf) {
+      return std::nullopt;
+    }
+
+    j_pdf += (*probabilities_[d])(E_in)*E_in_pdf.value();
+  }
+
+  return j_pdf;
+}
+
 }  // namespace pndl

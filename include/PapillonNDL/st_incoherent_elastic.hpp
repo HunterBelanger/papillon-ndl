@@ -115,6 +115,16 @@ class STIncoherentElastic : public AngleEnergy {
     return {mu, E_in};
   }
 
+  std::optional<double> angle_pdf(double /*E_in*/,
+                                  double /*mu*/) const override final {
+    return std::nullopt;
+  }
+
+  std::optional<double> pdf(double /*E_in*/, double /*mu*/,
+                            double /*E_out*/) const override final {
+    return std::nullopt;
+  }
+
   /**
    * @brief Returns vector to the incoming energy grid.
    */
