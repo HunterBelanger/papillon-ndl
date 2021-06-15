@@ -40,6 +40,7 @@
  */
 
 #include <array>
+#include <fstream>
 #include <string>
 #include <vector>
 
@@ -52,9 +53,18 @@ namespace pndl {
 class ACE {
  public:
   /**
-   * @param fname Name of the file to be loaded.
+   * @brief Enum to describe the format of the ACE file.
    */
-  ACE(std::string fname);
+  enum class Type {
+    ASCII, /**< ACE stored as ASCII text. */
+    BINARY /**< ACE stored in NJOY binary format. */
+  };
+
+  /**
+   * @param fname Name of the file to be loaded.
+   * @param type Format of ACE file. Default is ASCII.
+   */
+  ACE(std::string fname, Type type = Type::ASCII);
   ~ACE() = default;
 
   /**
@@ -171,98 +181,98 @@ class ACE {
   /**
    * @brief Returns the index to the beginning of the ESZ block.
    */
-  int32_t ESZ() const { return esz_; }
+  int32_t ESZ() const { return jxs_[0] - 1; }
 
   /**
    * @brief Returns the index to the beginning of the NU block.
    */
-  int32_t NU() const { return nu_; }
+  int32_t NU() const { return jxs_[1] - 1; }
 
   /**
    * @brief Returns the index to the beginning of the MTR block.
    */
-  int32_t MTR() const { return mtr_; }
+  int32_t MTR() const { return jxs_[2] - 1; }
 
   /**
    * @brief Returns the index to the beginning of the LQR block.
    */
-  int32_t LQR() const { return lqr_; }
+  int32_t LQR() const { return jxs_[3] - 1; }
 
   /**
    * @brief Returns the index to the beginning of the TYR block.
    */
-  int32_t TYR() const { return tyr_; }
+  int32_t TYR() const { return jxs_[4] - 1; }
 
   /**
    * @brief Returns the index to the beginning of the LSIG block.
    */
-  int32_t LSIG() const { return lsig_; }
+  int32_t LSIG() const { return jxs_[5] - 1; }
 
   /**
    * @brief Returns the index to the beginning of the SIG block.
    */
-  int32_t SIG() const { return sig_; }
+  int32_t SIG() const { return jxs_[6] - 1; }
 
   /**
    * @brief Returns the index to the beginning of the LAND block.
    */
-  int32_t LAND() const { return land_; }
+  int32_t LAND() const { return jxs_[7] - 1; }
 
   /**
    * @brief Returns the index to the beginning of the AND block.
    */
-  int32_t AND() const { return and_; }
+  int32_t AND() const { return jxs_[8] - 1; }
 
   /**
    * @brief Returns the index to the beginning of the LDLW block.
    */
-  int32_t LDLW() const { return ldlw_; }
+  int32_t LDLW() const { return jxs_[9] - 1; }
 
   /**
    * @brief Returns the index to the beginning of the DLW block.
    */
-  int32_t DLW() const { return dlw_; }
+  int32_t DLW() const { return jxs_[10] - 1; }
 
   /**
    * @brief Returns the index to the beginning of the DNEDL block.
    */
-  int32_t DNEDL() const { return dnedl_; }
+  int32_t DNEDL() const { return jxs_[25] - 1; }
 
   /**
    * @brief Returns the index to the beginning of the DNED block.
    */
-  int32_t DNED() const { return dned_; }
+  int32_t DNED() const { return jxs_[26] - 1; }
 
   /**
    * @brief Returns the index to the beginning of the DNU block.
    */
-  int32_t DNU() const { return dnu_; }
+  int32_t DNU() const { return jxs_[23] - 1; }
 
   /**
    * @brief Returns the index to the beginning of the BDD block.
    */
-  int32_t BDD() const { return bdd_; }
+  int32_t BDD() const { return jxs_[24] - 1; }
 
   /**
    * @brief Returns the index to the beginning of the GPD block.
    */
-  int32_t GPD() const { return gpd_; }
+  int32_t GPD() const { return jxs_[11] - 1; }
 
  private:
   int32_t zaid_;
   double temperature_;
   double awr_;
   bool fissile_;
+  std::string fname_;
 
   std::array<std::pair<int32_t, double>, 16> izaw_;
   std::array<int32_t, 16> nxs_;
   std::array<int32_t, 32> jxs_;
   std::vector<double> xss_;
 
-  // Locator constants
-  int32_t esz_, nu_, mtr_, lqr_, tyr_, lsig_, sig_, land_, and_, ldlw_, dlw_;
-  int32_t dnedl_, dned_, dnu_, bdd_, gpd_;
-
+  // Private Helper Methods
+  void read_ascii(std::ifstream& file);
+  void read_binary(std::ifstream& file);
 };  // ACE
 }  // namespace pndl
 

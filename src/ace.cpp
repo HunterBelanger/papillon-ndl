@@ -35,6 +35,7 @@
 #include <PapillonNDL/pndl_exception.hpp>
 #include <filesystem>
 #include <fstream>
+#include <ios>
 
 #include "constants.hpp"
 
@@ -42,31 +43,16 @@ namespace pndl {
 // Forward declaration of split_line function
 static std::vector<std::string> split_line(std::string line);
 
-ACE::ACE(std::string fname)
+ACE::ACE(std::string fname, Type type)
     : zaid_(),
       temperature_(),
       awr_(),
       fissile_(),
+      fname_(fname),
       izaw_(),
       nxs_(),
       jxs_(),
-      xss_(),
-      esz_(),
-      nu_(),
-      mtr_(),
-      lqr_(),
-      tyr_(),
-      lsig_(),
-      sig_(),
-      land_(),
-      and_(),
-      ldlw_(),
-      dlw_(),
-      dnedl_(),
-      dned_(),
-      dnu_(),
-      bdd_(),
-      gpd_() {
+      xss_() {
   // Make sure file exists
   if (!std::filesystem::exists(fname)) {
     std::string mssg = "ACE::ACE: File \"" + fname + "\" does not exist.";
@@ -74,8 +60,24 @@ ACE::ACE(std::string fname)
   }
 
   // Open ACE file
-  std::ifstream file(fname);
+  std::ios_base::openmode mode = std::ios_base::in;
+  if (type == Type::BINARY) mode = std::ios_base::binary;
+  std::ifstream file(fname, mode);
 
+  switch (type) {
+    case Type::ASCII:
+      read_ascii(file);
+      break;
+
+    case Type::BINARY:
+      read_binary(file);
+      break;
+  }
+
+  file.close();
+}
+
+void ACE::read_ascii(std::ifstream& file) {
   std::string line;
   std::getline(file, line);
 
@@ -127,16 +129,16 @@ ACE::ACE(std::string fname)
   // Parse XSS
   xss_.resize(nxs_[0]);
   int i = 0;
-  while (!file.eof()) {
+  while (!file.eof() && i <= nxs_[0]) {
     file >> xss_[i];
     i++;
   }
 
   if (i - 1 != nxs_[0]) {
     std::string mssg =
-        "ACE::ACE: Found incorrect number of entries in XSS array while "
+        "ACE::read_ascii: Found incorrect number of entries in XSS array while "
         "reading the \"" +
-        fname +
+        fname_ +
         "\" ACE file. This is likely due to a numerical entry which is missing "
         "the \"E\". Please correct the ACE file.";
     throw PNDLException(mssg, __FILE__, __LINE__);
@@ -145,24 +147,66 @@ ACE::ACE(std::string fname)
   zaid_ = static_cast<uint32_t>(nxs_[1]);
 
   if (jxs_[1] > 0) fissile_ = true;
+}
 
-  // Set locator constants
-  esz_ = jxs_[0] - 1;
-  nu_ = jxs_[1] - 1;
-  mtr_ = jxs_[2] - 1;
-  lqr_ = jxs_[3] - 1;
-  tyr_ = jxs_[4] - 1;
-  lsig_ = jxs_[5] - 1;
-  sig_ = jxs_[6] - 1;
-  land_ = jxs_[7] - 1;
-  and_ = jxs_[8] - 1;
-  ldlw_ = jxs_[9] - 1;
-  dlw_ = jxs_[10] - 1;
-  gpd_ = jxs_[11] - 1;
-  dnu_ = jxs_[23] - 1;
-  bdd_ = jxs_[24] - 1;
-  dnedl_ = jxs_[25] - 1;
-  dned_ = jxs_[26] - 1;
+void ACE::read_binary(std::ifstream& file) {
+  // Skip first record length
+  file.ignore(4);
+
+  // Skip zaid
+  file.ignore(10);
+
+  // Read the AWR
+  file.read(reinterpret_cast<char*>(&awr_), sizeof(double));
+
+  // Read the temperatuer
+  file.read(reinterpret_cast<char*>(&temperature_), sizeof(double));
+  temperature_ *= MEV_TO_EV * EV_TO_K;
+
+  // Skip date, comment, and mat
+  file.ignore(90);
+
+  // Parse IZAW
+  for (int i = 0; i < 16; i++) {
+    int32_t i_zaid;
+    double i_awr;
+
+    file.read(reinterpret_cast<char*>(&i_zaid), sizeof(int32_t));
+    file.read(reinterpret_cast<char*>(&i_awr), sizeof(double));
+    izaw_[i] = {i_zaid, i_awr};
+  }
+
+  // Parse NXS
+  for (int i = 0; i < 16; i++) {
+    file.read(reinterpret_cast<char*>(&nxs_[i]), sizeof(int32_t));
+  }
+
+  // Parse JXS
+  for (int i = 0; i < 32; i++) {
+    file.read(reinterpret_cast<char*>(&jxs_[i]), sizeof(int32_t));
+  }
+
+  // Skip end record length
+  file.ignore(4);
+
+  // Parse XSS
+  xss_.resize(nxs_[0]);
+  uint32_t rlen;
+  std::size_t i = 0;
+  while (!file.eof() && i < xss_.size()) {
+    // Get the record entry length
+    file.read(reinterpret_cast<char*>(&rlen), 4);
+
+    file.read(reinterpret_cast<char*>(&xss_[i]), rlen);
+    i += rlen / sizeof(double);
+
+    // Skip last len entry
+    file.ignore(4);
+  }
+
+  zaid_ = static_cast<uint32_t>(nxs_[1]);
+
+  if (jxs_[1] > 0) fissile_ = true;
 }
 
 std::vector<std::pair<int32_t, double>> ACE::izaw(std::size_t i,

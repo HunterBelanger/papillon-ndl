@@ -41,8 +41,14 @@ namespace py = pybind11;
 using namespace pndl;
 
 void init_ACE(py::module& m) {
+  py::enum_<ACE::Type>(m, "ACEType")
+      .value("ASCII", ACE::Type::ASCII)
+      .value("BINARY", ACE::Type::BINARY);
+
   py::class_<ACE>(m, "ACE")
-      .def(py::init<std::string>())
+      .def(py::init<std::string, ACE::Type>(),
+           py::arg("fname") = static_cast<std::string*>(nullptr),
+           py::arg("type") = ACE::Type::ASCII)
       .def("zaid", &ACE::zaid)
       .def("temperature", &ACE::temperature)
       .def("awr", &ACE::awr)
