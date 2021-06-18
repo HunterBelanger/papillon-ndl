@@ -66,7 +66,11 @@ void init_ACE(py::module& m) {
       .def("xss", py::overload_cast<size_t>(&ACE::xss<double>, py::const_))
       .def("xss",
            py::overload_cast<size_t, size_t>(&ACE::xss<double>, py::const_))
-
+      .def("zaid_id", &ACE::zaid_id)
+      .def("comment", &ACE::comment)
+      .def("mat", &ACE::mat)
+      .def("date", &ACE::date)
+      .def("save_binary", &ACE::save_binary)
       .def("ESZ", &ACE::ESZ)
       .def("NU", &ACE::NU)
       .def("MTR", &ACE::MTR)

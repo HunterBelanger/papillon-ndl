@@ -92,27 +92,56 @@ class ACE {
    * @param i index to a pair in the IZAW array.
    *          Must be in the range [0,16).
    */
-  std::pair<int32_t, double> izaw(std::size_t i) const { return izaw_[i]; }
+  const std::pair<int32_t, double>& izaw(std::size_t i) const {
+    return izaw_[i];
+  }
+
+  /**
+   * @brief Retrieves an (int32_t, double) pair from the IZAW array.
+   * @param i index to a pair in the IZAW array.
+   *          Must be in the range [0,16).
+   */
+  std::pair<int32_t, double>& izaw(std::size_t i) { return izaw_[i]; }
 
   /**
    * @brief Retrieves a value from the NXS array.
    * @param i index to element in the NXS array.
    *          Must be in the range [0,16).
    */
-  int32_t nxs(std::size_t i) const { return nxs_[i]; }
+  const int32_t& nxs(std::size_t i) const { return nxs_[i]; }
+
+  /**
+   * @brief Retrieves a value from the NXS array.
+   * @param i index to element in the NXS array.
+   *          Must be in the range [0,16).
+   */
+  int32_t& nxs(std::size_t i) { return nxs_[i]; }
 
   /**
    * @brief Retrieves a value from the JXS array.
    * @param i index to element in the JXS array.
    *          Must be in the range [0,32).
    */
-  int32_t jxs(std::size_t i) const { return jxs_[i]; }
+  const int32_t& jxs(std::size_t i) const { return jxs_[i]; }
+
+  /**
+   * @brief Retrieves a value from the JXS array.
+   * @param i index to element in the JXS array.
+   *          Must be in the range [0,32).
+   */
+  int32_t& jxs(std::size_t i) { return jxs_[i]; }
 
   /**
    * @brief Retrieves a value from the XSS array as a double.
    * @param i index to element in the XSS array.
    */
-  double xss(std::size_t i) const { return xss_[i]; }
+  const double& xss(std::size_t i) const { return xss_[i]; }
+
+  /**
+   * @brief Retrieves a value from the XSS array as a double.
+   * @param i index to element in the XSS array.
+   */
+  double& xss(std::size_t i) { return xss_[i]; }
 
   /**
    * @brief Retrieves a value from the XSS array, cast to type T.
@@ -172,6 +201,32 @@ class ACE {
 
     return tmp;
   }
+
+  /**
+   * @brief Returns the ZAID string from the ACE header.
+   */
+  const std::string& zaid_id() const { return zaid_txt; }
+
+  /**
+   * @brief Returns the comment string from the ACE header.
+   */
+  const std::string& comment() const { return comment_; }
+
+  /**
+   * @brief Returns the ENDF MAT string from the ACE header.
+   */
+  const std::string& mat() const { return mat_; }
+
+  /**
+   * @brief Returns the processing date string from the ACE header.
+   */
+  const std::string& date() const { return date_; }
+
+  /**
+   * @brief Saves a copy of the ACE file in the type 2 binary format.
+   * @param fname Name of file where binary data will be saved.
+   */
+  void save_binary(std::string& fname);
 
   /**
    * @brief Returns a pointer to the beginning of the XSS array.
@@ -264,6 +319,10 @@ class ACE {
   double awr_;
   bool fissile_;
   std::string fname_;
+  std::string zaid_txt;
+  std::string date_;
+  std::string comment_;
+  std::string mat_;
 
   std::array<std::pair<int32_t, double>, 16> izaw_;
   std::array<int32_t, 16> nxs_;

@@ -36,10 +36,12 @@
 #include <filesystem>
 #include <fstream>
 #include <ios>
+#include <string>
 
 #include "constants.hpp"
 
 namespace pndl {
+
 // Forward declaration of split_line function
 static std::vector<std::string> split_line(std::string line);
 
@@ -49,6 +51,10 @@ ACE::ACE(std::string fname, Type type)
       awr_(),
       fissile_(),
       fname_(fname),
+      zaid_txt(10, ' '),
+      date_(10, ' '),
+      comment_(70, ' '),
+      mat_(10, ' '),
       izaw_(),
       nxs_(),
       jxs_(),
@@ -78,33 +84,73 @@ ACE::ACE(std::string fname, Type type)
 }
 
 void ACE::read_ascii(std::ifstream& file) {
-  std::string line;
-  std::getline(file, line);
-
   // Check first line to determine header type
   bool legacy_header = true;
-  if (line[0] == '2' && line[1] == '.') legacy_header = false;
 
-  std::vector<std::string> split;
+  char c1 = file.get();
+  char c2 = file.peek();
+  if (c1 == '2' && c2 == '.') legacy_header = false;
+  file.unget();
 
   // Parse header
+  std::string awr_txt(12, ' ');
+  std::string temp_txt(12, ' ');
   if (legacy_header) {
-    split = split_line(line);
-    awr_ = std::stod(split[1]);
-    temperature_ = std::stod(split[2]) * MEV_TO_EV * EV_TO_K;
+    file.read(zaid_txt.data(), 10);
+    file.read(awr_txt.data(), 12);
+    file.read(temp_txt.data(), 12);
+    awr_ = std::stod(awr_txt);
+    temperature_ = std::stod(temp_txt) * MEV_TO_EV * EV_TO_K;
 
-    // Skip next line
-    std::getline(file, line);
+    // Skip blank char
+    file.ignore(1);
+
+    // Read date
+    file.read(date_.data(), 10);
+
+    // Ignore the newline chars
+    if (file.peek() == '\n' || file.peek() == '\r') file.ignore(1);
+    if (file.peek() == '\n' || file.peek() == '\r') file.ignore(1);
+
+    // Read comment
+    file.read(comment_.data(), 70);
+
+    // Read mat id
+    file.read(mat_.data(), 10);
   } else {
+    std::string line;
+    std::getline(file, line);
     // Read next line
     std::getline(file, line);
-    split = split_line(line);
+    std::vector<std::string> split = split_line(line);
     awr_ = std::stod(split[0]);
     temperature_ = std::stod(split[1]) * MEV_TO_EV * EV_TO_K;
     int n_skip = std::stoi(split[3]);
 
-    // Skip comment lines
-    for (int i = 0; i < n_skip; i++) std::getline(file, line);
+    if (n_skip == 2) {
+      // These are the legacy header. Read them
+      // Read zaid text
+      file.read(zaid_txt.data(), 10);
+
+      // Skip duplicate awr and temp and space
+      file.ignore(25);
+
+      // Read date
+      file.read(date_.data(), 10);
+
+      // Ignore the newline chars
+      if (file.peek() == '\n' || file.peek() == '\r') file.ignore(1);
+      if (file.peek() == '\n' || file.peek() == '\r') file.ignore(1);
+
+      // Read comment
+      file.read(comment_.data(), 70);
+
+      // Read mat id
+      file.read(mat_.data(), 10);
+    } else {
+      // Skip comment lines
+      for (int i = 0; i < n_skip; i++) std::getline(file, line);
+    }
   }
 
   // Parse IZAW
@@ -154,7 +200,7 @@ void ACE::read_binary(std::ifstream& file) {
   file.ignore(4);
 
   // Skip zaid
-  file.ignore(10);
+  file.read(zaid_txt.data(), 10);
 
   // Read the AWR
   file.read(reinterpret_cast<char*>(&awr_), sizeof(double));
@@ -163,8 +209,14 @@ void ACE::read_binary(std::ifstream& file) {
   file.read(reinterpret_cast<char*>(&temperature_), sizeof(double));
   temperature_ *= MEV_TO_EV * EV_TO_K;
 
-  // Skip date, comment, and mat
-  file.ignore(90);
+  // Read date
+  file.read(date_.data(), 10);
+
+  // Read comment
+  file.read(comment_.data(), 70);
+
+  // Read mat
+  file.read(mat_.data(), 10);
 
   // Parse IZAW
   for (int i = 0; i < 16; i++) {
@@ -207,6 +259,75 @@ void ACE::read_binary(std::ifstream& file) {
   zaid_ = static_cast<uint32_t>(nxs_[1]);
 
   if (jxs_[1] > 0) fissile_ = true;
+}
+
+void ACE::save_binary(std::string& fname) {
+  std::ofstream file(fname, std::ios_base::binary);
+
+  // Write first record length which is size of all
+  // of the ACE header
+  uint32_t rlen = 100 + 64 * sizeof(int32_t) + 18 * sizeof(double);
+  file.write(reinterpret_cast<char*>(&rlen), 4);
+
+  // Write zaid
+  file.write(zaid_txt.data(), 10);
+
+  // Write the AWR
+  file.write(reinterpret_cast<char*>(&awr_), sizeof(double));
+
+  // Write the temperatuer
+  temperature_ /= MEV_TO_EV * EV_TO_K;
+  file.write(reinterpret_cast<char*>(&temperature_), sizeof(double));
+
+  // Write date, comment, and mat
+  file.write(date_.data(), 10);
+  file.write(comment_.data(), 70);
+  file.write(mat_.data(), 10);
+
+  // Write IZAW
+  for (std::size_t i = 0; i < 16; i++) {
+    file.write(reinterpret_cast<char*>(&izaw_[i].first), sizeof(int32_t));
+    file.write(reinterpret_cast<char*>(&izaw_[i].second), sizeof(double));
+  }
+
+  // Write NXS
+  for (std::size_t i = 0; i < 16; i++) {
+    file.write(reinterpret_cast<char*>(&nxs_[i]), sizeof(int32_t));
+  }
+
+  // Write JXS
+  for (std::size_t i = 0; i < 32; i++) {
+    file.write(reinterpret_cast<char*>(&jxs_[i]), sizeof(int32_t));
+  }
+
+  // Write end record length
+  file.write(reinterpret_cast<char*>(&rlen), 4);
+
+  // Write XSS
+  const uint32_t ner = 512;
+  std::size_t ll = 0;
+  std::size_t nn = xss_.size();
+  while (nn > 0) {
+    std::size_t n = nn;
+
+    if (n > ner) n = ner;
+
+    rlen = n * sizeof(double);
+
+    // Write first len header
+    file.write(reinterpret_cast<char*>(&rlen), 4);
+
+    for (std::size_t j = ll; j < ll + n; j++) {
+      file.write(reinterpret_cast<char*>(&xss_[j]), sizeof(double));
+    }
+    ll += n;
+    nn -= n;
+
+    // Write second len header
+    file.write(reinterpret_cast<char*>(&rlen), 4);
+  }
+
+  file.close();
 }
 
 std::vector<std::pair<int32_t, double>> ACE::izaw(std::size_t i,
