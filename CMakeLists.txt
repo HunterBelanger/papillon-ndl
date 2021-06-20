@@ -1,10 +1,12 @@
 cmake_minimum_required(VERSION 3.11)
 
 project(PapillonNDL
-  VERSION "0.2.0"
-  DESCRIPTION "Library to interact with ACE nuclear data"
+  VERSION "0.2.1"
+  DESCRIPTION "Library to interact with ACE nuclear data files."
   LANGUAGES CXX
 )
+
+message(STATUS "Building PapillonNDL version ${PapillonNDL_VERSION}")
 
 include(CMakePackageConfigHelpers)
 
@@ -65,7 +67,8 @@ add_library(PapillonNDL::PapillonNDL ALIAS PapillonNDL)
 # Add public interface includes directory
 target_include_directories(PapillonNDL PUBLIC 
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+  #$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+  $<INSTALL_INTERFACE:include>
 )
 
 # Require C++17 standard
@@ -170,6 +173,12 @@ configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/PapillonNDLConfig.cmak
   INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/PapillonNDL
 )
 
+write_basic_package_version_file(
+  "${CMAKE_CURRENT_BINARY_DIR}/PapillonNDLConfigVersion.cmake"
+  VERSION "${PapillonNDL_VERSION}"
+  COMPATIBILITY SameMinorVersion
+)
+
 install(TARGETS PapillonNDL
         EXPORT PapillonNDLTargets
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
@@ -188,5 +197,6 @@ install(EXPORT PapillonNDLTargets
 
 install(FILES
           "${CMAKE_CURRENT_BINARY_DIR}/PapillonNDLConfig.cmake"
+          "${CMAKE_CURRENT_BINARY_DIR}/PapillonNDLConfigVersion.cmake"
         DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/PapillonNDL
 )
