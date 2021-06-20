@@ -67,7 +67,6 @@ add_library(PapillonNDL::PapillonNDL ALIAS PapillonNDL)
 # Add public interface includes directory
 target_include_directories(PapillonNDL PUBLIC 
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  #$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
   $<INSTALL_INTERFACE:include>
 )
 
