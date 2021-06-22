@@ -19,6 +19,11 @@ MultipleDistribution
 
 .. doxygenclass:: pndl::MultipleDistribution
 
+CMDistribution
+--------------------
+
+.. doxygenclass:: pndl::CMDistribution
+
 Uncorrelated
 ------------
 
