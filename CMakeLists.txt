@@ -6,8 +6,6 @@ project(PapillonNDL
   LANGUAGES CXX
 )
 
-message(STATUS "Building PapillonNDL version ${PapillonNDL_VERSION}")
-
 include(CMakePackageConfigHelpers)
 
 # Add options

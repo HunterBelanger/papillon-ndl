@@ -33,6 +33,7 @@
  * */
 #include <PapillonNDL/absorption.hpp>
 #include <PapillonNDL/angle_distribution.hpp>
+#include <PapillonNDL/cm_distribution.hpp>
 #include <PapillonNDL/constant.hpp>
 #include <PapillonNDL/discrete_photon.hpp>
 #include <PapillonNDL/equiprobable_energy_bins.hpp>
@@ -137,6 +138,13 @@ Reaction::Reaction(const ACE& ace, std::size_t indx,
             distributions, probabilities);
       } else {
         neutron_distribution_ = distributions.front();
+      }
+
+      // Check if we are in the CM frame
+      if (frame_ == Frame::CM) {
+        std::shared_ptr<AngleEnergy> tmp = neutron_distribution_; 
+        neutron_distribution_.reset();
+        neutron_distribution_ = std::make_shared<CMDistribution>(awr_, q_, tmp);
       }
     } catch (PNDLException& error) {
       std::string mssg =

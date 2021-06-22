@@ -54,5 +54,19 @@ void init_Frame(py::module& m) {
              return std::make_tuple(mu, Eout);
            })
       .def("transform", py::overload_cast<double, double, AngleEnergyPacket&>(
-                            &CMToLab::transform));
+                            &CMToLab::transform))
+      .def("angle_jacobian", py::overload_cast<double,double,double,double>(&CMToLab::angle_jacobian))
+      .def("angle_jacobian", py::overload_cast<double,double,double,double,double>(&CMToLab::angle_jacobian))
+      .def("angle_jacobian", py::overload_cast<double,double,AngleEnergyPacket>(&CMToLab::angle_jacobian))
+      .def("jacobian", &CMToLab::jacobian);
+
+  py::class_<LabToCM>(m, "LabToCM")
+      .def("transform",
+           [](double Ein, double A, double mu, double Eout) {
+             LabToCM::transform(Ein, A, mu, Eout);
+             return std::make_tuple(mu, Eout);
+           })
+      .def("transform", py::overload_cast<double, double, AngleEnergyPacket&>(
+                            &LabToCM::transform))
+      .def("angle", &LabToCM::angle);
 }

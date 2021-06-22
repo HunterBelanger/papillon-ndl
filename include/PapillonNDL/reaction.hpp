@@ -107,12 +107,7 @@ class Reaction {
       double E_in, std::function<double()> rng) const {
     if (E_in < threshold_) return {0., 0.};
 
-    AngleEnergyPacket out =
-        neutron_distribution_->sample_angle_energy(E_in, rng);
-
-    if (frame_ == Frame::CM) CMToLab::transform(E_in, awr_, out);
-
-    return out;
+    return neutron_distribution_->sample_angle_energy(E_in, rng);
   }
 
   /**

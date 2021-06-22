@@ -35,6 +35,7 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
+#include <PapillonNDL/cm_distribution.hpp>
 #include <PapillonNDL/absorption.hpp>
 #include <PapillonNDL/continuous_energy_discrete_cosines.hpp>
 #include <PapillonNDL/discrete_cosines_energies.hpp>
@@ -276,6 +277,18 @@ void init_MultipleDistribution(py::module& m) {
            py::return_value_policy::reference_internal)
       .def("angle_pdf", &MultipleDistribution::angle_pdf)
       .def("pdf", &MultipleDistribution::pdf);
+}
+
+void init_CMDistribution(py::module& m) {
+  py::class_<CMDistribution, AngleEnergy,
+             std::shared_ptr<CMDistribution>>(m, "CMDistribution")
+      .def(py::init<double, double, std::shared_ptr<AngleEnergy>>())
+      .def("sample_angle_energy", &CMDistribution::sample_angle_energy)
+      .def("angle_pdf", &CMDistribution::angle_pdf)
+      .def("pdf", &CMDistribution::pdf)
+      .def("distribution", &CMDistribution::distribution, py::return_value_policy::reference_internal)
+      .def("awr", &CMDistribution::awr)
+      .def("q", &CMDistribution::q);
 }
 
 void init_Absorption(py::module& m) {
