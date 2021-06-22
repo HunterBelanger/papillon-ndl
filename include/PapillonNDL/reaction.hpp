@@ -87,12 +87,6 @@ class Reaction {
   double threshold() const { return threshold_; }
 
   /**
-   * @brief Returns the frame of referece of the product
-   *        distribution data.
-   */
-  Frame frame() const { return frame_; }
-
-  /**
    * @brief Returns the function for the reaction yield.
    */
   const Function1D& yield() const { return *yield_; }
@@ -127,7 +121,6 @@ class Reaction {
   double q_;
   double awr_;
   double threshold_;
-  Frame frame_;
   std::shared_ptr<CrossSection> xs_;
   std::shared_ptr<Function1D> yield_;
   std::shared_ptr<AngleEnergy> neutron_distribution_;

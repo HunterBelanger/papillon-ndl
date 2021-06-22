@@ -51,7 +51,6 @@ void init_Reaction(py::module& m) {
       .def("multiplicity", &Reaction::yield,
            py::return_value_policy::reference_internal)
       .def("threshold", &Reaction::threshold)
-      .def("frame", &Reaction::frame)
       .def("xs", &Reaction::xs)
       .def("sample_neutron_angle_energy",
            &Reaction::sample_neutron_angle_energy)

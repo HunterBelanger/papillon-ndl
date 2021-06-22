@@ -55,9 +55,14 @@ void init_Frame(py::module& m) {
            })
       .def("transform", py::overload_cast<double, double, AngleEnergyPacket&>(
                             &CMToLab::transform))
-      .def("angle_jacobian", py::overload_cast<double,double,double,double>(&CMToLab::angle_jacobian))
-      .def("angle_jacobian", py::overload_cast<double,double,double,double,double>(&CMToLab::angle_jacobian))
-      .def("angle_jacobian", py::overload_cast<double,double,AngleEnergyPacket>(&CMToLab::angle_jacobian))
+      .def("angle_jacobian", py::overload_cast<double, double, double, double>(
+                                 &CMToLab::angle_jacobian))
+      .def("angle_jacobian",
+           py::overload_cast<double, double, double, double, double>(
+               &CMToLab::angle_jacobian))
+      .def("angle_jacobian",
+           py::overload_cast<double, double, AngleEnergyPacket>(
+               &CMToLab::angle_jacobian))
       .def("jacobian", &CMToLab::jacobian);
 
   py::class_<LabToCM>(m, "LabToCM")

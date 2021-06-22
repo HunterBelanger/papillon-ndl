@@ -55,83 +55,25 @@ class CMDistribution : public AngleEnergy {
   /**
    * @param A Atomic weight ratio of the nuclide.
    * @param Q The Q-value of the reaction.
-   * @param distribution Pointer to the distribution object in the center of mass frame.
+   * @param distribution Pointer to the distribution object in the center of
+   * mass frame.
    *
    */
-  CMDistribution(double A, double Q, std::shared_ptr<AngleEnergy> distribution): awr_(A), q_(Q), distribution_(distribution) {}
+  CMDistribution(double A, double Q, std::shared_ptr<AngleEnergy> distribution)
+      : awr_(A), q_(Q), distribution_(distribution) {}
 
   AngleEnergyPacket sample_angle_energy(
-      double E_in, std::function<double()> rng) const override final {
-    
-    AngleEnergyPacket out =
-        distribution_->sample_angle_energy(E_in, rng);
+      double E_in, std::function<double()> rng) const override final;
 
-    CMToLab::transform(E_in, awr_, out);
-
-    return out;
-  }
-
-  std::optional<double> angle_pdf(double E_in, double mu) const override final {
-    // First we need the angle in the CM frame
-    auto cm_angles = LabToCM::angle(E_in, awr_, q_, mu);
-
-    // There can be at most up to two angles in the CM frame for a given
-    // angle in the Lab frame. If one angle is returned, then we only
-    // return the PDF component for that angle. If two angles are returned,
-    // we take the sum of their respective PDFs. If no angles are returned,
-    // this means that it is imposible to have a scattering angle of mu in
-    // the lab frame for the given reaction. In this case, zero is returned.
-    
-    // Variables to contain the components
-    double p1 = 0.;
-    double p2 = 0.;
-    
-    // Treat first angle
-    if (cm_angles.first) {
-      double mu_cm = cm_angles.first.value();
-      auto p1_opt = distribution_->angle_pdf(E_in, mu_cm); 
-      if (p1_opt) {
-        p1 = p1_opt.value() * CMToLab::angle_jacobian(E_in, awr_, q_, mu, mu_cm); 
-      }
-    }
-    
-    // Treat second angle
-    if (cm_angles.second) {
-      double mu_cm = cm_angles.second.value();
-      auto p2_opt = distribution_->angle_pdf(E_in, mu_cm); 
-      if (p2_opt) {
-        p2 = p2_opt.value() * CMToLab::angle_jacobian(E_in, awr_, q_, mu, mu_cm); 
-      }
-    }
-
-    return p1 + p2;
-  }
+  std::optional<double> angle_pdf(double E_in, double mu) const override final;
 
   std::optional<double> pdf(double E_in, double mu,
-                            double E_out) const override final {
-    // First, we need to get the angle and energy in the CM frame 
-    double mu_cm = mu;
-    double Eout_cm = E_out;
-    LabToCM::transform(E_in, awr_, mu_cm, Eout_cm);
-    
-    // We now get the PDF in the CM frame
-    auto p = distribution_->pdf(E_in, mu_cm, Eout_cm);
-    
-    // Convert the CM frame to the lab frame
-    if (p) {
-      p.value() *= CMToLab::jacobian(E_out, Eout_cm);
-    }
-
-    return p;
-  }
-
+                            double E_out) const override final;
   /**
    * @brief Returns the distribution in the Center of Mass frame.
    */
-  const AngleEnergy& distribution() const {
-    return *distribution_;
-  }
-  
+  const AngleEnergy& distribution() const { return *distribution_; }
+
   /**
    * @brief Returns the nuclide Atomic Weight Ratio.
    */
@@ -141,7 +83,6 @@ class CMDistribution : public AngleEnergy {
    * @brief Returns the Q-value of the reaction.
    */
   double q() const { return q_; }
-
 
  private:
   double awr_, q_;

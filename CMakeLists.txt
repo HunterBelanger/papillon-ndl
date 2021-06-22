@@ -36,6 +36,7 @@ set(PNDL_SOURCE_LIST src/region_1d.cpp
                      src/energy_angle_table.cpp
                      src/tabular_energy_angle.cpp
                      src/multiple_distribution.cpp
+                     src/cm_distribution.cpp
                      src/energy_grid.cpp
                      src/cross_section.cpp
                      src/reaction.cpp

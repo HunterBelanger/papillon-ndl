@@ -64,7 +64,6 @@ Reaction::Reaction(const ACE& ace, std::size_t indx,
       q_(),
       awr_(),
       threshold_(),
-      frame_(),
       xs_(nullptr),
       yield_(nullptr),
       neutron_distribution_(nullptr) {
@@ -74,7 +73,7 @@ Reaction::Reaction(const ACE& ace, std::size_t indx,
   awr_ = ace.awr();
 
   // Determine the frame of reference for the outgoing distributions
-  frame_ = Frame::Lab;
+  Frame frame_ = Frame::Lab;
   if (ace.xss(ace.TYR() + indx) < 0.) frame_ = Frame::CM;
 
   // Get the yield for the reaction
@@ -142,7 +141,7 @@ Reaction::Reaction(const ACE& ace, std::size_t indx,
 
       // Check if we are in the CM frame
       if (frame_ == Frame::CM) {
-        std::shared_ptr<AngleEnergy> tmp = neutron_distribution_; 
+        std::shared_ptr<AngleEnergy> tmp = neutron_distribution_;
         neutron_distribution_.reset();
         neutron_distribution_ = std::make_shared<CMDistribution>(awr_, q_, tmp);
       }
@@ -166,7 +165,6 @@ Reaction::Reaction(const ACE& ace, std::size_t indx,
       q_(),
       awr_(),
       threshold_(),
-      frame_(),
       xs_(nullptr),
       yield_(nullptr),
       neutron_distribution_(nullptr) {
@@ -182,7 +180,6 @@ Reaction::Reaction(const ACE& ace, std::size_t indx,
     throw PNDLException(mssg, __FILE__, __LINE__);
   }
 
-  frame_ = reac.frame_;
   yield_ = reac.yield_;
   neutron_distribution_ = reac.neutron_distribution_;
 
