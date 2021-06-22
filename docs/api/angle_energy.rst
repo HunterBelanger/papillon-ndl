@@ -63,3 +63,8 @@ ContinuousEnergyDiscreteCosines
 -------------------------------
 
 .. doxygenclass:: pndl::ContinuousEnergyDiscreteCosines
+
+Absorption
+----------
+
+.. doxygenclass:: pndl::Absorption
