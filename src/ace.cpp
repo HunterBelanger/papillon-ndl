@@ -175,7 +175,7 @@ void ACE::read_ascii(std::ifstream& file) {
   // Parse XSS
   xss_.resize(nxs_[0]);
   int i = 0;
-  while (!file.eof() && i <= nxs_[0]) {
+  while (!file.eof() && i < nxs_[0]) {
     file >> xss_[i];
     i++;
   }
