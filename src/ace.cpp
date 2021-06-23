@@ -180,7 +180,7 @@ void ACE::read_ascii(std::ifstream& file) {
     i++;
   }
 
-  if (i - 1 != nxs_[0]) {
+  if (i != nxs_[0]) {
     std::string mssg =
         "ACE::read_ascii: Found incorrect number of entries in XSS array while "
         "reading the \"" +
