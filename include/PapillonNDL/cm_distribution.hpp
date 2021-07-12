@@ -47,7 +47,7 @@
 namespace pndl {
 
 /**
- * @brief A dsitribution which for which the data is provided in the center of
+ * @brief A dsitribution for which the data is provided in the center of
  *        mass frame.
  */
 class CMDistribution : public AngleEnergy {
