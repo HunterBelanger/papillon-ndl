@@ -86,7 +86,11 @@ else() # Compile options for GCC and Clang on Unix-like systems
   target_compile_options(PapillonNDL PRIVATE -W -Wall -Wextra -Wpedantic)
 endif()
 
-if(NOT PNDL_SHARED)
+# Must make the static PapillonNDL position independent on linux so that
+# it can be linked with the pyPapillonNDL shared library. This adds an
+# indirection, but if a more performant static library is needed,
+# one should disable building the Python API.
+if(NOT PNDL_SHARED AND PNDL_PYTHON)
   set_target_properties(PapillonNDL PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
 endif()
 
@@ -142,10 +146,6 @@ if(PNDL_PYTHON)
   # Must link Python bindings with full library
   target_link_libraries(pyPapillonNDL PRIVATE PapillonNDL)
 
-  if(NOT PNDL_SHARED)
-    set_target_properties(pyPapillonNDL PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
-  endif()
-  
   if(PNDL_INSTALL)
     # Get location for python lib
     execute_process(
