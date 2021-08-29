@@ -41,17 +41,16 @@ Region1D::Region1D(const std::vector<double>& i_x,
                    const std::vector<double>& i_y, Interpolation interp)
     : x_(i_x), y_(i_y), interpolation_(interp), interpolator() {
   if (x_.size() != y_.size()) {
-    std::string mssg =
-        "Region1D::Region1D: x and y have different sizes. x.size() = " +
-        std::to_string(x_.size()) +
-        " and y.size() = " + std::to_string(y_.size()) + ".";
-    throw PNDLException(mssg, __FILE__, __LINE__);
+    std::string mssg = "x and y have different sizes. x.size() = " +
+                       std::to_string(x_.size()) +
+                       " and y.size() = " + std::to_string(y_.size()) + ".";
+    throw PNDLException(mssg);
   }
 
   // Ensure x_ is ordered
   if (!std::is_sorted(x_.begin(), x_.end())) {
-    std::string mssg = "Region1D::Region1D: x is not sorted.";
-    throw PNDLException(mssg, __FILE__, __LINE__);
+    std::string mssg = "x is not sorted.";
+    throw PNDLException(mssg);
   }
 
   // Set interpolator

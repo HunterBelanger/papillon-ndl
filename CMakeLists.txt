@@ -77,8 +77,8 @@ target_include_directories(PapillonNDL PUBLIC
   $<INSTALL_INTERFACE:include>
 )
 
-# Require C++17 standard
-target_compile_features(PapillonNDL PRIVATE cxx_std_17)
+# Require C++20 standard
+target_compile_features(PapillonNDL PUBLIC cxx_std_20)
 
 if(WIN32) # Comile options for Windows
   target_compile_options(PapillonNDL PRIVATE /W4)
@@ -141,7 +141,7 @@ if(PNDL_PYTHON)
   )
   
   # Require C++17 standard
-  target_compile_features(pyPapillonNDL PRIVATE cxx_std_17)
+  target_compile_features(pyPapillonNDL PRIVATE cxx_std_20)
   
   # Must link Python bindings with full library
   target_link_libraries(pyPapillonNDL PRIVATE PapillonNDL)

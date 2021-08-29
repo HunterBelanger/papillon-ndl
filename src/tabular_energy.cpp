@@ -55,14 +55,13 @@ TabularEnergy::TabularEnergy(const ACE& ace, std::size_t i, std::size_t JED)
     try {
       tables_.emplace_back(ace, loc);
     } catch (PNDLException& error) {
-      std::string mssg =
-          "TabularEnergy::TabularEnergy: Couldn't construct outgoin energy "
-          "table for j = " +
-          std::to_string(j) +
-          ",  energy = " + std::to_string(incoming_energy_[j]) +
-          "Mev. Occurred at loc = " + std::to_string(loc) +
-          ", i = " + std::to_string(i) + ", JED = " + std::to_string(JED) + ".";
-      error.add_to_exception(mssg, __FILE__, __LINE__);
+      std::string mssg = "Couldn't construct outgoin energy table for j = " +
+                         std::to_string(j) +
+                         ",  energy = " + std::to_string(incoming_energy_[j]) +
+                         "Mev. Occurred at loc = " + std::to_string(loc) +
+                         ", i = " + std::to_string(i) +
+                         ", JED = " + std::to_string(JED) + ".";
+      error.add_to_exception(mssg);
       throw error;
     }
   }
@@ -72,17 +71,15 @@ TabularEnergy::TabularEnergy(const std::vector<double>& incoming_energy,
                              const std::vector<PCTable>& tables)
     : incoming_energy_(incoming_energy), tables_(tables) {
   if (!std::is_sorted(incoming_energy_.begin(), incoming_energy_.end())) {
-    std::string mssg =
-        "TabularEnergy::TabularEnergy: The incoming energy grid is not sroted.";
-    throw PNDLException(mssg, __FILE__, __LINE__);
+    std::string mssg = "The incoming energy grid is not sroted.";
+    throw PNDLException(mssg);
   }
 
   if (incoming_energy_.size() != tables_.size()) {
     std::string mssg =
-        "TabularEnergy::TabularEnergy: Must have the same number of points in "
-        "the incoming energy grid as there are PCTables for the outgoing "
-        "energy.";
-    throw PNDLException(mssg, __FILE__, __LINE__);
+        "Must have the same number of points in the incoming energy grid as "
+        "there are PCTables for the outgoing energy.";
+    throw PNDLException(mssg);
   }
 }
 

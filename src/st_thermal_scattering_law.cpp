@@ -52,9 +52,8 @@ STThermalScatteringLaw::STThermalScatteringLaw(const ACE& ace,
         std::make_shared<STIncoherentInelastic>(ace, unit_based_interpolation);
   } catch (PNDLException& err) {
     std::string mssg =
-        "STThermalScatteringLaw::STThermalScatteringLaw: Could not construct "
-        "Incoherent Inelastic scattering data.";
-    err.add_to_exception(mssg, __FILE__, __LINE__);
+        "Could not construct Incoherent Inelastic scattering data.";
+    err.add_to_exception(mssg);
     throw err;
   }
 
@@ -69,9 +68,8 @@ STThermalScatteringLaw::STThermalScatteringLaw(const ACE& ace,
         coherent_elastic_ = std::make_shared<STCoherentElastic>(ace);
       } catch (PNDLException& err) {
         std::string mssg =
-            "STThermalScatteringLaw::STThermalScatteringLaw: Could not "
-            "construct Coherent Elastic scattering data.";
-        err.add_to_exception(mssg, __FILE__, __LINE__);
+            "Could not construct Coherent Elastic scattering data.";
+        err.add_to_exception(mssg);
         throw err;
       }
       has_coherent_elastic_ = true;
@@ -82,9 +80,8 @@ STThermalScatteringLaw::STThermalScatteringLaw(const ACE& ace,
         incoherent_elastic_ = std::make_shared<STIncoherentElastic>(ace);
       } catch (PNDLException& err) {
         std::string mssg =
-            "STThermalScatteringLaw::STThermalScatteringLaw: Could not "
-            "construct Incoherent Elastic scattering data.";
-        err.add_to_exception(mssg, __FILE__, __LINE__);
+            "Could not construct Incoherent Elastic scattering data.";
+        err.add_to_exception(mssg);
         throw err;
       }
       has_incoherent_elastic_ = true;

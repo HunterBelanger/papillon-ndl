@@ -176,10 +176,10 @@ class CENeutron {
    */
   const Reaction& reaction(uint32_t mt) const {
     if (!this->has_reaction(mt)) {
-      std::string mssg = "CENeutron::reaction: MT = " + std::to_string(mt) +
+      std::string mssg = "MT = " + std::to_string(mt) +
                          " is not provided in ZAID = " + std::to_string(zaid_) +
                          ".";
-      throw PNDLException(mssg, __FILE__, __LINE__);
+      throw PNDLException(mssg);
     }
 
     return reactions_[reaction_indices_[mt]];

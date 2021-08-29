@@ -40,9 +40,8 @@ Uncorrelated::Uncorrelated(const AngleDistribution& angle,
                            std::shared_ptr<EnergyLaw> energy)
     : angle_(angle), energy_(energy) {
   if (!energy_) {
-    std::string mssg =
-        "Uncorrelated::Uncorrelated: Provided energy distribution is nullptr.";
-    throw PNDLException(mssg, __FILE__, __LINE__);
+    std::string mssg = "Provided energy distribution is nullptr.";
+    throw PNDLException(mssg);
   }
 }
 

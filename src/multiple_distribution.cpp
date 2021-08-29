@@ -43,29 +43,24 @@ MultipleDistribution::MultipleDistribution(
     : distributions_(distributions), probabilities_(probabilities) {
   if (distributions_.size() != probabilities_.size()) {
     std::string mssg =
-        "MultipleDistribution::MultipleDistribution: Different number of "
-        "distributions and probabilities provided.";
-    throw PNDLException(mssg, __FILE__, __LINE__);
+        "Different number of distributions and probabilities provided.";
+    throw PNDLException(mssg);
   }
 
   if (distributions_.size() <= 1) {
-    std::string mssg =
-        "MultipleDistribution::MultipleDistribution: At least two "
-        "distributions must be provided.";
-    throw PNDLException(mssg, __FILE__, __LINE__);
+    std::string mssg = "At least two distributions must be provided.";
+    throw PNDLException(mssg);
   }
 
   for (std::size_t i = 0; i < distributions_.size(); i++) {
     if (!distributions_[i]) {
       std::string mssg =
-          "MultipleDistribution::MultipleDistribution: Distribution at index " +
-          std::to_string(i) + " is nullptr.";
-      throw PNDLException(mssg, __FILE__, __LINE__);
+          "Distribution at index " + std::to_string(i) + " is nullptr.";
+      throw PNDLException(mssg);
     } else if (!probabilities_[i]) {
       std::string mssg =
-          "MultipleDistribution::MultipleDistribution: Probability at index " +
-          std::to_string(i) + " is nullptr.";
-      throw PNDLException(mssg, __FILE__, __LINE__);
+          "Probability at index " + std::to_string(i) + " is nullptr.";
+      throw PNDLException(mssg);
     }
   }
 }

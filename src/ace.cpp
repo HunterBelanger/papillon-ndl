@@ -61,8 +61,8 @@ ACE::ACE(std::string fname, Type type)
       xss_() {
   // Make sure file exists
   if (!std::filesystem::exists(fname)) {
-    std::string mssg = "ACE::ACE: File \"" + fname + "\" does not exist.";
-    throw PNDLException(mssg, __FILE__, __LINE__);
+    std::string mssg = "File \"" + fname + "\" does not exist.";
+    throw PNDLException(mssg);
   }
 
   // Open ACE file
@@ -182,12 +182,11 @@ void ACE::read_ascii(std::ifstream& file) {
 
   if (i != nxs_[0]) {
     std::string mssg =
-        "ACE::read_ascii: Found incorrect number of entries in XSS array while "
-        "reading the \"" +
+        "Found incorrect number of entries in XSS array while reading the \"" +
         fname_ +
         "\" ACE file. This is likely due to a numerical entry which is missing "
         "the \"E\". Please correct the ACE file.";
-    throw PNDLException(mssg, __FILE__, __LINE__);
+    throw PNDLException(mssg);
   }
 
   zaid_ = static_cast<uint32_t>(nxs_[1]);

@@ -41,11 +41,11 @@ KalbachTable::KalbachTable(const ACE& ace, std::size_t i)
   interp_ = ace.xss<Interpolation>(i);
   if ((interp_ != Interpolation::Histogram) &&
       (interp_ != Interpolation::LinLin)) {
-    std::string mssg = "KalbachTable::KalbackTable: Invalid interpolation of " +
+    std::string mssg = "Invalid interpolation of " +
                        std::to_string(static_cast<int>(interp_)) +
                        ". Index of KalbachTable in XSS block is " +
                        std::to_string(i) + ".";
-    throw PNDLException(mssg, __FILE__, __LINE__);
+    throw PNDLException(mssg);
   }
   uint32_t NP = ace.xss<uint32_t>(i + 1);
   energy_ = ace.xss(i + 2, NP);
@@ -57,26 +57,23 @@ KalbachTable::KalbachTable(const ACE& ace, std::size_t i)
 
   if (!std::is_sorted(energy_.begin(), energy_.end())) {
     std::string mssg =
-        "KalbachTable::KalbackTable: Energies are not sorted. Index of "
-        "KalbachTable in XSS block is " +
+        "Energies are not sorted. Index of KalbachTable in XSS block is " +
         std::to_string(i) + ".";
-    throw PNDLException(mssg, __FILE__, __LINE__);
+    throw PNDLException(mssg);
   }
 
   if (!std::is_sorted(cdf_.begin(), cdf_.end())) {
     std::string mssg =
-        "KalbachTable::KalbackTable: CDF is not sorted. Index of KalbachTable "
-        "in XSS block is " +
+        "CDF is not sorted. Index of KalbachTable in XSS block is " +
         std::to_string(i) + ".";
-    throw PNDLException(mssg, __FILE__, __LINE__);
+    throw PNDLException(mssg);
   }
 
   if (cdf_[0] != 0.) {
     std::string mssg =
-        "KalbachTable::KalbachTable: First CDF entry is not 0, but " +
-        std::to_string(cdf_[0]) + ". Index of KalbachTable in XSS block is " +
-        std::to_string(i) + ".";
-    throw PNDLException(mssg, __FILE__, __LINE__);
+        "First CDF entry is not 0, but " + std::to_string(cdf_[0]) +
+        ". Index of KalbachTable in XSS block is " + std::to_string(i) + ".";
+    throw PNDLException(mssg);
   }
 
   if (cdf_[cdf_.size() - 1] != 1.) {
@@ -84,21 +81,20 @@ KalbachTable::KalbachTable(const ACE& ace, std::size_t i)
     if (std::abs(cdf_[cdf_.size() - 1] - 1.) < 1.E-7) {
       cdf_[cdf_.size() - 1] = 1.;
     } else {
-      std::string mssg =
-          "KalbachTable::KalbachTable: Last CDF entry is not 1, but " +
-          std::to_string(cdf_[cdf_.size() - 1]) +
-          ". Index of KalbachTable in XSS block is " + std::to_string(i) + ".";
-      throw PNDLException(mssg, __FILE__, __LINE__);
+      std::string mssg = "Last CDF entry is not 1, but " +
+                         std::to_string(cdf_[cdf_.size() - 1]) +
+                         ". Index of KalbachTable in XSS block is " +
+                         std::to_string(i) + ".";
+      throw PNDLException(mssg);
     }
   }
 
   for (const auto& p : pdf_) {
     if (p < 0.) {
       std::string mssg =
-          "KalbachTable::KalbachTable: Negative value found in PDF. Index of "
-          "PCTable in XSS block is " +
+          "Negative value found in PDF. Index of PCTable in XSS block is " +
           std::to_string(i) + ".";
-      throw PNDLException(mssg, __FILE__, __LINE__);
+      throw PNDLException(mssg);
     }
   }
 }
@@ -111,34 +107,33 @@ KalbachTable::KalbachTable(const std::vector<double>& energy,
     : energy_(energy), pdf_(pdf), cdf_(cdf), R_(R), A_(A), interp_(interp) {
   if ((interp_ != Interpolation::Histogram) &&
       (interp_ != Interpolation::LinLin)) {
-    std::string mssg = "KalbachTable::KalbackTable: Invalid interpolation of " +
+    std::string mssg = "Invalid interpolation of " +
                        std::to_string(static_cast<int>(interp_)) + ".";
-    throw PNDLException(mssg, __FILE__, __LINE__);
+    throw PNDLException(mssg);
   }
 
   if ((energy_.size() != pdf_.size()) || (pdf_.size() != cdf_.size()) ||
       (cdf_.size() != R_.size()) || (R_.size() != A_.size())) {
     std::string mssg =
-        "KalbachTable::KalbackTable: The outgoing energy, PDF, CDF, R, and A "
-        "grids must all be the same size.";
-    throw PNDLException(mssg, __FILE__, __LINE__);
+        "The outgoing energy, PDF, CDF, R, and A grids must all be the same "
+        "size.";
+    throw PNDLException(mssg);
   }
 
   if (!std::is_sorted(energy_.begin(), energy_.end())) {
-    std::string mssg = "KalbachTable::KalbackTable: Energies are not sorted.";
-    throw PNDLException(mssg, __FILE__, __LINE__);
+    std::string mssg = "Energies are not sorted.";
+    throw PNDLException(mssg);
   }
 
   if (!std::is_sorted(cdf_.begin(), cdf_.end())) {
-    std::string mssg = "KalbachTable::KalbackTable: CDF is not sorted.";
-    throw PNDLException(mssg, __FILE__, __LINE__);
+    std::string mssg = "CDF is not sorted.";
+    throw PNDLException(mssg);
   }
 
   if (cdf_[0] != 0.) {
     std::string mssg =
-        "KalbachTable::KalbachTable: First CDF entry is not 0, but " +
-        std::to_string(cdf_[0]) + ".";
-    throw PNDLException(mssg, __FILE__, __LINE__);
+        "First CDF entry is not 0, but " + std::to_string(cdf_[0]) + ".";
+    throw PNDLException(mssg);
   }
 
   if (cdf_[cdf_.size() - 1] != 1.) {
@@ -146,18 +141,16 @@ KalbachTable::KalbachTable(const std::vector<double>& energy,
     if (std::abs(cdf_[cdf_.size() - 1] - 1.) < 1.E-7) {
       cdf_[cdf_.size() - 1] = 1.;
     } else {
-      std::string mssg =
-          "KalbachTable::KalbachTable: Last CDF entry is not 1, but " +
-          std::to_string(cdf_[cdf_.size() - 1]) + ".";
-      throw PNDLException(mssg, __FILE__, __LINE__);
+      std::string mssg = "Last CDF entry is not 1, but " +
+                         std::to_string(cdf_[cdf_.size() - 1]) + ".";
+      throw PNDLException(mssg);
     }
   }
 
   for (const auto& p : pdf_) {
     if (p < 0.) {
-      std::string mssg =
-          "KalbachTable::KalbachTable: Negative value found in PDF.";
-      throw PNDLException(mssg, __FILE__, __LINE__);
+      std::string mssg = "Negative value found in PDF.";
+      throw PNDLException(mssg);
     }
   }
 }

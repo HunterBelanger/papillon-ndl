@@ -49,10 +49,9 @@ DiscreteCosinesEnergies::DiscreteCosinesEnergies(const ACE& ace)
 
   if (nxs_7 != 0 && nxs_7 != 1) {
     std::string mssg =
-        "DiscreteCosinesEnergies::DiscreteCosinesEnergies: The provided ACE "
-        "file does not contain a distribution of this form for Incoherent "
-        "Inelastic scattering.";
-    throw PNDLException(mssg, __FILE__, __LINE__);
+        "The provided ACE file does not contain a distribution of this form "
+        "for Incoherent Inelastic scattering.";
+    throw PNDLException(mssg);
   }
 
   if (nxs_7 == 1) {
@@ -66,20 +65,17 @@ DiscreteCosinesEnergies::DiscreteCosinesEnergies(const ACE& ace)
 
   // Make sure incident energy grid is sorted
   if (!std::is_sorted(incoming_energy_.begin(), incoming_energy_.end())) {
-    std::string mssg =
-        "DiscreteCosinesEnergies::DiscreteCosinesEnergies: The incident energy "
-        "grid is not sorted.";
-    throw PNDLException(mssg, __FILE__, __LINE__);
+    std::string mssg = "The incident energy grid is not sorted.";
+    throw PNDLException(mssg);
   }
 
   // Get the number of outgoing discrete energies
   Noe = static_cast<uint32_t>(ace.nxs(3));
   if (skewed_ && Noe < 6) {
     std::string mssg =
-        "DiscreteCosinesEnergies::DiscreteCosinesEnergies: A skewed "
-        "distribution must have at least 6 outgoing energies. Only " +
+        "A skewed distribution must have at least 6 outgoing energies. Only " +
         std::to_string(Noe) + " were provided.";
-    throw PNDLException(mssg, __FILE__, __LINE__);
+    throw PNDLException(mssg);
   }
 
   // Get the number of outgoing discrete cosines
@@ -98,11 +94,9 @@ DiscreteCosinesEnergies::DiscreteCosinesEnergies(const ACE& ace)
       double E_out = ace.xss(i);
       // Check E_out
       if (E_out <= 0.) {
-        std::string mssg =
-            "DiscreteCosinesEnergies::DiscreteCosinesEnergies: Nevative "
-            "outgoing energy found at index " +
-            std::to_string(i) + ".";
-        throw PNDLException(mssg, __FILE__, __LINE__);
+        std::string mssg = "Nevative outgoing energy found at index " +
+                           std::to_string(i) + ".";
+        throw PNDLException(mssg);
       }
       i++;
 
@@ -110,11 +104,9 @@ DiscreteCosinesEnergies::DiscreteCosinesEnergies(const ACE& ace)
       // Check mu grid
       for (std::size_t j = 0; j < Nmu; j++) {
         if (mu[j] < -1. || mu[j] > 1.) {
-          std::string mssg =
-              "DiscreteCosinesEnergies::DiscreteCosinesEnergies: Invalid "
-              "cosine value found at index " +
-              std::to_string(i + j) + ".";
-          throw PNDLException(mssg, __FILE__, __LINE__);
+          std::string mssg = "Invalid cosine value found at index " +
+                             std::to_string(i + j) + ".";
+          throw PNDLException(mssg);
         }
       }
       i += Nmu;

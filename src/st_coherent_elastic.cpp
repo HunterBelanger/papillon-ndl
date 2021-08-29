@@ -49,15 +49,13 @@ STCoherentElastic::STCoherentElastic(const ACE& ace)
 
     // Make sure Bragg edges are all positive and sorted
     if (!std::is_sorted(bragg_edges_.begin(), bragg_edges_.end())) {
-      std::string mssg =
-          "STCoherentElastic::STCoherentElastic: Bragg edges are not sorted.";
-      throw PNDLException(mssg, __FILE__, __LINE__);
+      std::string mssg = "Bragg edges are not sorted.";
+      throw PNDLException(mssg);
     }
 
     if (bragg_edges_.front() < 0.) {
-      std::string mssg =
-          "STCoherentElastic::STCoherentElastic: Negative Bragg edges found.";
-      throw PNDLException(mssg, __FILE__, __LINE__);
+      std::string mssg = "Negative Bragg edges found.";
+      throw PNDLException(mssg);
     }
   }
 }

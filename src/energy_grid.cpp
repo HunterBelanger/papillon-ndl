@@ -43,18 +43,16 @@ EnergyGrid::EnergyGrid(const ACE& ace, uint32_t NBINS)
 
   if (!std::is_sorted(energy_values_.begin(), energy_values_.end())) {
     std::string mssg =
-        "EnergyGrid::EnergyGrid: Energy values are not sorted. Index in the "
-        "XSS block is " +
+        "Energy values are not sorted. Index in the XSS block is " +
         std::to_string(ace.ESZ()) + ".";
-    throw PNDLException(mssg, __FILE__, __LINE__);
+    throw PNDLException(mssg);
   }
 
   if (energy_values_.front() <= 0.) {
     std::string mssg =
-        "EnergyGrid::EnergyGrid: Nevative or zero values in energy grid. Index "
-        "in the XSS block is " +
+        "Nevative or zero values in energy grid. Index in the XSS block is " +
         std::to_string(ace.ESZ()) + ".";
-    throw PNDLException(mssg, __FILE__, __LINE__);
+    throw PNDLException(mssg);
   }
 
   hash_energy_grid(NBINS);
@@ -63,14 +61,13 @@ EnergyGrid::EnergyGrid(const ACE& ace, uint32_t NBINS)
 EnergyGrid::EnergyGrid(const std::vector<double>& energy, uint32_t NBINS)
     : energy_values_(energy.size(), 0.), bin_pointers_(), u_min(), du() {
   if (!std::is_sorted(energy_values_.begin(), energy_values_.end())) {
-    std::string mssg = "EnergyGrid::EnergyGrid: Energy values are not sorted.";
-    throw PNDLException(mssg, __FILE__, __LINE__);
+    std::string mssg = "Energy values are not sorted.";
+    throw PNDLException(mssg);
   }
 
   if (energy_values_.front() < 0.) {
-    std::string mssg =
-        "EnergyGrid::EnergyGrid: Nevative values in energy grid.";
-    throw PNDLException(mssg, __FILE__, __LINE__);
+    std::string mssg = "Nevative values in energy grid.";
+    throw PNDLException(mssg);
   }
 
   for (std::size_t i = 0; i < energy.size(); i++) {

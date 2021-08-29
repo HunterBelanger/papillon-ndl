@@ -45,11 +45,9 @@ AngleDistribution::AngleDistribution(const ACE& ace, int locb)
   // Locb must be >= 0! If locb == -1, it means that there is
   // no angular distribution for the reaction (must use product distribution)
   if (locb < 0) {
-    std::string mssg =
-        "AngleDistribution::AngleDistribution: Must have locb >= 0. Was "
-        "provided with locb = " +
-        std::to_string(locb) + ".";
-    throw PNDLException(mssg, __FILE__, __LINE__);
+    std::string mssg = "Must have locb >= 0. Was provided with locb = " +
+                       std::to_string(locb) + ".";
+    throw PNDLException(mssg);
   }
 
   if (locb > 0) {
@@ -63,11 +61,9 @@ AngleDistribution::AngleDistribution(const ACE& ace, int locb)
     energy_grid_ = ace.xss(i + 1, NE);
 
     if (!std::is_sorted(energy_grid_.begin(), energy_grid_.end())) {
-      std::string mssg =
-          "AngleDistribution::AngleDistribution: The energy grid must be "
-          "sorted. Occurred at lobc = " +
-          std::to_string(locb) + ".";
-      throw PNDLException(mssg, __FILE__, __LINE__);
+      std::string mssg = "The energy grid must be sorted. Occurred at lobc = " +
+                         std::to_string(locb) + ".";
+      throw PNDLException(mssg);
     }
 
     // Get each table
@@ -85,13 +81,12 @@ AngleDistribution::AngleDistribution(const ACE& ace, int locb)
         }
       } catch (PNDLException& err) {
         std::string mssg =
-            "AngleDistribution::AngleDistribution: Could not construct angular "
-            "distribution for energy index = " +
+            "Could not construct angular distribution for energy index = " +
             std::to_string(j) +
             ", energy = " + std::to_string(energy_grid_[j]) +
             " MeV. Occurred at loc = " + std::to_string(loc) +
             ", locb = " + std::to_string(locb) + ".";
-        err.add_to_exception(mssg, __FILE__, __LINE__);
+        err.add_to_exception(mssg);
         throw err;
       }
     }
@@ -107,15 +102,13 @@ AngleDistribution::AngleDistribution(
     : energy_grid_(energy_grid), laws_(laws) {
   if (energy_grid_.size() != laws_.size()) {
     std::string mssg =
-        "AngleDistribution::AngleDistribution: The energy grid and the vector "
-        "of laws must have the same size.";
-    throw PNDLException(mssg, __FILE__, __LINE__);
+        "The energy grid and the vector of laws must have the same size.";
+    throw PNDLException(mssg);
   }
 
   if (!std::is_sorted(energy_grid_.begin(), energy_grid_.end())) {
-    std::string mssg =
-        "AngleDistribution::AngleDistribution: The energy grid must be sorted.";
-    throw PNDLException(mssg, __FILE__, __LINE__);
+    std::string mssg = "The energy grid must be sorted.";
+    throw PNDLException(mssg);
   }
 }
 

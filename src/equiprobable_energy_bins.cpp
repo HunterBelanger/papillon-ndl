@@ -54,10 +54,10 @@ EquiprobableEnergyBins::EquiprobableEnergyBins(const ACE& ace, std::size_t i)
 
   if (!std::is_sorted(incoming_energy_.begin(), incoming_energy_.end())) {
     std::string mssg =
-        "EquiprobableEnergyBins::EquiprobableEnergyBins: Incoming energy grid "
-        "is not sorted. Index of EquiprobableEnergyBins in XSS block is " +
+        "Incoming energy grid is not sorted. Index of EquiprobableEnergyBins "
+        "in XSS block is " +
         std::to_string(i) + ".";
-    throw PNDLException(mssg, __FILE__, __LINE__);
+    throw PNDLException(mssg);
   }
 
   uint32_t NET = ace.xss<uint32_t>(i + 2 + 2 * NR + NE);
@@ -70,12 +70,11 @@ EquiprobableEnergyBins::EquiprobableEnergyBins(const ACE& ace, std::size_t i)
   // Make sure that each bin set is sorted
   for (std::size_t j = 0; j < bin_sets_.size(); j++) {
     if (!std::is_sorted(bin_sets_[j].begin(), bin_sets_[j].end())) {
-      std::string mssg = "EquiprobableEnergyBins::EquiprobableEnergyBins: " +
-                         std::to_string(j) +
+      std::string mssg = std::to_string(j) +
                          " bin bounds are not sorted. Index of "
                          "EquiprobableEnergyBins in XSS block is " +
                          std::to_string(i) + ".";
-      throw PNDLException(mssg, __FILE__, __LINE__);
+      throw PNDLException(mssg);
     }
   }
 }
@@ -85,25 +84,22 @@ EquiprobableEnergyBins::EquiprobableEnergyBins(
     const std::vector<std::vector<double>>& bin_bounds)
     : incoming_energy_(incoming_energy), bin_sets_(bin_bounds) {
   if (!std::is_sorted(incoming_energy_.begin(), incoming_energy_.end())) {
-    std::string mssg =
-        "EquiprobableEnergyBins::EquiprobableEnergyBins: Incoming energy grid "
-        "is not sorted.";
-    throw PNDLException(mssg, __FILE__, __LINE__);
+    std::string mssg = "Incoming energy grid is not sorted.";
+    throw PNDLException(mssg);
   }
 
   if (incoming_energy_.size() != bin_sets_.size()) {
     std::string mssg =
-        "EquiprobableEnergyBins::EquiprobableEnergyBins: The number of "
-        "incoming energies does not match the numer of bin sets provided.";
-    throw PNDLException(mssg, __FILE__, __LINE__);
+        "The number of incoming energies does not match the numer of bin sets "
+        "provided.";
+    throw PNDLException(mssg);
   }
 
   // Make sure that each bin set is sorted
   for (std::size_t j = 0; j < bin_sets_.size(); j++) {
     if (!std::is_sorted(bin_sets_[j].begin(), bin_sets_[j].end())) {
-      std::string mssg = "EquiprobableEnergyBins::EquiprobableEnergyBins: " +
-                         std::to_string(j) + " bin bounds are not sorted.";
-      throw PNDLException(mssg, __FILE__, __LINE__);
+      std::string mssg = std::to_string(j) + " bin bounds are not sorted.";
+      throw PNDLException(mssg);
     }
   }
 }

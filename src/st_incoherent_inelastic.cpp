@@ -49,10 +49,8 @@ STIncoherentInelastic::STIncoherentInelastic(const ACE& ace,
     std::vector<double> xs = ace.xss(S + 1 + Ne, Ne);
     xs_ = std::make_shared<Region1D>(energy, xs, Interpolation::LinLin);
   } catch (PNDLException& err) {
-    std::string mssg =
-        "STIncoherentInelastic::STIncoherentInelastic: Could not construct "
-        "cross section.";
-    err.add_to_exception(mssg, __FILE__, __LINE__);
+    std::string mssg = "Could not construct cross section.";
+    err.add_to_exception(mssg);
     throw err;
   }
 
@@ -66,15 +64,13 @@ STIncoherentInelastic::STIncoherentInelastic(const ACE& ace,
           ace, unit_based_interpolation);
     } else {
       std::string mssg =
-          "STIncoherentInelastic::STIncoherentInelastic: Unknown distribution "
-          "type. Make sure this is a valid thermal scattering law ACE file.";
-      throw PNDLException(mssg, __FILE__, __LINE__);
+          "Unknown distribution type. Make sure this is a valid thermal "
+          "scattering law ACE file.";
+      throw PNDLException(mssg);
     }
   } catch (PNDLException& err) {
-    std::string mssg =
-        "STIncoherentInelastic::STIncoherentInelastic: Could not construct "
-        "AngleEnergy distribution.";
-    err.add_to_exception(mssg, __FILE__, __LINE__);
+    std::string mssg = "Could not construct AngleEnergy distribution.";
+    err.add_to_exception(mssg);
     throw err;
   }
 }

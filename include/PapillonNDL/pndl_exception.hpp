@@ -40,6 +40,7 @@
  */
 
 #include <exception>
+#include <source_location>
 #include <string>
 
 namespace pndl {
@@ -52,24 +53,24 @@ class PNDLException : public std::exception {
   PNDLException() : message("\n") {}
   /**
    * @param mssg Error message.
-   * @param file File in which the error was thrown.
-   * @param line Line number where error was thrown.
+   * @param file Location where the error occurred;
    */
-  PNDLException(const std::string& mssg, const std::string& file, int line)
+  PNDLException(const std::string& mssg,
+                std::source_location location = std::source_location::current())
       : message("\n") {
-    add_to_error_message(mssg, file, line);
+    add_to_error_message(mssg, location);
   }
   ~PNDLException() = default;
 
   /**
    * @brief Adds details to the exception message as it is passed up the stack.
    * @param mssg Error message.
-   * @param file File in which the error was thrown.
-   * @param line Line number where error was thrown.
+   * @param file Location where the error was thrown.
    */
-  void add_to_exception(const std::string& mssg, const std::string& file,
-                        int line) {
-    add_to_error_message(mssg, file, line);
+  void add_to_exception(
+      const std::string& mssg,
+      std::source_location location = std::source_location::current()) {
+    add_to_error_message(mssg, location);
   }
 
   const char* what() const noexcept override { return message.c_str(); }
@@ -77,8 +78,8 @@ class PNDLException : public std::exception {
  private:
   std::string message;
 
-  void add_to_error_message(const std::string& mssg, const std::string& file,
-                            int line) {
+  void add_to_error_message(const std::string& mssg,
+                            const std::source_location& location) {
     // Go through original string and determine line breaks
     std::string mssg_tmp = mssg;
     int nbreaks = static_cast<int>(mssg_tmp.size()) / 80;
@@ -106,7 +107,9 @@ class PNDLException : public std::exception {
     tmp +=
         " #--------------------------------------------------------------------"
         "-------------\n";
-    tmp += " # Location: " + file + ":" + std::to_string(line) + "\n";
+    tmp += " # File: " + std::string(location.file_name()) + "\n";
+    tmp += " # Function: " + std::string(location.function_name()) + "\n";
+    tmp += " # Line: " + std::to_string(location.line()) + "\n";
     tmp += " # \n";
     tmp += " # ";
 

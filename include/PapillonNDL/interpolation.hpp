@@ -103,10 +103,10 @@ struct Histogram {
       // Grid has repeated elements which are not allowed !
       auto ind = std::distance(first, it);
       std::string mssg =
-          "Histogram::verify_x_grid: Repeated values found in x-grid values of "
-          "Histogram interpolation at index " +
+          "Repeated values found in x-grid values of Histogram interpolation "
+          "at index " +
           std::to_string(ind) + ".";
-      throw PNDLException(mssg, __FILE__, __LINE__);
+      throw PNDLException(mssg);
     }
   }
 
@@ -143,9 +143,8 @@ struct LinLin {
     if (!std::is_sorted(first, last)) {
       // Grid elements aren't increasing, which isn't allowed for LinLin
       std::string mssg =
-          "LinLin::verify_x_grid: Non-increasing x-grid values in LinLin "
-          "interpolation.";
-      throw PNDLException(mssg, __FILE__, __LINE__);
+          "Non-increasing x-grid values in LinLin interpolation.";
+      throw PNDLException(mssg);
     }
   }
 
@@ -184,9 +183,8 @@ struct LinLog {
     // Make sure ther are no sign changes
     if (has_sign_change(first, last)) {
       std::string mssg =
-          "LinLog::verify_x_grid: Sign change occurs in x-grid values of "
-          "LinLog interpolation.";
-      throw PNDLException(mssg, __FILE__, __LINE__);
+          "Sign change occurs in x-grid values of LinLog interpolation.";
+      throw PNDLException(mssg);
     }
   }
 
@@ -232,9 +230,8 @@ struct LogLin {
     // Make sure ther are no sign changes
     if (has_sign_change(first, last)) {
       std::string mssg =
-          "LogLin::verify_y_grid: Sign change occurs in y-grid values of "
-          "LogLin interpolation.";
-      throw PNDLException(mssg, __FILE__, __LINE__);
+          "Sign change occurs in y-grid values of LogLin interpolation.";
+      throw PNDLException(mssg);
     }
   }
 };
@@ -275,9 +272,8 @@ struct LogLog {
     // Make sure ther are no sign changes
     if (has_sign_change(first, last)) {
       std::string mssg =
-          "LogLog::verify_x_grid: Sign change occurs in x-grid values of "
-          "LogLog interpolation.";
-      throw PNDLException(mssg, __FILE__, __LINE__);
+          "Sign change occurs in x-grid values of LogLog interpolation.";
+      throw PNDLException(mssg);
     }
   }
 
@@ -286,9 +282,8 @@ struct LogLog {
     // Make sure ther are no sign changes
     if (has_sign_change(first, last)) {
       std::string mssg =
-          "LogLog::verify_y_grid: Sign change occurs in y-grid values of "
-          "LogLog interpolation.";
-      throw PNDLException(mssg, __FILE__, __LINE__);
+          "Sign change occurs in y-grid values of LogLog interpolation.";
+      throw PNDLException(mssg);
     }
   }
 };

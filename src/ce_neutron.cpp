@@ -138,15 +138,13 @@ CENeutron::CENeutron(const ACE& ace, const CENeutron& nuclide)
 
   // Make sure these are the same nuclide !
   if (zaid_ != nuclide.zaid()) {
-    std::string mssg =
-        "Nuclide::Nuclide: ZAID of ACE doesn't match ZAID of nuclide.";
-    throw PNDLException(mssg, __FILE__, __LINE__);
+    std::string mssg = "ZAID of ACE doesn't match ZAID of nuclide.";
+    throw PNDLException(mssg);
   }
 
   if (awr_ != nuclide.awr()) {
-    std::string mssg =
-        "Nuclide::Nuclide: AWR of ACE doesn't match AWR of nuclide.";
-    throw PNDLException(mssg, __FILE__, __LINE__);
+    std::string mssg = "AWR of ACE doesn't match AWR of nuclide.";
+    throw PNDLException(mssg);
   }
 
   // Number of energy points
@@ -179,9 +177,9 @@ CENeutron::CENeutron(const ACE& ace, const CENeutron& nuclide)
     mt_list_[indx] = MT;
 
     if (!nuclide.has_reaction(MT)) {
-      std::string mssg = "Nuclide::Nuclide: MT = " + std::to_string(MT) +
+      std::string mssg = "MT = " + std::to_string(MT) +
                          " is present in ACE, but not in nuclide.";
-      throw PNDLException(mssg, __FILE__, __LINE__);
+      throw PNDLException(mssg);
     }
 
     reactions_.emplace_back(ace, indx, energy_grid_, nuclide.reaction(MT));

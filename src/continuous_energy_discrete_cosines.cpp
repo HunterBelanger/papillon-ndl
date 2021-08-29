@@ -49,10 +49,9 @@ ContinuousEnergyDiscreteCosines::ContinuousEnergyDiscreteCosines(
   int32_t nxs_7 = ace.nxs(6);
   if (nxs_7 != 2) {
     std::string mssg =
-        "ContinuousEnergyDiscreteCosines::ContinuousEnergyDiscreteCosines: The "
-        "provided ACE file does not contain a distribution of this form for "
-        "Incoherent Inelastic scattering.";
-    throw PNDLException(mssg, __FILE__, __LINE__);
+        "The provided ACE file does not contain a distribution of this form "
+        "for Incoherent Inelastic scattering.";
+    throw PNDLException(mssg);
   }
 
   // Read incident energy grid
@@ -62,10 +61,8 @@ ContinuousEnergyDiscreteCosines::ContinuousEnergyDiscreteCosines(
 
   // Make sure incident energy grid is sorted
   if (!std::is_sorted(incoming_energy_.begin(), incoming_energy_.end())) {
-    std::string mssg =
-        "ContinuousEnergyDiscreteCosines::ContinuousEnergyDiscreteCosines: The "
-        "incident energy grid is not sorted.";
-    throw PNDLException(mssg, __FILE__, __LINE__);
+    std::string mssg = "The incident energy grid is not sorted.";
+    throw PNDLException(mssg);
   }
 
   // Get the number of outgoing discrete cosines
@@ -160,36 +157,32 @@ ContinuousEnergyDiscreteCosines::ContinuousEnergyDiscreteCosines(
     if (!std::is_sorted(tables_.back().energy.begin(),
                         tables_.back().energy.end())) {
       std::string mssg =
-          "ContinuousEnergyDiscreteCosines::ContinuousEnergyDiscreteCosines: "
           "Outgoing energies are not sorted for incoming energy index " +
           std::to_string(ie) + ".";
-      throw PNDLException(mssg, __FILE__, __LINE__);
+      throw PNDLException(mssg);
     }
 
     if (tables_.back().energy.front() < 0.) {
       std::string mssg =
-          "ContinuousEnergyDiscreteCosines::ContinuousEnergyDiscreteCosines: "
           "Negative outgoing energies are present for incoming energy index " +
           std::to_string(ie) + ".";
-      throw PNDLException(mssg, __FILE__, __LINE__);
+      throw PNDLException(mssg);
     }
 
     if (!std::is_sorted(tables_.back().cdf.begin(), tables_.back().cdf.end())) {
       std::string mssg =
-          "ContinuousEnergyDiscreteCosines::ContinuousEnergyDiscreteCosines: "
           "The outgoing energy CDF is not sorted for incoming energy index " +
           std::to_string(ie) + ".";
-      throw PNDLException(mssg, __FILE__, __LINE__);
+      throw PNDLException(mssg);
     }
 
     for (std::size_t z = 0; z < Noe; z++) {
       if (tables_.back().pdf[z] < 0.) {
         std::string mssg =
-            "ContinuousEnergyDiscreteCosines::ContinuousEnergyDiscreteCosines: "
             "Negative PDF value found for outgoing energy index " +
             std::to_string(z) + ", for incoming energy index " +
             std::to_string(ie) + ".";
-        throw PNDLException(mssg, __FILE__, __LINE__);
+        throw PNDLException(mssg);
       }
     }
 

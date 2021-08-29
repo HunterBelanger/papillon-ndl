@@ -60,26 +60,23 @@ class DiscretePhoton : public EnergyLaw {
     A = ace.awr();
 
     if ((lp != 0) && (lp != 1) && (lp != 2)) {
-      std::string mssg = "DiscretePhoton::DiscretePhoton: Invalid lp of " +
-                         std::to_string(lp) + ". Occurred at index " +
-                         std::to_string(i) + " in XSS array.";
-      throw PNDLException(mssg, __FILE__, __LINE__);
+      std::string mssg = "Invalid lp of " + std::to_string(lp) +
+                         ". Occurred at index " + std::to_string(i) +
+                         " in XSS array.";
+      throw PNDLException(mssg);
     }
 
     if (Eg <= 0.) {
-      std::string mssg =
-          "DiscretePphoton::DiscretePhoton: Eg must be greater than zero. "
-          "Occurred at index " +
-          std::to_string(i) + " in XSS array.";
-      throw PNDLException(mssg, __FILE__, __LINE__);
+      std::string mssg = "Eg must be greater than zero. Occurred at index " +
+                         std::to_string(i) + " in XSS array.";
+      throw PNDLException(mssg);
     }
 
     if (A <= 0.) {
       std::string mssg =
-          "DiscretePphoton::DiscretePhoton: Atomic weight ratio must be "
-          "greater than zero. Occurred at index " +
+          "Atomic weight ratio must be greater than zero. Occurred at index " +
           std::to_string(i) + " in XSS array.";
-      throw PNDLException(mssg, __FILE__, __LINE__);
+      throw PNDLException(mssg);
     }
   }
 
@@ -90,22 +87,18 @@ class DiscretePhoton : public EnergyLaw {
    */
   DiscretePhoton(int lp, double Eg, double AWR) : lp(lp), A(AWR), Eg(Eg) {
     if ((lp != 0) && (lp != 1) && (lp != 2)) {
-      std::string mssg = "DiscretePhoton::DiscretePhoton: Invalid lp of " +
-                         std::to_string(lp) + ".";
-      throw PNDLException(mssg, __FILE__, __LINE__);
+      std::string mssg = "Invalid lp of " + std::to_string(lp) + ".";
+      throw PNDLException(mssg);
     }
 
     if (Eg <= 0.) {
-      std::string mssg =
-          "DiscretePphoton::DiscretePhoton: Eg must be greater than zero.";
-      throw PNDLException(mssg, __FILE__, __LINE__);
+      std::string mssg = "Eg must be greater than zero.";
+      throw PNDLException(mssg);
     }
 
     if (A <= 0.) {
-      std::string mssg =
-          "DiscretePphoton::DiscretePhoton: Atomic weight ratio must be "
-          "greater than zero.";
-      throw PNDLException(mssg, __FILE__, __LINE__);
+      std::string mssg = "Atomic weight ratio must be greater than zero.";
+      throw PNDLException(mssg);
     }
   }
 

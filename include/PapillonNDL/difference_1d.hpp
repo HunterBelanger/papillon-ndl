@@ -60,13 +60,13 @@ class Difference1D : public Function1D {
                std::shared_ptr<Function1D> term2)
       : term_1_(term1), term_2_(term2) {
     if (!term_1_) {
-      std::string mssg = "Difference1D::Difference1D: Term 1 is nullptr.";
-      throw PNDLException(mssg, __FILE__, __LINE__);
+      std::string mssg = "Term 1 is nullptr.";
+      throw PNDLException(mssg);
     }
 
     if (!term_2_) {
-      std::string mssg = "Difference1D::Difference1D: Term 2 is nullptr.";
-      throw PNDLException(mssg, __FILE__, __LINE__);
+      std::string mssg = "Term 2 is nullptr.";
+      throw PNDLException(mssg);
     }
   }
 

@@ -57,10 +57,8 @@ STIncoherentElastic::STIncoherentElastic(const ACE& ace)
     for (size_t j = 0; j < xs_vals.size(); j++) {
       if (xs_vals[j] < 0.) {
         std::string mssg =
-            "STIncoherentElastic::STIncoherentElastic: Negative cross section "
-            "found at index " +
-            std::to_string(j) + ".";
-        throw PNDLException(mssg, __FILE__, __LINE__);
+            "Negative cross section found at index " + std::to_string(j) + ".";
+        throw PNDLException(mssg);
       }
     }
 
@@ -76,29 +74,23 @@ STIncoherentElastic::STIncoherentElastic(const ACE& ace)
 
       // Check cosines
       if (!std::is_sorted(cosines_for_ie.begin(), cosines_for_ie.end())) {
-        std::string mssg =
-            "STIncoherentElastic::STIncoherentElastic: Cosines are not sored "
-            "for "
-            "incoming energy index " +
-            std::to_string(ie) + ".";
-        throw PNDLException(mssg, __FILE__, __LINE__);
+        std::string mssg = "Cosines are not sored for incoming energy index " +
+                           std::to_string(ie) + ".";
+        throw PNDLException(mssg);
       }
 
       if (cosines_for_ie.front() < -1.) {
         std::string mssg =
-            "STIncoherentElastic::STIncoherentElastic: Lowest cosine is less "
-            "than -1 for incoming energy index " +
+            "Lowest cosine is less than -1 for incoming energy index " +
             std::to_string(ie) + ".";
-        throw PNDLException(mssg, __FILE__, __LINE__);
+        throw PNDLException(mssg);
       }
 
       if (cosines_for_ie.back() > 1.) {
         std::string mssg =
-            "STIncoherentElastic::STIncoherentElastic: Largest cosine is "
-            "greater "
-            "than 1 for incoming eneergy index " +
+            "Largest cosine is greater than 1 for incoming eneergy index " +
             std::to_string(ie) + ".";
-        throw PNDLException(mssg, __FILE__, __LINE__);
+        throw PNDLException(mssg);
       }
 
       cosines_.push_back(cosines_for_ie);

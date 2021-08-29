@@ -103,9 +103,8 @@ Reaction::Reaction(const ACE& ace, std::size_t indx,
     }
   } catch (PNDLException& error) {
     std::string mssg =
-        "Reaction::Reaction: Could not create yield function for MT = " +
-        std::to_string(mt_) + ".";
-    error.add_to_exception(mssg, __FILE__, __LINE__);
+        "Could not create yield function for MT = " + std::to_string(mt_) + ".";
+    error.add_to_exception(mssg);
     throw error;
   }
 
@@ -116,9 +115,8 @@ Reaction::Reaction(const ACE& ace, std::size_t indx,
     threshold_ = xs_->energy(0);
   } catch (PNDLException& error) {
     std::string mssg =
-        "Reaction::Reaction: Could not create cross section for MT = " +
-        std::to_string(mt_) + ".";
-    error.add_to_exception(mssg, __FILE__, __LINE__);
+        "Could not create cross section for MT = " + std::to_string(mt_) + ".";
+    error.add_to_exception(mssg);
     throw error;
   }
 
@@ -147,10 +145,10 @@ Reaction::Reaction(const ACE& ace, std::size_t indx,
       }
     } catch (PNDLException& error) {
       std::string mssg =
-          "Reaction::Reaction: Could not create secondary neutron angle-energy "
-          "distribution for MT = " +
+          "Could not create secondary neutron angle-energy distribution for MT "
+          "= " +
           std::to_string(mt_) + ".";
-      error.add_to_exception(mssg, __FILE__, __LINE__);
+      error.add_to_exception(mssg);
       throw error;
     }
   } else {
@@ -175,9 +173,8 @@ Reaction::Reaction(const ACE& ace, std::size_t indx,
 
   // make sure the MT values agree
   if (mt_ != reac.mt()) {
-    std::string mssg =
-        "Reaction::Reaction: MT from ACE file doesn't match MT from reaction.";
-    throw PNDLException(mssg, __FILE__, __LINE__);
+    std::string mssg = "MT from ACE file doesn't match MT from reaction.";
+    throw PNDLException(mssg);
   }
 
   yield_ = reac.yield_;
@@ -190,9 +187,8 @@ Reaction::Reaction(const ACE& ace, std::size_t indx,
     threshold_ = xs_->energy(0);
   } catch (PNDLException& error) {
     std::string mssg =
-        "Reaction::Reaction: Could not create cross section for MT = " +
-        std::to_string(mt_) + ".";
-    error.add_to_exception(mssg, __FILE__, __LINE__);
+        "Could not create cross section for MT = " + std::to_string(mt_) + ".";
+    error.add_to_exception(mssg);
     throw error;
   }
 }
@@ -212,10 +208,9 @@ void Reaction::load_neutron_distributions(
       angle = std::make_shared<AngleDistribution>(ace, locb);
     } catch (PNDLException& error) {
       std::string mssg =
-          "Reaction::Reaction: Could not create secondary angular "
-          "distribution for MT = " +
+          "Could not create secondary angular distribution for MT = " +
           std::to_string(mt_) + ".";
-      error.add_to_exception(mssg, __FILE__, __LINE__);
+      error.add_to_exception(mssg);
       throw error;
     }
   }
@@ -303,19 +298,17 @@ void Reaction::load_neutron_distributions(
 
     } else if ((law > 0 && law < 6) || law == 7 || law == 9 || law == 11) {
       // Didn't have angle distribution
-      std::string mssg =
-          "Reaction::Reaction: No anglular distribution provided to acompany "
-          "law " +
-          std::to_string(law) + " in reaction MT=" + std::to_string(mt_) +
-          " in ZAID=" + std::to_string(ace.zaid()) + ".";
-      throw PNDLException(mssg, __FILE__, __LINE__);
-    } else {
-      // Unknown or unsuported law
-      std::string mssg = "Reaction::Reaction: Unkown energy law " +
+      std::string mssg = "No anglular distribution provided to acompany law " +
                          std::to_string(law) +
                          " in reaction MT=" + std::to_string(mt_) +
                          " in ZAID=" + std::to_string(ace.zaid()) + ".";
-      throw PNDLException(mssg, __FILE__, __LINE__);
+      throw PNDLException(mssg);
+    } else {
+      // Unknown or unsuported law
+      std::string mssg = "Unkown energy law " + std::to_string(law) +
+                         " in reaction MT=" + std::to_string(mt_) +
+                         " in ZAID=" + std::to_string(ace.zaid()) + ".";
+      throw PNDLException(mssg);
     }
 
     // Save law to list of all distributions

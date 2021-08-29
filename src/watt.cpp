@@ -68,10 +68,10 @@ Watt::Watt(const ACE& ace, std::size_t i) : a_(), b_(), restriction_energy_() {
     }
   } catch (PNDLException& error) {
     std::string mssg =
-        "Watt::Watt: Could not construct Tabular1D for the 'a'. Index in the "
-        "XSS block is i = " +
+        "Could not construct Tabular1D for the 'a'. Index in the XSS block is "
+        "i = " +
         std::to_string(original_i) + ".";
-    error.add_to_exception(mssg, __FILE__, __LINE__);
+    error.add_to_exception(mssg);
     throw error;
   }
 
@@ -104,10 +104,10 @@ Watt::Watt(const ACE& ace, std::size_t i) : a_(), b_(), restriction_energy_() {
     }
   } catch (PNDLException& error) {
     std::string mssg =
-        "Watt::Watt: Could not construct Tabular1D for the 'b'. Index in the "
-        "XSS block is i = " +
+        "Could not construct Tabular1D for the 'b'. Index in the XSS block is "
+        "i = " +
         std::to_string(original_i) + ".";
-    error.add_to_exception(mssg, __FILE__, __LINE__);
+    error.add_to_exception(mssg);
     throw error;
   }
 

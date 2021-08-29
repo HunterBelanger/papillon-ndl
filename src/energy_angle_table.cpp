@@ -42,12 +42,11 @@ EnergyAngleTable::EnergyAngleTable(const ACE& ace, std::size_t i,
   interp_ = ace.xss<Interpolation>(i);
   if ((interp_ != Interpolation::Histogram) &&
       (interp_ != Interpolation::LinLin)) {
-    std::string mssg =
-        "EnergyAngleTable::EnergyAngleTable: Invalid interpolation of " +
-        std::to_string(static_cast<int>(interp_)) +
-        ". Index of EnergyAngleTable in XSS block is " + std::to_string(i) +
-        ".";
-    throw PNDLException(mssg, __FILE__, __LINE__);
+    std::string mssg = "Invalid interpolation of " +
+                       std::to_string(static_cast<int>(interp_)) +
+                       ". Index of EnergyAngleTable in XSS block is " +
+                       std::to_string(i) + ".";
+    throw PNDLException(mssg);
   }
   uint32_t NP = ace.xss<uint32_t>(i + 1);
   energy_ = ace.xss(i + 2, NP);
@@ -57,27 +56,24 @@ EnergyAngleTable::EnergyAngleTable(const ACE& ace, std::size_t i,
 
   if (!std::is_sorted(energy_.begin(), energy_.end())) {
     std::string mssg =
-        "EnergyAngleTable::EnergyAngleTable: Energies are not sorted. Index of "
-        "EnergyAngleTable in XSS block is " +
+        "Energies are not sorted. Index of EnergyAngleTable in XSS block is " +
         std::to_string(i) + ".";
-    throw PNDLException(mssg, __FILE__, __LINE__);
+    throw PNDLException(mssg);
   }
 
   if (!std::is_sorted(cdf_.begin(), cdf_.end())) {
     std::string mssg =
-        "EnergyAngleTable::EnergyAngleTable: CDF is not sorted. Index of "
-        "EnergyAngleTable in XSS block is " +
+        "CDF is not sorted. Index of EnergyAngleTable in XSS block is " +
         std::to_string(i) + ".";
-    throw PNDLException(mssg, __FILE__, __LINE__);
+    throw PNDLException(mssg);
   }
 
   if (cdf_[0] != 0.) {
-    std::string mssg =
-        "EnergyAngleTable::EnergyAngleTable: First CDF entry is not 0, but " +
-        std::to_string(cdf_[0]) +
-        ". Index of EnergyAngleTable in XSS block is " + std::to_string(i) +
-        ".";
-    throw PNDLException(mssg, __FILE__, __LINE__);
+    std::string mssg = "First CDF entry is not 0, but " +
+                       std::to_string(cdf_[0]) +
+                       ". Index of EnergyAngleTable in XSS block is " +
+                       std::to_string(i) + ".";
+    throw PNDLException(mssg);
   }
 
   if (cdf_[cdf_.size() - 1] != 1.) {
@@ -85,22 +81,20 @@ EnergyAngleTable::EnergyAngleTable(const ACE& ace, std::size_t i,
     if (std::abs(cdf_[cdf_.size() - 1] - 1.) < 1.E-7) {
       cdf_[cdf_.size() - 1] = 1.;
     } else {
-      std::string mssg =
-          "EnergyAngleTable::EnergyAngleTable: Last CDF entry is not 1, but " +
-          std::to_string(cdf_[cdf_.size() - 1]) +
-          ". Index of EnergyAngleTable in XSS block is " + std::to_string(i) +
-          ".";
-      throw PNDLException(mssg, __FILE__, __LINE__);
+      std::string mssg = "Last CDF entry is not 1, but " +
+                         std::to_string(cdf_[cdf_.size() - 1]) +
+                         ". Index of EnergyAngleTable in XSS block is " +
+                         std::to_string(i) + ".";
+      throw PNDLException(mssg);
     }
   }
 
   for (const auto& p : pdf_) {
     if (p < 0.) {
       std::string mssg =
-          "EnergyAngleTable::EnergyAngleTable: Negative value found in PDF. "
-          "Index of PCTable in XSS block is " +
+          "Negative value found in PDF. Index of PCTable in XSS block is " +
           std::to_string(i) + ".";
-      throw PNDLException(mssg, __FILE__, __LINE__);
+      throw PNDLException(mssg);
     }
   }
 
@@ -111,13 +105,12 @@ EnergyAngleTable::EnergyAngleTable(const ACE& ace, std::size_t i,
     try {
       angles_.emplace_back(ace, l);
     } catch (PNDLException& error) {
-      std::string mssg =
-          "EnergyAngleTable::EnergyAngleTable: Couldn't create angle table "
-          "for " +
-          std::to_string(j) + "th energy " + std::to_string(energy_[j]) +
-          " MeV. Index of EnergyAngleTable in XSS block is " +
-          std::to_string(i) + ".";
-      error.add_to_exception(mssg, __FILE__, __LINE__);
+      std::string mssg = "Couldn't create angle table for " +
+                         std::to_string(j) + "th energy " +
+                         std::to_string(energy_[j]) +
+                         " MeV. Index of EnergyAngleTable in XSS block is " +
+                         std::to_string(i) + ".";
+      error.add_to_exception(mssg);
       throw error;
     }
   }
@@ -135,28 +128,25 @@ EnergyAngleTable::EnergyAngleTable(const std::vector<double>& outgoing_energy,
       interp_(interp) {
   if ((interp_ != Interpolation::Histogram) &&
       (interp_ != Interpolation::LinLin)) {
-    std::string mssg =
-        "EnergyAngleTable::EnergyAngleTable: Invalid interpolation of " +
-        std::to_string(static_cast<int>(interp_)) + ".";
-    throw PNDLException(mssg, __FILE__, __LINE__);
+    std::string mssg = "Invalid interpolation of " +
+                       std::to_string(static_cast<int>(interp_)) + ".";
+    throw PNDLException(mssg);
   }
 
   if (!std::is_sorted(energy_.begin(), energy_.end())) {
-    std::string mssg =
-        "EnergyAngleTable::EnergyAngleTable: Energies are not sorted.";
-    throw PNDLException(mssg, __FILE__, __LINE__);
+    std::string mssg = "Energies are not sorted.";
+    throw PNDLException(mssg);
   }
 
   if (!std::is_sorted(cdf_.begin(), cdf_.end())) {
-    std::string mssg = "EnergyAngleTable::EnergyAngleTable: CDF is not sorted.";
-    throw PNDLException(mssg, __FILE__, __LINE__);
+    std::string mssg = "CDF is not sorted.";
+    throw PNDLException(mssg);
   }
 
   if (cdf_[0] != 0.) {
     std::string mssg =
-        "EnergyAngleTable::EnergyAngleTable: First CDF entry is not 0, but " +
-        std::to_string(cdf_[0]) + ".";
-    throw PNDLException(mssg, __FILE__, __LINE__);
+        "First CDF entry is not 0, but " + std::to_string(cdf_[0]) + ".";
+    throw PNDLException(mssg);
   }
 
   if (cdf_[cdf_.size() - 1] != 1.) {
@@ -164,18 +154,16 @@ EnergyAngleTable::EnergyAngleTable(const std::vector<double>& outgoing_energy,
     if (std::abs(cdf_[cdf_.size() - 1] - 1.) < 1.E-7) {
       cdf_[cdf_.size() - 1] = 1.;
     } else {
-      std::string mssg =
-          "EnergyAngleTable::EnergyAngleTable: Last CDF entry is not 1, but " +
-          std::to_string(cdf_[cdf_.size() - 1]) + ".";
-      throw PNDLException(mssg, __FILE__, __LINE__);
+      std::string mssg = "Last CDF entry is not 1, but " +
+                         std::to_string(cdf_[cdf_.size() - 1]) + ".";
+      throw PNDLException(mssg);
     }
   }
 
   for (const auto& p : pdf_) {
     if (p < 0.) {
-      std::string mssg =
-          "EnergyAngleTable::EnergyAngleTable: Negative value found in PDF.";
-      throw PNDLException(mssg, __FILE__, __LINE__);
+      std::string mssg = "Negative value found in PDF.";
+      throw PNDLException(mssg);
     }
   }
 }

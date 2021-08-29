@@ -51,10 +51,10 @@ TabularEnergyAngle::TabularEnergyAngle(const ACE& ace, std::size_t i,
 
   if (!std::is_sorted(incoming_energy_.begin(), incoming_energy_.end())) {
     std::string mssg =
-        "TabularEnergyAngle::TabularEnergyAngle: Incoming energy grid is not "
-        "sorted. Index to TabularEnergyAngle in XSS block is " +
+        "Incoming energy grid is not sorted. Index to TabularEnergyAngle in "
+        "XSS block is " +
         std::to_string(i) + ".";
-    throw PNDLException(mssg, __FILE__, __LINE__);
+    throw PNDLException(mssg);
   }
 
   // Read outgoing energy tables
@@ -63,14 +63,12 @@ TabularEnergyAngle::TabularEnergyAngle(const ACE& ace, std::size_t i,
     try {
       tables_.emplace_back(ace, loc, JED);
     } catch (PNDLException& error) {
-      std::string mssg =
-          "TabularEnergyAngle::TabularEnergyAngle: Could not create "
-          "EnergyAngleTable for the " +
-          std::to_string(j) + "th incoming energy " +
-          std::to_string(incoming_energy_[j]) +
-          " MeV. Index of TabularEnergyAngle in XSS block is " +
-          std::to_string(i) + ".";
-      error.add_to_exception(mssg, __FILE__, __LINE__);
+      std::string mssg = "Could not create EnergyAngleTable for the " +
+                         std::to_string(j) + "th incoming energy " +
+                         std::to_string(incoming_energy_[j]) +
+                         " MeV. Index of TabularEnergyAngle in XSS block is " +
+                         std::to_string(i) + ".";
+      error.add_to_exception(mssg);
       throw error;
     }
   }
@@ -81,18 +79,15 @@ TabularEnergyAngle::TabularEnergyAngle(
     const std::vector<EnergyAngleTable>& tables)
     : incoming_energy_(incoming_energy), tables_(tables) {
   if (!std::is_sorted(incoming_energy_.begin(), incoming_energy_.end())) {
-    std::string mssg =
-        "TabularEnergyAngle::TabularEnergyAngle: Incoming energy grid is not "
-        "sorted.";
-    throw PNDLException(mssg, __FILE__, __LINE__);
+    std::string mssg = "Incoming energy grid is not sorted.";
+    throw PNDLException(mssg);
   }
 
   if (incoming_energy_.size() != tables_.size()) {
     std::string mssg =
-        "TabularEnergyAngle::TabularEnergyAngle: Must have the same number of "
-        "points in the\nincoming energy grid as there are KalbachTables for "
-        "the outgoing energy and angle.";
-    throw PNDLException(mssg, __FILE__, __LINE__);
+        "Must have the same number of points in the incoming energy grid as "
+        "there are KalbachTables for the outgoing energy and angle.";
+    throw PNDLException(mssg);
   }
 }
 

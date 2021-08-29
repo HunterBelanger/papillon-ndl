@@ -71,10 +71,10 @@ Evaporation::Evaporation(const ACE& ace, std::size_t i)
     }
   } catch (PNDLException& error) {
     std::string mssg =
-        "Evaporation::Evaporation: Could not construct Tabular1D for the "
-        "effective nuclear temperature. Index in the XSS block is i = " +
+        "Could not construct Tabular1D for the effective nuclear temperature. "
+        "Index in the XSS block is i = " +
         std::to_string(i) + ".";
-    error.add_to_exception(mssg, __FILE__, __LINE__);
+    error.add_to_exception(mssg);
     throw error;
   }
 }
