@@ -41,9 +41,11 @@ set(PNDL_SOURCE_LIST src/region_1d.cpp
                      src/cm_distribution.cpp
                      src/energy_grid.cpp
                      src/cross_section.cpp
-                     src/reaction.cpp
                      src/delayed_group.cpp
+                     src/ce_neutron_base.cpp
                      src/ce_neutron.cpp
+                     src/reaction_base.cpp
+                     src/reaction.cpp
                      src/continuous_energy_discrete_cosines.cpp
                      src/discrete_cosines_energies.cpp
                      src/st_incoherent_inelastic.cpp

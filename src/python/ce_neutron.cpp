@@ -36,35 +36,41 @@
 #include <pybind11/stl.h>
 
 #include <PapillonNDL/ce_neutron.hpp>
+#include <PapillonNDL/ce_neutron_base.hpp>
 
 namespace py = pybind11;
 
 using namespace pndl;
 
-void init_CENeutron(py::module& m) {
-  py::class_<CENeutron>(m, "CENeutron")
+void init_CENeutronBase(py::module& m) {
+  py::class_<CENeutronBase>(m, "CENeutronBase")
+      .def("zaid", &CENeutronBase::zaid)
+      .def("awr", &CENeutronBase::awr)
+      .def("fissile", &CENeutronBase::fissile)
+      .def("elastic_angle_distribution",
+           &CENeutronBase::elastic_angle_distribution)
+      .def("nu_total", &CENeutronBase::nu_total,
+           py::return_value_policy::reference_internal)
+      .def("nu_prompt", &CENeutronBase::nu_prompt,
+           py::return_value_policy::reference_internal)
+      .def("nu_delayed", &CENeutronBase::nu_delayed,
+           py::return_value_policy::reference_internal)
+      .def("n_delayed_groups", &CENeutronBase::n_delayed_groups)
+      .def("delayed_group", &CENeutronBase::delayed_group)
+      .def("mt_list", &CENeutronBase::mt_list)
+      .def("has_reaction", &CENeutronBase::has_reaction);
+}
+
+void init_STNeutron(py::module& m) {
+  py::class_<STNeutron, CENeutronBase>(m, "STNeutron")
       .def(py::init<const ACE&>())
-      .def(py::init<const ACE&, const CENeutron&>())
-      .def("zaid", &CENeutron::zaid)
-      .def("awr", &CENeutron::awr)
-      .def("temperature", &CENeutron::temperature)
-      .def("fissile", &CENeutron::fissile)
-      .def("energy_grid", &CENeutron::energy_grid)
-      .def("total_xs", &CENeutron::total_xs)
-      .def("elastic_xs", &CENeutron::elastic_xs)
-      .def("fission_xs", &CENeutron::fission_xs)
-      .def("disappearance_xs", &CENeutron::disappearance_xs)
-      .def("photon_production_xs", &CENeutron::photon_production_xs)
-      .def("elastic_angle_distribution", &CENeutron::elastic_angle_distribution)
-      .def("nu_total", &CENeutron::nu_total,
-           py::return_value_policy::reference_internal)
-      .def("nu_prompt", &CENeutron::nu_prompt,
-           py::return_value_policy::reference_internal)
-      .def("nu_delayed", &CENeutron::nu_delayed,
-           py::return_value_policy::reference_internal)
-      .def("n_delayed_groups", &CENeutron::n_delayed_groups)
-      .def("delayed_group", &CENeutron::delayed_group)
-      .def("mt_list", &CENeutron::mt_list)
-      .def("has_reaction", &CENeutron::has_reaction)
-      .def("reaction", &CENeutron::reaction);
+      .def(py::init<const ACE&, const STNeutron&>())
+      .def("temperature", &STNeutron::temperature)
+      .def("energy_grid", &STNeutron::energy_grid)
+      .def("total_xs", &STNeutron::total_xs)
+      .def("elastic_xs", &STNeutron::elastic_xs)
+      .def("fission_xs", &STNeutron::fission_xs)
+      .def("disappearance_xs", &STNeutron::disappearance_xs)
+      .def("photon_production_xs", &STNeutron::photon_production_xs)
+      .def("reaction", &STNeutron::reaction);
 }

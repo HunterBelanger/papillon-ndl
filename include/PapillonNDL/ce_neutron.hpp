@@ -39,20 +39,16 @@
  * @author Hunter Belanger
  */
 
-#include <PapillonNDL/ace.hpp>
-#include <PapillonNDL/angle_distribution.hpp>
-#include <PapillonNDL/delayed_group.hpp>
+#include <PapillonNDL/ce_neutron_base.hpp>
 #include <PapillonNDL/reaction.hpp>
-#include <array>
-#include <memory>
 
 namespace pndl {
 
-/**
- * @brief Holds all continuous energy neutron data for a single nuclide
- *        and at a single temperature.
- */
-class CENeutron {
+template <typename XSType>
+class CENeutron {};
+
+template <>
+class CENeutron<CrossSection> : public CENeutronBase {
  public:
   /**
    * @param ace ACE file from which to construct the data.
@@ -67,27 +63,10 @@ class CENeutron {
    */
   CENeutron(const ACE& ace, const CENeutron& nuclide);
 
-  ~CENeutron() = default;
-
-  /**
-   * @brief Returns the nuclide ZAID.
-   */
-  uint32_t zaid() const { return zaid_; }
-
-  /**
-   * @brief Returns the nuclide Atomic Weight Ratio.
-   */
-  double awr() const { return awr_; }
-
   /**
    * @brief Returns the temperature at which the data has been prepared.
    */
   double temperature() const { return temperature_; }
-
-  /**
-   * @brief Returns true if the nuclide is fissile, and false otherwise.
-   */
-  bool fissile() const { return fissile_; }
 
   /**
    * @brief Returns the energy grid for the nuclide.
@@ -123,58 +102,10 @@ class CENeutron {
   }
 
   /**
-   * @brief Returns the function for total nu.
-   */
-  const Function1D& nu_total() const { return *nu_total_; }
-
-  /**
-   * @brief Returns the function for prompt nu.
-   */
-  const Function1D& nu_prompt() const { return *nu_prompt_; }
-
-  /**
-   * @brief Returns the function for delayed nu.
-   */
-  const Function1D& nu_delayed() const { return *nu_delayed_; }
-
-  /**
-   * @brief Returns the AngleDistribution for elastic scattering.
-   */
-  const AngleDistribution& elastic_angle_distribution() const {
-    return *elastic_angle_;
-  }
-
-  /**
-   * @brief Returns the number of delayed neutron groups.
-   */
-  std::size_t n_delayed_groups() const { return delayed_groups_.size(); }
-
-  /**
-   * @brief Returns the ith delayed group data.
-   * @param i Index of the delayed group.
-   */
-  const DelayedGroup& delayed_group(std::size_t i) const {
-    return delayed_groups_[i];
-  }
-
-  /**
-   * @brief Returns a list of all MT reactions present for the nuclide.
-   */
-  const std::vector<uint32_t>& mt_list() const { return mt_list_; }
-
-  /**
-   * @brief Checks to see if a nucldie has a given reaction.
-   * @param mt MT reaction to search for.
-   */
-  bool has_reaction(uint32_t mt) const {
-    return (mt > 891 || reaction_indices_[mt] < 0) ? false : true;
-  }
-
-  /**
    * @brief Retrieved a given MT reaction.
    * @param mt MT reaction to return.
    */
-  const Reaction& reaction(uint32_t mt) const {
+  const STReaction& reaction(uint32_t mt) const {
     if (!this->has_reaction(mt)) {
       std::string mssg = "MT = " + std::to_string(mt) +
                          " is not provided in ZAID = " + std::to_string(zaid_) +
@@ -186,10 +117,7 @@ class CENeutron {
   }
 
  private:
-  uint32_t zaid_;
-  double awr_;
   double temperature_;
-  bool fissile_;
 
   std::shared_ptr<EnergyGrid> energy_grid_;
   std::shared_ptr<CrossSection> total_xs_;
@@ -198,24 +126,13 @@ class CENeutron {
   std::shared_ptr<CrossSection> fission_xs_;
   std::shared_ptr<CrossSection> photon_production_xs_;
 
-  std::shared_ptr<AngleDistribution> elastic_angle_;
+  std::vector<STReaction> reactions_;
 
-  std::shared_ptr<Function1D> nu_total_;
-  std::shared_ptr<Function1D> nu_prompt_;
-  std::shared_ptr<Function1D> nu_delayed_;
-  std::vector<DelayedGroup> delayed_groups_;
-
-  std::vector<uint32_t> mt_list_;
-  std::array<int32_t, 892> reaction_indices_;
-  std::vector<Reaction> reactions_;
-
-  // Private helper methods
-  void read_fission_data(const ACE& ace);
-  std::shared_ptr<Function1D> read_nu(const ACE& ace, std::size_t i);
-  std::shared_ptr<Function1D> read_polynomial_nu(const ACE& ace, std::size_t i);
-  std::shared_ptr<Function1D> read_tabular_nu(const ACE& ace, std::size_t i);
+  // Private Helper Methods
   std::shared_ptr<CrossSection> compute_fission_xs();
 };
+
+using STNeutron = CENeutron<CrossSection>;
 
 }  // namespace pndl
 

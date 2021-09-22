@@ -83,8 +83,10 @@ extern void init_TabularEnergyAngle(py::module&);
 extern void init_EnergyGrid(py::module&);
 extern void init_CrossSection(py::module&);
 extern void init_DelayedGroup(py::module&);
-extern void init_Reaction(py::module&);
-extern void init_CENeutron(py::module&);
+extern void init_ReactionBase(py::module& m);
+extern void init_STNeutron(py::module& m);
+extern void init_CENeutronBase(py::module& m);
+extern void init_STReaction(py::module& m);
 extern void init_PRNG(py::module&);
 
 PYBIND11_MODULE(pyPapillonNDL, m) {
@@ -133,9 +135,11 @@ PYBIND11_MODULE(pyPapillonNDL, m) {
   init_TabularEnergyAngle(m);
   init_EnergyGrid(m);
   init_CrossSection(m);
-  init_Reaction(m);
+  init_ReactionBase(m);
+  init_STReaction(m);
   init_DelayedGroup(m);
-  init_CENeutron(m);
+  init_CENeutronBase(m);
+  init_STNeutron(m);
   init_PRNG(m);
 
   m.attr("__author__") = "Hunter Belanger";

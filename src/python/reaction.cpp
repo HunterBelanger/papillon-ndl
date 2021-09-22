@@ -36,24 +36,29 @@
 #include <pybind11/stl.h>
 
 #include <PapillonNDL/reaction.hpp>
+#include <PapillonNDL/reaction_base.hpp>
 
 namespace py = pybind11;
 
 using namespace pndl;
 
-void init_Reaction(py::module& m) {
-  py::class_<Reaction>(m, "Reaction")
+void init_ReactionBase(py::module& m) {
+  py::class_<ReactionBase>(m, "ReactionBase")
+      .def("mt", &ReactionBase::mt)
+      .def("q", &ReactionBase::q)
+      .def("multiplicity", &ReactionBase::yield,
+           py::return_value_policy::reference_internal)
+      .def("threshold", &ReactionBase::threshold)
+      .def("sample_neutron_angle_energy",
+           &ReactionBase::sample_neutron_angle_energy)
+      .def("neutron_distribution", &ReactionBase::neutron_distribution,
+           py::return_value_policy::reference_internal);
+}
+
+void init_STReaction(py::module& m) {
+  py::class_<STReaction, ReactionBase>(m, "STReaction")
       .def(py::init<const ACE&, size_t, std::shared_ptr<EnergyGrid>>())
       .def(py::init<const ACE&, size_t, std::shared_ptr<EnergyGrid>,
-                    const Reaction&>())
-      .def("mt", &Reaction::mt)
-      .def("q", &Reaction::q)
-      .def("multiplicity", &Reaction::yield,
-           py::return_value_policy::reference_internal)
-      .def("threshold", &Reaction::threshold)
-      .def("xs", &Reaction::xs)
-      .def("sample_neutron_angle_energy",
-           &Reaction::sample_neutron_angle_energy)
-      .def("neutron_distribution", &Reaction::neutron_distribution,
-           py::return_value_policy::reference_internal);
+                    const STReaction&>())
+      .def("xs", &STReaction::xs);
 }

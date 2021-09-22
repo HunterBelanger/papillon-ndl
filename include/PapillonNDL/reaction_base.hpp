@@ -31,8 +31,8 @@
  * termes.
  *
  * */
-#ifndef PAPILLON_NDL_REACTION_H
-#define PAPILLON_NDL_REACTION_H
+#ifndef PAPILLON_NDL_REACTION_BASE_H
+#define PAPILLON_NDL_REACTION_BASE_H
 
 /**
  * @file
@@ -40,46 +40,80 @@
  */
 
 #include <PapillonNDL/ace.hpp>
-#include <PapillonNDL/cross_section.hpp>
-#include <PapillonNDL/reaction_base.hpp>
+#include <PapillonNDL/angle_energy.hpp>
+#include <PapillonNDL/frame.hpp>
+#include <PapillonNDL/function_1d.hpp>
 #include <memory>
 
 namespace pndl {
 
-template <typename XSType>
-class Reaction {};
-
 /**
- * @brief Holds all information for a reaction at a single temperature.
+ * @brief Holds the product distributions for a single MT.
  */
-template <>
-class Reaction<CrossSection> : public ReactionBase {
+class ReactionBase {
  public:
+  ReactionBase(const ReactionBase&) = default;
+
+  /**
+   * @brief Returns the MT of the reaction.
+   */
+  uint32_t mt() const { return mt_; }
+
+  /**
+   * @brief Returns the Q-value of the reaction.
+   */
+  double q() const { return q_; }
+
+  /**
+   * @brief Returns the threshold energy for the reaction.
+   */
+  double threshold() const { return threshold_; }
+
+  /**
+   * @brief Returns the function for the reaction yield.
+   */
+  const Function1D& yield() const { return *yield_; }
+
+  /**
+   * @brief Samples and angle and energy from the neutron reaction
+   *        product distribution.
+   * @param E_in Incident energy in MeV.
+   * @param rng Random number generation function.
+   */
+  AngleEnergyPacket sample_neutron_angle_energy(
+      double E_in, std::function<double()> rng) const {
+    if (E_in < threshold_) return {0., 0.};
+
+    return neutron_distribution_->sample_angle_energy(E_in, rng);
+  }
+
+  /**
+   * @brief Returns the distribution for neutron reaction products.
+   */
+  const AngleEnergy& neutron_distribution() const {
+    return *neutron_distribution_;
+  }
+
+ protected:
+  uint32_t mt_;
+  double q_;
+  double awr_;
+  double threshold_;
+  std::shared_ptr<Function1D> yield_;
+  std::shared_ptr<AngleEnergy> neutron_distribution_;
+
   /**
    * @param ace ACE file to take reaction from.
    * @param indx Reaction index in the MT array.
    */
-  Reaction(const ACE& ace, std::size_t indx, std::shared_ptr<EnergyGrid> egrid);
+  ReactionBase(const ACE& ace, std::size_t indx);
 
-  /**
-   * @param ace ACE file to take cross section from.
-   * @param indx Reaction index in the MT array.
-   * @param egrid Pointer to the EnergyGrid for the nuclide.
-   * @param reac Reaction object to take distributions from.
-   */
-  Reaction(const ACE& ace, std::size_t indx, std::shared_ptr<EnergyGrid> egrid,
-           const Reaction& reac);
-
-  /**
-   * @brief Returns the CrossSection for the reaction.
-   */
-  const CrossSection& xs() const { return *xs_; }
-
- private:
-  std::shared_ptr<CrossSection> xs_;
+  // Private helper methods
+  void load_neutron_distributions(
+      const ACE& ace, std::size_t indx,
+      std::vector<std::shared_ptr<AngleEnergy>>& distributions,
+      std::vector<std::shared_ptr<Tabulated1D>>& probabilities);
 };
-
-using STReaction = Reaction<CrossSection>;
 
 }  // namespace pndl
 
