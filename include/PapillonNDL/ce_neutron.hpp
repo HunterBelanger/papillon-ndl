@@ -47,6 +47,11 @@ namespace pndl {
 template <typename XSType>
 class CENeutron {};
 
+/**
+ * @brief Holds all continuous energy data for single nuclide, at a single
+ *        temperature.
+ *
+ */
 template <>
 class CENeutron<CrossSection> : public CENeutronBase {
  public:
@@ -132,6 +137,10 @@ class CENeutron<CrossSection> : public CENeutronBase {
   std::shared_ptr<CrossSection> compute_fission_xs();
 };
 
+/**
+ * @brief Alias for a CENeutron<CrossSection>, which contains all data for a
+ *        nuclide at a single temperature.
+ */
 using STNeutron = CENeutron<CrossSection>;
 
 }  // namespace pndl

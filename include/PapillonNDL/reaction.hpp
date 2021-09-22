@@ -79,6 +79,10 @@ class Reaction<CrossSection> : public ReactionBase {
   std::shared_ptr<CrossSection> xs_;
 };
 
+/**
+ * @brief Alias for Reaction<CrossSection>, which contains all data for a
+ *        reaction MT at a single temperature.
+ */
 using STReaction = Reaction<CrossSection>;
 
 }  // namespace pndl

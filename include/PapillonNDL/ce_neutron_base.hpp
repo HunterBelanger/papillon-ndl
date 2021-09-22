@@ -49,7 +49,8 @@ namespace pndl {
 
 /**
  * @brief Holds all non temperature-dependent, continuous energy data for a
- *        single nuclide.
+ *        single nuclide. This is mainly ZAID, AWR, delayed fission info,
+ *        and nu.
  */
 class CENeutronBase {
  public:

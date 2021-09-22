@@ -48,7 +48,8 @@
 namespace pndl {
 
 /**
- * @brief Holds the product distributions for a single MT.
+ * @brief Holds the non temperature-dependent info and product distributions
+ *        for a single MT.
  */
 class ReactionBase {
  public:

@@ -4,10 +4,17 @@
 Nuclear Data Interface
 ======================
 
-CENeutron
+CENeutronBase
+-------------
+
+.. doxygenclass:: pndl::CENeutronBase
+
+STNeutron
 ---------
 
-.. doxygenclass:: pndl::CENeutron
+.. doxygentypedef:: pndl::STNeutron
+
+.. doxygenclass:: pndl::CENeutron< CrossSection >
 
 EnergyGrid
 ----------
@@ -19,10 +26,17 @@ CrossSection
 
 .. doxygenclass:: pndl::CrossSection
 
-Reaction
---------
+ReactionBase
+------------
 
-.. doxygenclass:: pndl::Reaction
+.. doxygenclass:: pndl::ReactionBase
+
+STReaction
+----------
+
+.. doxygentypedef:: pndl::STReaction
+
+.. doxygenclass:: pndl::Reaction< CrossSection >
 
 DelayedGroup
 ------------
