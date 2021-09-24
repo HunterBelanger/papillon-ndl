@@ -56,7 +56,7 @@ set(PNDL_SOURCE_LIST src/region_1d.cpp
 )
 
 # Only let a static library be built on Windows
-if(WIN32)
+if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
   if(PNDL_SHARED)
     message("Only a static library may be built for Windows.")
     message("Setting PNDL_SHARED to OFF.")
@@ -146,7 +146,7 @@ if(PNDL_PYTHON)
                                     src/python/prng.cpp
   )
   
-  # Require C++17 standard
+  # Require C++20 standard
   target_compile_features(pyPapillonNDL PRIVATE cxx_std_20)
   
   # Must link Python bindings with full library
