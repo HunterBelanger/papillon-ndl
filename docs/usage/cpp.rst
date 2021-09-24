@@ -10,7 +10,7 @@ Reading an ACE File
 
 Most use cases of PapillonNDL only require the inclusion of a single header
 file: ``PapillonNDL/ce_neutron.hpp``. This allows you to first read an ACE file,
-and then construct a CENeutron object from it (assuming it is an ACE file with
+and then construct a STNeutron object from it (assuming it is an ACE file with
 continuous energy neutron data !).
 
 .. code-block:: c++
@@ -19,9 +19,13 @@ continuous energy neutron data !).
   #include <iostream>
 
   int main() {
-
+    // Read ACE file with nuclear data
     pndl::ACE U235ace = pndl::ACE("U235.300c");
-    pndl::CENeutron U235(U235ace);
+
+    // Construct an STNeutron instance from the ACE file.
+    // And STNeutron contains all continuous energy neutron data
+    // for a single nuclide, and at a single temperature.
+    pndl::STNeutron U235(U235ace);
 
     // Writes the ZAID to the terimal. For U235, this should
     // be 92235.
@@ -45,7 +49,7 @@ your linker search path, then this should be as easy as:
 Evaluating Cross Sections
 -------------------------
 
-CENeutron objects have quick-access functions to allow fast evaluation of the
+STNeutron objects have quick-access functions to allow fast evaluation of the
 total, absorption, and elastic scattering cross sections. If we want to find
 these cross sections for U235 at 3MeV, then we can do
 
@@ -102,7 +106,7 @@ reaction; Here, we will look at the (n,2n) reaction (MT=16):
 
   // I know that U235 has MT=16, so we don't need to check that
   // it exists, but this should be done in general !
-  const pndl::Reaction& U235_n2n = U235.reaction(16);
+  const pndl::STReaction& U235_n2n = U235.reaction(16);
 
   double E_min = U235_n2n.threshold();
 
@@ -156,7 +160,7 @@ such as U235. While the fission cross section is contained in the
 MT=18 reaction (or sometimes MT=19,20,21, and 38), helper methods to
 access other bits of fission data such as the number of neutrons per
 fission, the fission neutron spectrum, and delayed group info/spectra are
-provided in the CENeutron class.
+provided in the STNeutron class.
 
 .. code-block:: c++
 
