@@ -22,9 +22,9 @@ be found [here](https://cecill.info/).
 
 ## Dependencies
 The library may be built on Unix-like operating systems or on Windows. All that
-is required is cmake >= 3.11, and a C++ compiler which supports the C++17
-standard. For Unix-like systems, the recommended compilers are GCC >= 7 or
-Clang >= 6. On Windows, you should have MSVC >= 19.15. In order to build the
+is required is cmake >= 3.11, and a C++ compiler which supports the C++20
+standard. For Unix-like systems, the recommended compilers are GCC >= 11.2.
+On Windows, you should have MSVC >= 19.29. In order to build the
 Python interface, Python >= 3.5 should be installed on your system, in
 addition to the Python development libraries and header files.
 

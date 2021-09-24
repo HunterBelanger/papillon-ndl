@@ -9,8 +9,8 @@ Build Requirements
 ------------------
 
 To build the C++ library on linux, a C++ compiler is required, which supports
-the C++17 standard. Any remotely recent version of g++ or clang should fit
-the bill for this. On Windows, we recommend MSVC >= 19.15. You will also need
+the C++20 standard. On Linux systems, the only current option which satisfied
+this is GCC 11.2. On Windows, you will need MSVC >= 19.29. You will also need
 cmake >= 3.11, whether you use Windows or linux.
 
 In addition, if you would like to build the Python API, you will also need to
