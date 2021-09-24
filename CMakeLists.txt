@@ -60,6 +60,7 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
   if(PNDL_SHARED)
     message("Only a static library may be built for Windows.")
     message("Setting PNDL_SHARED to OFF.")
+    set(PNDL_SHARED OFF)
   endif()
 endif()
 
