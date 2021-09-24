@@ -87,8 +87,8 @@ void ACE::read_ascii(std::ifstream& file) {
   // Check first line to determine header type
   bool legacy_header = true;
 
-  char c1 = file.get();
-  char c2 = file.peek();
+  char c1 = static_cast<char>(file.get());
+  char c2 = static_cast<char>(file.peek());
   if (c1 == '2' && c2 == '.') legacy_header = false;
   file.unget();
 
@@ -311,7 +311,7 @@ void ACE::save_binary(std::string& fname) {
 
     if (n > ner) n = ner;
 
-    rlen = n * sizeof(double);
+    rlen = n * static_cast<std::size_t>(sizeof(double));
 
     // Write first len header
     file.write(reinterpret_cast<char*>(&rlen), 4);
