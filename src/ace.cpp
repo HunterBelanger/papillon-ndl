@@ -311,7 +311,7 @@ void ACE::save_binary(std::string& fname) {
 
     if (n > ner) n = ner;
 
-    rlen = n * static_cast<uint32_t>(sizeof(double));
+    rlen = static_cast<uint32_t>(n * sizeof(double));
 
     // Write first len header
     file.write(reinterpret_cast<char*>(&rlen), 4);
