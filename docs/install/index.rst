@@ -16,7 +16,7 @@ cmake >= 3.11, whether you use Windows or linux.
 In addition, if you would like to build the Python API, you will also need to
 ensure that the Python development headers are installed on your system.
 
-Fedora 35+
+Fedora 34+
 ------------------------
 To ensure you have all the build requirements on a RedHat based system, run the
 following command:
