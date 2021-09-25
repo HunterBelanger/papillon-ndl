@@ -10,22 +10,13 @@ Build Requirements
 
 To build the C++ library on linux, a C++ compiler is required, which supports
 the C++20 standard. On Linux systems, the only current option which satisfied
-this is GCC 11.2. On Windows, you will need MSVC >= 19.29. You will also need
+this is GCC >= 11. On Windows, you will need MSVC >= 19.29. You will also need
 cmake >= 3.11, whether you use Windows or linux.
 
 In addition, if you would like to build the Python API, you will also need to
 ensure that the Python development headers are installed on your system.
 
-Debian / Ubuntu / LinuxMint
----------------------------
-To ensure you have all the build requirements on a Debian based system, run the
-following command:
-
-.. code-block:: sh
-
-  sudo apt install g++ cmake python3-dev
-
-Fedora / CentOS / RedHat
+Fedora 35+
 ------------------------
 To ensure you have all the build requirements on a RedHat based system, run the
 following command:
@@ -34,7 +25,7 @@ following command:
 
   sudo dnf install g++ cmake python3-devel
 
-Arch / Manjaro
+Arch / Manjaro 21+
 ------------------------
 To ensure you have all the build requirements on an Arch based system, run the
 following command:
@@ -43,12 +34,24 @@ following command:
 
   sudo pacman -S g++ cmake python3
 
+Other Linux Distributions
+-------------------------
+Unfortunately, GCC-11 is quite new, and many distrubtions do not yet ship this
+compiler toolchain, or have specific installation commands. If you are not
+using one of hte distributions listed above, first check to see if there is
+a specific method to install GCC-11 form your distributions repositories. If
+not, I recommend building GCC-11 from source. This is outside the scope of these
+installation instruction, but instructions are readily found online.
+
 Windows
 --------
 There are no quick and easy commands to install the necessary dependencies on
 Windows sadly. You should insall Visual Studio 2019, and when performing the
 installation, be sure to also install the Python development libraries. You
-will also have to download and install cmake separately as well.
+will also have to download and install cmake separately as well. If you already
+have Visual Studio 2019 installed, you should make sure that it has been
+updated to the most recent version, or that the compiler version is at least
+MSVC >= 19.29.
 
 ------------------
 Getting the Source
@@ -106,6 +109,15 @@ PNDL_PYTHON
 
 PNDL_TESTS
   This is used to build the unit tests, and is turned off by default.
+
+PNDL_SHARED
+  Builds a shared library, as opposed to a static library. This is turned on by
+  default. When building on Windows, this will automatically be turned off.
+
+PNDL_INSTALL
+  Adds and exports the installation targets for PapillonNDL. This is truned on
+  by default, but can be turned off if using PapillonNDL as a build dependency
+  in another project.
 
 Several other standard cmake options will also be usefull in many cases, and
 are therefore listed here:

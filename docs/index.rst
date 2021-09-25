@@ -11,7 +11,7 @@ used to read continuous energy ACE files, for neutron cross sections and
 secondary distributions. It can find and evaluate cross sections, sample
 secondary angle and energy distributions, and provide access to much more data.
 
-Written in C++17 with object orientation, the library provides an easy way to
+Written in C++20 with object orientation, the library provides an easy way to
 get the data you need out of ACE files, and fast. A Python API is also generated
 using Pybind11, allowing you the same speedy access through Python, without
 having to learn a second API! This is a great option for when you want to
