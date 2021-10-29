@@ -21,11 +21,11 @@
  *
  * */
 #include <PapillonNDL/maxwellian.hpp>
+#include <PapillonNDL/constants.hpp>
 #include <PapillonNDL/multi_region_1d.hpp>
 #include <PapillonNDL/region_1d.hpp>
 #include <cmath>
 
-#include "constants.hpp"
 
 namespace pndl {
 

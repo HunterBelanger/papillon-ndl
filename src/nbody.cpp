@@ -21,10 +21,10 @@
  *
  * */
 #include <PapillonNDL/nbody.hpp>
+#include <PapillonNDL/constants.hpp>
 #include <PapillonNDL/pndl_exception.hpp>
 #include <cmath>
 
-#include "constants.hpp"
 
 namespace pndl {
 

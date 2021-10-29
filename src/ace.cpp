@@ -21,13 +21,13 @@
  *
  * */
 #include <PapillonNDL/ace.hpp>
+#include <PapillonNDL/constants.hpp>
 #include <PapillonNDL/pndl_exception.hpp>
 #include <filesystem>
 #include <fstream>
 #include <ios>
 #include <string>
 
-#include "constants.hpp"
 
 namespace pndl {
 

@@ -20,12 +20,12 @@
  * along with PapillonNDL. If not, see <https://www.gnu.org/licenses/>.
  *
  * */
+#include <PapillonNDL/watt.hpp>
+#include <PapillonNDL/constants.hpp>
 #include <PapillonNDL/multi_region_1d.hpp>
 #include <PapillonNDL/region_1d.hpp>
-#include <PapillonNDL/watt.hpp>
 #include <cmath>
 
-#include "constants.hpp"
 
 namespace pndl {
 

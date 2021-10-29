@@ -21,6 +21,7 @@
  *
  * */
 #include <PapillonNDL/delayed_group.hpp>
+#include <PapillonNDL/constants.hpp>
 #include <PapillonNDL/equiprobable_energy_bins.hpp>
 #include <PapillonNDL/evaporation.hpp>
 #include <PapillonNDL/general_evaporation.hpp>
@@ -31,7 +32,6 @@
 #include <PapillonNDL/watt.hpp>
 #include <iostream>
 
-#include "constants.hpp"
 
 namespace pndl {
 
