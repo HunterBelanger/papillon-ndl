@@ -215,7 +215,7 @@ class ACE {
    * @brief Saves a copy of the ACE file in the type 2 binary format.
    * @param fname Name of file where binary data will be saved.
    */
-  void save_binary(std::string& fname);
+  void save_binary(const std::string& fname);
 
   /**
    * @brief Returns a pointer to the beginning of the XSS array.

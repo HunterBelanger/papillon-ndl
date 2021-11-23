@@ -249,7 +249,7 @@ void ACE::read_binary(std::ifstream& file) {
   if (jxs_[1] > 0) fissile_ = true;
 }
 
-void ACE::save_binary(std::string& fname) {
+void ACE::save_binary(const std::string& fname) {
   std::ofstream file(fname, std::ios_base::binary);
 
   // Write first record length which is size of all
