@@ -118,7 +118,7 @@ if(PNDL_PYTHON)
 
     FetchContent_Declare(pybind11
       GIT_REPOSITORY https://github.com/pybind/pybind11
-      GIT_TAG        v2.6.2
+      GIT_TAG        v2.9.1
     )
 
     FetchContent_MakeAvailable(pybind11)
