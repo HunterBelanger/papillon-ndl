@@ -50,7 +50,7 @@ class EquiprobableAngleBins : public AngleLaw {
   EquiprobableAngleBins(const std::vector<double>& bounds);
   ~EquiprobableAngleBins() = default;
 
-  double sample_mu(double xi) const override final;
+  double sample_mu(std::function<double()> rng) const override final;
 
   double pdf(double mu) const override final;
 

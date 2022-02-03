@@ -22,11 +22,12 @@
  * */
 #include <PapillonNDL/isotropic.hpp>
 #include <cmath>
+#include <functional>
 
 namespace pndl {
 
-double Isotropic::sample_mu(double xi) const {
-  double mu = 2. * xi - 1.;
+double Isotropic::sample_mu(std::function<double()> rng) const {
+  double mu = 2. * rng() - 1.;
   if (std::abs(mu) > 1.) mu = std::copysign(1., mu);
   return mu;
 }
