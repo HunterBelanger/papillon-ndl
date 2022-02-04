@@ -78,8 +78,8 @@ AngleTable::AngleTable(const PCTable& table) : distribution_(table) {
   }
 }
 
-double AngleTable::sample_mu(double xi) const {
-  double mu = distribution_.sample_value(xi);
+double AngleTable::sample_mu(std::function<double()> rng) const {
+  double mu = distribution_.sample_value(rng());
   if (std::abs(mu) > 1.) mu = std::copysign(1., mu);
   return mu;
 }

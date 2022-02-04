@@ -22,6 +22,7 @@ set(PNDL_SOURCE_LIST src/region_1d.cpp
                      src/isotropic.cpp
                      src/equiprobable_angle_bins.cpp
                      src/angle_table.cpp
+                     src/legendre.cpp
                      src/equiprobable_energy_bins.cpp
                      src/level_inelastic_scatter.cpp
                      src/general_evaporation.cpp
@@ -118,7 +119,7 @@ if(PNDL_PYTHON)
 
     FetchContent_Declare(pybind11
       GIT_REPOSITORY https://github.com/pybind/pybind11
-      GIT_TAG        v2.6.2
+      GIT_TAG        v2.9.1
     )
 
     FetchContent_MakeAvailable(pybind11)

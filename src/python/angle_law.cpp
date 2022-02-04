@@ -20,12 +20,14 @@
  * along with PapillonNDL. If not, see <https://www.gnu.org/licenses/>.
  *
  * */
+#include <pybind11/functional.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
 #include <PapillonNDL/angle_table.hpp>
 #include <PapillonNDL/equiprobable_angle_bins.hpp>
 #include <PapillonNDL/isotropic.hpp>
+#include <PapillonNDL/legendre.hpp>
 
 namespace py = pybind11;
 
@@ -36,8 +38,8 @@ class PyAngleLaw : public AngleLaw {
  public:
   using AngleLaw::AngleLaw;
 
-  double sample_mu(double xi) const override {
-    PYBIND11_OVERRIDE_PURE(double, AngleLaw, sample_mu, xi);
+  double sample_mu(std::function<double()> rng) const override {
+    PYBIND11_OVERRIDE_PURE(double, AngleLaw, sample_mu, rng);
   }
 
   double pdf(double mu) const override {
@@ -83,4 +85,14 @@ void init_AngleTable(py::module& m) {
       .def("pdf", py::overload_cast<double>(&AngleTable::pdf, py::const_))
       .def("cdf", &AngleTable::cdf)
       .def("interpolation", &AngleTable::interpolation);
+}
+
+void init_Legendre(py::module& m) {
+  py::class_<Legendre, AngleLaw, std::shared_ptr<Legendre>>(m, "Legendre")
+      .def(py::init<>())
+      .def(py::init<const std::vector<double>&>())
+      .def("sample_mu", &Legendre::sample_mu)
+      .def("pdf", &Legendre::pdf)
+      .def("set_moment", &Legendre::set_moment)
+      .def("coefficients", &Legendre::coefficients);
 }

@@ -1,6 +1,7 @@
 #include <PapillonNDL/isotropic.hpp>
 #include <PapillonNDL/equiprobable_angle_bins.hpp>
 #include <PapillonNDL/angle_table.hpp>
+#include <vector>
 #include <gtest/gtest.h>
 
 namespace pndl {
@@ -11,11 +12,17 @@ namespace {
 TEST(Isotropic, SampleMu) {
   Isotropic iso;
 
-  EXPECT_DOUBLE_EQ(iso.sample_mu(0.), -1.);
-  EXPECT_DOUBLE_EQ(iso.sample_mu(0.25), -0.5);
-  EXPECT_DOUBLE_EQ(iso.sample_mu(0.5), 0.);
-  EXPECT_DOUBLE_EQ(iso.sample_mu(0.75), 0.5);
-  EXPECT_DOUBLE_EQ(iso.sample_mu(1.), 1.);
+  const std::vector<double> xi {0., 0.25, 0.5, 0.75, 1.};
+  std::size_t xi_i = 0;
+  auto rng = [&xi, &xi_i]() {
+    return xi[xi_i++]; 
+  };
+
+  EXPECT_DOUBLE_EQ(iso.sample_mu(rng), -1.);
+  EXPECT_DOUBLE_EQ(iso.sample_mu(rng), -0.5);
+  EXPECT_DOUBLE_EQ(iso.sample_mu(rng), 0.);
+  EXPECT_DOUBLE_EQ(iso.sample_mu(rng), 0.5);
+  EXPECT_DOUBLE_EQ(iso.sample_mu(rng), 1.);
 }
 
 TEST(Isotropic, PDF) {
@@ -40,11 +47,17 @@ TEST(EquiprobableAngleBins, SampleMu) {
         0.75  ,  0.8125,  0.875 ,  0.9375,  1.};
   EquiprobableAngleBins bins(bounds);
 
-  EXPECT_DOUBLE_EQ(bins.sample_mu(0.), -1.);
-  EXPECT_DOUBLE_EQ(bins.sample_mu(0.25), -0.5);
-  EXPECT_DOUBLE_EQ(bins.sample_mu(0.5), 0.);
-  EXPECT_DOUBLE_EQ(bins.sample_mu(0.75), 0.5);
-  EXPECT_DOUBLE_EQ(bins.sample_mu(1.), 1.);
+  const std::vector<double> xi {0., 0.25, 0.5, 0.75, 1.};
+  std::size_t xi_i = 0;
+  auto rng = [&xi, &xi_i]() {
+    return xi[xi_i++]; 
+  };
+
+  EXPECT_DOUBLE_EQ(bins.sample_mu(rng), -1.);
+  EXPECT_DOUBLE_EQ(bins.sample_mu(rng), -0.5);
+  EXPECT_DOUBLE_EQ(bins.sample_mu(rng), 0.);
+  EXPECT_DOUBLE_EQ(bins.sample_mu(rng), 0.5);
+  EXPECT_DOUBLE_EQ(bins.sample_mu(rng), 1.);
 }
 
 TEST(EquiprobableAngleBins, PDF) {
@@ -115,12 +128,18 @@ TEST(AngleTable, SampleMu) {
   std::vector<double> pdf   {0.5, 0.5, 0.5};
   std::vector<double> cdf   {0., 0.5, 1.};
   AngleTable tab(vals, pdf, cdf, Interpolation::LinLin);
+  
+  const std::vector<double> xi {0., 0.25, 0.5, 0.75, 1.};
+  std::size_t xi_i = 0;
+  auto rng = [&xi, &xi_i]() {
+    return xi[xi_i++]; 
+  };
 
-  EXPECT_DOUBLE_EQ(tab.sample_mu(0.), -1.);
-  EXPECT_DOUBLE_EQ(tab.sample_mu(0.25), -0.5);
-  EXPECT_DOUBLE_EQ(tab.sample_mu(0.5), 0.);
-  EXPECT_DOUBLE_EQ(tab.sample_mu(0.75), 0.5);
-  EXPECT_DOUBLE_EQ(tab.sample_mu(1.), 1.);
+  EXPECT_DOUBLE_EQ(tab.sample_mu(rng), -1.);
+  EXPECT_DOUBLE_EQ(tab.sample_mu(rng), -0.5);
+  EXPECT_DOUBLE_EQ(tab.sample_mu(rng), 0.);
+  EXPECT_DOUBLE_EQ(tab.sample_mu(rng), 0.5);
+  EXPECT_DOUBLE_EQ(tab.sample_mu(rng), 1.);
 }
 
 TEST(AngleTable, PDF) {

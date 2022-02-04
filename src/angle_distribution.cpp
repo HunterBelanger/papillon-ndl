@@ -105,9 +105,9 @@ double AngleDistribution::sample_angle(double E_in,
                                        std::function<double()> rng) const {
   auto E_it = std::lower_bound(energy_grid_.begin(), energy_grid_.end(), E_in);
   if (E_it == energy_grid_.begin())
-    return laws_.front()->sample_mu(rng());
+    return laws_.front()->sample_mu(rng);
   else if (E_it == energy_grid_.end())
-    return laws_.back()->sample_mu(rng());
+    return laws_.back()->sample_mu(rng);
   E_it--;
 
   // Get index of low energy
@@ -117,9 +117,9 @@ double AngleDistribution::sample_angle(double E_in,
   double mu = 0;
 
   if (rng() > f)
-    mu = laws_[l]->sample_mu(rng());
+    mu = laws_[l]->sample_mu(rng);
   else
-    mu = laws_[l + 1]->sample_mu(rng());
+    mu = laws_[l + 1]->sample_mu(rng);
 
   if (std::abs(mu) > 1.) mu = std::copysign(1., mu);
 

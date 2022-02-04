@@ -30,6 +30,7 @@
 
 #include <PapillonNDL/angle_law.hpp>
 #include <cmath>
+#include <functional>
 
 namespace pndl {
 
@@ -41,7 +42,7 @@ class Isotropic : public AngleLaw {
   Isotropic() {}
   ~Isotropic() = default;
 
-  double sample_mu(double xi) const override final;
+  double sample_mu(std::function<double()> rng) const override final;
 
   double pdf(double mu) const override final;
 };
