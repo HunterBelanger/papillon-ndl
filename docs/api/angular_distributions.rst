@@ -24,6 +24,10 @@ AngleTable
 
 .. doxygenclass:: pndl::AngleTable
 
+Legendre
+--------
+.. doxygenclass:: pndl::Legendre
+
 Isotropic
 ---------
 
