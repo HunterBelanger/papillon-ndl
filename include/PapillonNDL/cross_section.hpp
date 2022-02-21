@@ -240,6 +240,12 @@ class CrossSection {
   const std::vector<double>& xs() const { return *values_; }
 
   /**
+   * @breif Returns a reference to the EnergyGrid object associated with the
+   *        cross section.
+   */
+  const EnergyGrid& energy_grid() const { return *energy_grid_; }
+
+  /**
    * @brief Returns a copy of the energy grid points for the cross section
    *        as a vector of floats.
    */
