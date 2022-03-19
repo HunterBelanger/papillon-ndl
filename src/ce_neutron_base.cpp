@@ -39,7 +39,7 @@ CENeutronBase::CENeutronBase(const ACE& ace)
     : zaid_(ace.zaid()),
       awr_(ace.awr()),
       fissile_(ace.fissile()),
-      elastic_angle_(nullptr),
+      elastic_angle_(),
       nu_total_(nullptr),
       nu_prompt_(nullptr),
       nu_delayed_(nullptr),
@@ -47,8 +47,7 @@ CENeutronBase::CENeutronBase(const ACE& ace)
       mt_list_(),
       reaction_indices_() {
   // Make elastic AngleDistribution
-  elastic_angle_ =
-      std::make_shared<AngleDistribution>(ace, ace.xss<int>(ace.LAND()));
+  elastic_angle_ = AngleDistribution(ace, ace.xss<int>(ace.LAND()));
 
   // Read all reaction MTs
   uint32_t NMT = ace.nxs(3);

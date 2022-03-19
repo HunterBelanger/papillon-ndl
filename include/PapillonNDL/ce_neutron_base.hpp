@@ -79,7 +79,7 @@ class CENeutronBase {
    * @brief Returns the AngleDistribution for elastic scattering.
    */
   const AngleDistribution& elastic_angle_distribution() const {
-    return *elastic_angle_;
+    return elastic_angle_;
   }
 
   /**
@@ -113,7 +113,7 @@ class CENeutronBase {
   double awr_;
   bool fissile_;
 
-  std::shared_ptr<AngleDistribution> elastic_angle_;
+  AngleDistribution elastic_angle_;
 
   std::shared_ptr<Function1D> nu_total_;
   std::shared_ptr<Function1D> nu_prompt_;
