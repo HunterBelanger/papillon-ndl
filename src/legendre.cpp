@@ -63,7 +63,7 @@ double Legendre::pdf(double mu) const {
   double pdf = 0.;
 
   for (std::size_t l = 0; l < a_.size(); l++) {
-    pdf += a_[l] * std::legendre(l, mu);
+    pdf += a_[l] * std::legendre(static_cast<unsigned int>(l), mu);
   }
 
   return pdf;
