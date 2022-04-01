@@ -7,6 +7,7 @@ project(PapillonNDL
 )
 
 include(CMakePackageConfigHelpers)
+include(FetchContent)
 
 # Add options
 option(PNDL_SHARED "Build PapillonNDL as a shared library" ON)
@@ -15,7 +16,8 @@ option(PNDL_INSTALL "Install the PapillonNDL library and header files" ON)
 option(PNDL_TESTS "Build PapillonNDL tests" OFF)
 
 # List of source files for PapillonNDL
-set(PNDL_SOURCE_LIST src/region_1d.cpp
+set(PNDL_SOURCE_LIST src/element.cpp
+                     src/region_1d.cpp
                      src/multi_region_1d.cpp
                      src/polynomial_1d.cpp
                      src/ace.cpp
@@ -84,6 +86,7 @@ target_include_directories(PapillonNDL PUBLIC
 # Require C++20 standard
 target_compile_features(PapillonNDL PUBLIC cxx_std_20)
 
+
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC") # Comile options for Windows
   target_compile_options(PapillonNDL PRIVATE /W4)
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU") # Compile options for GCC
@@ -114,14 +117,10 @@ if(PNDL_PYTHON)
   if(NOT pybind11_FOUND)
     message(STATUS "Could not find a local install of Pybind11")
     message(STATUS "Will download Pybind11 instead")
-
-    include(FetchContent)
-
     FetchContent_Declare(pybind11
       GIT_REPOSITORY https://github.com/pybind/pybind11
       GIT_TAG        v2.9.1
     )
-
     FetchContent_MakeAvailable(pybind11)
   else()
     message(STATUS "Using local install of Pybind11")
@@ -146,6 +145,7 @@ if(PNDL_PYTHON)
                                     src/python/delayed_group.cpp
                                     src/python/ce_neutron.cpp
                                     src/python/prng.cpp
+                                    src/python/nuclide.cpp
   )
   
   # Require C++20 standard
