@@ -119,7 +119,7 @@ if(PNDL_PYTHON)
     message(STATUS "Will download Pybind11 instead")
     FetchContent_Declare(pybind11
       GIT_REPOSITORY https://github.com/pybind/pybind11
-      GIT_TAG        v2.9.1
+      GIT_TAG        v2.9.2
     )
     FetchContent_MakeAvailable(pybind11)
   else()
