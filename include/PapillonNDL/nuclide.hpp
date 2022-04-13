@@ -49,8 +49,8 @@ class Nuclide {
      * @param level Isomer level of the nuclide.
      */
     Nuclide(const Isotope& isotope, uint8_t level = 0): isotope_(isotope), level_(level) {
-      if (level > 5) {
-        std::string mssg = "Cannot create Nuclide with iosmer lever greater than 5. "
+      if (level > 2) {
+        std::string mssg = "Cannot create Nuclide with iosmer lever greater than 2. "
           "Was provided with level = " + std::to_string(level_) + ".";
         throw  PNDLException(mssg);
       }
@@ -70,8 +70,8 @@ class Nuclide {
         throw err;
       }
 
-      if (level > 5) {
-        std::string mssg = "Cannot create Nuclide with iosmer lever greater than 5. "
+      if (level > 2) {
+        std::string mssg = "Cannot create Nuclide with iosmer lever greater than 2. "
           "Was provided with level = " + std::to_string(level_) + ".";
         throw  PNDLException(mssg);
       }
@@ -125,8 +125,7 @@ class Nuclide {
     std::string symbol() const {
       std::string symbl = isotope_.symbol(); 
       if (level_ > 0) {
-        symbl += 'm';
-        symbl += std::to_string(level_); 
+        symbl += 'm' + std::to_string(level_); 
       }
       return symbl;
     }
