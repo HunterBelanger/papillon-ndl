@@ -28,8 +28,9 @@ TEST(ZAID, ZAID) {
   EXPECT_FALSE(zaid2 < zaid);
 
   std::hash<ZAID> zhash;
-  EXPECT_EQ(zhash(zaid), zaid.zaid());
-  EXPECT_EQ(zhash(zaid2), zaid2.zaid());
+  std::hash<uint32_t> uhash;
+  EXPECT_EQ(zhash(zaid), uhash(zaid.zaid()));
+  EXPECT_EQ(zhash(zaid2), uhash(zaid2.zaid()));
 }
 
 //================================================
@@ -60,8 +61,9 @@ TEST(Element, Element) {
   EXPECT_FALSE(Pu < U);
 
   std::hash<Element> ehash;
-  EXPECT_EQ(ehash(U), U.Z());
-  EXPECT_EQ(ehash(Pu), Pu.Z());
+  std::hash<uint8_t> uhash;
+  EXPECT_EQ(ehash(U), uhash(U.Z()));
+  EXPECT_EQ(ehash(Pu), uhash(Pu.Z()));
 
   Element U_from_symbol = Element::from_symbol("U");
   EXPECT_TRUE(U == U_from_symbol);
