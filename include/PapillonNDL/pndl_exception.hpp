@@ -54,7 +54,7 @@ class PNDLException : public std::exception {
   /**
    * @brief Adds details to the exception message as it is passed up the stack.
    * @param mssg Error message.
-   * @param file Location where the error was thrown.
+   * @param location Location where the error was thrown.
    */
   void add_to_exception(
       const std::string& mssg,
