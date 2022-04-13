@@ -40,7 +40,8 @@
 namespace pndl {
 
 /**
- * @brief Class which identifies an isotope.
+ * @brief Class which identifies an isotope. The atomic mass number must be at
+ *        least equal to the atomic number, and can be no larger than 300.
  */
 class Isotope {
   public:
@@ -109,7 +110,7 @@ class Isotope {
     uint32_t atomic_mass() const { return A(); }
     
     /**
-     * @bried Returns ZAID of isotope.
+     * @brief Returns ZAID of isotope.
      */ 
     ZAID zaid() const { return ZAID(element_.Z(), A_); }
   

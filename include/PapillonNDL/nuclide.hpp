@@ -40,7 +40,8 @@
 namespace pndl {
 
 /**
- * @brief Class which identifies a nuclide.
+ * @brief Class which identifies a nuclide. The isomer level may be no
+ *        greater than 2.
  */
 class Nuclide {
   public:
