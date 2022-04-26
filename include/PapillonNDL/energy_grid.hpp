@@ -30,6 +30,7 @@
 
 #include <PapillonNDL/ace.hpp>
 #include <cmath>
+#include <cstddef>
 #include <memory>
 #include <vector>
 
@@ -91,6 +92,17 @@ class EnergyGrid : public std::enable_shared_from_this<EnergyGrid> {
   double max_energy() const { return energy_values_.back(); }
 
   /**
+   * @brief Returns the starting energy for the unresolved resonance region.
+   */
+  double urr_min_energy() const { return urr_start_energy_; }
+
+  /**
+   * @brief Returns true if the EnergyGrid has an associated unresolved
+   *        resonance region.
+   */
+  bool has_urr() const { return urr_start_energy_ < this->max_energy(); }
+
+  /**
    * @brief Finds the interpolation index for a given energy, using the
    *        hashing algorithm for speed.
    * @param E Energy for which to find the index.
@@ -126,6 +138,7 @@ class EnergyGrid : public std::enable_shared_from_this<EnergyGrid> {
   std::vector<double> energy_values_;
   std::vector<uint32_t> bin_pointers_;
   double u_min, du;
+  double urr_start_energy_;
 };
 
 }  // namespace pndl
