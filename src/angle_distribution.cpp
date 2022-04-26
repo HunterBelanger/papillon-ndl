@@ -26,8 +26,21 @@
 #include <PapillonNDL/isotropic.hpp>
 #include <PapillonNDL/pndl_exception.hpp>
 #include <cmath>
+#include <memory>
 
 namespace pndl {
+
+AngleDistribution::AngleDistribution()
+    : energy_grid_(), laws_() {
+  energy_grid_.reserve(2); 
+  laws_.reserve(2);
+
+  energy_grid_.push_back(1.E-11);
+  energy_grid_.push_back(200.);
+
+  laws_.push_back(std::make_shared<Isotropic>());
+  laws_.push_back(std::make_shared<Isotropic>());
+}
 
 AngleDistribution::AngleDistribution(const ACE& ace, int locb)
     : energy_grid_(), laws_() {

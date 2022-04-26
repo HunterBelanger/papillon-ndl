@@ -33,6 +33,7 @@ using namespace pndl;
 void init_AngleDistribution(py::module& m) {
   py::class_<AngleDistribution, std::shared_ptr<AngleDistribution>>(
       m, "AngleDistribution")
+      .def(py::init<>())
       .def(py::init<const ACE&, int>())
       .def(py::init<const std::vector<double>&,
                     const std::vector<std::shared_ptr<AngleLaw>>&>())

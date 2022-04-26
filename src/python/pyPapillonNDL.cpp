@@ -78,6 +78,10 @@ extern void init_STNeutron(py::module& m);
 extern void init_CENeutronBase(py::module& m);
 extern void init_STReaction(py::module& m);
 extern void init_PRNG(py::module&);
+extern void init_ZAID(py::module&);
+extern void init_Element(py::module&);
+extern void init_Isotope(py::module&);
+extern void init_Nuclide(py::module&);
 
 PYBIND11_MODULE(pyPapillonNDL, m) {
   init_ACE(m);
@@ -132,6 +136,10 @@ PYBIND11_MODULE(pyPapillonNDL, m) {
   init_CENeutronBase(m);
   init_STNeutron(m);
   init_PRNG(m);
+  init_ZAID(m);
+  init_Element(m);
+  init_Isotope(m);
+  init_Nuclide(m);
 
   m.attr("__author__") = "Hunter Belanger";
   m.attr("__copyright__") = "Copyright 2021, Hunter Belanger";

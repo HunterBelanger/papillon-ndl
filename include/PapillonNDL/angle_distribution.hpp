@@ -41,6 +41,8 @@ namespace pndl {
  */
 class AngleDistribution {
  public:
+  AngleDistribution(); 
+
   /**
    * @param ace ACE file to take data from.
    * @param locb Index in the XSS array to start reading angular distribution.

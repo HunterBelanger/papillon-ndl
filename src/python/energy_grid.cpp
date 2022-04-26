@@ -40,5 +40,7 @@ void init_EnergyGrid(py::module& m) {
       .def("min_energy", &EnergyGrid::min_energy)
       .def("max_energy", &EnergyGrid::max_energy)
       .def("get_lower_index", &EnergyGrid::get_lower_index)
+      .def("urr_min_energy", &EnergyGrid::urr_min_energy)
+      .def("has_urr", &EnergyGrid::has_urr)
       .def("hash_energy_grid", &EnergyGrid::hash_energy_grid);
 }

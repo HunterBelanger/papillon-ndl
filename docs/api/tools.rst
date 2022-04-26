@@ -54,6 +54,26 @@ LogLog
 
 .. doxygenstruct:: pndl::LogLog
 
+ZAID
+----
+
+.. doxygenclass:: pndl::ZAID
+
+Element
+-------
+
+.. doxygenclass:: pndl::Element
+
+Isotope
+-------
+
+.. doxygenclass:: pndl::Isotope
+
+Nuclide
+-------
+
+.. doxygenclass:: pndl::Nuclide
+
 PNDLException
 -------------
 

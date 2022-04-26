@@ -27,8 +27,18 @@
 namespace pndl {
 
 EnergyGrid::EnergyGrid(const ACE& ace, uint32_t NBINS)
-    : energy_values_({0.}), bin_pointers_(), u_min(), du() {
+    : energy_values_({0.}), bin_pointers_(), u_min(), du(), urr_start_energy_() {
   energy_values_ = ace.xss(ace.ESZ(), ace.nxs(2));
+
+  // Check if there are URR tables.
+  if (ace.jxs(22) != 0) {
+    // There are URR tables. Get the starting energy.
+    uint32_t URN = static_cast<uint32_t>(ace.jxs(22)) - 1;
+    urr_start_energy_ = ace.xss(URN + 6);
+  } else {
+    // No URR tables. Set start energy to a very large value.
+    urr_start_energy_ = 50000;
+  }
 
   if (!std::is_sorted(energy_values_.begin(), energy_values_.end())) {
     std::string mssg =

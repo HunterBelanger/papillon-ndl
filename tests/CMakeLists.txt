@@ -33,6 +33,12 @@ else()
   message(STATUS "Using local install of GTest")
 endif()
 
+# ZAID, Element, Isotope, Nuclide Tests
+add_executable(ZAIDTests zaid.cpp)
+target_compile_features(ZAIDTests PRIVATE cxx_std_17)
+target_link_libraries(ZAIDTests PUBLIC PapillonNDL gtest_main)
+add_test(ZAIDTests ZAIDTests)
+
 # Interpolation Tests
 add_executable(InterpolationTests interpolation.cpp)
 target_compile_features(InterpolationTests PRIVATE cxx_std_17)
