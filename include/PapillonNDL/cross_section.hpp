@@ -39,13 +39,6 @@ namespace pndl {
  *        a single MT.
  */
 class CrossSection {
-  // CrossSection instances should mainly be shared pointers in this
-  // library. This is because sometimes certain cross sections aren't
-  // present (such as photon production), and this is represented as a
-  // nullptr. It also makes it easier to load a nuclide and just grab
-  // the elastic scattering xs should someone want to do DBRC or
-  // something like that.
-
  public:
   /**
    * @param ace ACE file to take the data from.
@@ -57,22 +50,22 @@ class CrossSection {
    *                  value is true.
    */
   CrossSection(const ACE& ace, std::size_t i,
-               std::shared_ptr<EnergyGrid> E_grid, bool get_index = true);
+               const EnergyGrid& E_grid, bool get_index = true);
 
   /**
    * @param xs Vector containing the cross section values.
-   * @param E_grid Pointer to EnergyGrid to use for the cross section.
+   * @param E_grid EnergyGrid to use for the cross section.
    * @param index Starting index in the energy grid.
    */
   CrossSection(const std::vector<double>& xs,
-               std::shared_ptr<EnergyGrid> E_grid, std::size_t index);
+               const EnergyGrid& E_grid, std::size_t index);
 
   /**
    * @param xs Value for the cross section at all points in the provided
    *           energy grid.
-   * @param E_grid Pointer to EnergyGrid to use for the cross section.
+   * @param E_grid EnergyGrid to use for the cross section.
    */
-  CrossSection(double xs, std::shared_ptr<EnergyGrid> E_grid);
+  CrossSection(double xs, const EnergyGrid& E_grid);
 
   ~CrossSection() = default;
 
@@ -99,16 +92,16 @@ class CrossSection {
    */
   double operator()(double E) const {
     if (single_value_) {
-      if (E < energy_grid_->min_energy()) return 0.;
+      if (E < energy_grid_.min_energy()) return 0.;
       return values_->front();
     }
 
-    if (E <= (*energy_grid_)[index_])
+    if (E <= energy_grid_[index_])
       return 0.;
-    else if (E >= energy_grid_->max_energy())
+    else if (E >= energy_grid_.max_energy())
       return values_->back();
 
-    const auto& egrid = energy_grid_->grid();
+    const auto& egrid = energy_grid_.grid();
     const auto erange_begin = egrid.begin() + index_;
     const auto erange_end = egrid.end();
 
@@ -132,7 +125,7 @@ class CrossSection {
    */
   double operator()(double E, std::size_t i) const {
     if (single_value_) {
-      if (E < energy_grid_->min_energy()) return 0.;
+      if (E < energy_grid_.min_energy()) return 0.;
       return values_->front();
     }
 
@@ -144,8 +137,8 @@ class CrossSection {
     // Transform index from global grid to local grid
     i -= index_;
 
-    double E_low = (*energy_grid_)[index_ + i];
-    double E_hi = (*energy_grid_)[index_ + i + 1];
+    double E_low = energy_grid_[index_ + i];
+    double E_hi = energy_grid_[index_ + i + 1];
     double sig_low = (*values_)[i];
     double sig_hi = (*values_)[i + 1];
 
@@ -163,7 +156,7 @@ class CrossSection {
    */
   double operator()(double E, std::size_t i, double El, double Eh) const {
     if (single_value_) {
-      if (E < energy_grid_->min_energy()) return 0.;
+      if (E < energy_grid_.min_energy()) return 0.;
       return values_->front();
     }
 
@@ -232,7 +225,7 @@ class CrossSection {
    * @brief Returns the ith energy value, which corresponds with
    *        the ith cross section value.
    */
-  double energy(std::size_t i) const { return (*energy_grid_)[index_ + i]; }
+  double energy(std::size_t i) const { return energy_grid_[index_ + i]; }
 
   /**
    * @brief Returns the cross section values as a vector of floats.
@@ -243,7 +236,7 @@ class CrossSection {
    * @breif Returns a reference to the EnergyGrid object associated with the
    *        cross section.
    */
-  const EnergyGrid& energy_grid() const { return *energy_grid_; }
+  const EnergyGrid& energy_grid() const { return energy_grid_; }
 
   /**
    * @brief Returns a copy of the energy grid points for the cross section
@@ -252,7 +245,7 @@ class CrossSection {
   std::vector<double> energy() const;
 
  private:
-  std::shared_ptr<EnergyGrid> energy_grid_;
+  EnergyGrid energy_grid_;
   std::shared_ptr<std::vector<double>> values_;
   std::size_t index_;
   bool single_value_;

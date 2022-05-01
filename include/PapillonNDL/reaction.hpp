@@ -47,16 +47,17 @@ class Reaction<CrossSection> : public ReactionBase {
   /**
    * @param ace ACE file to take reaction from.
    * @param indx Reaction index in the MT array.
+   * @param egrid EnergyGrid for the nuclide.
    */
-  Reaction(const ACE& ace, std::size_t indx, std::shared_ptr<EnergyGrid> egrid);
+  Reaction(const ACE& ace, std::size_t indx, const EnergyGrid& egrid);
 
   /**
    * @param ace ACE file to take cross section from.
    * @param indx Reaction index in the MT array.
-   * @param egrid Pointer to the EnergyGrid for the nuclide.
+   * @param egrid EnergyGrid for the nuclide.
    * @param reac Reaction object to take distributions from.
    */
-  Reaction(const ACE& ace, std::size_t indx, std::shared_ptr<EnergyGrid> egrid,
+  Reaction(const ACE& ace, std::size_t indx, const EnergyGrid& egrid,
            const Reaction& reac);
 
   /**

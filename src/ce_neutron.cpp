@@ -27,16 +27,13 @@ namespace pndl {
 CENeutron<CrossSection>::CENeutron(const ACE& ace)
     : CENeutronBase(ace),
       temperature_(ace.temperature()),
-      energy_grid_(nullptr),
+      energy_grid_(ace),
       total_xs_(nullptr),
       disappearance_xs_(nullptr),
       elastic_xs_(nullptr),
       fission_xs_(nullptr),
       photon_production_xs_(nullptr),
       reactions_() {
-  // Construct energy grid
-  energy_grid_ = std::make_shared<EnergyGrid>(ace);
-
   // Number of energy points
   uint32_t NE = ace.nxs(2);
   total_xs_ =
@@ -74,16 +71,13 @@ CENeutron<CrossSection>::CENeutron(const ACE& ace)
 CENeutron<CrossSection>::CENeutron(const ACE& ace, const CENeutron& nuclide)
     : CENeutronBase(nuclide),
       temperature_(ace.temperature()),
-      energy_grid_(nullptr),
+      energy_grid_(ace),
       total_xs_(nullptr),
       disappearance_xs_(nullptr),
       elastic_xs_(nullptr),
       fission_xs_(nullptr),
       photon_production_xs_(nullptr),
       reactions_() {
-  // Construct energy grid
-  energy_grid_ = std::make_shared<EnergyGrid>(ace);
-
   // Number of energy points
   uint32_t NE = ace.nxs(2);
   total_xs_ =
@@ -128,7 +122,7 @@ std::shared_ptr<CrossSection> CENeutron<CrossSection>::compute_fission_xs() {
   }
 
   // Life is difficult. We need to sum the products.
-  std::size_t lowest_index = energy_grid_->size();
+  std::size_t lowest_index = energy_grid_.size();
   if (this->has_reaction(19)) {
     if (this->reaction(19).xs().index() < lowest_index) {
       lowest_index = this->reaction(19).xs().index();
@@ -154,9 +148,9 @@ std::shared_ptr<CrossSection> CENeutron<CrossSection>::compute_fission_xs() {
   }
 
   // We now know what energy point to start at. We can initialize the vector.
-  std::vector<double> fiss_xs(energy_grid_->size() - lowest_index, 0.);
+  std::vector<double> fiss_xs(energy_grid_.size() - lowest_index, 0.);
 
-  for (std::size_t i = lowest_index; i < energy_grid_->size(); i++) {
+  for (std::size_t i = lowest_index; i < energy_grid_.size(); i++) {
     if (this->has_reaction(19)) {
       fiss_xs[i - lowest_index] += this->reaction(19).xs()[i];
     }

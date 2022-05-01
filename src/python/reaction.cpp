@@ -46,8 +46,8 @@ void init_ReactionBase(py::module& m) {
 
 void init_STReaction(py::module& m) {
   py::class_<STReaction, ReactionBase>(m, "STReaction")
-      .def(py::init<const ACE&, size_t, std::shared_ptr<EnergyGrid>>())
-      .def(py::init<const ACE&, size_t, std::shared_ptr<EnergyGrid>,
+      .def(py::init<const ACE&, size_t, const EnergyGrid&>())
+      .def(py::init<const ACE&, size_t, const EnergyGrid&,
                     const STReaction&>())
       .def("xs", &STReaction::xs);
 }

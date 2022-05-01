@@ -65,7 +65,7 @@ class CENeutron<CrossSection> : public CENeutronBase {
   /**
    * @brief Returns the energy grid for the nuclide.
    */
-  const EnergyGrid& energy_grid() const { return *energy_grid_; }
+  const EnergyGrid& energy_grid() const { return energy_grid_; }
 
   /**
    * @brief Returns the total CrossSection for the nuclide.
@@ -113,7 +113,7 @@ class CENeutron<CrossSection> : public CENeutronBase {
  private:
   double temperature_;
 
-  std::shared_ptr<EnergyGrid> energy_grid_;
+  EnergyGrid energy_grid_;
   std::shared_ptr<CrossSection> total_xs_;
   std::shared_ptr<CrossSection> disappearance_xs_;
   std::shared_ptr<CrossSection> elastic_xs_;

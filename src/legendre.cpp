@@ -27,11 +27,11 @@
  */
 
 #include <PapillonNDL/legendre.hpp>
+#include <PapillonNDL/constants.hpp>
 #include <PapillonNDL/pndl_exception.hpp>
 #include <cmath>
 #include <functional>
 
-#include "constants.hpp"
 
 namespace pndl {
 

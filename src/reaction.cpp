@@ -31,7 +31,7 @@
 namespace pndl {
 
 Reaction<CrossSection>::Reaction(const ACE& ace, std::size_t indx,
-                                 std::shared_ptr<EnergyGrid> egrid)
+                                 const EnergyGrid& egrid)
     : ReactionBase(ace, indx), xs_(nullptr) {
   try {
     uint32_t loca = ace.xss<uint32_t>(ace.LSIG() + indx);
@@ -46,7 +46,7 @@ Reaction<CrossSection>::Reaction(const ACE& ace, std::size_t indx,
 }
 
 Reaction<CrossSection>::Reaction(const ACE& ace, std::size_t indx,
-                                 std::shared_ptr<EnergyGrid> egrid,
+                                 const EnergyGrid& egrid,
                                  const Reaction& reac)
     : ReactionBase(reac), xs_(nullptr) {
   // make sure the MT values agree

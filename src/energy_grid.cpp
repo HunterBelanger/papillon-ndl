@@ -23,12 +23,17 @@
 #include <PapillonNDL/energy_grid.hpp>
 #include <PapillonNDL/pndl_exception.hpp>
 #include <algorithm>
+#include <memory>
+#include <vector>
 
 namespace pndl {
 
 EnergyGrid::EnergyGrid(const ACE& ace, uint32_t NBINS)
-    : energy_values_({0.}), bin_pointers_(), u_min(), du(), urr_start_energy_() {
-  energy_values_ = ace.xss(ace.ESZ(), ace.nxs(2));
+    : energy_values_(nullptr), bin_pointers_(nullptr), u_min(), du(), urr_start_energy_() {
+  energy_values_ = std::make_shared<std::vector<double>>();
+  bin_pointers_ = std::make_shared<std::vector<uint32_t>>();
+
+  *energy_values_ = ace.xss(ace.ESZ(), ace.nxs(2));
 
   // Check if there are URR tables.
   if (ace.jxs(22) != 0) {
@@ -40,14 +45,14 @@ EnergyGrid::EnergyGrid(const ACE& ace, uint32_t NBINS)
     urr_start_energy_ = 50000;
   }
 
-  if (!std::is_sorted(energy_values_.begin(), energy_values_.end())) {
+  if (!std::is_sorted(energy_values_->begin(), energy_values_->end())) {
     std::string mssg =
         "Energy values are not sorted. Index in the XSS block is " +
         std::to_string(ace.ESZ()) + ".";
     throw PNDLException(mssg);
   }
 
-  if (energy_values_.front() <= 0.) {
+  if (energy_values_->front() <= 0.) {
     std::string mssg =
         "Nevative or zero values in energy grid. Index in the XSS block is " +
         std::to_string(ace.ESZ()) + ".";
@@ -58,13 +63,16 @@ EnergyGrid::EnergyGrid(const ACE& ace, uint32_t NBINS)
 }
 
 EnergyGrid::EnergyGrid(const std::vector<double>& energy, uint32_t NBINS)
-    : energy_values_(energy), bin_pointers_(), u_min(), du() {
-  if (!std::is_sorted(energy_values_.begin(), energy_values_.end())) {
+    : energy_values_(nullptr), bin_pointers_(nullptr), u_min(), du() {
+  energy_values_ = std::make_shared<std::vector<double>>(energy);
+  bin_pointers_ = std::make_shared<std::vector<uint32_t>>();
+
+  if (!std::is_sorted(energy_values_->begin(), energy_values_->end())) {
     std::string mssg = "Energy values are not sorted.";
     throw PNDLException(mssg);
   }
 
-  if (energy_values_.front() < 0.) {
+  if (energy_values_->front() < 0.) {
     std::string mssg = "Nevative values in energy grid.";
     throw PNDLException(mssg);
   }
@@ -74,29 +82,29 @@ EnergyGrid::EnergyGrid(const std::vector<double>& energy, uint32_t NBINS)
 
 void EnergyGrid::hash_energy_grid(uint32_t NBINS) {
   // Generate pointers for lethargy bins
-  u_min = std::log(energy_values_.front());
-  double u_max = std::log(energy_values_.back());
+  u_min = std::log(energy_values_->front());
+  double u_max = std::log(energy_values_->back());
   du = (u_max - u_min) / static_cast<double>(NBINS);
 
-  bin_pointers_.clear();
-  bin_pointers_.reserve(NBINS + 1);
+  bin_pointers_->clear();
+  bin_pointers_->reserve(NBINS + 1);
 
-  double E = energy_values_.front();
+  double E = energy_values_->front();
   std::size_t i = 0;
 
   // Start by storing index to u_min which is 0
-  bin_pointers_.push_back(0);
+  bin_pointers_->push_back(0);
 
   // Get energy index for each lethargy bin bound
   for (std::size_t b = 1; b < NBINS + 1; b++) {
     E *= std::exp(du);
 
     i = std::distance(
-            energy_values_.begin(),
-            std::lower_bound(energy_values_.begin(), energy_values_.end(), E)) -
+            energy_values_->begin(),
+            std::lower_bound(energy_values_->begin(), energy_values_->end(), E)) -
         1;
 
-    bin_pointers_.push_back(static_cast<uint32_t>(i));
+    bin_pointers_->push_back(static_cast<uint32_t>(i));
   }
 }
 
