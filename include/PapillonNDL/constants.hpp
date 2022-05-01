@@ -32,6 +32,7 @@ constexpr double MEV_TO_EV = 1.E6;
 constexpr double EV_TO_MEV = 1.E-6;
 constexpr double KB = 8.61733034E-11;  // [MeV / K]
 constexpr double PI = 3.14159265358979323846264338327950288;
+constexpr double SQRT_PI = 1.77245385090551602729816748334114518;
 
 }
 
