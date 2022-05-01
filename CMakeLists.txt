@@ -44,6 +44,7 @@ set(PNDL_SOURCE_LIST src/element.cpp
                      src/cm_distribution.cpp
                      src/energy_grid.cpp
                      src/cross_section.cpp
+                     src/s1_cross_section.cpp
                      src/delayed_group.cpp
                      src/ce_neutron_base.cpp
                      src/ce_neutron.cpp
@@ -86,7 +87,6 @@ target_include_directories(PapillonNDL PUBLIC
 # Require C++20 standard
 target_compile_features(PapillonNDL PUBLIC cxx_std_20)
 
-
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC") # Comile options for Windows
   target_compile_options(PapillonNDL PRIVATE /W4)
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU") # Compile options for GCC
@@ -95,6 +95,13 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang") # Compile options for Clang
   target_compile_options(PapillonNDL PRIVATE -W -Wall -Wextra -Wpedantic)
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Intel") # Compile options for Intel
   target_compile_options(PapillonNDL PRIVATE -W -Wall -Wextra -Wpedantic)
+endif()
+
+# Link with OpenMP if available.
+# Used for the SIMD stuff in Sigma1
+find_package(OpenMP REQUIRED)
+if(OpenMP_CXX_FOUND)
+  target_link_libraries(PapillonNDL PUBLIC OpenMP::OpenMP_CXX)
 endif()
 
 # Must make the static PapillonNDL position independent on linux so that
@@ -153,6 +160,10 @@ if(PNDL_PYTHON)
   
   # Must link Python bindings with full library
   target_link_libraries(pyPapillonNDL PRIVATE PapillonNDL)
+
+  if(OpenMP_CXX_FOUND)
+    target_link_libraries(pyPapillonNDL PUBLIC OpenMP::OpenMP_CXX)
+  endif()
 
   if(PNDL_INSTALL)
     # Get location for python lib
