@@ -24,6 +24,7 @@
 #include <pybind11/stl.h>
 
 #include <PapillonNDL/cross_section.hpp>
+#include <PapillonNDL/s1_cross_section.hpp>
 
 namespace py = pybind11;
 
@@ -31,10 +32,10 @@ using namespace pndl;
 
 void init_CrossSection(py::module& m) {
   py::class_<CrossSection, std::shared_ptr<CrossSection>>(m, "CrossSection")
-      .def(py::init<const ACE&, size_t, std::shared_ptr<EnergyGrid>, bool>())
-      .def(py::init<const std::vector<double>&, std::shared_ptr<EnergyGrid>,
+      .def(py::init<const ACE&, size_t, const EnergyGrid&, bool>())
+      .def(py::init<const std::vector<double>&, const EnergyGrid&,
                     size_t>())
-      .def(py::init<double, std::shared_ptr<EnergyGrid>>())
+      .def(py::init<double, const EnergyGrid&>())
       .def("__getitem__", &CrossSection::operator[])
       .def("__call__",
            py::overload_cast<double>(&CrossSection::operator(), py::const_))
@@ -54,5 +55,26 @@ void init_CrossSection(py::module& m) {
       .def("xs", py::overload_cast<>(&CrossSection::xs, py::const_))
       .def("energy",
            py::overload_cast<size_t>(&CrossSection::energy, py::const_))
-      .def("energy", py::overload_cast<>(&CrossSection::energy, py::const_));
+      .def("energy", py::overload_cast<>(&CrossSection::energy, py::const_))
+      .def("energy_grid", &CrossSection::energy_grid);
+}
+
+void init_S1CrossSection(py::module& m) {
+  py::class_<S1CrossSection, std::shared_ptr<S1CrossSection>>(m, "S1CrossSection")
+      .def(py::init<const ACE&, size_t, const EnergyGrid&, bool>())
+      .def(py::init<const std::vector<double>&, const EnergyGrid&,
+                    size_t, double, double>())
+      .def(py::init<double, const EnergyGrid&>())
+      .def(py::init<CrossSection, double, double>())
+      .def("__getitem__", &S1CrossSection::operator[])
+      .def("__call__", &S1CrossSection::operator())
+      .def("evaluate", &S1CrossSection::evaluate)
+      .def("size", &S1CrossSection::size)
+      .def("index", &S1CrossSection::index)
+      .def("xs", py::overload_cast<size_t>(&S1CrossSection::xs, py::const_))
+      .def("xs", py::overload_cast<>(&S1CrossSection::xs, py::const_))
+      .def("energy",
+           py::overload_cast<size_t>(&S1CrossSection::energy, py::const_))
+      .def("energy", py::overload_cast<>(&S1CrossSection::energy, py::const_))
+      .def("energy_grid", &S1CrossSection::energy_grid);
 }
