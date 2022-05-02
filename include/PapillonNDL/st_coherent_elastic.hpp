@@ -32,6 +32,7 @@
 #include <PapillonNDL/angle_energy.hpp>
 #include <PapillonNDL/region_1d.hpp>
 #include <algorithm>
+#include <iterator>
 #include <optional>
 
 namespace pndl {
@@ -69,26 +70,33 @@ class STCoherentElastic : public AngleEnergy {
   }
 
   AngleEnergyPacket sample_angle_energy(
-      double E_in, std::function<double()> /*rng*/) const override final {
+      double E_in, std::function<double()> rng) const override final {
     if (bragg_edges_.size() == 0) return {1., 0.};
 
-    // Get Bragg edge of scatter
-    double Ei = 0.;
-    if (E_in > bragg_edges_.front() && E_in < bragg_edges_.back()) {
+    if (E_in > bragg_edges_.front()) {
       // Get index for lower bragg edge
-      auto Eit =
-          std::lower_bound(bragg_edges_.begin(), bragg_edges_.end(), E_in);
-      Eit--;
-      Ei = *Eit;
-    } else if (E_in < bragg_edges_.front()) {
-      Ei = 0.;
+      auto Eit = std::lower_bound(bragg_edges_.begin(),
+                                  bragg_edges_.end(), E_in);
+      size_t l = std::distance(bragg_edges_.begin(), Eit) - 1;
+
+      // Sample which Bragg edge off of which we will scatter.
+      double Prob = rng() * structure_factor_sum_[l];
+      auto Sit = std::lower_bound(structure_factor_sum_.begin(),
+                                  structure_factor_sum_.begin() + l,
+                                  Prob);
+      std::size_t Si = std::distance(structure_factor_sum_.begin(), Sit);
+      double E_bragg = bragg_edges_[Si];
+      
+      // Calculate the cosine of the scattering angle.
+      double mu = 1. - (2. * E_bragg / E_in);
+
+      return {mu, E_in};
     } else {
-      Ei = bragg_edges_.back();
+      // When E_in <= E_0, the xs is 0, so we shouldn't actually be sampling
+      // this distribution. We will indicated this through a forward scatter
+      // with no change in energy.
+      return {1., E_in};
     }
-
-    double mu = 1. - (2. * Ei / E_in);
-
-    return {mu, E_in};
   }
 
   std::optional<double> angle_pdf(double /*E_in*/,
