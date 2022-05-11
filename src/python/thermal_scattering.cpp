@@ -40,7 +40,8 @@ void init_STIncoherentInelastic(py::module& m) {
       .def("xs",
            py::overload_cast<double>(&STIncoherentInelastic::xs, py::const_))
       .def("sample_angle_energy", &STIncoherentInelastic::sample_angle_energy)
-      .def("distribution", &STIncoherentInelastic::distribution)
+      .def("distribution", &STIncoherentInelastic::distribution,
+           py::return_value_policy::reference_internal)
       .def("max_energy", &STIncoherentInelastic::max_energy);
 }
 
