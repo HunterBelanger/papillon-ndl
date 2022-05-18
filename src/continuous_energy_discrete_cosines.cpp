@@ -101,6 +101,26 @@ ContinuousEnergyDiscreteCosines::ContinuousEnergyDiscreteCosines(
         l++;
       }
 
+      // For ACE files made with NJOY or FRENDY, the cdf usually starts at a
+      // value larger than zero. To make sure problems don't arrise, we need
+      // to add an entry that is zero. We can calculate the pdf from the
+      // interpolation, and we just copy the angular distribution from the
+      // lowest provided cdf value.
+      if (oe == 0 && tables_.back().cdf[0] > 0.) {
+        tables_.back().energy.insert(tables_.back().energy.begin(), 0.);
+        tables_.back().cdf.insert(tables_.back().cdf.begin(), 0.);
+        tables_.back().pdf.insert(tables_.back().pdf.begin(), 0.);
+        std::vector<double> discrete_angles = tables_.back().cosines[0];
+        tables_.back().cosines.insert(tables_.back().cosines.begin(), discrete_angles);
+
+        // Calculate the PDF
+        tables_.back().pdf[0] = (2. * tables_.back().cdf[1] / tables_.back().energy[1]) - tables_.back().pdf[1];
+
+        // Advance Noe and oe, due to the added grid point.
+        oe++;
+        Noe++;
+      }
+
       // Check all cosines for the current outgoing energy
       /* The cosines SHOULD all be sorted, but this sometimes isn't the case
          in the ACE files, so I have commented out this check for now. Not
