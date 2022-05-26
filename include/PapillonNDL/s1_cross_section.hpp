@@ -122,8 +122,7 @@ class S1CrossSection {
     if (E < xs_.energy(0)) {
       // If we are below threshold, xs is zero.
       return 0.;
-    } else if (E >= xs_.energy_grid().urr_min_energy() ||
-               diff_T < 1.) {
+    } else if (E >= max_db_energy_ || diff_T < 1.) {
       // If We are in the URR, don't doppler broaden.
       // Also, if we are within 1 Kelvin, we will skip doppler broadening.
       return xs_(E); 
@@ -197,11 +196,22 @@ class S1CrossSection {
    * @brief Returns the atomic weight ratio.
    */
   double awr() const { return awr_; }
+  
+  /**
+   * @brief Returns the maximum energy for doppler broadening.
+   */
+  double max_broadening_energy() const { return max_db_energy_; }
+
+  /**
+   * @brief Sets the maximum energy for doppler broadening.
+   */
+  void set_max_broadening_energy(double E) { max_db_energy_ = E; }
 
  private:
   CrossSection xs_;
   double min_temp_;
   double awr_;
+  double max_db_energy_ = 1.; // Default to 1MeV.
 };
 
 }  // namespace pndl

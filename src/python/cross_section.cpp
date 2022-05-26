@@ -76,5 +76,7 @@ void init_S1CrossSection(py::module& m) {
       .def("energy",
            py::overload_cast<size_t>(&S1CrossSection::energy, py::const_))
       .def("energy", py::overload_cast<>(&S1CrossSection::energy, py::const_))
-      .def("energy_grid", &S1CrossSection::energy_grid);
+      .def("energy_grid", &S1CrossSection::energy_grid)
+      .def("max_broadening_energy", &S1CrossSection::max_broadening_energy)
+      .def("set_max_broadening_energy", &S1CrossSection::set_max_broadening_energy);
 }
