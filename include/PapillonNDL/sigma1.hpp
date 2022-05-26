@@ -25,7 +25,6 @@
 #include <algorithm>
 #include <array>
 #include <cmath>
-#include <ranges>
 #include <span>
 
 namespace pndl {
@@ -178,7 +177,32 @@ struct Sigma1 {
     double inv_yy = inv_y * inv_y;
 
     // Initialize cross section to be returned to zero.
-    double sig = 0.;
+    double sig = 0.; 
+
+    // Initialize Fa, Fb, and H arrays used in the broadening.
+    std::array<double, 5> Fa, Fb, H;
+    Fa.fill(0.);
+    Fb.fill(0.);
+    H.fill(0.);
+
+    // Lambda functions to fill Fa, Fb, and H.
+    auto fill_f = [](std::array<double, 5>& f, double a) {
+      f[0] = 0.5 * std::erfc(a);
+      f[1] = (0.5 / std::sqrt(PI)) * std::exp(-a * a);
+      f[2] = 0.5 * f[0] + a * f[1];
+      f[3] = f[1] + a * a * f[1];
+      f[4] = (3. / 2.) * f[2] + a * a * a * f[1];
+    };
+
+    auto fill_h = [](const std::array<double, 5>& fa,
+                     const std::array<double, 5>& fb,
+                     std::array<double, 5>& h) {
+      h[0] = fa[0] - fb[0];
+      h[1] = fa[1] - fb[1];
+      h[2] = fa[2] - fb[2];
+      h[3] = fa[3] - fb[3];
+      h[4] = fa[4] - fb[4];
+    };
 
     // Find the lower and upper integration limits, based on the provided limit.
     std::size_t low = 0;
@@ -201,31 +225,18 @@ struct Sigma1 {
         low_approx == Extrapolate::OneOverV) {
       // Extend the xs as 1/v from 0 to x[0]
       const double x_0 = std::sqrt(alpha*egrid[0]);
-      const double a = -y;
-      const double Fa_0 = 0.5 * std::erfc(a);
-      const double Fa_1 = (0.5 / std::sqrt(PI)) * std::exp(-a * a);
-      const double b = x_0 - y;
-      const double Fb_0 = 0.5 * std::erfc(b);
-      const double Fb_1 = (0.5 / std::sqrt(PI)) * std::exp(-b * b);
-      const double H_0 = Fa_0 - Fb_0;
-      const double H_1 = Fa_1 - Fb_1;
-      sig += inv_yy * x_0 * xs[0] * (H_1 + y * H_0);
+      fill_f(Fa, -y);
+      fill_f(Fb, x_0 - y);
+      fill_h(Fa, Fb, H);
+      sig += inv_yy * x_0 * xs[0] * (H[1] + y * H[0]);
     } else if (low == 0 && std::sqrt(alpha*egrid[0]) > y - limit &&
                low_approx == Extrapolate::Constant) {
       // Extend the xs as constant from 0 to x[0]
       const double x_0 = std::sqrt(alpha*egrid[0]);
-      const double a = -y;
-      const double Fa_0 = 0.5 * std::erfc(a);
-      const double Fa_1 = (0.5 / std::sqrt(PI)) * std::exp(-a * a);
-      const double Fa_2 = 0.5 * Fa_0 + a * Fa_1;
-      const double b = x_0 - y;
-      const double Fb_0 = 0.5 * std::erfc(b);
-      const double Fb_1 = (0.5 / std::sqrt(PI)) * std::exp(-b * b);
-      const double Fb_2 = 0.5 * Fb_0 + b * Fb_1;
-      const double H_0 = Fa_0 - Fb_0;
-      const double H_1 = Fa_1 - Fb_1;
-      const double H_2 = Fa_2 - Fb_2;
-      sig += inv_yy * xs[0] * (H_2 + 2. * y * H_1 + yy * H_0);
+      fill_f(Fa, -y);
+      fill_f(Fb, x_0 - y);
+      fill_h(Fa, Fb, H);
+      sig += inv_yy * xs[0] * (H[2] + 2. * y * H[1] + yy * H[0]);
     }
 
     // Do all of the points which are in the grid
@@ -236,44 +247,25 @@ struct Sigma1 {
       const double x_k = std::sqrt(alpha*egrid[k]);
       const double x_k1 = std::sqrt(alpha*egrid[k + 1]);
       const double sk = (xs[k + 1] - xs[k]) / (x_k1 * x_k1 - x_k * x_k);
-      const double a = x_k - y;
-      const double Fa_0 = 0.5 * std::erfc(a);
-      const double Fa_1 = (0.5 / std::sqrt(PI)) * std::exp(-a * a);
-      const double Fa_2 = 0.5 * Fa_0 + a * Fa_1;
-      const double Fa_3 = Fa_1 + a * a * Fa_1;
-      const double Fa_4 = (3. / 2.) * Fa_2 + a * a * a * Fa_1;
-      const double b = x_k1 - y;
-      const double Fb_0 = 0.5 * std::erfc(b);
-      const double Fb_1 = (0.5 / std::sqrt(PI)) * std::exp(-b * b);
-      const double Fb_2 = 0.5 * Fb_0 + b * Fb_1;
-      const double Fb_3 = Fb_1 + b * b * Fb_1;
-      const double Fb_4 = (3. / 2.) * Fb_2 + b * b * b * Fb_1;
-      const double H_0 = Fa_0 - Fb_0;
-      const double H_1 = Fa_1 - Fb_1;
-      const double H_2 = Fa_2 - Fb_2;
-      const double H_3 = Fa_3 - Fb_3;
-      const double H_4 = Fa_4 - Fb_4;
-      const double Ak = inv_yy * (H_2 + 2. * y * H_1 + yy * H_0);
-      const double Bk = inv_yy * H_4 + 4. * inv_y * H_3 + 6. * H_2 +
-                  4. * y * H_1 + yy * H_0;
+      fill_f(Fa, x_k - y);
+      fill_f(Fb, x_k1 - y);
+      fill_h(Fa, Fb, H);
+      const double Ak = inv_yy * (H[2] + 2. * y * H[1] + yy * H[0]);
+      const double Bk = inv_yy * H[4] + 4. * inv_y * H[3] + 6. * H[2] +
+                  4. * y * H[1] + yy * H[0];
       sig += Ak * (xs[k] - sk * x_k * x_k) + sk * Bk;
     }
 
     if (hi == egrid.size() - 1 && std::sqrt(alpha*egrid[hi]) < y + limit &&
         hi_approx == Extrapolate::Constant) {
       // Extend the xs as constant from x[N] to infinity
-      const double a = std::sqrt(alpha*egrid[egrid.size() - 1]) - y;
-      const double Fa_0 = 0.5 * std::erfc(a);
-      const double Fa_1 = (0.5 / std::sqrt(PI)) * std::exp(-a * a);
-      const double Fa_2 = 0.5 * Fa_0 + a * Fa_1;
-      sig += xs[egrid.size() - 1] * (inv_yy * Fa_2 + 2. * inv_y * Fa_1 + Fa_0);
+      fill_f(Fa, std::sqrt(alpha*egrid[egrid.size() - 1]) - y);
+      sig += xs[egrid.size() - 1] * (inv_yy * Fa[2] + 2. * inv_y * Fa[1] + Fa[0]);
     } else if (hi == egrid.size() - 1 && std::sqrt(alpha*egrid[hi]) < y + limit &&
                hi_approx == Extrapolate::OneOverV) {
       // Extend the xs as 1/v from x[N] to infinity
-      const double a = std::sqrt(alpha*egrid[egrid.size() - 1]) - y;
-      const double Fa_0 = 0.5 * std::erfc(a);
-      const double Fa_1 = (0.5 / std::sqrt(PI)) * std::exp(-a * a);
-      sig += std::sqrt(alpha*egrid[egrid.size() - 1]) * xs[egrid.size() - 1] * inv_yy * (Fa_1 + y * Fa_0);
+      fill_f(Fa, std::sqrt(alpha*egrid[egrid.size() - 1]) - y);
+      sig += std::sqrt(alpha*egrid[egrid.size() - 1]) * xs[egrid.size() - 1] * inv_yy * (Fa[1] + y * Fa[0]);
     }
 
     //============================================================================
@@ -291,30 +283,17 @@ struct Sigma1 {
     if (low_approx == Extrapolate::OneOverV) {
       // Extend the xs as 1/v from 0 to x[0]
       const double x_0 = std::sqrt(alpha*egrid[0]);
-      const double a = -y;
-      const double Fa_0 = 0.5 * std::erfc(a);
-      const double Fa_1 = (0.5 / std::sqrt(PI)) * std::exp(-a * a);
-      const double b = x_0 - y;
-      const double Fb_0 = 0.5 * std::erfc(b);
-      const double Fb_1 = (0.5 / std::sqrt(PI)) * std::exp(-b * b);
-      const double H_0 = Fa_0 - Fb_0;
-      const double H_1 = Fa_1 - Fb_1;
-      sig -= inv_yy * x_0 * xs[0] * (H_1 + y * H_0);
+      fill_f(Fa, -y);
+      fill_f(Fb, x_0 - y);
+      fill_h(Fa, Fb, H);
+      sig -= inv_yy * x_0 * xs[0] * (H[1] + y * H[0]);
     } else if (low_approx == Extrapolate::Constant) {
       // Extend the xs as constant from 0 to x[0]
       double x_0 = std::sqrt(alpha*egrid[0]);
-      const double a = -y;
-      const double Fa_0 = 0.5 * std::erfc(a);
-      const double Fa_1 = (0.5 / std::sqrt(PI)) * std::exp(-a * a);
-      const double Fa_2 = 0.5 * Fa_0 + a * Fa_1;
-      const double b = x_0 - y;
-      const double Fb_0 = 0.5 * std::erfc(b);
-      const double Fb_1 = (0.5 / std::sqrt(PI)) * std::exp(-b * b);
-      const double Fb_2 = 0.5 * Fb_0 + b * Fb_1;
-      const double H_0 = Fa_0 - Fb_0;
-      const double H_1 = Fa_1 - Fb_1;
-      const double H_2 = Fa_2 - Fb_2;
-      sig -= inv_yy * xs[0] * (H_2 + 2. * y * H_1 + yy * H_0);
+      fill_f(Fa, -y);
+      fill_f(Fb, x_0 - y);
+      fill_h(Fa, Fb, H);
+      sig -= inv_yy * xs[0] * (H[2] + 2. * y * H[1] + yy * H[0]);
     }
 
 #ifdef _OPENMP
@@ -323,45 +302,26 @@ struct Sigma1 {
     for (std::size_t k = 0; k < hi; k++) {
       const double x_k = std::sqrt(alpha*egrid[k]);
       const double x_k1 = std::sqrt(alpha*egrid[k + 1]);
+      fill_f(Fa, x_k - y);
+      fill_f(Fb, x_k1 - y);
+      fill_h(Fa, Fb, H);
       const double sk = (xs[k + 1] - xs[k]) / (x_k1 * x_k1 - x_k * x_k);
-      const double a = x_k - y;
-      const double Fa_0 = 0.5 * std::erfc(a);
-      const double Fa_1 = (0.5 / std::sqrt(PI)) * std::exp(-a * a);
-      const double Fa_2 = 0.5 * Fa_0 + a * Fa_1;
-      const double Fa_3 = Fa_1 + a * a * Fa_1;
-      const double Fa_4 = (3. / 2.) * Fa_2 + a * a * a * Fa_1;
-      const double b = x_k1 - y;
-      const double Fb_0 = 0.5 * std::erfc(b);
-      const double Fb_1 = (0.5 / std::sqrt(PI)) * std::exp(-b * b);
-      const double Fb_2 = 0.5 * Fb_0 + b * Fb_1;
-      const double Fb_3 = Fb_1 + b * b * Fb_1;
-      const double Fb_4 = (3. / 2.) * Fb_2 + b * b * b * Fb_1;
-      const double H_0 = Fa_0 - Fb_0;
-      const double H_1 = Fa_1 - Fb_1;
-      const double H_2 = Fa_2 - Fb_2;
-      const double H_3 = Fa_3 - Fb_3;
-      const double H_4 = Fa_4 - Fb_4;
-      const double Ak = inv_yy * (H_2 + 2. * y * H_1 + yy * H_0);
-      const double Bk = inv_yy * H_4 + 4. * inv_y * H_3 + 6. * H_2 +
-                  4. * y * H_1 + yy * H_0;
+      const double Ak = inv_yy * (H[2] + 2. * y * H[1] + yy * H[0]);
+      const double Bk = inv_yy * H[4] + 4. * inv_y * H[3] + 6. * H[2] +
+                  4. * y * H[1] + yy * H[0];
       sig -= Ak * (xs[k] - sk * x_k * x_k) + sk * Bk;
     }
 
     if (hi == egrid.size() - 1 && std::sqrt(alpha*egrid[hi]) < y + limit &&
         hi_approx == Extrapolate::Constant) {
       // Extend the xs as constant from x[N] to infinity
-      const double a = std::sqrt(alpha*egrid[egrid.size() - 1]) - y;
-      const double Fa_0 = 0.5 * std::erfc(a);
-      const double Fa_1 = (0.5 / std::sqrt(PI)) * std::exp(-a * a);
-      const double Fa_2 = 0.5 * Fa_0 + a * Fa_1;
-      sig -= xs[egrid.size() - 1] * (inv_yy * Fa_2 + 2. * inv_y * Fa_1 + Fa_0);
+      fill_f(Fa, std::sqrt(alpha*egrid[egrid.size() - 1]) - y);
+      sig -= xs[egrid.size() - 1] * (inv_yy * Fa[2] + 2. * inv_y * Fa[1] + Fa[0]);
     } else if (hi == egrid.size() - 1 && std::sqrt(alpha*egrid[hi]) < y + limit &&
                hi_approx == Extrapolate::OneOverV) {
       // Extend the xs as 1/v from x[N] to infinity
-      const double a = std::sqrt(alpha*egrid[egrid.size() - 1]) - y;
-      const double Fa_0 = 0.5 * std::erfc(a);
-      const double Fa_1 = (0.5 / std::sqrt(PI)) * std::exp(-a * a);
-      sig -= std::sqrt(alpha*egrid[egrid.size() - 1]) * xs[egrid.size() - 1] * inv_yy * (Fa_1 + y * Fa_0);
+      fill_f(Fa, std::sqrt(alpha*egrid[egrid.size() - 1]) - y);
+      sig -= std::sqrt(alpha*egrid[egrid.size() - 1]) * xs[egrid.size() - 1] * inv_yy * (Fa[1] + y * Fa[0]);
     }
 
     return sig;
@@ -430,11 +390,6 @@ struct Sigma1 {
     double inv_y = 1. / y;
     double inv_yy = inv_y * inv_y;
 
-    // Make a vew of energy grid in speed space for convenience
-    auto xgrid = egrid | std::views::transform([alpha](double E) {
-                   return std::sqrt(alpha * E);
-                 });
-
     // Initialize Fa, Fb, and H arrays used in the broadening.
     std::array<double, 5> Fa, Fb, H;
     Fa.fill(0.);
@@ -463,24 +418,26 @@ struct Sigma1 {
     };
 
     // Find the lower and upper integration limits, based on the provided limit.
-    auto low_it = std::lower_bound(xgrid.begin(), xgrid.end(), y - limit);
-    auto hi_it = std::lower_bound(xgrid.begin(), xgrid.end(), y + limit);
     std::size_t low = 0;
-    if (low_it != xgrid.begin()) {
-      low = std::distance(xgrid.begin(), low_it) - 1;
+    if (y - limit > 0.) {
+      auto low_it = std::lower_bound(egrid.begin(), egrid.end(), (y - limit)*(y - limit)/alpha);
+      if (low_it != egrid.begin()) {
+        low = std::distance(egrid.begin(), low_it) - 1;
+      }
     }
-    std::size_t hi = xgrid.size() - 1;
-    if (hi_it != xgrid.end()) {
-      hi = std::distance(xgrid.begin(), hi_it);
+    std::size_t hi = egrid.size() - 1;
+    auto hi_it = std::lower_bound(egrid.begin(), egrid.end(), (y + limit)*(y + limit)/alpha);
+    if (hi_it != egrid.end()) {
+      hi = std::distance(egrid.begin(), hi_it);
     }
 
     //============================================================================
     // Positive Integral
     //----------------------------------------------------------------------------
-    if (low == 0 && xgrid[low] > y - limit &&
+    if (low == 0 && std::sqrt(alpha*egrid[0]) > y - limit &&
         low_approx == Extrapolate::OneOverV) {
       // Extend the xs as 1/v from 0 to x[0]
-      double x_0 = xgrid[0];
+      const double x_0 = std::sqrt(alpha*egrid[0]);
       fill_f(Fa, -y);
       fill_f(Fb, x_0 - y);
       fill_h(Fa, Fb, H);
@@ -493,10 +450,10 @@ struct Sigma1 {
           xs_out[ll] += inv_yy * x_0 * xs[ll][0] * (H[1] + y * H[0]);
         }
       }
-    } else if (low == 0 && xgrid[low] > y - limit &&
+    } else if (low == 0 && std::sqrt(alpha*egrid[0]) > y - limit &&
                low_approx == Extrapolate::Constant) {
       // Extend the xs as constant from 0 to x[0]
-      double x_0 = xgrid[0];
+      const double x_0 = std::sqrt(alpha*egrid[0]);
       fill_f(Fa, -y);
       fill_f(Fb, x_0 - y);
       fill_h(Fa, Fb, H);
@@ -509,8 +466,8 @@ struct Sigma1 {
 
     // Do all of the points which are in the grid
     for (std::size_t k = low; k < hi; k++) {
-      double x_k = xgrid[k];
-      double x_k1 = xgrid[k + 1];
+      const double x_k = std::sqrt(alpha*egrid[k]);
+      const double x_k1 = std::sqrt(alpha*egrid[k + 1]);
       for (std::size_t ll = 0; ll < sk.size(); ll++) {
         if (start_indx[ll] <= k) {
           sk[ll] =
@@ -521,8 +478,8 @@ struct Sigma1 {
       fill_f(Fa, x_k - y);
       fill_f(Fb, x_k1 - y);
       fill_h(Fa, Fb, H);
-      double Ak = inv_yy * (H[2] + 2. * y * H[1] + yy * H[0]);
-      double Bk = inv_yy * H[4] + 4. * inv_y * H[3] + 6. * H[2] +
+      const double Ak = inv_yy * (H[2] + 2. * y * H[1] + yy * H[0]);
+      const double Bk = inv_yy * H[4] + 4. * inv_y * H[3] + 6. * H[2] +
                   4. * y * H[1] + yy * H[0];
       for (std::size_t ll = 0; ll < xs_out.size(); ll++) {
         if (start_indx[ll] <= k) {
@@ -532,19 +489,19 @@ struct Sigma1 {
       }
     }
 
-    if (hi == xgrid.size() - 1 && xgrid[hi] < y + limit &&
+    if (hi == egrid.size() - 1 && std::sqrt(alpha*egrid[hi]) < y + limit &&
         hi_approx == Extrapolate::Constant) {
       // Extend the xs as constant from x[N] to infinity
-      fill_f(Fa, xgrid[egrid.size() - 1] - y);
+      fill_f(Fa, std::sqrt(alpha*egrid[egrid.size() - 1]) - y);
       for (std::size_t ll = 0; ll < xs_out.size(); ll++)
         xs_out[ll] += xs[ll][egrid.size() - 1] *
                       (inv_yy * Fa[2] + 2. * inv_y * Fa[1] + Fa[0]);
-    } else if (hi == xgrid.size() - 1 && xgrid[hi] < y + limit &&
+    } else if (hi == egrid.size() - 1 && std::sqrt(alpha*egrid[hi]) < y + limit &&
                hi_approx == Extrapolate::OneOverV) {
       // Extend the xs as 1/v from x[N] to infinity
-      fill_f(Fa, xgrid[egrid.size() - 1] - y);
+      fill_f(Fa, std::sqrt(alpha*egrid[egrid.size() - 1]) - y);
       for (std::size_t ll = 0; ll < xs_out.size(); ll++)
-        xs_out[ll] += xgrid[egrid.size() - 1] * xs[ll][egrid.size() - 1] *
+        xs_out[ll] += std::sqrt(alpha*egrid[egrid.size() - 1]) * xs[ll][egrid.size() - 1] *
                       inv_yy * (Fa[1] + y * Fa[0]);
     }
 
@@ -553,22 +510,16 @@ struct Sigma1 {
     //----------------------------------------------------------------------------
     y = -y;
     inv_y = -inv_y;
-    // Find the lower and upper integration limits, based on the provided limit.
-    low_it = std::lower_bound(xgrid.begin(), xgrid.end(), y - limit);
-    hi_it = std::lower_bound(xgrid.begin(), xgrid.end(), y + limit);
-    low = 0;
-    if (low_it != xgrid.begin()) {
-      low = std::distance(xgrid.begin(), low_it) - 1;
-    }
-    hi = xgrid.size() - 1;
-    if (hi_it != xgrid.end()) {
-      hi = std::distance(xgrid.begin(), hi_it);
+    // Find the upper integration limit, based on the provided limit.
+    hi = egrid.size() - 1;
+    hi_it = std::lower_bound(egrid.begin(), egrid.end(), limit*limit/alpha);
+    if (hi_it != egrid.end()) {
+      hi = std::distance(egrid.begin(), hi_it);
     }
 
-    if (low == 0 && xgrid[low] > y - limit &&
-        low_approx == Extrapolate::OneOverV) {
+    if (low_approx == Extrapolate::OneOverV) {
       // Extend the xs as 1/v from 0 to x[0]
-      double x_0 = xgrid[0];
+      const double x_0 = std::sqrt(alpha*egrid[0]);
       fill_f(Fa, -y);
       fill_f(Fb, x_0 - y);
       fill_h(Fa, Fb, H);
@@ -577,10 +528,9 @@ struct Sigma1 {
           xs_out[ll] -= inv_yy * x_0 * xs[ll][0] * (H[1] + y * H[0]);
         }
       }
-    } else if (low == 0 && xgrid[low] > y - limit &&
-               low_approx == Extrapolate::Constant) {
+    } else if (low_approx == Extrapolate::Constant) {
       // Extend the xs as constant from 0 to x[0]
-      double x_0 = xgrid[0];
+      const double x_0 = std::sqrt(alpha*egrid[0]);
       fill_f(Fa, -y);
       fill_f(Fb, x_0 - y);
       fill_h(Fa, Fb, H);
@@ -592,8 +542,8 @@ struct Sigma1 {
     }
 
     for (std::size_t k = 0; k < hi; k++) {
-      double x_k = xgrid[k];
-      double x_k1 = xgrid[k + 1];
+      const double x_k = std::sqrt(alpha*egrid[k]);
+      const double x_k1 = std::sqrt(alpha*egrid[k + 1]);
       for (std::size_t ll = 0; ll < sk.size(); ll++) {
         if (start_indx[ll] <= k) {
           sk[ll] =
@@ -604,8 +554,8 @@ struct Sigma1 {
       fill_f(Fa, x_k - y);
       fill_f(Fb, x_k1 - y);
       fill_h(Fa, Fb, H);
-      double Ak = inv_yy * (H[2] + 2. * y * H[1] + yy * H[0]);
-      double Bk = inv_yy * H[4] + 4. * inv_y * H[3] + 6. * H[2] +
+      const double Ak = inv_yy * (H[2] + 2. * y * H[1] + yy * H[0]);
+      const double Bk = inv_yy * H[4] + 4. * inv_y * H[3] + 6. * H[2] +
                   4. * y * H[1] + yy * H[0];
       for (std::size_t ll = 0; ll < xs_out.size(); ll++) {
         if (start_indx[ll] <= k) {
@@ -615,19 +565,19 @@ struct Sigma1 {
       }
     }
 
-    if (hi == xgrid.size() - 1 && xgrid[hi] < y + limit &&
+    if (hi == egrid.size() - 1 && std::sqrt(alpha*egrid[hi]) < y + limit &&
         hi_approx == Extrapolate::Constant) {
       // Extend the xs as constant from x[N] to infinity
-      fill_f(Fa, xgrid[egrid.size() - 1] - y);
+      fill_f(Fa, std::sqrt(alpha*egrid[egrid.size() - 1]) - y);
       for (std::size_t ll = 0; ll < xs_out.size(); ll++)
         xs_out[ll] -= xs[ll][egrid.size() - 1] *
                       (inv_yy * Fa[2] + 2. * inv_y * Fa[1] + Fa[0]);
-    } else if (hi == xgrid.size() - 1 && xgrid[hi] < y + limit &&
+    } else if (hi == egrid.size() - 1 && std::sqrt(alpha*egrid[hi]) < y + limit &&
                hi_approx == Extrapolate::OneOverV) {
       // Extend the xs as 1/v from x[N] to infinity
-      fill_f(Fa, xgrid[egrid.size() - 1] - y);
+      fill_f(Fa, std::sqrt(alpha*egrid[egrid.size() - 1]) - y);
       for (std::size_t ll = 0; ll < xs_out.size(); ll++)
-        xs_out[ll] -= xgrid[egrid.size() - 1] * xs[ll][egrid.size() - 1] *
+        xs_out[ll] -= std::sqrt(alpha*egrid[egrid.size() - 1]) * xs[ll][egrid.size() - 1] *
                       inv_yy * (Fa[1] + y * Fa[0]);
     }
   }
