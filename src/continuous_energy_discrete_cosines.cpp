@@ -110,7 +110,20 @@ ContinuousEnergyDiscreteCosines::ContinuousEnergyDiscreteCosines(
         tables_.back().energy.insert(tables_.back().energy.begin(), 0.);
         tables_.back().cdf.insert(tables_.back().cdf.begin(), 0.);
         tables_.back().pdf.insert(tables_.back().pdf.begin(), 0.);
-        std::vector<double> discrete_angles = tables_.back().cosines[0];
+        // We now need to create a set is isotropicly distributed discrete
+        // angles. An isotropic distribution is used, as very close to Eout=0,
+        // alpha is almost constant, which means that S(a,b) will have very
+        // little variation, and should therefore provide an isotropic
+        // distribution for energies just above 0.
+        std::vector<double> discrete_angles(Nmu, 0.);
+        const double dmu = 2. / static_cast<double>(Nmu);
+        for (uint32_t i_mu = 0; i_mu < Nmu; i_mu++) {
+          if (i_mu == 0) {
+            discrete_angles[0] = -1. + 0.5*dmu; 
+          } else {
+            discrete_angles[i_mu] = discrete_angles[i_mu - 1] + dmu; 
+          }
+        }
         tables_.back().cosines.insert(tables_.back().cosines.begin(), discrete_angles);
 
         // Calculate the PDF
