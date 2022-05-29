@@ -62,5 +62,6 @@ void init_STNeutron(py::module& m) {
       .def("fission_xs", &STNeutron::fission_xs)
       .def("disappearance_xs", &STNeutron::disappearance_xs)
       .def("photon_production_xs", &STNeutron::photon_production_xs)
-      .def("reaction", &STNeutron::reaction);
+      .def("reaction", &STNeutron::reaction)
+      .def("urr_ptables", &STNeutron::urr_ptables);
 }

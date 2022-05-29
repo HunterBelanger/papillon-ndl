@@ -30,6 +30,7 @@
 
 #include <PapillonNDL/ce_neutron_base.hpp>
 #include <PapillonNDL/reaction.hpp>
+#include <PapillonNDL/urr_ptables.hpp>
 
 namespace pndl {
 
@@ -116,6 +117,11 @@ class CENeutron<CrossSection> : public CENeutronBase {
 
     return reactions_[reaction_indices_[mt]];
   }
+  
+  /**
+   * @brief Returns a reference to the URRPTables instance.
+   */
+  const URRPTables& urr_ptables() const { return *urr_ptables_; }
 
  private:
   double temperature_;
@@ -129,6 +135,8 @@ class CENeutron<CrossSection> : public CENeutronBase {
   std::shared_ptr<CrossSection> photon_production_xs_;
 
   std::vector<STReaction> reactions_;
+
+  std::shared_ptr<URRPTables> urr_ptables_;
 
   // Private Helper Methods
   std::shared_ptr<CrossSection> compute_fission_xs();
