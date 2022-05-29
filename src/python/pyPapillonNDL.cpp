@@ -67,6 +67,7 @@ extern void init_STIncoherentInelastic(py::module& m);
 extern void init_STCoherentElastic(py::module& m);
 extern void init_STInoherentElastic(py::module& m);
 extern void init_STThermalScatteringLaw(py::module& m);
+extern void init_URRPtable(py::module& m);
 extern void init_PCTable(py::module&);
 extern void init_EnergyAngleTable(py::module&);
 extern void init_TabularEnergyAngle(py::module&);
@@ -125,6 +126,7 @@ PYBIND11_MODULE(pyPapillonNDL, m) {
   init_STCoherentElastic(m);
   init_STInoherentElastic(m);
   init_STThermalScatteringLaw(m);
+  init_URRPtable(m);
   init_PCTable(m);
   init_EnergyAngleTable(m);
   init_TabularEnergyAngle(m);

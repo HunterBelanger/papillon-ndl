@@ -55,6 +55,7 @@ set(PNDL_SOURCE_LIST src/element.cpp
                      src/st_coherent_elastic.cpp
                      src/st_incoherent_elastic.cpp
                      src/st_thermal_scattering_law.cpp
+                     src/urr_ptables.cpp
                      src/version.cpp
 )
 
@@ -138,6 +139,7 @@ if(PNDL_PYTHON)
                                     src/python/energy_law.cpp
                                     src/python/angle_energy.cpp
                                     src/python/thermal_scattering.cpp
+                                    src/python/urr_ptables.cpp
                                     src/python/pctable.cpp
                                     src/python/energy_grid.cpp
                                     src/python/cross_section.cpp
