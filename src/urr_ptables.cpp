@@ -163,10 +163,10 @@ namespace pndl {
       mssg << "Could not find inelastic MT = " << inelastic_flag << "."; 
       throw PNDLException(mssg.str());
     }
-  } else if (inelastic_flag == 0) {
+  } /*else if (inelastic_flag == 0) {
     std::string mssg = "Cannot handle inelastic flag of 0."; 
     throw PNDLException(mssg);
-  }
+  }*/
 
   if (absorption_flag > 0) {
     // Go find relevant MT in reaction list
@@ -182,10 +182,20 @@ namespace pndl {
       mssg << "Could not find absorption MT = " << absorption_flag << "."; 
       throw PNDLException(mssg.str());
     }
-  } else if (absorption_flag == 0) {
+  } /*else if (absorption_flag == 0) {
     std::string mssg = "Cannot handle absorption flag of 0."; 
     throw PNDLException(mssg);
-  }
+  }*/
+
+  /* I can't figure out what to do when inelastic_flag == 0 or when
+   * absorption_flag == 0. The ACE manual makes some vague description
+   * about calculating the other absoption or inelastic xs using a balance
+   * relationship with the smooth cross sections, but I find no other
+   * mention of this in any reference. Currently, I do nothing, and I
+   * don't account for these extra absorptions or inelastic xs contributions.
+   * From what I can tell, this is in agreement with what OpenMC and Scone
+   * do, as they both seem to ignore these flags.
+   * */
 }
 
 }

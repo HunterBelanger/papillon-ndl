@@ -41,6 +41,10 @@
 
 namespace pndl {
 
+/**
+ * @brief Class to hold the URR probability tables for a single nuclide,
+ *        at a single temperature.
+ */
 class URRPTables {
   public:
     /**
@@ -116,7 +120,7 @@ class URRPTables {
 
       // Figure out which band we have sampled
       for (std::size_t b = 0; b < ptable.cdf.size(); b++) {
-        if (xi >= ptable.cdf[b]) return b;
+        if (ptable.cdf[b] >= xi) return b;
       }
 
       // SHOULD NEVER GET HERE
@@ -197,8 +201,6 @@ class URRPTables {
         xsout.elastic *= elastic_->evaluate(E, i); 
         xsout.capture *= capture_->evaluate(E, i);
         xsout.fission *= fission_->evaluate(E, i);
-        // I don't know if we are supposed to do this with heating too ??
-        // Will need to check this one day.
         xsout.heating *= heating_->evaluate(E, i);
       }
 
