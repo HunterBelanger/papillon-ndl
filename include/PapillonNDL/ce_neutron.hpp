@@ -79,6 +79,13 @@ class CENeutron<CrossSection> : public CENeutronBase {
   const CrossSection& elastic_xs() const { return *elastic_xs_; }
 
   /**
+   * @brief Returns the heating number CrossSection for the nuclide.
+   *        Upon evaluation, the average heating number if given for the
+   *        nuclide, as the prescribed energy, in MeV.
+   */
+  const CrossSection& heating_number() const { return *heating_number_; }
+
+  /**
    * @brief Returns the fission CrossSection for the nuclide.
    */
   const CrossSection& fission_xs() const { return *fission_xs_; }
@@ -117,6 +124,7 @@ class CENeutron<CrossSection> : public CENeutronBase {
   std::shared_ptr<CrossSection> total_xs_;
   std::shared_ptr<CrossSection> disappearance_xs_;
   std::shared_ptr<CrossSection> elastic_xs_;
+  std::shared_ptr<CrossSection> heating_number_;
   std::shared_ptr<CrossSection> fission_xs_;
   std::shared_ptr<CrossSection> photon_production_xs_;
 

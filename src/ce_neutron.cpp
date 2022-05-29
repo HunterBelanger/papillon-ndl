@@ -31,6 +31,7 @@ CENeutron<CrossSection>::CENeutron(const ACE& ace)
       total_xs_(nullptr),
       disappearance_xs_(nullptr),
       elastic_xs_(nullptr),
+      heating_number_(nullptr),
       fission_xs_(nullptr),
       photon_production_xs_(nullptr),
       reactions_() {
@@ -45,6 +46,7 @@ CENeutron<CrossSection>::CENeutron(const ACE& ace)
                                                      energy_grid_, false);
   elastic_xs_ = std::make_shared<CrossSection>(ace, ace.ESZ() + 3 * NE,
                                                energy_grid_, false);
+  heating_number_ = std::make_shared<CrossSection>(ace, ace.ESZ() + 4 * NE, energy_grid_, false);
 
   // Get photon production XS if present
   if (ace.jxs(11) != 0) {
@@ -78,6 +80,7 @@ CENeutron<CrossSection>::CENeutron(const ACE& ace, const CENeutron& nuclide)
       total_xs_(nullptr),
       disappearance_xs_(nullptr),
       elastic_xs_(nullptr),
+      heating_number_(nullptr),
       fission_xs_(nullptr),
       photon_production_xs_(nullptr),
       reactions_() {
@@ -92,6 +95,7 @@ CENeutron<CrossSection>::CENeutron(const ACE& ace, const CENeutron& nuclide)
                                                      energy_grid_, false);
   elastic_xs_ = std::make_shared<CrossSection>(ace, ace.ESZ() + 3 * NE,
                                                energy_grid_, false);
+  heating_number_ = std::make_shared<CrossSection>(ace, ace.ESZ() + 4 * NE, energy_grid_, false);
 
   // Get photon production XS if present
   if (ace.jxs(11) != 0) {
