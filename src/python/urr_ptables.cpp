@@ -53,12 +53,12 @@ void init_URRPtable(py::module& m) {
     .def_readwrite("heating", &URRPTables::MicroXS::heating);
 
   py::class_<URRPTables, std::shared_ptr<URRPTables>>(m, "URRPTables")
-    .def(py::init<>(const ACE&,
+    .def(py::init<const ACE&,
           const std::shared_ptr<CrossSection>&,
           const std::shared_ptr<CrossSection>&,
           const std::shared_ptr<CrossSection>&,
           const std::shared_ptr<CrossSection>&,
-          const std::vector<STReaction>&))
+          const std::vector<STReaction>&>())
     .def("is_valid", &URRPTables::is_valid)
     .def("sample_xs_band", &URRPTables::sample_xs_band)
     .def("evaluate_xs_band", &URRPTables::evaluate_xs_band)

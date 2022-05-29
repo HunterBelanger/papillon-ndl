@@ -90,7 +90,7 @@ class URRPTables {
      * @brief Returns true if the PTables are present, and false if not.
      */
     bool is_valid() const {
-      return energy_.size() > 2; 
+      return energy_->size() > 2; 
     }
     
     /**
@@ -102,17 +102,17 @@ class URRPTables {
     std::size_t sample_xs_band(double E, double xi) const {
       // Find the energy index
       std::size_t i = 0;
-      auto Eit = std::lower_bound(energy_.begin(), energy_().end());
-      if (Eit == energy_.begin()) {
+      auto Eit = std::lower_bound(energy_->begin(), energy_->end(), E);
+      if (Eit == energy_->begin()) {
         i = 0;  
-      } else if (Eit == energy_.end()) {
-        i = energy_.size() - 1; 
+      } else if (Eit == energy_->end()) {
+        i = energy_->size() - 1; 
       } else {
-        i = std::distance(energy_.begin(), Eit) - 1; 
+        i = std::distance(energy_->begin(), Eit) - 1; 
       }
 
       // Get reference to the PTable
-      const PTable& ptable = ptables_[i];
+      const PTable& ptable = (*ptables_)[i];
 
       // Figure out which band we have sampled
       for (std::size_t b = 0; b < ptable.cdf.size(); b++) {
@@ -135,56 +135,58 @@ class URRPTables {
       // Find the energy index and interpolation factor
       std::size_t j = 0;
       double f = 0.;
-      auto Eit = std::lower_bound(energy_.begin(), energy_().end());
-      if (Eit == energy_.begin()) {
+      std::vector<double>& energy = *energy_;
+      auto Eit = std::lower_bound(energy.begin(), energy.end(), E);
+      if (Eit == energy.begin()) {
         j = 0;
         f = 0.; 
-      } else if (Eit == energy_.end()) {
-        j = energy_.size() - 2; 
+      } else if (Eit == energy.end()) {
+        j = energy.size() - 2; 
         f = 1.;
       } else {
-        j = std::distance(energy_.begin(), Eit) - 1; 
+        j = std::distance(energy.begin(), Eit) - 1; 
         if (interp_ == Interpolation::LinLin) {
-          f = (E - energy_[j])/(energy_[j+1] - energy_[j]);
+          f = (E - energy[j])/(energy[j+1] - energy[j]);
         } else {
-          f = std::log(E/energy_[j]) / std::log(energy_[j+1]/energy_[j]); 
+          f = std::log(E/energy[j]) / std::log(energy[j+1]/energy[j]); 
         }
       }
       
       // XSBand struct which will contain the returned cross sections
       MicroXS xsout{0., 0., 0., 0., 0., 0., 0.};
+      std::vector<PTable>& ptabs = *ptables_;
 
       // Evaluate the cross sections depending on interpolation
       if (interp_ == Interpolation::LinLin) {
-        xsout.elastic = ptables_[j].xs_bands[b].elastic + f*(ptables_[j+1].xs_bands[b].elastic - ptables_[j].xs_bands[b].elastic);
-        xsout.capture = ptables_[j].xs_bands[b].capture + f*(ptables_[j+1].xs_bands[b].capture - ptables_[j].xs_bands[b].capture);
-        xsout.fission = ptables_[j].xs_bands[b].fission + f*(ptables_[j+1].xs_bands[b].fission - ptables_[j].xs_bands[b].fission);
-        xsout.heating = ptables_[j].xs_bands[b].heating + f*(ptables_[j+1].xs_bands[b].heating - ptables_[j].xs_bands[b].heating);
+        xsout.elastic = ptabs[j].xs_bands[b].elastic + f*(ptabs[j+1].xs_bands[b].elastic - ptabs[j].xs_bands[b].elastic);
+        xsout.capture = ptabs[j].xs_bands[b].capture + f*(ptabs[j+1].xs_bands[b].capture - ptabs[j].xs_bands[b].capture);
+        xsout.fission = ptabs[j].xs_bands[b].fission + f*(ptabs[j+1].xs_bands[b].fission - ptabs[j].xs_bands[b].fission);
+        xsout.heating = ptabs[j].xs_bands[b].heating + f*(ptabs[j+1].xs_bands[b].heating - ptabs[j].xs_bands[b].heating);
       } else {
-        if (ptables_[j].xs_bands[b].elastic > 0. &&
-            ptables_[j+1].xs_bands[b].elastic > 0.) {
-          xsout.elastic = std::exp(std::log(ptables_[j].xs_bands[b].elastic) + f*std::log(ptables_[j+1].xs_bands[b].elastic/ptables_[j].xs_bands[b].elastic));
+        if (ptabs[j].xs_bands[b].elastic > 0. &&
+            ptabs[j+1].xs_bands[b].elastic > 0.) {
+          xsout.elastic = std::exp(std::log(ptabs[j].xs_bands[b].elastic) + f*std::log(ptabs[j+1].xs_bands[b].elastic/ptabs[j].xs_bands[b].elastic));
         } else {
           xsout.elastic = 0.; 
         }
 
-        if (ptables_[j].xs_bands[b].capture > 0. &&
-            ptables_[j+1].xs_bands[b].capture > 0.) {
-          xsout.capture = std::exp(std::log(ptables_[j].xs_bands[b].capture) + f*std::log(ptables_[j+1].xs_bands[b].capture/ptables_[j].xs_bands[b].capture));
+        if (ptabs[j].xs_bands[b].capture > 0. &&
+            ptabs[j+1].xs_bands[b].capture > 0.) {
+          xsout.capture = std::exp(std::log(ptabs[j].xs_bands[b].capture) + f*std::log(ptabs[j+1].xs_bands[b].capture/ptabs[j].xs_bands[b].capture));
         } else {
           xsout.capture = 0.; 
         }
         
-        if (ptables_[j].xs_bands[b].fission > 0. &&
-            ptables_[j+1].xs_bands[b].fission > 0.) {
-          xsout.fission = std::exp(std::log(ptables_[j].xs_bands[b].fission) + f*std::log(ptables_[j+1].xs_bands[b].fission/ptables_[j].xs_bands[b].fission));
+        if (ptabs[j].xs_bands[b].fission > 0. &&
+            ptabs[j+1].xs_bands[b].fission > 0.) {
+          xsout.fission = std::exp(std::log(ptabs[j].xs_bands[b].fission) + f*std::log(ptabs[j+1].xs_bands[b].fission/ptabs[j].xs_bands[b].fission));
         } else {
           xsout.fission = 0.; 
         }
 
-        if (ptables_[j].xs_bands[b].heating > 0. &&
-            ptables_[j+1].xs_bands[b].heating > 0.) {
-          xsout.heating = std::exp(std::log(ptables_[j].xs_bands[b].heating) + f*std::log(ptables_[j+1].xs_bands[b].heating/ptables_[j].xs_bands[b].heating));
+        if (ptabs[j].xs_bands[b].heating > 0. &&
+            ptabs[j+1].xs_bands[b].heating > 0.) {
+          xsout.heating = std::exp(std::log(ptabs[j].xs_bands[b].heating) + f*std::log(ptabs[j+1].xs_bands[b].heating/ptabs[j].xs_bands[b].heating));
         } else {
           xsout.heating = 0.; 
         }
@@ -230,16 +232,16 @@ class URRPTables {
      * @brief Returns the minimum energy of the URR probability tables.
      */
     double min_energy() const {
-      if (energy_.size() == 0) return -1.;
-      return energy_.front();
+      if (energy_->size() == 0) return -1.;
+      return energy_->front();
     }
     
     /**
      * @brief Returns the maximum energy of the URR probability tables.
      */
     double max_energy() const {
-      if (energy_.size() == 0) return -1.;
-      return energy_.back();
+      if (energy_->size() == 0) return -1.;
+      return energy_->back();
     }
     
     /**
@@ -247,7 +249,7 @@ class URRPTables {
      * @param E Energy to check, in MeV.
      */
     bool energy_in_range(double E) const {
-      if (energy_.size() < 2) return false;
+      if (energy_->size() < 2) return false;
       return this->min_energy() < E && E , this->max_energy(); 
     }
     
@@ -265,8 +267,8 @@ class URRPTables {
      * @brief Number of cross section bands in each PTable.
      */
     std::size_t n_xs_bands() const {
-      if (ptables_.size() == 0) return 0;
-      return ptables_.front().xs_bands.size();
+      if (ptables_->size() == 0) return 0;
+      return ptables_->front().xs_bands.size();
     }
     
   private:
