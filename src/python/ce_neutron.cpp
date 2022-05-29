@@ -58,6 +58,7 @@ void init_STNeutron(py::module& m) {
       .def("energy_grid", &STNeutron::energy_grid)
       .def("total_xs", &STNeutron::total_xs)
       .def("elastic_xs", &STNeutron::elastic_xs)
+      .def("heating_number", &STNeutron::heating_number)
       .def("fission_xs", &STNeutron::fission_xs)
       .def("disappearance_xs", &STNeutron::disappearance_xs)
       .def("photon_production_xs", &STNeutron::photon_production_xs)
