@@ -83,6 +83,14 @@ class URRPTables {
     };
 
   public:
+    /**
+     * @param ace ACE file containing the probability tables.
+     * @param elastic Pointer to the elastic CrossSection of the nuclide.
+     * @param capture Pointer to the capture CrossSection of the nuclide.
+     * @param fission Pointer to the fission CrossSection of the nuclide.
+     * @param heating Pointer to the heating number CrossSection of the nuclide.
+     * @param reactions Vector of all STReaction instances for the nuclide.
+     */
     URRPTables(const ACE& ace,
                const std::shared_ptr<CrossSection>& elastic,
                const std::shared_ptr<CrossSection>& capture,
