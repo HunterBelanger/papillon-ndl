@@ -85,17 +85,17 @@ class URRPTables {
   public:
     /**
      * @param ace ACE file containing the probability tables.
-     * @param elastic Pointer to the elastic CrossSection of the nuclide.
-     * @param capture Pointer to the capture CrossSection of the nuclide.
-     * @param fission Pointer to the fission CrossSection of the nuclide.
-     * @param heating Pointer to the heating number CrossSection of the nuclide.
+     * @param elastic Elastic cross section of the nuclide.
+     * @param capture Capture cross section of the nuclide.
+     * @param fission Fission cross section of the nuclide.
+     * @param heating Heating number CrossSection of the nuclide.
      * @param reactions Vector of all STReaction instances for the nuclide.
      */
     URRPTables(const ACE& ace,
-               const std::shared_ptr<CrossSection>& elastic,
-               const std::shared_ptr<CrossSection>& capture,
-               const std::shared_ptr<CrossSection>& fission,
-               const std::shared_ptr<CrossSection>& heating,
+               const CrossSection& elastic,
+               const CrossSection& capture,
+               const CrossSection& fission,
+               const CrossSection& heating,
                const std::vector<STReaction>& reactions);
     
     /**
@@ -206,10 +206,10 @@ class URRPTables {
 
       // Check if these are factors. If so, we mulitply by smooth cross sections.
       if (factors_) {
-        xsout.elastic *= elastic_->evaluate(E, i); 
-        xsout.capture *= capture_->evaluate(E, i);
-        xsout.fission *= fission_->evaluate(E, i);
-        xsout.heating *= heating_->evaluate(E, i);
+        xsout.elastic *= elastic_(E, i); 
+        xsout.capture *= capture_(E, i);
+        xsout.fission *= fission_(E, i);
+        xsout.heating *= heating_(E, i);
       }
 
       // Set any negatives to zero.
@@ -284,10 +284,10 @@ class URRPTables {
   private:
     Interpolation interp_; 
     bool factors_;
-    std::shared_ptr<CrossSection> elastic_; // MT 2
-    std::shared_ptr<CrossSection> capture_; // MT 102
-    std::shared_ptr<CrossSection> fission_; // MT 18
-    std::shared_ptr<CrossSection> heating_;
+    CrossSection elastic_; // MT 2
+    CrossSection capture_; // MT 102
+    CrossSection fission_; // MT 18
+    CrossSection heating_;
     std::shared_ptr<CrossSection> inelastic_;
     std::shared_ptr<CrossSection> absorption_;
     std::shared_ptr<std::vector<double>> energy_;

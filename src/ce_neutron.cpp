@@ -81,8 +81,8 @@ CENeutron<CrossSection>::CENeutron(const ACE& ace)
   std::shared_ptr<CrossSection> capture_xs_ =
     std::make_shared<CrossSection>(this->reaction(102).xs());
   try {
-    urr_ptables_ = std::make_shared<URRPTables>(ace, elastic_xs_, capture_xs_,
-        fission_xs_, heating_number_, reactions_);
+    urr_ptables_ = std::make_shared<URRPTables>(ace, *elastic_xs_, *capture_xs_,
+        *fission_xs_, *heating_number_, reactions_);
   } catch (PNDLException& error) {
     std::string mssg = "Could not construct URRPTables for nuclide data."; 
     error.add_to_exception(mssg);
@@ -147,8 +147,8 @@ CENeutron<CrossSection>::CENeutron(const ACE& ace, const CENeutron& nuclide)
   std::shared_ptr<CrossSection> capture_xs_ =
     std::make_shared<CrossSection>(this->reaction(102).xs());
   try {
-    urr_ptables_ = std::make_shared<URRPTables>(ace, elastic_xs_, capture_xs_,
-        fission_xs_, heating_number_, reactions_);
+    urr_ptables_ = std::make_shared<URRPTables>(ace, *elastic_xs_, *capture_xs_,
+        *fission_xs_, *heating_number_, reactions_);
   } catch (PNDLException& error) {
     std::string mssg = "Could not construct URRPTables for nuclide data."; 
     error.add_to_exception(mssg);

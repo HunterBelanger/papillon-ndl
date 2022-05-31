@@ -34,17 +34,17 @@
 namespace pndl {
 
   URRPTables::URRPTables(const ACE& ace,
-      const std::shared_ptr<CrossSection>& elastic,
-      const std::shared_ptr<CrossSection>& capture,
-      const std::shared_ptr<CrossSection>& fission,
-      const std::shared_ptr<CrossSection>& heating,
+      const CrossSection& elastic,
+      const CrossSection& capture,
+      const CrossSection& fission,
+      const CrossSection& heating,
       const std::vector<STReaction>& reactions):
     interp_(Interpolation::LinLin),
     factors_(false),
-    elastic_(nullptr),
-    capture_(nullptr),
-    fission_(nullptr),
-    heating_(nullptr),
+    elastic_(elastic),
+    capture_(capture),
+    fission_(fission),
+    heating_(heating),
     inelastic_(nullptr),
     absorption_(nullptr),
     energy_(nullptr),
@@ -142,12 +142,6 @@ namespace pndl {
     mssg << "Unsupported interpolation " << interp_ << "." ; 
     throw PNDLException(mssg.str());
   }
-
-  // Set cross sections
-  elastic_ = elastic;
-  capture_ = capture;
-  fission_ = fission;
-  heating_ = heating;
 
   if (inelastic_flag > 0) {
     // Go find relevant MT in reaction list
