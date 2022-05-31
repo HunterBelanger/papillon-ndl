@@ -280,6 +280,15 @@ class URRPTables {
       if (ptables_->size() == 0) return 0;
       return ptables_->front().xs_bands.size();
     }
+
+    /**
+     * @brief Returns true if the values in the probability tables are factors
+     *        which must multiply the smooth cross sections. False is returned
+     *        if the actual cross sections are stored.
+     */
+    bool xs_factors() const {
+      return factors_; 
+    }
     
   private:
     Interpolation interp_; 

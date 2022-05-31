@@ -64,6 +64,7 @@ void init_URRPtable(py::module& m) {
     .def("energy_in_range", &URRPTables::energy_in_range)
     .def("energy", &URRPTables::energy)
     .def("ptables", &URRPTables::ptables)
-    .def("n_xs_bands", &URRPTables::n_xs_bands);
+    .def("n_xs_bands", &URRPTables::n_xs_bands)
+    .def("xs_factors", &URRPTables::xs_factors);
 }
 
