@@ -26,72 +26,71 @@
  * @author Hunter Belanger
  */
 
-#include <PapillonNDL/urr_ptables.hpp>
 #include <PapillonNDL/pndl_exception.hpp>
+#include <PapillonNDL/urr_ptables.hpp>
 #include <algorithm>
 #include <sstream>
 
 namespace pndl {
 
-  URRPTables::URRPTables(const ACE& ace,
-      const CrossSection& elastic,
-      const CrossSection& capture,
-      const CrossSection& fission,
-      const CrossSection& heating,
-      const std::vector<STReaction>& reactions):
-    interp_(Interpolation::LinLin),
-    factors_(false),
-    elastic_(elastic),
-    capture_(capture),
-    fission_(fission),
-    heating_(heating),
-    inelastic_(nullptr),
-    absorption_(nullptr),
-    energy_(nullptr),
-    ptables_(nullptr) {
+URRPTables::URRPTables(const ACE& ace, const CrossSection& elastic,
+                       const CrossSection& capture, const CrossSection& fission,
+                       const CrossSection& heating,
+                       const std::vector<STReaction>& reactions)
+    : interp_(Interpolation::LinLin),
+      factors_(false),
+      elastic_(elastic),
+      capture_(capture),
+      fission_(fission),
+      heating_(heating),
+      inelastic_(nullptr),
+      absorption_(nullptr),
+      energy_(nullptr),
+      ptables_(nullptr) {
   // Initialize at least the energy_ and ptables_ vectors
   energy_ = std::make_shared<std::vector<double>>();
   ptables_ = std::make_shared<std::vector<PTable>>();
 
   // Start by checking if there are any ptables or not in the ACE file
   if (ace.jxs(22) == 0) {
-    // No URR PTables are given. 
+    // No URR PTables are given.
     return;
   }
-  
+
   // Read numbers and flags
   uint32_t Nenergy = ace.xss<uint32_t>(ace.LUNR());
-  uint32_t Nptables = ace.xss<uint32_t>(ace.LUNR()+1);
-  interp_ = ace.xss<Interpolation>(ace.LUNR()+2);
-  int32_t inelastic_flag = ace.xss<int32_t>(ace.LUNR()+3);
-  int32_t absorption_flag = ace.xss<int32_t>(ace.LUNR()+4);
-  int32_t factors_flag = ace.xss<int32_t>(ace.LUNR()+5);
+  uint32_t Nptables = ace.xss<uint32_t>(ace.LUNR() + 1);
+  interp_ = ace.xss<Interpolation>(ace.LUNR() + 2);
+  int32_t inelastic_flag = ace.xss<int32_t>(ace.LUNR() + 3);
+  int32_t absorption_flag = ace.xss<int32_t>(ace.LUNR() + 4);
+  int32_t factors_flag = ace.xss<int32_t>(ace.LUNR() + 5);
 
   // Read energy grid
-  *energy_ = ace.xss(ace.LUNR()+6, Nenergy);
+  *energy_ = ace.xss(ace.LUNR() + 6, Nenergy);
 
   // Read all PTables for each energy
-  std::size_t indx = ace.LUNR()+6+Nenergy;
+  std::size_t indx = ace.LUNR() + 6 + Nenergy;
   PTable empty_ptable;
   for (std::size_t ie = 0; ie < Nenergy; ie++) {
     ptables_->push_back(empty_ptable);
     ptables_->back().cdf.resize(Nptables);
     for (std::size_t ipt = 0; ipt < Nptables; ipt++) {
-      ptables_->back().cdf[ipt] = ace.xss(indx + ipt); 
+      ptables_->back().cdf[ipt] = ace.xss(indx + ipt);
     }
     indx += Nptables;
 
     // Check the CDF for consistency
-    if (std::is_sorted(ptables_->back().cdf.begin(), ptables_->back().cdf.end()) == false) {
+    if (std::is_sorted(ptables_->back().cdf.begin(),
+                       ptables_->back().cdf.end()) == false) {
       std::stringstream mssg;
-      mssg << "CDF for incident energy " << ie << " is not sorted."; 
+      mssg << "CDF for incident energy " << ie << " is not sorted.";
       throw PNDLException(mssg.str());
     }
 
     if (ptables_->back().cdf[0] <= 0.) {
       std::stringstream mssg;
       mssg << "Initial CDF value for incident energy " << ie << " is less ";
-      mssg << "than or equal to zero."; 
+      mssg << "than or equal to zero.";
       throw PNDLException(mssg.str());
     }
 
@@ -99,35 +98,35 @@ namespace pndl {
       ptables_->back().cdf.back() = 1.;
     } else {
       std::stringstream mssg;
-      mssg << "Last CDF value for incident energy " << ie << " is not 1, "; 
+      mssg << "Last CDF value for incident energy " << ie << " is not 1, ";
       mssg << "but " << ptables_->back().cdf.back() << ".";
       throw PNDLException(mssg.str());
     }
-    
-    // Get the cross section bands. 
+
+    // Get the cross section bands.
     ptables_->back().xs_bands.resize(Nptables);
     for (std::size_t ipt = 0; ipt < Nptables; ipt++) {
-      ptables_->back().xs_bands[ipt].total = ace.xss(indx + ipt); 
+      ptables_->back().xs_bands[ipt].total = ace.xss(indx + ipt);
     }
     indx += Nptables;
 
     for (std::size_t ipt = 0; ipt < Nptables; ipt++) {
-      ptables_->back().xs_bands[ipt].elastic = ace.xss(indx + ipt); 
+      ptables_->back().xs_bands[ipt].elastic = ace.xss(indx + ipt);
     }
     indx += Nptables;
 
     for (std::size_t ipt = 0; ipt < Nptables; ipt++) {
-      ptables_->back().xs_bands[ipt].fission = ace.xss(indx + ipt); 
+      ptables_->back().xs_bands[ipt].fission = ace.xss(indx + ipt);
     }
     indx += Nptables;
 
     for (std::size_t ipt = 0; ipt < Nptables; ipt++) {
-      ptables_->back().xs_bands[ipt].capture = ace.xss(indx + ipt); 
+      ptables_->back().xs_bands[ipt].capture = ace.xss(indx + ipt);
     }
     indx += Nptables;
 
     for (std::size_t ipt = 0; ipt < Nptables; ipt++) {
-      ptables_->back().xs_bands[ipt].heating = ace.xss(indx + ipt); 
+      ptables_->back().xs_bands[ipt].heating = ace.xss(indx + ipt);
     }
     indx += Nptables;
   }
@@ -136,10 +135,9 @@ namespace pndl {
   if (factors_flag == 1) factors_ = true;
 
   // Check interpolation
-  if (interp_ != Interpolation::LinLin &&
-      interp_ != Interpolation::LogLog) {
+  if (interp_ != Interpolation::LinLin && interp_ != Interpolation::LogLog) {
     std::stringstream mssg;
-    mssg << "Unsupported interpolation " << interp_ << "." ; 
+    mssg << "Unsupported interpolation " << interp_ << ".";
     throw PNDLException(mssg.str());
   }
 
@@ -147,18 +145,18 @@ namespace pndl {
     // Go find relevant MT in reaction list
     for (const auto& reac : reactions) {
       if (reac.mt() == static_cast<uint32_t>(inelastic_flag)) {
-        inelastic_ = std::make_shared<CrossSection>(reac.xs()); 
+        inelastic_ = std::make_shared<CrossSection>(reac.xs());
         break;
       }
     }
 
     if (inelastic_ == nullptr) {
       std::stringstream mssg;
-      mssg << "Could not find inelastic MT = " << inelastic_flag << "."; 
+      mssg << "Could not find inelastic MT = " << inelastic_flag << ".";
       throw PNDLException(mssg.str());
     }
   } /*else if (inelastic_flag == 0) {
-    std::string mssg = "Cannot handle inelastic flag of 0."; 
+    std::string mssg = "Cannot handle inelastic flag of 0.";
     throw PNDLException(mssg);
   }*/
 
@@ -166,18 +164,18 @@ namespace pndl {
     // Go find relevant MT in reaction list
     for (const auto& reac : reactions) {
       if (reac.mt() == static_cast<uint32_t>(absorption_flag)) {
-        absorption_ = std::make_shared<CrossSection>(reac.xs()); 
+        absorption_ = std::make_shared<CrossSection>(reac.xs());
         break;
       }
     }
 
     if (absorption_ == nullptr) {
       std::stringstream mssg;
-      mssg << "Could not find absorption MT = " << absorption_flag << "."; 
+      mssg << "Could not find absorption MT = " << absorption_flag << ".";
       throw PNDLException(mssg.str());
     }
   } /*else if (absorption_flag == 0) {
-    std::string mssg = "Cannot handle absorption flag of 0."; 
+    std::string mssg = "Cannot handle absorption flag of 0.";
     throw PNDLException(mssg);
   }*/
 
@@ -192,4 +190,4 @@ namespace pndl {
    * */
 }
 
-}
+}  // namespace pndl
