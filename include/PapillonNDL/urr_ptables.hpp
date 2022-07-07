@@ -275,6 +275,20 @@ class URRPTables {
   }
 
   /**
+   * @brief Calculates the cross section for a given incident energy and
+   *        cross section band.
+   * @param E Incident energy (MeV).
+   * @param b Index of the sampled cross section band.
+   */
+  MicroXS evaluate_xs_band(double E, std::size_t b) const {
+    // Get the energy index
+    std::size_t i = this->elastic_.energy_grid().get_lower_index(E); 
+    // Call the other method
+    return this->evaluate_xs_band(E, i, b);
+  }
+
+
+  /**
    * @brief Energies for which a PTable is given.
    */
   const std::vector<double>& energy() const { return *energy_; }
