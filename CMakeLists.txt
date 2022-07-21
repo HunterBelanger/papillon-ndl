@@ -132,6 +132,7 @@ if(PNDL_PYTHON)
   pybind11_add_module(pyPapillonNDL src/python/pyPapillonNDL.cpp
                                     src/python/interpolation.cpp
                                     src/python/ace.cpp
+                                    src/python/xs_packet.cpp
                                     src/python/function_1d.cpp
                                     src/python/frame.cpp
                                     src/python/angle_law.cpp
