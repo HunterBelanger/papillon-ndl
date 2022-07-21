@@ -43,15 +43,6 @@ void init_URRPtable(py::module& m) {
       .def_readwrite("cdf", &URRPTables::PTable::cdf)
       .def_readwrite("xs_bands", &URRPTables::PTable::xs_bands);
 
-  py::class_<URRPTables::MicroXS>(m, "MicroXS")
-      .def_readwrite("total", &URRPTables::MicroXS::total)
-      .def_readwrite("elastic", &URRPTables::MicroXS::elastic)
-      .def_readwrite("inelastic", &URRPTables::MicroXS::inelastic)
-      .def_readwrite("absorption", &URRPTables::MicroXS::absorption)
-      .def_readwrite("capture", &URRPTables::MicroXS::capture)
-      .def_readwrite("fission", &URRPTables::MicroXS::fission)
-      .def_readwrite("heating", &URRPTables::MicroXS::heating);
-
   py::class_<URRPTables, std::shared_ptr<URRPTables>>(m, "URRPTables")
       .def(py::init<const ACE&, const CrossSection&, const CrossSection&,
                     const CrossSection&, const CrossSection&,

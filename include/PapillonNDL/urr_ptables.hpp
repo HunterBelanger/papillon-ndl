@@ -32,6 +32,7 @@
 #include <PapillonNDL/cross_section.hpp>
 #include <PapillonNDL/interpolation.hpp>
 #include <PapillonNDL/reaction.hpp>
+#include <PapillonNDL/xs_packet.hpp>
 #include <algorithm>
 #include <cmath>
 #include <functional>
@@ -65,20 +66,6 @@ class URRPTables {
 
     std::vector<double> cdf; /**< Probability CDF for cross section bands */
     std::vector<XSBand> xs_bands; /**< Cross section bands */
-  };
-
-  /**
-   * @brief A struct to hold all of the microscopic cross sections which
-   *        are calculated from the sampled PTables.
-   */
-  struct MicroXS {
-    double total;      /**< Total cross section */
-    double elastic;    /**< Elastic cross section (MT 2) */
-    double inelastic;  /**< Inelastic cross section */
-    double absorption; /**< Absorption cross section */
-    double capture;    /**< Capture cross section (MT 102) */
-    double fission;    /**< Fission cross section (MT 18) */
-    double heating;    /**< Heating number */
   };
 
  public:
@@ -138,7 +125,7 @@ class URRPTables {
    *          sections.
    * @param b Index of the sampled cross section band.
    */
-  MicroXS evaluate_xs_band(double E, std::size_t i, std::size_t b) const {
+  XSPacket evaluate_xs_band(double E, std::size_t i, std::size_t b) const {
     // Find the energy index and interpolation factor
     std::size_t j = 0;
     double f = 0.;
@@ -159,8 +146,8 @@ class URRPTables {
       }
     }
 
-    // XSBand struct which will contain the returned cross sections
-    MicroXS xsout{0., 0., 0., 0., 0., 0., 0.};
+    // XSPacket struct which will contain the returned cross sections
+    XSPacket xsout{0., 0., 0., 0., 0., 0., 0.};
     std::vector<PTable>& ptabs = *ptables_;
 
     // Evaluate the cross sections depending on interpolation
@@ -250,6 +237,19 @@ class URRPTables {
   }
 
   /**
+   * @brief Calculates the cross section for a given incident energy and
+   *        cross section band.
+   * @param E Incident energy (MeV).
+   * @param b Index of the sampled cross section band.
+   */
+  XSPacket evaluate_xs_band(double E, std::size_t b) const {
+    // Get the energy index
+    std::size_t i = this->elastic_.energy_grid().get_lower_index(E); 
+    // Call the other method
+    return this->evaluate_xs_band(E, i, b);
+  }
+
+  /**
    * @brief Returns the minimum energy of the URR probability tables.
    */
   double min_energy() const {
@@ -272,21 +272,7 @@ class URRPTables {
   bool energy_in_range(double E) const {
     if (energy_->size() < 2) return false;
     return this->min_energy() < E && E, this->max_energy();
-  }
-
-  /**
-   * @brief Calculates the cross section for a given incident energy and
-   *        cross section band.
-   * @param E Incident energy (MeV).
-   * @param b Index of the sampled cross section band.
-   */
-  MicroXS evaluate_xs_band(double E, std::size_t b) const {
-    // Get the energy index
-    std::size_t i = this->elastic_.energy_grid().get_lower_index(E); 
-    // Call the other method
-    return this->evaluate_xs_band(E, i, b);
-  }
-
+  } 
 
   /**
    * @brief Energies for which a PTable is given.
