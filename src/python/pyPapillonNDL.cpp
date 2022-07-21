@@ -27,6 +27,7 @@
 namespace py = pybind11;
 
 extern void init_ACE(py::module&);
+extern void init_XSPacket(py::module&);
 extern void init_Interpolation(py::module&);
 extern void init_Frame(py::module&);
 extern void init_Function1D(py::module&);
@@ -86,6 +87,7 @@ extern void init_Nuclide(py::module&);
 
 PYBIND11_MODULE(pyPapillonNDL, m) {
   init_ACE(m);
+  init_XSPacket(m);
   init_Interpolation(m);
   init_Frame(m);
   init_Function1D(m);
