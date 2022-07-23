@@ -34,16 +34,16 @@ namespace pndl {
  * @brief A struct to hold the set of basic cross sections.
  */
 struct XSPacket {
-  double total;   /**< Total cross section (MT 1) */
-  double elastic; /**< Elastic cross section (MT 2) */
+  double total;      /**< Total cross section (MT 1) */
+  double elastic;    /**< Elastic cross section (MT 2) */
   double inelastic;  /**< Inelastic cross section (MT 3) */
   double absorption; /**< Absorption cross section (MT 27) */
-  double fission; /**< Fission cross section (MT 18) */
-  double capture; /**< Radiative capture cross section (MT 102) */
-  double heating; /**< Heating number */
+  double fission;    /**< Fission cross section (MT 18) */
+  double capture;    /**< Radiative capture cross section (MT 102) */
+  double heating;    /**< Heating number */
 
   XSPacket& operator+=(const XSPacket& other) {
-    this->total += other.total; 
+    this->total += other.total;
     this->elastic += other.elastic;
     this->inelastic += other.inelastic;
     this->absorption += other.absorption;
@@ -53,9 +53,8 @@ struct XSPacket {
     return *this;
   }
 
-
   XSPacket& operator-=(const XSPacket& other) {
-    this->total -= other.total; 
+    this->total -= other.total;
     this->elastic -= other.elastic;
     this->inelastic -= other.inelastic;
     this->absorption -= other.absorption;
@@ -66,7 +65,7 @@ struct XSPacket {
   }
 
   XSPacket& operator*=(const double& C) {
-    this->total *= C; 
+    this->total *= C;
     this->elastic *= C;
     this->inelastic *= C;
     this->absorption *= C;
@@ -107,7 +106,7 @@ struct XSPacket {
 
   XSPacket operator*(const double& C) const {
     XSPacket pkt;
-    pkt.total =   this->total * C;
+    pkt.total = this->total * C;
     pkt.elastic = this->elastic * C;
     pkt.inelastic = this->inelastic * C;
     pkt.absorption = this->absorption * C;
@@ -122,16 +121,14 @@ struct XSPacket {
     return this->operator*(D);
   }
 
-  XSPacket operator+() const {
-    return *this; 
-  }
+  XSPacket operator+() const { return *this; }
 
   XSPacket operator-() const {
-    XSPacket neg; 
+    XSPacket neg;
     neg.total = -this->total;
     neg.elastic = -this->elastic;
     neg.inelastic = -this->inelastic;
-    neg.absorption = -this->absorption; 
+    neg.absorption = -this->absorption;
     neg.fission = -this->absorption;
     neg.capture = -this->capture;
     neg.heating = -this->heating;
@@ -143,6 +140,6 @@ inline XSPacket operator*(const double& C, const XSPacket& xs) {
   return xs * C;
 }
 
-}
+}  // namespace pndl
 
 #endif

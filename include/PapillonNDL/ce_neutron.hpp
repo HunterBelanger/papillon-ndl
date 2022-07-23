@@ -117,7 +117,7 @@ class CENeutron<CrossSection> : public CENeutronBase {
 
     return reactions_[reaction_indices_[mt]];
   }
-  
+
   /**
    * @brief Returns a reference to the URRPTables instance.
    */

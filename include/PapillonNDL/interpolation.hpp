@@ -48,11 +48,12 @@ enum class Interpolation : uint32_t {
   LogLog = 5     /**< ln(y) is linear in ln(x) */
 };
 
-inline std::ostream& operator<<(std::ostream& out, const Interpolation& interp) {
+inline std::ostream& operator<<(std::ostream& out,
+                                const Interpolation& interp) {
   switch (interp) {
     case Interpolation::Histogram:
       out << "Histogram";
-      break; 
+      break;
     case Interpolation::LinLin:
       out << "LinLin";
       break;

@@ -244,7 +244,7 @@ class URRPTables {
    */
   XSPacket evaluate_xs_band(double E, std::size_t b) const {
     // Get the energy index
-    std::size_t i = this->elastic_.energy_grid().get_lower_index(E); 
+    std::size_t i = this->elastic_.energy_grid().get_lower_index(E);
     // Call the other method
     return this->evaluate_xs_band(E, i, b);
   }
@@ -272,7 +272,7 @@ class URRPTables {
   bool energy_in_range(double E) const {
     if (energy_->size() < 2) return false;
     return this->min_energy() < E && E, this->max_energy();
-  } 
+  }
 
   /**
    * @brief Energies for which a PTable is given.

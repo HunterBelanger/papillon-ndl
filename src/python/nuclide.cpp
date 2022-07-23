@@ -20,14 +20,13 @@
  * along with PapillonNDL. If not, see <https://www.gnu.org/licenses/>.
  *
  * */
-#include <pybind11/pybind11.h>
 #include <pybind11/operators.h>
+#include <pybind11/pybind11.h>
 
-#include <PapillonNDL/zaid.hpp>
 #include <PapillonNDL/element.hpp>
 #include <PapillonNDL/isotope.hpp>
 #include <PapillonNDL/nuclide.hpp>
-
+#include <PapillonNDL/zaid.hpp>
 #include <string>
 
 namespace py = pybind11;
@@ -42,13 +41,17 @@ void init_ZAID(py::module& m) {
       .def("zaid", &ZAID::zaid)
       .def(py::self == py::self)
       .def(py::self < py::self)
-      .def("__repr__", [](const ZAID& z){ return std::to_string(z.zaid()); })
-      .def("__hash__", [](const ZAID& z){ std::hash<ZAID> h; return h(z); });
+      .def("__repr__", [](const ZAID& z) { return std::to_string(z.zaid()); })
+      .def("__hash__", [](const ZAID& z) {
+        std::hash<ZAID> h;
+        return h(z);
+      });
 }
 
 void init_Element(py::module& m) {
   py::class_<Element>(m, "Element")
       .def(py::init<uint8_t>())
+      .def(py::init<const ZAID&>())
       .def("Z", &Element::Z)
       .def("atomic_numer", &Element::atomic_number)
       .def("symbol", &Element::symbol)
@@ -58,14 +61,18 @@ void init_Element(py::module& m) {
       .def(py::self < py::self)
       .def("from_symbol", &Element::from_symbol)
       .def("from_name", &Element::from_name)
-      .def("__repr__", [](const Element& e){ return e.symbol(); })
-      .def("__hash__", [](const Element& e){ std::hash<Element> h; return h(e); });
+      .def("__repr__", [](const Element& e) { return e.symbol(); })
+      .def("__hash__", [](const Element& e) {
+        std::hash<Element> h;
+        return h(e);
+      });
 }
 
 void init_Isotope(py::module& m) {
   py::class_<Isotope>(m, "Isotope")
       .def(py::init<const Element&, uint32_t>())
-      .def(py::init<uint8_t,uint32_t>())
+      .def(py::init<uint8_t, uint32_t>())
+      .def(py::init<const ZAID&>())
       .def("Z", &Isotope::Z)
       .def("atomic_numer", &Isotope::atomic_number)
       .def("A", &Isotope::A)
@@ -76,14 +83,18 @@ void init_Isotope(py::module& m) {
       .def("element_name", &Isotope::element_name)
       .def(py::self == py::self)
       .def(py::self < py::self)
-      .def("__repr__", [](const Isotope& i){ return i.symbol(); })
-      .def("__hash__", [](const Isotope& i){ std::hash<Isotope> h; return h(i); });
+      .def("__repr__", [](const Isotope& i) { return i.symbol(); })
+      .def("__hash__", [](const Isotope& i) {
+        std::hash<Isotope> h;
+        return h(i);
+      });
 }
 
 void init_Nuclide(py::module& m) {
   py::class_<Nuclide>(m, "Nuclide")
       .def(py::init<const Isotope&, uint8_t>())
-      .def(py::init<uint8_t,uint32_t,uint8_t>())
+      .def(py::init<uint8_t, uint32_t, uint8_t>())
+      .def(py::init<const ZAID&>())
       .def("Z", &Nuclide::Z)
       .def("atomic_numer", &Nuclide::atomic_number)
       .def("A", &Nuclide::A)
@@ -96,6 +107,9 @@ void init_Nuclide(py::module& m) {
       .def("element_name", &Nuclide::element_name)
       .def(py::self == py::self)
       .def(py::self < py::self)
-      .def("__repr__", [](const Nuclide& n){ return n.symbol(); })
-      .def("__hash__", [](const Nuclide& n){ std::hash<Nuclide> h; return h(n); });
+      .def("__repr__", [](const Nuclide& n) { return n.symbol(); })
+      .def("__hash__", [](const Nuclide& n) {
+        std::hash<Nuclide> h;
+        return h(n);
+      });
 }

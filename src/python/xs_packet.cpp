@@ -38,8 +38,10 @@ void init_XSPacket(py::module& m) {
       .def_readwrite("capture", &XSPacket::capture)
       .def_readwrite("fission", &XSPacket::fission)
       .def_readwrite("heating", &XSPacket::heating)
-      .def("__add__", py::overload_cast<const XSPacket&>(&XSPacket::operator+, py::const_))
-      .def("__sub__", py::overload_cast<const XSPacket&>(&XSPacket::operator-, py::const_))
+      .def("__add__",
+           py::overload_cast<const XSPacket&>(&XSPacket::operator+, py::const_))
+      .def("__sub__",
+           py::overload_cast<const XSPacket&>(&XSPacket::operator-, py::const_))
       .def("__mul__", &XSPacket::operator*)
       .def("__truediv__", &XSPacket::operator/)
       .def("__iadd__", &XSPacket::operator+=)

@@ -30,12 +30,11 @@
 
 #include <PapillonNDL/element.hpp>
 #include <PapillonNDL/pndl_exception.hpp>
-
 #include <cstddef>
 #include <cstdint>
 #include <functional>
-#include <string>
 #include <ostream>
+#include <string>
 
 namespace pndl {
 
@@ -44,132 +43,147 @@ namespace pndl {
  *        least equal to the atomic number, and can be no larger than 300.
  */
 class Isotope {
-  public:
-    /**
-     * @param element Element of the Isotope.
-     * @param A Atomic mass of the Isotope.
-     */
-    Isotope(const Element& element, uint32_t A): element_(element), A_(A) {
-      if (A < element_.Z()) {
-        std::string mssg = "Cannot create isotope " + element_.name() +
-          std::to_string(this->A()) + ". Isotopes must satisfy A >= Z." +
-          "Was provided with A = " + std::to_string(this->A()) + ", Z = " +
-          std::to_string(this->Z()) + ".";
-        throw PNDLException(mssg); 
-      }
+ public:
+  /**
+   * @param element Element of the Isotope.
+   * @param A Atomic mass of the Isotope.
+   */
+  Isotope(const Element& element, uint32_t A) : element_(element), A_(A) {
+    if (A < element_.Z()) {
+      std::string mssg = "Cannot create isotope " + element_.name() +
+                         std::to_string(this->A()) +
+                         ". Isotopes must satisfy A >= Z." +
+                         "Was provided with A = " + std::to_string(this->A()) +
+                         ", Z = " + std::to_string(this->Z()) + ".";
+      throw PNDLException(mssg);
+    }
 
-      if (A >= 300) {
-        std::string mssg = "Cannot create isotope " + element_.name() +
+    if (A >= 300) {
+      std::string mssg =
+          "Cannot create isotope " + element_.name() +
           std::to_string(this->A()) + ". Isotopes must satisfy A < 300." +
           "Was provided with A = " + std::to_string(this->A()) + ".";
-        throw PNDLException(mssg); 
-
-      }
+      throw PNDLException(mssg);
     }
+  }
 
-    /**
-     * @param Z Atomic number of the Isotope.
-     * @param A Atomic mass of the Isotope.
-     */
-    Isotope(uint8_t Z, uint32_t A): element_(1), A_(A) {
-      try {
-        element_ = Element(Z); 
-      } catch (PNDLException& err) {
-        std::string mssg = "Could not construct Element associated with Isotope.";
-        err.add_to_exception(mssg); 
-        throw err;
-      }
-
-      if (A >= 300) {
-        std::string mssg = "Cannot create isotope " + element_.name() +
+  /**
+   * @param Z Atomic number of the Isotope.
+   * @param A Atomic mass of the Isotope.
+   */
+  Isotope(uint8_t Z, uint32_t A) try : element_(Z), A_(A) {
+    if (A >= 300) {
+      std::string mssg =
+          "Cannot create isotope " + element_.name() +
           std::to_string(this->A()) + ". Isotopes must satisfy A < 300." +
           "Was provided with A = " + std::to_string(this->A()) + ".";
-        throw PNDLException(mssg); 
+      throw PNDLException(mssg);
+    }
+  } catch (PNDLException& err) {
+    std::string mssg = "Could not construct Element associated with Isotope.";
+    err.add_to_exception(mssg);
+    throw err;
+  }
 
-      }
+  /**
+   * @param zaid ZAID of the Isotope.
+   */
+  Isotope(const ZAID& zaid) try : element_(zaid), A_(zaid.A()) {
+    if (A_ >= 300) {
+      std::string mssg =
+          "Cannot create isotope " + element_.name() +
+          std::to_string(this->A()) + ". Isotopes must satisfy A < 300." +
+          "Was provided with A = " + std::to_string(this->A()) + ".";
+      throw PNDLException(mssg);
     }
-    
-    /**
-     * @brief Returns atomic number of isotope.
-     */ 
-    uint8_t Z() const { return element_.Z(); }
-    
-    /**
-     * @brief Returns atomic number of isotope.
-     */ 
-    uint8_t atomic_number() const { return Z(); }
-    
-    /**
-     * @brief Returns atomic mass of isotope.
-     */
-    uint32_t A() const { return A_; }
-    
-    /**
-     * @brief Returns atomic mass of isotope.
-     */
-    uint32_t atomic_mass() const { return A(); }
-    
-    /**
-     * @brief Returns ZAID of isotope.
-     */ 
-    ZAID zaid() const { return ZAID(element_.Z(), A_); }
-  
-    /** 
-     * @brief Returns the symbol of the isotope.
-     */
-    std::string symbol() const { return element_.symbol() + std::to_string(A_); }
-    
-    /**
-     * @brief Returns the Element symbol of the isotope.
-     */
-    const std::string& element_symbol() const { return element_.symbol(); }
-    
-    /**
-     * @brief Returns the Element name of the isotope.
-     */
-    const std::string& element_name() const { return element_.name(); }
-    
-    /**
-     * @brief Returns true if two isotopes are the same, and false if not.
-     */
-    bool operator==(const Isotope& rhs) const {
-      if (Z() == rhs.Z() && A() == rhs.A()) return true;
-      return false;
-    }
-    
-    /**
-     * @brief Returns true if one Isotope's atomic number is less than the
-     *        other's. If the atomic numbers are equal and the Isotope's atomic
-     *        mass is less than the other's, true is also returned. Otherwise,
-     *        flase is returned.
-     */
-    bool operator<(const Isotope& rhs) const {
-      if (Z() < rhs.Z()) return true; 
-      else if (Z() > rhs.Z()) return false;
-      
-      if (A() < rhs.A()) return true;
-      
-      return false;
-    }
+  } catch (PNDLException& err) {
+    std::string mssg = "Could not construct Element associated with ZAID.";
+    err.add_to_exception(mssg);
+    throw err;
+  }
 
-  private:
-    Element element_;
-    uint32_t A_;
+  /**
+   * @brief Returns atomic number of isotope.
+   */
+  uint8_t Z() const { return element_.Z(); }
+
+  /**
+   * @brief Returns atomic number of isotope.
+   */
+  uint8_t atomic_number() const { return Z(); }
+
+  /**
+   * @brief Returns atomic mass of isotope.
+   */
+  uint32_t A() const { return A_; }
+
+  /**
+   * @brief Returns atomic mass of isotope.
+   */
+  uint32_t atomic_mass() const { return A(); }
+
+  /**
+   * @brief Returns ZAID of isotope.
+   */
+  ZAID zaid() const { return ZAID(element_.Z(), A_); }
+
+  /**
+   * @brief Returns the symbol of the isotope.
+   */
+  std::string symbol() const { return element_.symbol() + std::to_string(A_); }
+
+  /**
+   * @brief Returns the Element symbol of the isotope.
+   */
+  const std::string& element_symbol() const { return element_.symbol(); }
+
+  /**
+   * @brief Returns the Element name of the isotope.
+   */
+  const std::string& element_name() const { return element_.name(); }
+
+  /**
+   * @brief Returns true if two isotopes are the same, and false if not.
+   */
+  bool operator==(const Isotope& rhs) const {
+    if (Z() == rhs.Z() && A() == rhs.A()) return true;
+    return false;
+  }
+
+  /**
+   * @brief Returns true if one Isotope's atomic number is less than the
+   *        other's. If the atomic numbers are equal and the Isotope's atomic
+   *        mass is less than the other's, true is also returned. Otherwise,
+   *        flase is returned.
+   */
+  bool operator<(const Isotope& rhs) const {
+    if (Z() < rhs.Z())
+      return true;
+    else if (Z() > rhs.Z())
+      return false;
+
+    if (A() < rhs.A()) return true;
+
+    return false;
+  }
+
+ private:
+  Element element_;
+  uint32_t A_;
 };
 
-inline
-std::ostream& operator<<(std::ostream& strm, const Isotope& istp) {
+inline std::ostream& operator<<(std::ostream& strm, const Isotope& istp) {
   strm << istp.element_symbol() << istp.A();
   return strm;
 }
 
-}
+}  // namespace pndl
 
-template<>
+template <>
 struct std::hash<pndl::Isotope> {
   std::size_t operator()(const pndl::Isotope& iso) const noexcept {
     std::hash<uint32_t> h;
-    return h(iso.Z()*1000 + iso.A());  
+    return h(iso.Z() * 1000 + iso.A());
   }
 };
 

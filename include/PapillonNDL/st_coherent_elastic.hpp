@@ -75,18 +75,17 @@ class STCoherentElastic : public AngleEnergy {
 
     if (E_in > bragg_edges_.front()) {
       // Get index for lower bragg edge
-      auto Eit = std::lower_bound(bragg_edges_.begin(),
-                                  bragg_edges_.end(), E_in);
+      auto Eit =
+          std::lower_bound(bragg_edges_.begin(), bragg_edges_.end(), E_in);
       size_t l = std::distance(bragg_edges_.begin(), Eit) - 1;
 
       // Sample which Bragg edge off of which we will scatter.
       double Prob = rng() * structure_factor_sum_[l];
       auto Sit = std::lower_bound(structure_factor_sum_.begin(),
-                                  structure_factor_sum_.begin() + l,
-                                  Prob);
+                                  structure_factor_sum_.begin() + l, Prob);
       std::size_t Si = std::distance(structure_factor_sum_.begin(), Sit);
       double E_bragg = bragg_edges_[Si];
-      
+
       // Calculate the cosine of the scattering angle.
       double mu = 1. - (2. * E_bragg / E_in);
 

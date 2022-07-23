@@ -41,7 +41,7 @@ namespace pndl {
  */
 class AngleDistribution {
  public:
-  AngleDistribution(); 
+  AngleDistribution();
 
   /**
    * @param ace ACE file to take data from.

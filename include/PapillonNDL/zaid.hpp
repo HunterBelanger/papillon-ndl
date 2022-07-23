@@ -38,64 +38,65 @@ namespace pndl {
  * @brief Class which represents a ZAID identifier.
  */
 class ZAID {
-  public:
-    /**
-     * @param Z Atomic number for ZAID.
-     * @param A Atomic mass for ZAID.
-     */
-    ZAID(uint8_t Z, uint32_t A): Z_(Z), A_(A) {}
-    
-    /**
-     * @brief Returns the atomic number of ZAID.
-     */
-    uint8_t Z() const { return Z_; }
-    
-    /**
-     * @brief Returns the atomic mass of ZAID.
-     */
-    uint32_t A() const { return A_; }
-    
-    /**
-     * @brief Returns the ZAID as an unsigned integer.
-     */
-    uint32_t zaid() const { return 1000*Z_ + A_; };
-    
-    /**
-     * @brief Returns true if two ZAIDs are equal, and false if not.
-     */
-    bool operator==(const ZAID& rhs) const {
-      return (this->Z_ == rhs.Z_) && (this->A_ == rhs.A_);
-    }
-    
-    /**
-     * @brief Returns true if one ZAID's atomic number is less than the
-     *        other's. If the atomic numbers are equal and the ZAID's atomic
-     *        mass is less than the other's, true is also returned. Otherwise,
-     *        flase is returned.
-     */
-    bool operator<(const ZAID& rhs) const {
-      if (Z() < rhs.Z()) return true; 
-      else if (Z() > rhs.Z()) return false;
-      
-      if (A() < rhs.A()) return true;
-      
-      return false;
-    }
+ public:
+  /**
+   * @param Z Atomic number for ZAID.
+   * @param A Atomic mass for ZAID.
+   */
+  ZAID(uint8_t Z, uint32_t A) : Z_(Z), A_(A) {}
 
-  private:
-    uint8_t Z_;
-    uint32_t A_; 
+  /**
+   * @brief Returns the atomic number of ZAID.
+   */
+  uint8_t Z() const { return Z_; }
+
+  /**
+   * @brief Returns the atomic mass of ZAID.
+   */
+  uint32_t A() const { return A_; }
+
+  /**
+   * @brief Returns the ZAID as an unsigned integer.
+   */
+  uint32_t zaid() const { return 1000 * Z_ + A_; };
+
+  /**
+   * @brief Returns true if two ZAIDs are equal, and false if not.
+   */
+  bool operator==(const ZAID& rhs) const {
+    return (this->Z_ == rhs.Z_) && (this->A_ == rhs.A_);
+  }
+
+  /**
+   * @brief Returns true if one ZAID's atomic number is less than the
+   *        other's. If the atomic numbers are equal and the ZAID's atomic
+   *        mass is less than the other's, true is also returned. Otherwise,
+   *        flase is returned.
+   */
+  bool operator<(const ZAID& rhs) const {
+    if (Z() < rhs.Z())
+      return true;
+    else if (Z() > rhs.Z())
+      return false;
+
+    if (A() < rhs.A()) return true;
+
+    return false;
+  }
+
+ private:
+  uint8_t Z_;
+  uint32_t A_;
 };
 
-inline
-std::ostream& operator<<(std::ostream& strm, const ZAID& zaid) {
+inline std::ostream& operator<<(std::ostream& strm, const ZAID& zaid) {
   strm << zaid.Z() << zaid.A();
   return strm;
 }
 
-}
+}  // namespace pndl
 
-template<>
+template <>
 struct std::hash<pndl::ZAID> {
   std::size_t operator()(const pndl::ZAID& zaid) const noexcept {
     std::hash<uint32_t> h;

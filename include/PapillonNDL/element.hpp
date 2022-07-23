@@ -28,14 +28,13 @@
  * @author Hunter Belanger
  */
 
-#include <PapillonNDL/zaid.hpp>
 #include <PapillonNDL/pndl_exception.hpp>
-
+#include <PapillonNDL/zaid.hpp>
 #include <array>
 #include <cstdint>
 #include <functional>
-#include <string>
 #include <ostream>
+#include <string>
 
 namespace pndl {
 
@@ -43,100 +42,109 @@ namespace pndl {
  * @brief Class which identifies an element.
  */
 class Element {
-  public:
-    /**
-     * @param Z Atomic number of the element. Must be in the interval [1,118].
-     */
-    Element(uint8_t Z): Z_(Z) {
-      if (Z_ == 0 || Z_ > N_ELEM) {
-        std::string mssg = "Elements must have an atomic number "
-                           "in interval [1," + std::to_string(N_ELEM) + "].";
-        throw PNDLException(mssg); 
-      }
+ public:
+  /**
+   * @param Z Atomic number of the element. Must be in the interval [1,118].
+   */
+  Element(uint8_t Z) : Z_(Z) {
+    if (Z_ == 0 || Z_ > N_ELEM) {
+      std::string mssg =
+          "Elements must have an atomic number "
+          "in interval [1," +
+          std::to_string(N_ELEM) + "].";
+      throw PNDLException(mssg);
     }
+  }
 
-    /**
-     * @brief Returns the atomic number of the element.
-     */
-    uint8_t Z() const { return Z_; }
-
-    /**
-     * @brief Returns the atomic number of the element.
-     */
-    uint8_t atomic_number() const { return Z_; }
-
-    
-    /**
-     * @brief Returns the symbol of the element.
-     */
-    const std::string& symbol() const {
-      return elements_table[static_cast<std::size_t>(Z_-1)].symbol;
+  /**
+   * @param zaid ZAID identifier. Requires zaid.Z() be in the interval [1,118].
+   */
+  Element(const ZAID& zaid) : Z_(zaid.Z()) {
+    if (Z_ == 0 || Z_ > N_ELEM) {
+      std::string mssg =
+          "Elements must have an atomic number "
+          "in interval [1," +
+          std::to_string(N_ELEM) + "].";
+      throw PNDLException(mssg);
     }
-    
-    /**
-     * @brief Returns the name of the element.
-     */
-    const std::string& name() const {
-      return elements_table[static_cast<std::size_t>(Z_-1)].name;
-    }
+  }
 
-    /**
-     * @brief Returns the ZAID which represents the natural element.
-     */
-    ZAID zaid() const { return ZAID(Z_, 0); }
-    
-    /**
-     * @brief Returns true if two elements are the same, and false if not.
-     */
-    bool operator==(const Element& rhs) const {
-      return this->Z_ == rhs.Z_; 
-    }
-    
-    /**
-     * @brief Returns true if the Element's atomic number is less than the
-     *        other's, and false if otherwise.
-     */
-    bool operator<(const Element& rhs) const {
-      return this->Z_ < rhs.Z_; 
-    }
-    
-    /**
-     * @brief Finds an element from a symbol.
-     * @param symbol String which holds the element symbol for which to search.
-     */
-    static Element from_symbol(const std::string& symbol);
-  
-    /**
-     * @brief Finds an element from a name.
-     * @param symbol String which holds the element name for which to search.
-     */
-    static Element from_name(const std::string& name);
+  /**
+   * @brief Returns the atomic number of the element.
+   */
+  uint8_t Z() const { return Z_; }
 
-  private:
-    struct Info {
-      std::string name; 
-      std::string symbol;
-    };
-    static constexpr uint8_t N_ELEM {118};
+  /**
+   * @brief Returns the atomic number of the element.
+   */
+  uint8_t atomic_number() const { return Z_; }
 
-    uint8_t Z_;
+  /**
+   * @brief Returns the symbol of the element.
+   */
+  const std::string& symbol() const {
+    return elements_table[static_cast<std::size_t>(Z_ - 1)].symbol;
+  }
 
-    static std::array<Info,N_ELEM> elements_table;
+  /**
+   * @brief Returns the name of the element.
+   */
+  const std::string& name() const {
+    return elements_table[static_cast<std::size_t>(Z_ - 1)].name;
+  }
+
+  /**
+   * @brief Returns the ZAID which represents the natural element.
+   */
+  ZAID zaid() const { return ZAID(Z_, 0); }
+
+  /**
+   * @brief Returns true if two elements are the same, and false if not.
+   */
+  bool operator==(const Element& rhs) const { return this->Z_ == rhs.Z_; }
+
+  /**
+   * @brief Returns true if the Element's atomic number is less than the
+   *        other's, and false if otherwise.
+   */
+  bool operator<(const Element& rhs) const { return this->Z_ < rhs.Z_; }
+
+  /**
+   * @brief Finds an element from a symbol.
+   * @param symbol String which holds the element symbol for which to search.
+   */
+  static Element from_symbol(const std::string& symbol);
+
+  /**
+   * @brief Finds an element from a name.
+   * @param symbol String which holds the element name for which to search.
+   */
+  static Element from_name(const std::string& name);
+
+ private:
+  struct Info {
+    std::string name;
+    std::string symbol;
+  };
+  static constexpr uint8_t N_ELEM{118};
+
+  uint8_t Z_;
+
+  static std::array<Info, N_ELEM> elements_table;
 };
 
-inline
-std::ostream& operator<<(std::ostream& strm, const Element& elem) {
+inline std::ostream& operator<<(std::ostream& strm, const Element& elem) {
   strm << elem.symbol();
   return strm;
 }
 
-}
+}  // namespace pndl
 
-template<>
+template <>
 struct std::hash<pndl::Element> {
   std::size_t operator()(const pndl::Element& elem) const noexcept {
     std::hash<uint8_t> h;
-    return h(elem.Z()); 
+    return h(elem.Z());
   }
 };
 
