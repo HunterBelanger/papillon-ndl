@@ -30,6 +30,7 @@
 
 #include <PapillonNDL/ce_neutron_base.hpp>
 #include <PapillonNDL/reaction.hpp>
+#include <PapillonNDL/urr_ptables.hpp>
 
 namespace pndl {
 
@@ -79,6 +80,13 @@ class CENeutron<CrossSection> : public CENeutronBase {
   const CrossSection& elastic_xs() const { return *elastic_xs_; }
 
   /**
+   * @brief Returns the heating number CrossSection for the nuclide.
+   *        Upon evaluation, the average heating number if given for the
+   *        nuclide, as the prescribed energy, in MeV.
+   */
+  const CrossSection& heating_number() const { return *heating_number_; }
+
+  /**
    * @brief Returns the fission CrossSection for the nuclide.
    */
   const CrossSection& fission_xs() const { return *fission_xs_; }
@@ -109,6 +117,11 @@ class CENeutron<CrossSection> : public CENeutronBase {
 
     return reactions_[reaction_indices_[mt]];
   }
+  
+  /**
+   * @brief Returns a reference to the URRPTables instance.
+   */
+  const URRPTables& urr_ptables() const { return *urr_ptables_; }
 
  private:
   double temperature_;
@@ -117,10 +130,13 @@ class CENeutron<CrossSection> : public CENeutronBase {
   std::shared_ptr<CrossSection> total_xs_;
   std::shared_ptr<CrossSection> disappearance_xs_;
   std::shared_ptr<CrossSection> elastic_xs_;
+  std::shared_ptr<CrossSection> heating_number_;
   std::shared_ptr<CrossSection> fission_xs_;
   std::shared_ptr<CrossSection> photon_production_xs_;
 
   std::vector<STReaction> reactions_;
+
+  std::shared_ptr<URRPTables> urr_ptables_;
 
   // Private Helper Methods
   std::shared_ptr<CrossSection> compute_fission_xs();

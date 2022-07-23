@@ -9,6 +9,11 @@ ACE
 
 .. doxygenclass:: pndl::ACE
 
+XSPacket
+--------
+
+.. doxygenstruct:: pndl::XSPacket
+
 PCTable
 -------
 

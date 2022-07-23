@@ -74,5 +74,6 @@ void init_ACE(py::module& m) {
       .def("DNEDL", &ACE::DNEDL)
       .def("DNED", &ACE::DNED)
       .def("DNU", &ACE::DNU)
+      .def("LUNR", &ACE::LUNR)
       .def("BDD", &ACE::BDD);
 }

@@ -278,6 +278,11 @@ class ACE {
   int32_t DLW() const { return jxs_[10] - 1; }
 
   /**
+   * @brief Returns the index to the beginning of the UNR block.
+   */
+  int32_t LUNR() const { return jxs_[22] - 1; }
+
+  /**
    * @brief Returns the index to the beginning of the DNEDL block.
    */
   int32_t DNEDL() const { return jxs_[25] - 1; }

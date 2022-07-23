@@ -62,3 +62,8 @@ STIncoherentInelastic
 ---------------------
 
 .. doxygenclass:: pndl::STIncoherentInelastic
+
+URRPTables
+---------------------
+
+.. doxygenclass:: pndl::URRPTables

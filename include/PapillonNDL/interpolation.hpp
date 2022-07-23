@@ -32,6 +32,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdint>
+#include <ostream>
 
 namespace pndl {
 
@@ -46,6 +47,28 @@ enum class Interpolation : uint32_t {
   LogLin = 4,    /**< ln(y) is linear in x */
   LogLog = 5     /**< ln(y) is linear in ln(x) */
 };
+
+inline std::ostream& operator<<(std::ostream& out, const Interpolation& interp) {
+  switch (interp) {
+    case Interpolation::Histogram:
+      out << "Histogram";
+      break; 
+    case Interpolation::LinLin:
+      out << "LinLin";
+      break;
+    case Interpolation::LinLog:
+      out << "LinLog";
+      break;
+    case Interpolation::LogLin:
+      out << "LogLin";
+      break;
+    case Interpolation::LogLog:
+      out << "LogLog";
+      break;
+  }
+
+  return out;
+}
 
 /**
  * @brief Returns true if a range of data has a sign change from positive to

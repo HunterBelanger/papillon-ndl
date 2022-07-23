@@ -27,6 +27,7 @@
 namespace py = pybind11;
 
 extern void init_ACE(py::module&);
+extern void init_XSPacket(py::module&);
 extern void init_Interpolation(py::module&);
 extern void init_Frame(py::module&);
 extern void init_Function1D(py::module&);
@@ -67,6 +68,7 @@ extern void init_STIncoherentInelastic(py::module& m);
 extern void init_STCoherentElastic(py::module& m);
 extern void init_STInoherentElastic(py::module& m);
 extern void init_STThermalScatteringLaw(py::module& m);
+extern void init_URRPtable(py::module& m);
 extern void init_PCTable(py::module&);
 extern void init_EnergyAngleTable(py::module&);
 extern void init_TabularEnergyAngle(py::module&);
@@ -85,6 +87,7 @@ extern void init_Nuclide(py::module&);
 
 PYBIND11_MODULE(pyPapillonNDL, m) {
   init_ACE(m);
+  init_XSPacket(m);
   init_Interpolation(m);
   init_Frame(m);
   init_Function1D(m);
@@ -125,6 +128,7 @@ PYBIND11_MODULE(pyPapillonNDL, m) {
   init_STCoherentElastic(m);
   init_STInoherentElastic(m);
   init_STThermalScatteringLaw(m);
+  init_URRPtable(m);
   init_PCTable(m);
   init_EnergyAngleTable(m);
   init_TabularEnergyAngle(m);

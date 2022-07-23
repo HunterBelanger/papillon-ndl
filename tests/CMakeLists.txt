@@ -33,6 +33,13 @@ else()
   message(STATUS "Using local install of GTest")
 endif()
 
+# XSPacket
+add_executable(XSPacketTests xs_packet.cpp)
+target_compile_features(XSPacketTests PRIVATE cxx_std_17)
+target_link_libraries(XSPacketTests PUBLIC PapillonNDL gtest_main)
+add_test(XSPacketTests XSPacketTests)
+
+
 # ZAID, Element, Isotope, Nuclide Tests
 add_executable(ZAIDTests zaid.cpp)
 target_compile_features(ZAIDTests PRIVATE cxx_std_17)
