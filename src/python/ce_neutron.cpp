@@ -34,6 +34,7 @@ using namespace pndl;
 void init_CENeutronBase(py::module& m) {
   py::class_<CENeutronBase>(m, "CENeutronBase")
       .def("zaid", &CENeutronBase::zaid)
+      .def("nuclide", &CENeutronBase::nuclide)
       .def("awr", &CENeutronBase::awr)
       .def("fissile", &CENeutronBase::fissile)
       .def("elastic_angle_distribution",

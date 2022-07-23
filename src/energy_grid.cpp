@@ -27,7 +27,11 @@
 namespace pndl {
 
 EnergyGrid::EnergyGrid(const ACE& ace, uint32_t NBINS)
-    : energy_values_({0.}), bin_pointers_(), u_min(), du(), urr_start_energy_() {
+    : energy_values_({0.}),
+      bin_pointers_(),
+      u_min(),
+      du(),
+      urr_start_energy_() {
   energy_values_ = ace.xss(ace.ESZ(), ace.nxs(2));
 
   // Check if there are URR tables.

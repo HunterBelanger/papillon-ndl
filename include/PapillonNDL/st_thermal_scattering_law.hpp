@@ -31,6 +31,7 @@
 #include <PapillonNDL/st_coherent_elastic.hpp>
 #include <PapillonNDL/st_incoherent_elastic.hpp>
 #include <PapillonNDL/st_incoherent_inelastic.hpp>
+#include <PapillonNDL/zaid.hpp>
 
 namespace pndl {
 
@@ -54,7 +55,7 @@ class STThermalScatteringLaw {
   /**
    * @brief Returns the nuclide ZAID.
    */
-  uint32_t zaid() const { return zaid_; }
+  const ZAID& zaid() const { return zaid_; }
 
   /**
    * @brief Returns the nuclide Atomic Weight Ratio.
@@ -116,7 +117,7 @@ class STThermalScatteringLaw {
   }
 
  private:
-  uint32_t zaid_;
+  ZAID zaid_;
   double awr_;
   double temperature_;
   bool has_coherent_elastic_;

@@ -119,15 +119,18 @@ ContinuousEnergyDiscreteCosines::ContinuousEnergyDiscreteCosines(
         const double dmu = 2. / static_cast<double>(Nmu);
         for (uint32_t i_mu = 0; i_mu < Nmu; i_mu++) {
           if (i_mu == 0) {
-            discrete_angles[0] = -1. + 0.5*dmu; 
+            discrete_angles[0] = -1. + 0.5 * dmu;
           } else {
-            discrete_angles[i_mu] = discrete_angles[i_mu - 1] + dmu; 
+            discrete_angles[i_mu] = discrete_angles[i_mu - 1] + dmu;
           }
         }
-        tables_.back().cosines.insert(tables_.back().cosines.begin(), discrete_angles);
+        tables_.back().cosines.insert(tables_.back().cosines.begin(),
+                                      discrete_angles);
 
         // Calculate the PDF
-        tables_.back().pdf[0] = (2. * tables_.back().cdf[1] / tables_.back().energy[1]) - tables_.back().pdf[1];
+        tables_.back().pdf[0] =
+            (2. * tables_.back().cdf[1] / tables_.back().energy[1]) -
+            tables_.back().pdf[1];
 
         // Advance Noe and oe, due to the added grid point.
         oe++;

@@ -31,6 +31,8 @@
 #include <PapillonNDL/ace.hpp>
 #include <PapillonNDL/angle_distribution.hpp>
 #include <PapillonNDL/delayed_group.hpp>
+#include <PapillonNDL/nuclide.hpp>
+#include <PapillonNDL/zaid.hpp>
 #include <array>
 #include <memory>
 
@@ -48,7 +50,12 @@ class CENeutronBase {
   /**
    * @brief Returns the nuclide ZAID.
    */
-  uint32_t zaid() const { return zaid_; }
+  const ZAID& zaid() const { return zaid_; }
+
+  /**
+   * @brief Returns the Nuclide which describes the nuclide.
+   */
+  const Nuclide& nuclide() const { return nuclide_; }
 
   /**
    * @brief Returns the nuclide Atomic Weight Ratio.
@@ -109,7 +116,8 @@ class CENeutronBase {
   }
 
  protected:
-  uint32_t zaid_;
+  ZAID zaid_;
+  Nuclide nuclide_;
   double awr_;
   bool fissile_;
 

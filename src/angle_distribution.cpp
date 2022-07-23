@@ -30,9 +30,8 @@
 
 namespace pndl {
 
-AngleDistribution::AngleDistribution()
-    : energy_grid_(), laws_() {
-  energy_grid_.reserve(2); 
+AngleDistribution::AngleDistribution() : energy_grid_(), laws_() {
+  energy_grid_.reserve(2);
   laws_.reserve(2);
 
   energy_grid_.push_back(1.E-11);

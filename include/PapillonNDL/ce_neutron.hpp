@@ -109,9 +109,9 @@ class CENeutron<CrossSection> : public CENeutronBase {
    */
   const STReaction& reaction(uint32_t mt) const {
     if (!this->has_reaction(mt)) {
-      std::string mssg = "MT = " + std::to_string(mt) +
-                         " is not provided in ZAID = " + std::to_string(zaid_) +
-                         ".";
+      std::string mssg =
+          "MT = " + std::to_string(mt) +
+          " is not provided in ZAID = " + std::to_string(zaid_.zaid()) + ".";
       throw PNDLException(mssg);
     }
 

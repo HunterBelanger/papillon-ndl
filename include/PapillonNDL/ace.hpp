@@ -28,6 +28,7 @@
  * @author Hunter Belanger
  */
 
+#include <PapillonNDL/zaid.hpp>
 #include <array>
 #include <fstream>
 #include <string>
@@ -59,7 +60,7 @@ class ACE {
   /**
    * @brief Gets the ZAID of nuclide represented.
    */
-  int32_t zaid() const { return zaid_; }
+  const ZAID& zaid() const { return zaid_; }
 
   /**
    * @brief Gets the temperature for which the data was prepared, in kelvins.
@@ -308,7 +309,7 @@ class ACE {
   int32_t GPD() const { return jxs_[11] - 1; }
 
  private:
-  int32_t zaid_;
+  ZAID zaid_;
   double temperature_;
   double awr_;
   bool fissile_;

@@ -35,7 +35,7 @@ namespace pndl {
 static std::vector<std::string> split_line(std::string line);
 
 ACE::ACE(std::string fname, Type type)
-    : zaid_(),
+    : zaid_(0, 0),
       temperature_(),
       awr_(),
       fissile_(),
@@ -178,7 +178,10 @@ void ACE::read_ascii(std::ifstream& file) {
     throw PNDLException(mssg);
   }
 
-  zaid_ = static_cast<uint32_t>(nxs_[1]);
+  uint32_t zaid_int = static_cast<uint32_t>(nxs_[1]);
+  uint8_t Z_ = zaid_int / 1000;
+  uint32_t A_ = zaid_int - (Z_ * 1000);
+  zaid_ = ZAID(Z_, A_);
 
   if (jxs_[1] > 0) fissile_ = true;
 }
@@ -244,7 +247,10 @@ void ACE::read_binary(std::ifstream& file) {
     file.ignore(4);
   }
 
-  zaid_ = static_cast<uint32_t>(nxs_[1]);
+  uint32_t zaid_int = static_cast<uint32_t>(nxs_[1]);
+  uint8_t Z_ = zaid_int / 1000;
+  uint32_t A_ = zaid_int - (Z_ * 1000);
+  zaid_ = ZAID(Z_, A_);
 
   if (jxs_[1] > 0) fissile_ = true;
 }

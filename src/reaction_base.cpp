@@ -244,13 +244,13 @@ void ReactionBase::load_neutron_distributions(
       std::string mssg = "No anglular distribution provided to acompany law " +
                          std::to_string(law) +
                          " in reaction MT=" + std::to_string(mt_) +
-                         " in ZAID=" + std::to_string(ace.zaid()) + ".";
+                         " in ZAID=" + std::to_string(ace.zaid().zaid()) + ".";
       throw PNDLException(mssg);
     } else {
       // Unknown or unsuported law
       std::string mssg = "Unkown energy law " + std::to_string(law) +
                          " in reaction MT=" + std::to_string(mt_) +
-                         " in ZAID=" + std::to_string(ace.zaid()) + ".";
+                         " in ZAID=" + std::to_string(ace.zaid().zaid()) + ".";
       throw PNDLException(mssg);
     }
 
