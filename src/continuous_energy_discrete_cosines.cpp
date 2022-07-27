@@ -24,7 +24,9 @@
 #include <PapillonNDL/pndl_exception.hpp>
 #include <PapillonNDL/region_1d.hpp>
 #include <cmath>
+#include <ios>
 #include <iostream>
+#include <sstream>
 
 namespace pndl {
 
@@ -203,11 +205,12 @@ ContinuousEnergyDiscreteCosines::ContinuousEnergyDiscreteCosines(
 
     for (std::size_t z = 0; z < Noe; z++) {
       if (tables_.back().pdf[z] < 0.) {
-        std::string mssg =
-            "Negative PDF value found for outgoing energy index " +
-            std::to_string(z) + ", for incoming energy index " +
-            std::to_string(ie) + ".";
-        throw PNDLException(mssg);
+        std::stringstream mssg;
+        mssg << "Negative PDF value found for incoming energy index ";
+        mssg << ie << ", and outgoing energy index " << z << ". ";
+        mssg << "PDF value is " << std::scientific;
+        mssg << tables_.back().pdf[z] << ".";
+        throw PNDLException(mssg.str());
       }
     }
 
