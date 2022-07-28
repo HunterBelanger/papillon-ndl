@@ -37,7 +37,6 @@ namespace pndl {
 
 CENeutronBase::CENeutronBase(const ACE& ace)
     : zaid_(ace.zaid()),
-      nuclide_(zaid_),
       awr_(ace.awr()),
       fissile_(ace.fissile()),
       elastic_angle_(),

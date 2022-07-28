@@ -53,11 +53,6 @@ class CENeutronBase {
   const ZAID& zaid() const { return zaid_; }
 
   /**
-   * @brief Returns the Nuclide which describes the nuclide.
-   */
-  const Nuclide& nuclide() const { return nuclide_; }
-
-  /**
    * @brief Returns the nuclide Atomic Weight Ratio.
    */
   double awr() const { return awr_; }
@@ -117,7 +112,6 @@ class CENeutronBase {
 
  protected:
   ZAID zaid_;
-  Nuclide nuclide_;
   double awr_;
   bool fissile_;
 
