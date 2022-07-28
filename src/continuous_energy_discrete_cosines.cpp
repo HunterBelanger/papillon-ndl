@@ -105,9 +105,9 @@ ContinuousEnergyDiscreteCosines::ContinuousEnergyDiscreteCosines(
 
       // For ACE files made with NJOY or FRENDY, the cdf usually starts at a
       // value larger than zero. To make sure problems don't arrise, we need
-      // to add an entry that is zero. We can calculate the pdf from the
-      // interpolation, and we just copy the angular distribution from the
-      // lowest provided cdf value.
+      // to add an entry that is zero. From chapter 7 of the ENDF manual,
+      // a cdf of zero corresponds to an exit energy of zero. From Eq. 7.6
+      // in the ENDF manual, the pdf for an exit energy of zero, is zero.
       if (oe == 0 && tables_.back().cdf[0] > 0.) {
         tables_.back().energy.insert(tables_.back().energy.begin(), 0.);
         tables_.back().cdf.insert(tables_.back().cdf.begin(), 0.);
@@ -128,11 +128,6 @@ ContinuousEnergyDiscreteCosines::ContinuousEnergyDiscreteCosines(
         }
         tables_.back().cosines.insert(tables_.back().cosines.begin(),
                                       discrete_angles);
-
-        // Calculate the PDF
-        tables_.back().pdf[0] =
-            (2. * tables_.back().cdf[1] / tables_.back().energy[1]) -
-            tables_.back().pdf[1];
 
         // Advance Noe and oe, due to the added grid point.
         oe++;
