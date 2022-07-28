@@ -38,7 +38,7 @@ Other Linux Distributions
 -------------------------
 Unfortunately, GCC-11 is quite new, and many distrubtions do not yet ship this
 compiler toolchain, or have specific installation commands. If you are not
-using one of hte distributions listed above, first check to see if there is
+using one of the distributions listed above, first check to see if there is
 a specific method to install GCC-11 form your distributions repositories. If
 not, I recommend building GCC-11 from source. This is outside the scope of these
 installation instruction, but instructions are readily found online.
