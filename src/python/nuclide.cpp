@@ -52,6 +52,7 @@ void init_Element(py::module& m) {
   py::class_<Element>(m, "Element")
       .def(py::init<uint8_t>())
       .def(py::init<const ZAID&>())
+      .def(py::init<const std::string&>())
       .def("Z", &Element::Z)
       .def("atomic_numer", &Element::atomic_number)
       .def("symbol", &Element::symbol)
@@ -59,8 +60,6 @@ void init_Element(py::module& m) {
       .def("zaid", &Element::zaid)
       .def(py::self == py::self)
       .def(py::self < py::self)
-      .def("from_symbol", &Element::from_symbol)
-      .def("from_name", &Element::from_name)
       .def("__repr__", [](const Element& e) { return e.symbol(); })
       .def("__hash__", [](const Element& e) {
         std::hash<Element> h;
@@ -73,6 +72,7 @@ void init_Isotope(py::module& m) {
       .def(py::init<const Element&, uint32_t>())
       .def(py::init<uint8_t, uint32_t>())
       .def(py::init<const ZAID&>())
+      .def(py::init<const std::string&>())
       .def("Z", &Isotope::Z)
       .def("atomic_numer", &Isotope::atomic_number)
       .def("A", &Isotope::A)
@@ -95,6 +95,7 @@ void init_Nuclide(py::module& m) {
       .def(py::init<const Isotope&, uint8_t>())
       .def(py::init<uint8_t, uint32_t, uint8_t>())
       .def(py::init<const ZAID&>())
+      .def(py::init<const std::string&>())
       .def("Z", &Nuclide::Z)
       .def("atomic_numer", &Nuclide::atomic_number)
       .def("A", &Nuclide::A)

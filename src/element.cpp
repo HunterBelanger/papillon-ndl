@@ -22,53 +22,57 @@
  * */
 
 #include <PapillonNDL/element.hpp>
+#include <regex>
 
 namespace pndl {
 
-Element Element::from_symbol(const std::string& symbol) {
-  uint8_t z = 0;
+Element::Element(const std::string& name_or_symbol): Z_(0) {
   bool found = false;
-  for (z = 0; z < elements_table.size(); z++) {
-    if (elements_table[z].symbol == symbol) {
-      found = true;
-      break;
+  
+  // First check and see if we are a valid symbol.
+  const std::regex is_element_regex("(^\\s+)?([A-Z][a-z]{0,1})(\\s+)?");
+  if (std::regex_match(name_or_symbol, is_element_regex)) {
+    const std::regex element_regex("([A-Z][a-z]{0,1})");
+    std::smatch match;
+    std::regex_search(name_or_symbol, match, element_regex);
+    std::string element_symbol(match[0].first, match[0].second);
+
+    for (Z_ = 0; Z_ < elements_table.size(); Z_++) {
+      if (elements_table[Z_].symbol == element_symbol) {
+        found = true;
+        break;
+      }
+    }
+  }
+  
+  // If we still haven't found it, maybe it's a name
+  const std::regex is_name_regex("(^\\s+)?\\b([A-Z][a-z]+)\\b(\\s+)?");
+  if (found == false &&
+      std::regex_match(name_or_symbol, is_name_regex)) {
+    Z_ = 0;
+    const std::regex name_regex("([A-Z][a-z]+)");
+    std::smatch match;
+    std::regex_search(name_or_symbol, match, name_regex);
+    std::string element_name(match[0].first, match[0].second);
+    
+    for (Z_ = 0; Z_ < N_ELEM; Z_++) {
+      if (elements_table[Z_].name == element_name) {
+        found = true;
+        break; 
+      }
     }
   }
 
-  // Make sure we found the element
-  if (found == false) {
-    std::string mssg =
-        "Could not find an element with symbol \"" + symbol + "\".";
+  if (found) {
+    // Advance z by 1 for the correct atomic number.
+    Z_++; 
+  } else {
+    // We couldn't find the element... 
+    std::string mssg = "Could not find an element symbol or name matching \"";
+    mssg += name_or_symbol + "\".";
     throw PNDLException(mssg);
   }
-
-  // Advance z by 1 for the correct atomic number.
-  z++;
-
-  return Element(z);
-}
-
-Element Element::from_name(const std::string& name) {
-  uint8_t z = 0;
-  bool found = false;
-  for (z = 0; z < elements_table.size(); z++) {
-    if (elements_table[z].name == name) {
-      found = true;
-      break;
-    }
-  }
-
-  // Make sure we found the element
-  if (found == false) {
-    std::string mssg = "Could not find an element with name \"" + name + "\".";
-    throw PNDLException(mssg);
-  }
-
-  // Advance z by 1 for the correct atomic number.
-  z++;
-
-  return Element(z);
-}
+} 
 
 std::array<Element::Info, Element::N_ELEM> Element::elements_table{
     Element::Info{"Hydrogen", "H"},      Element::Info{"Helium", "He"},

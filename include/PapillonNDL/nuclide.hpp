@@ -34,6 +34,7 @@
 #include <cstdint>
 #include <functional>
 #include <ostream>
+#include <regex>
 #include <string>
 
 namespace pndl {
@@ -105,6 +106,44 @@ class Nuclide {
       std::string mssg = "Could not create isotope.";
       err.add_to_exception(mssg);
       throw err;
+    }
+  }
+
+  /**
+   * @param symbol String containing the symbol for the nuclide. The symbol
+   *               must be in SSAAA format. If the nuclide is an isomer, the
+   *               isomer level can be added as SSAAAmL. The level can be
+   *               0, 1, or 2.
+   */
+  Nuclide(const std::string& symbol): isotope_(1,1), level_(0) {
+    const std::regex is_nuclide_regex("(^\\s+)?([A-Z][a-z]{0,1}[0-9]{1,3})([m][0-2])?(\\s+)?");
+
+    if (std::regex_match(symbol, is_nuclide_regex) == false) {
+      std::string mssg = "The symbol \"" + symbol + "\" is not a valid "; 
+      mssg += "Nuclide symbol.";
+      throw PNDLException(mssg);
+    }
+
+    const std::regex isotope_regex("([A-Z][a-z]{0,1}[0-9]{1,3})");
+    std::smatch match;
+    std::regex_search(symbol, match, isotope_regex);
+    std::string isotope_symbol(match[0].first, match[0].second);
+    try {
+      isotope_ = Isotope(isotope_symbol);
+    } catch (PNDLException& err) {
+      std::string mssg = "Could not create nuclide with isotope symbol \"";
+      mssg += isotope_symbol + "\".";
+      err.add_to_exception(mssg);
+      throw err;
+    }
+
+    const std::regex isomer_regex("([m][0-2])");
+    std::regex_search(symbol, match, isomer_regex);
+    std::string isomer_str(match[0].first, match[0].second);
+    level_ = 0;
+    if (isomer_str.size() > 0) {
+      isomer_str.erase(isomer_str.begin());
+      level_ = std::stoul(isomer_str);
     }
   }
 

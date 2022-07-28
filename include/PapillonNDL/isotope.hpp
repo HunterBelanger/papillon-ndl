@@ -34,6 +34,7 @@
 #include <cstdint>
 #include <functional>
 #include <ostream>
+#include <regex>
 #include <string>
 
 namespace pndl {
@@ -51,8 +52,8 @@ class Isotope {
   Isotope(const Element& element, uint32_t A) : element_(element), A_(A) {
     if (A < element_.Z()) {
       std::string mssg = "Cannot create isotope " + element_.name() +
-                         std::to_string(this->A()) +
-                         ". Isotopes must satisfy A >= Z." +
+                         "-" + std::to_string(this->A()) +
+                         ". Isotopes must satisfy A >= Z. "
                          "Was provided with A = " + std::to_string(this->A()) +
                          ", Z = " + std::to_string(this->Z()) + ".";
       throw PNDLException(mssg);
@@ -60,9 +61,9 @@ class Isotope {
 
     if (A >= 300) {
       std::string mssg =
-          "Cannot create isotope " + element_.name() +
-          std::to_string(this->A()) + ". Isotopes must satisfy A < 300." +
-          "Was provided with A = " + std::to_string(this->A()) + ".";
+          "Cannot create isotope " + element_.name() + "-" +
+          std::to_string(this->A()) + ". Isotopes must satisfy A < 300."
+          " Was provided with A = " + std::to_string(this->A()) + ".";
       throw PNDLException(mssg);
     }
   }
@@ -72,11 +73,20 @@ class Isotope {
    * @param A Atomic mass of the Isotope.
    */
   Isotope(uint8_t Z, uint32_t A) try : element_(Z), A_(A) {
-    if (A >= 300) {
+    if (A_ < element_.Z()) {
+      std::string mssg = "Cannot create isotope " + element_.name() +
+                         "-" + std::to_string(this->A()) +
+                         ". Isotopes must satisfy A >= Z. "
+                         "Was provided with A = " + std::to_string(this->A()) +
+                         ", Z = " + std::to_string(this->Z()) + ".";
+      throw PNDLException(mssg);
+    }
+
+    if (A_ >= 300) {
       std::string mssg =
-          "Cannot create isotope " + element_.name() +
-          std::to_string(this->A()) + ". Isotopes must satisfy A < 300." +
-          "Was provided with A = " + std::to_string(this->A()) + ".";
+          "Cannot create isotope " + element_.name() + "-" +
+          std::to_string(this->A()) + ". Isotopes must satisfy A < 300."
+          " Was provided with A = " + std::to_string(this->A()) + ".";
       throw PNDLException(mssg);
     }
   } catch (PNDLException& err) {
@@ -89,17 +99,76 @@ class Isotope {
    * @param zaid ZAID of the Isotope.
    */
   Isotope(const ZAID& zaid) try : element_(zaid), A_(zaid.A()) {
+    if (A_ < element_.Z()) {
+      std::string mssg = "Cannot create isotope " + element_.name() +
+                         "-" + std::to_string(this->A()) +
+                         ". Isotopes must satisfy A >= Z. "
+                         "Was provided with A = " + std::to_string(this->A()) +
+                         ", Z = " + std::to_string(this->Z()) + ".";
+      throw PNDLException(mssg);
+    }
+
     if (A_ >= 300) {
       std::string mssg =
-          "Cannot create isotope " + element_.name() +
-          std::to_string(this->A()) + ". Isotopes must satisfy A < 300." +
-          "Was provided with A = " + std::to_string(this->A()) + ".";
+          "Cannot create isotope " + element_.name() + "-" +
+          std::to_string(this->A()) + ". Isotopes must satisfy A < 300."
+          " Was provided with A = " + std::to_string(this->A()) + ".";
       throw PNDLException(mssg);
     }
   } catch (PNDLException& err) {
     std::string mssg = "Could not construct Element associated with ZAID.";
     err.add_to_exception(mssg);
     throw err;
+  }
+
+  /**
+   * @param symbol String containing the symbol for the isotope. The symbol
+   *               must be in SSAAA format, such as Al27, or U235.
+   */
+  Isotope(const std::string& symbol): element_(1), A_(0) {
+    const std::regex is_isotope_regex("(^\\s+)?([A-Z][a-z]{0,1}[0-9]{1,3})(\\s+)?");
+    if (std::regex_match(symbol, is_isotope_regex) == false) {
+      std::string mssg = "The symbol \"" + symbol + "\" is not a valid "; 
+      mssg += "isotope symbol.";
+      throw PNDLException(mssg);
+    }
+    
+    // We are a valid formatted isotope. First get the element.
+    const std::regex element_regex("([A-Z][a-z]{0,1})");
+    std::smatch match;
+    std::regex_search(symbol, match, element_regex);
+    std::string element_symbol(match[0].first, match[0].second);
+    try {
+      element_ = Element(element_symbol);
+    } catch (PNDLException& err) {
+      std::string mssg = "Could not create isotope with element symbol \"";
+      mssg += element_symbol + "\".";
+      err.add_to_exception(mssg);
+      throw err;
+    }
+
+    // Get the atomic mass number
+    const std::regex atomic_mass_regex("([0-9]{1,3})");
+    std::regex_search(symbol, match, atomic_mass_regex);
+    std::string atomic_mass_str(match[0].first, match[0].second);
+    A_ = std::stoul(atomic_mass_str);
+    
+    if (A_ < element_.Z()) {
+      std::string mssg = "Cannot create isotope " + element_.name() +
+                         "-" + std::to_string(this->A()) +
+                         ". Isotopes must satisfy A >= Z. "
+                         "Was provided with A = " + std::to_string(this->A()) +
+                         ", Z = " + std::to_string(this->Z()) + ".";
+      throw PNDLException(mssg);
+    }
+
+    if (A_ >= 300) {
+      std::string mssg =
+          "Cannot create isotope " + element_.name() + "-" +
+          std::to_string(this->A()) + ". Isotopes must satisfy A < 300."
+          " Was provided with A = " + std::to_string(this->A()) + ".";
+      throw PNDLException(mssg);
+    }
   }
 
   /**

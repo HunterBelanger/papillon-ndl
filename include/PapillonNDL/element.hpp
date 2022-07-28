@@ -68,6 +68,12 @@ class Element {
       throw PNDLException(mssg);
     }
   }
+  
+  /**
+   * @param name_or_symbol String containing either the name or the symbol of
+   *                       the desired element.
+   */
+  Element(const std::string& name_or_symbol);
 
   /**
    * @brief Returns the atomic number of the element.
@@ -108,18 +114,6 @@ class Element {
    *        other's, and false if otherwise.
    */
   bool operator<(const Element& rhs) const { return this->Z_ < rhs.Z_; }
-
-  /**
-   * @brief Finds an element from a symbol.
-   * @param symbol String which holds the element symbol for which to search.
-   */
-  static Element from_symbol(const std::string& symbol);
-
-  /**
-   * @brief Finds an element from a name.
-   * @param symbol String which holds the element name for which to search.
-   */
-  static Element from_name(const std::string& name);
 
  private:
   struct Info {

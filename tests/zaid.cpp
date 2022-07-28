@@ -72,10 +72,10 @@ TEST(Element, Element) {
   EXPECT_EQ(ehash(U), uhash(U.Z()));
   EXPECT_EQ(ehash(Pu), uhash(Pu.Z()));
 
-  Element U_from_symbol = Element::from_symbol("U");
+  Element U_from_symbol("U");
   EXPECT_TRUE(U == U_from_symbol);
 
-  Element U_from_name = Element::from_name("Uranium");
+  Element U_from_name("Uranium");
   EXPECT_TRUE(U == U_from_name);
 }
 
