@@ -4,6 +4,11 @@
 Tools and Utils
 ===============
 
+MCNPLibrary
+-----------
+
+.. doxygenclass:: pndl::MCNPLibrary
+
 ACE
 ---
 
