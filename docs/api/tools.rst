@@ -4,10 +4,21 @@
 Tools and Utils
 ===============
 
+NDLibrary
+-----------
+
+.. doxygenclass:: pndl::NDLibrary
+
+
 MCNPLibrary
 -----------
 
 .. doxygenclass:: pndl::MCNPLibrary
+
+SerpentLibrary
+-----------
+
+.. doxygenclass:: pndl::SerpentLibrary
 
 ACE
 ---
