@@ -66,6 +66,16 @@ class NDLibrary {
   const std::vector<double>& temperatures(const std::string& symbol) const;
 
   /**
+   * @brief Returns the closest nearest provided temperature for the given
+   *        symbol-temperature combination.
+   * @param symbol String contianing the symbol for the nuclide, or the name
+   *               of the thermal scattering law to be queried.
+   * @param temperature Desired temperature for data.
+   */
+  double nearest_temperature(const std::string& symbol,
+                             double temperature) const;
+
+  /**
    * @brief Returns a shared pointer to an STNeutron instance.
    * @param symbol String for the symbol of the desired nuclide.
    * @param temperature Desired temperature for the returned STNeutron data

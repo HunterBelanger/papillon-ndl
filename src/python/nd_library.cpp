@@ -36,6 +36,7 @@ using namespace pndl;
 void init_NDLibrary(py::module& m) {
   py::class_<NDLibrary, std::shared_ptr<NDLibrary>>(m, "NDLibrary")
       .def("temperatures", &NDLibrary::temperatures)
+      .def("nearest_temperature", &NDLibrary::nearest_temperature)
       .def("atomic_weight_ratio", &NDLibrary::atomic_weight_ratio)
       .def("load_STNeutron", &NDLibrary::load_STNeutron)
       .def("load_STTSL", &NDLibrary::load_STTSL);

@@ -28,6 +28,7 @@
 #include <cmath>
 #include <filesystem>
 #include <fstream>
+#include <iostream>
 #include <regex>
 #include <sstream>
 
@@ -72,6 +73,60 @@ const std::vector<double>& NDLibrary::temperatures(
   return st_neutron_data_.at(symbol_zaid).temperatures;
 }
 
+double NDLibrary::nearest_temperature(const std::string& symbol,
+                                      double temperature) const {
+  const std::vector<double>* temps = nullptr;
+
+  // first check dictionary of TSLs
+  const std::regex tsl_name_regex("([\\w-]{1,6})");
+  std::smatch match;
+  if (std::regex_search(symbol, match, tsl_name_regex) == true) {
+    std::string tsl_name = match.str();
+    if (st_tsl_data_.find(tsl_name) != st_tsl_data_.end()) {
+      temps = &st_tsl_data_.at(tsl_name).temperatures;
+    }
+  }
+
+  if (temps == nullptr) {
+    // If we didn't find a TSL, try and get a zaid
+    ZAID symbol_zaid(0, 0);
+    try {
+      symbol_zaid = this->symbol_to_zaid(symbol);
+    } catch (PNDLException& err) {
+      std::stringstream mssg;
+      mssg << "The symbol \"" << symbol << "\" is not a valid element or ";
+      mssg << "nuclide. No thermal scattering law is associated with ";
+      mssg << "this symbol.";
+      err.add_to_exception(mssg.str());
+      throw err;
+    }
+
+    // If we got a ZAID, check if in data map
+    if (st_neutron_data_.find(symbol_zaid) == st_neutron_data_.end()) {
+      // Nothing found.
+      std::stringstream mssg;
+      mssg << "No data associated with the symbol \"" << symbol << "\", ZAID ";
+      mssg << symbol_zaid.zaid() << " was found.";
+      throw PNDLException(mssg.str());
+    }
+
+    temps = &st_neutron_data_.at(symbol_zaid).temperatures;
+  }
+
+  // Go through all tables to see if we find a matching temperature.
+  double min_diff = temperature - (*temps)[0];
+  std::size_t i_min_diff = 0;
+  for (std::size_t i = 1; i < temps->size(); i++) {
+    double Tdiff = std::abs(temperature - (*temps)[i]);
+    if (Tdiff < min_diff) {
+      min_diff = Tdiff;
+      i_min_diff = i;
+    }
+  }
+
+  return (*temps)[i_min_diff];
+}
+
 std::shared_ptr<STNeutron> NDLibrary::load_STNeutron(const std::string& symbol,
                                                      double temperature,
                                                      double tolerance) {
@@ -99,51 +154,49 @@ std::shared_ptr<STNeutron> NDLibrary::load_STNeutron(const std::string& symbol,
   STNeutronList& stlist = st_neutron_data_[symbol_zaid];
 
   // Go through all tables to see if we find a matching temperature.
-  for (std::size_t i = 0; i < stlist.tables.size(); i++) {
-    double Tdiff = std::abs(temperature - stlist.tables[i].temperature);
-    double Tdiff_1 = Tdiff + 2. * tolerance;
-    if (i < stlist.tables.size() - 1) {
-      Tdiff_1 = std::abs(temperature - stlist.tables[i].temperature);
-    }
-    if (Tdiff_1 < Tdiff) continue;
-
-    if (Tdiff <= tolerance) {
-      // We found our temperature
-      // Let's check if the data is loaded
-      if (stlist.loaded_data[i] == nullptr) {
-        try {
-          // Has yet to be loaded. We should do that. Start by loading ACE.
-          ACE ace(stlist.tables[i].file, stlist.tables[i].type);
-
-          // Now that we have the ACE, we need to construct the STNeutron
-          if (stlist.first_loaded != nullptr) {
-            stlist.loaded_data[i] =
-                std::make_shared<STNeutron>(ace, *(stlist.first_loaded));
-          } else {
-            stlist.loaded_data[i] = std::make_shared<STNeutron>(ace);
-            stlist.first_loaded = stlist.loaded_data[i];
-          }
-        } catch (PNDLException& err) {
-          std::stringstream mssg;
-          mssg << "Could not load STNeutron data for ACE file at ";
-          mssg << stlist.tables[i].file << ".";
-          err.add_to_exception(mssg.str());
-          throw err;
-        }
-      }
-
-      return stlist.loaded_data[i];
+  double min_diff = 1.E30;
+  std::size_t i_min_diff = stlist.temperatures.size();
+  for (std::size_t i = 0; i < stlist.temperatures.size(); i++) {
+    double Tdiff = std::abs(temperature - stlist.temperatures[i]);
+    if (Tdiff <= tolerance && Tdiff < min_diff) {
+      min_diff = Tdiff;
+      i_min_diff = i;
     }
   }
 
-  // We didn't find a temperature within tolerance
-  std::stringstream mssg;
-  mssg << "Could not find data for " << symbol << " within " << tolerance;
-  mssg << " Kelvin of desired temperature of " << temperature << " Kelvin.";
-  throw PNDLException(mssg.str());
+  if (i_min_diff == stlist.temperatures.size()) {
+    // We didn't find a temperature within tolerance
+    std::stringstream mssg;
+    mssg << "Could not find data for " << symbol << " within " << tolerance;
+    mssg << " Kelvin of desired temperature of " << temperature << " Kelvin.";
+    throw PNDLException(mssg.str());
+  }
 
-  // NEVER GETS HERE
-  return nullptr;
+  // We found our temperature
+  // Let's check if the data is loaded
+  if (stlist.loaded_data[i_min_diff] == nullptr) {
+    try {
+      // Has yet to be loaded. We should do that. Start by loading ACE.
+      ACE ace(stlist.tables[i_min_diff].file, stlist.tables[i_min_diff].type);
+
+      // Now that we have the ACE, we need to construct the STNeutron
+      if (stlist.first_loaded != nullptr) {
+        stlist.loaded_data[i_min_diff] =
+            std::make_shared<STNeutron>(ace, *(stlist.first_loaded));
+      } else {
+        stlist.loaded_data[i_min_diff] = std::make_shared<STNeutron>(ace);
+        stlist.first_loaded = stlist.loaded_data[i_min_diff];
+      }
+    } catch (PNDLException& err) {
+      std::stringstream mssg;
+      mssg << "Could not load STNeutron data for ACE file at ";
+      mssg << stlist.tables[i_min_diff].file << ".";
+      err.add_to_exception(mssg.str());
+      throw err;
+    }
+  }
+
+  return stlist.loaded_data[i_min_diff];
 }
 
 std::shared_ptr<STThermalScatteringLaw> NDLibrary::load_STTSL(
@@ -167,43 +220,42 @@ std::shared_ptr<STThermalScatteringLaw> NDLibrary::load_STTSL(
   STThermalScatteringLawList& stlist = st_tsl_data_[tsl_name];
 
   // Go through all tables to see if we find a matching temperature.
-  for (std::size_t i = 0; i < stlist.tables.size(); i++) {
-    double Tdiff = std::abs(temperature - stlist.tables[i].temperature);
-    double Tdiff_1 = Tdiff + 2. * tolerance;
-    if (i < stlist.tables.size() - 1) {
-      Tdiff_1 = std::abs(temperature - stlist.tables[i].temperature);
-    }
-    if (Tdiff_1 < Tdiff) continue;
-
-    if (Tdiff <= tolerance) {
-      // We found our temperature
-      // Let's check if the data is loaded
-      if (stlist.loaded_data[i] == nullptr) {
-        try {
-          // Has yet to be loaded. We should do that. Start by loading ACE.
-          ACE ace(stlist.tables[i].file, stlist.tables[i].type);
-          stlist.loaded_data[i] = std::make_shared<STThermalScatteringLaw>(ace);
-        } catch (PNDLException& err) {
-          std::stringstream mssg;
-          mssg << "Could not load STThermalScatteringLaw data for ACE file at ";
-          mssg << stlist.tables[i].file << ".";
-          err.add_to_exception(mssg.str());
-          throw err;
-        }
-      }
-
-      return stlist.loaded_data[i];
+  double min_diff = 1.E30;
+  std::size_t i_min_diff = stlist.temperatures.size();
+  for (std::size_t i = 0; i < stlist.temperatures.size(); i++) {
+    double Tdiff = std::abs(temperature - stlist.temperatures[i]);
+    if (Tdiff <= tolerance && Tdiff < min_diff) {
+      min_diff = Tdiff;
+      i_min_diff = i;
     }
   }
 
-  // We didn't find a temperature within tolerance
-  std::stringstream mssg;
-  mssg << "Could not find data for " << tsl_name << " within " << tolerance;
-  mssg << " Kelvin of desired temperature of " << temperature << " Kelvin.";
-  throw PNDLException(mssg.str());
+  if (i_min_diff == stlist.temperatures.size()) {
+    // We didn't find a temperature within tolerance
+    std::stringstream mssg;
+    mssg << "Could not find data for " << tsl_name << " within " << tolerance;
+    mssg << " Kelvin of desired temperature of " << temperature << " Kelvin.";
+    throw PNDLException(mssg.str());
+  }
 
-  // NEVER GETS HERE
-  return nullptr;
+  // We found our temperature
+  // Let's check if the data is loaded
+  if (stlist.loaded_data[i_min_diff] == nullptr) {
+    try {
+      // Has yet to be loaded. We should do that. Start by loading ACE.
+      ACE ace(stlist.tables[i_min_diff].file, stlist.tables[i_min_diff].type);
+      stlist.loaded_data[i_min_diff] =
+          std::make_shared<STThermalScatteringLaw>(ace);
+    } catch (PNDLException& err) {
+      std::stringstream mssg;
+      mssg << "Could not load STThermalScatteringLaw data for ACE file at ";
+      mssg << stlist.tables[i_min_diff].file << ".";
+      err.add_to_exception(mssg.str());
+      throw err;
+    }
+  }
+
+  return stlist.loaded_data[i_min_diff];
 }
 
 double NDLibrary::atomic_weight_ratio(const std::string& symbol) const {
