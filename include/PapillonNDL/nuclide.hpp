@@ -115,11 +115,12 @@ class Nuclide {
    *               isomer level can be added as SSAAAmL. The level can be
    *               0, 1, or 2.
    */
-  Nuclide(const std::string& symbol): isotope_(1,1), level_(0) {
-    const std::regex is_nuclide_regex("(^\\s+)?([A-Z][a-z]{0,1}[0-9]{1,3})([m][0-2])?(\\s+)?");
+  Nuclide(const std::string& symbol) : isotope_(1, 1), level_(0) {
+    const std::regex is_nuclide_regex(
+        "(^\\s+)?([A-Z][a-z]{0,1}[0-9]{1,3})([m][0-2])?(\\s+)?");
 
     if (std::regex_match(symbol, is_nuclide_regex) == false) {
-      std::string mssg = "The symbol \"" + symbol + "\" is not a valid "; 
+      std::string mssg = "The symbol \"" + symbol + "\" is not a valid ";
       mssg += "Nuclide symbol.";
       throw PNDLException(mssg);
     }

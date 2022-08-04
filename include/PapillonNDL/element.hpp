@@ -68,7 +68,7 @@ class Element {
       throw PNDLException(mssg);
     }
   }
-  
+
   /**
    * @param name_or_symbol String containing either the name or the symbol of
    *                       the desired element.

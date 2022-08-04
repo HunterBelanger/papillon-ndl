@@ -39,7 +39,7 @@
 
 namespace pndl {
 
-  /**
+/**
  * @brief This class acts as an interface to easily retrieve nuclear data
  *        for the desried isotope or thermal scattering law, at the desired
  *        temperature. This interface makes sure that data is only ever loaded
@@ -49,7 +49,7 @@ namespace pndl {
 class NDLibrary {
  public:
   virtual ~NDLibrary() = default;
-  
+
   /**
    * @brief Returns the atomic weight ratio for the nuclide associated with
    *        symbol, which was tabulated in the xsdir file.
@@ -95,7 +95,7 @@ class NDLibrary {
 
  protected:
   NDLibrary() = default;
-  
+
   struct TableEntry {
     std::filesystem::path file;
     ACE::Type type;

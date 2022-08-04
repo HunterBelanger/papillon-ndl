@@ -26,9 +26,9 @@
 
 namespace pndl {
 
-Element::Element(const std::string& name_or_symbol): Z_(0) {
+Element::Element(const std::string& name_or_symbol) : Z_(0) {
   bool found = false;
-  
+
   // First check and see if we are a valid symbol.
   const std::regex is_element_regex("(^\\s+)?([A-Z][a-z]{0,1})(\\s+)?");
   if (std::regex_match(name_or_symbol, is_element_regex)) {
@@ -44,35 +44,34 @@ Element::Element(const std::string& name_or_symbol): Z_(0) {
       }
     }
   }
-  
+
   // If we still haven't found it, maybe it's a name
   const std::regex is_name_regex("(^\\s+)?\\b([A-Z][a-z]+)\\b(\\s+)?");
-  if (found == false &&
-      std::regex_match(name_or_symbol, is_name_regex)) {
+  if (found == false && std::regex_match(name_or_symbol, is_name_regex)) {
     Z_ = 0;
     const std::regex name_regex("([A-Z][a-z]+)");
     std::smatch match;
     std::regex_search(name_or_symbol, match, name_regex);
     std::string element_name(match[0].first, match[0].second);
-    
+
     for (Z_ = 0; Z_ < N_ELEM; Z_++) {
       if (elements_table[Z_].name == element_name) {
         found = true;
-        break; 
+        break;
       }
     }
   }
 
   if (found) {
     // Advance z by 1 for the correct atomic number.
-    Z_++; 
+    Z_++;
   } else {
-    // We couldn't find the element... 
+    // We couldn't find the element...
     std::string mssg = "Could not find an element symbol or name matching \"";
     mssg += name_or_symbol + "\".";
     throw PNDLException(mssg);
   }
-} 
+}
 
 std::array<Element::Info, Element::N_ELEM> Element::elements_table{
     Element::Info{"Hydrogen", "H"},      Element::Info{"Helium", "He"},

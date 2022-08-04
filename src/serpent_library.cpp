@@ -20,8 +20,8 @@
  * along with PapillonNDL. If not, see <https://www.gnu.org/licenses/>.
  *
  * */
-#include <PapillonNDL/serpent_library.hpp>
 #include <PapillonNDL/pndl_exception.hpp>
+#include <PapillonNDL/serpent_library.hpp>
 #include <algorithm>
 #include <cmath>
 #include <filesystem>
@@ -33,8 +33,7 @@
 
 namespace pndl {
 
-SerpentLibrary::SerpentLibrary(const std::string& fname)
-    : NDLibrary() {
+SerpentLibrary::SerpentLibrary(const std::string& fname) : NDLibrary() {
   std::filesystem::path xsdir_fname(fname);
   if (std::filesystem::exists(xsdir_fname) == false) {
     std::stringstream mssg;
@@ -72,7 +71,7 @@ SerpentLibrary::SerpentLibrary(const std::string& fname)
     xsdir_stream >> AW_str;
     xsdir_stream >> T_str;
     xsdir_stream >> bin_str;
-    xsdir_stream >> path_str; 
+    xsdir_stream >> path_str;
 
     // If this isn't a neutron or tsl file, read next line
     if (type_str[0] != '1' && type_str[0] != '3') continue;
@@ -80,7 +79,7 @@ SerpentLibrary::SerpentLibrary(const std::string& fname)
     // Check if this is an alias. If so, read next line
     if (read_zaids.find(zaid_str) != read_zaids.end()) continue;
     read_zaids.emplace(zaid_str);
-    
+
     ACE::Type ace_type = ACE::Type::ASCII;
     if (bin_str[0] == '1') ace_type = ACE::Type::BINARY;
     double temp = std::stod(T_str);
@@ -94,7 +93,7 @@ SerpentLibrary::SerpentLibrary(const std::string& fname)
         break;
       }
     }
-    
+
     if (is_number) {
       // Free-gass Neutron data
       uint32_t ZA = std::stoul(ZA_str);
@@ -106,7 +105,7 @@ SerpentLibrary::SerpentLibrary(const std::string& fname)
       double awr = std::stod(AW_str);
       atomic_weight_ratios_[zaid] = awr;
     } else {
-      // Thermal Scattering Law 
+      // Thermal Scattering Law
       st_tsl_data_[zaid_str].tables.push_back({ace_path, ace_type, temp});
       st_tsl_data_[zaid_str].loaded_data.push_back(nullptr);
     }
@@ -115,30 +114,26 @@ SerpentLibrary::SerpentLibrary(const std::string& fname)
   // Entire xsdir has been read. We shoudl now sort the entries by
   // temperature, and fill the temperature vectors.
   for (auto& lst : st_neutron_data_) {
-    std::sort(lst.second.tables.begin(),
-              lst.second.tables.end(),
+    std::sort(lst.second.tables.begin(), lst.second.tables.end(),
               [](const TableEntry& L, const TableEntry& R) {
                 return L.temperature < R.temperature;
-              }
-             );
-    
+              });
+
     lst.second.temperatures.resize(lst.second.tables.size(), 0.);
     for (std::size_t i = 0; i < lst.second.tables.size(); i++) {
-      lst.second.temperatures[i] = lst.second.tables[i].temperature; 
+      lst.second.temperatures[i] = lst.second.tables[i].temperature;
     }
   }
 
   for (auto& lst : st_tsl_data_) {
-    std::sort(lst.second.tables.begin(),
-              lst.second.tables.end(),
+    std::sort(lst.second.tables.begin(), lst.second.tables.end(),
               [](const TableEntry& L, const TableEntry& R) {
                 return L.temperature < R.temperature;
-              }
-             );
-  
+              });
+
     lst.second.temperatures.resize(lst.second.tables.size(), 0.);
     for (std::size_t i = 0; i < lst.second.tables.size(); i++) {
-      lst.second.temperatures[i] = lst.second.tables[i].temperature; 
+      lst.second.temperatures[i] = lst.second.tables[i].temperature;
     }
   }
 }

@@ -20,8 +20,8 @@
  * along with PapillonNDL. If not, see <https://www.gnu.org/licenses/>.
  *
  * */
-#include <PapillonNDL/nd_library.hpp>
 #include <PapillonNDL/element.hpp>
+#include <PapillonNDL/nd_library.hpp>
 #include <PapillonNDL/nuclide.hpp>
 #include <PapillonNDL/pndl_exception.hpp>
 #include <algorithm>
@@ -35,7 +35,8 @@
 
 namespace pndl {
 
-const std::vector<double>& NDLibrary::temperatures(const std::string& symbol) const {
+const std::vector<double>& NDLibrary::temperatures(
+    const std::string& symbol) const {
   // first check dictionary of TSLs
   const std::regex tsl_name_regex("([\\w-]{1,6})");
   std::smatch match;
@@ -71,8 +72,9 @@ const std::vector<double>& NDLibrary::temperatures(const std::string& symbol) co
   return st_neutron_data_.at(symbol_zaid).temperatures;
 }
 
-std::shared_ptr<STNeutron> NDLibrary::load_STNeutron(
-    const std::string& symbol, double temperature, double tolerance) {
+std::shared_ptr<STNeutron> NDLibrary::load_STNeutron(const std::string& symbol,
+                                                     double temperature,
+                                                     double tolerance) {
   // First get zaid of symbol
   ZAID symbol_zaid(0, 0);
   try {

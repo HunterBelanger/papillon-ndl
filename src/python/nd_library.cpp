@@ -24,8 +24,8 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
-#include <PapillonNDL/nd_library.hpp>
 #include <PapillonNDL/mcnp_library.hpp>
+#include <PapillonNDL/nd_library.hpp>
 #include <PapillonNDL/serpent_library.hpp>
 #include <memory>
 
@@ -42,11 +42,13 @@ void init_NDLibrary(py::module& m) {
 }
 
 void init_MCNPLibrary(py::module& m) {
-  py::class_<MCNPLibrary, NDLibrary, std::shared_ptr<MCNPLibrary>>(m, "MCNPLibrary")
+  py::class_<MCNPLibrary, NDLibrary, std::shared_ptr<MCNPLibrary>>(
+      m, "MCNPLibrary")
       .def(py::init<const std::string&>());
 }
 
 void init_SerpentLibrary(py::module& m) {
-  py::class_<SerpentLibrary, NDLibrary, std::shared_ptr<SerpentLibrary>>(m, "SerpentLibrary")
+  py::class_<SerpentLibrary, NDLibrary, std::shared_ptr<SerpentLibrary>>(
+      m, "SerpentLibrary")
       .def(py::init<const std::string&>());
 }
