@@ -206,7 +206,7 @@ MCNPLibrary::MCNPLibrary(const std::string& fname) : NDLibrary() {
     }
   }
 
-  // Entire xsdir has been read. We shoudl now sort the entries by
+  // Entire xsdir has been read. We should now sort the entries by
   // temperature, and fill the temperature vectors.
   for (auto& lst : st_neutron_data_) {
     std::sort(lst.second.tables.begin(), lst.second.tables.end(),
