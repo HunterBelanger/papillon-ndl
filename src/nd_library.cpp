@@ -113,18 +113,21 @@ double NDLibrary::nearest_temperature(const std::string& symbol,
     temps = &st_neutron_data_.at(symbol_zaid).temperatures;
   }
 
-  // Go through all tables to see if we find a matching temperature.
-  double min_diff = temperature - (*temps)[0];
-  std::size_t i_min_diff = 0;
-  for (std::size_t i = 1; i < temps->size(); i++) {
+  for (std::size_t i = 0; i < temps->size(); i++) {
     double Tdiff = std::abs(temperature - (*temps)[i]);
-    if (Tdiff < min_diff) {
-      min_diff = Tdiff;
-      i_min_diff = i;
+    double Tdiff_1 = 1.E300;
+    if (i < temps->size() - 1) {
+      Tdiff_1 = std::abs(temperature - (*temps)[i+1]);
+    }
+
+    if (Tdiff_1 < Tdiff) {
+      continue;
+    } else {
+      return (*temps)[i];
     }
   }
 
-  return (*temps)[i_min_diff];
+  return temps->back();
 }
 
 std::shared_ptr<STNeutron> NDLibrary::load_STNeutron(const std::string& symbol,
@@ -153,14 +156,19 @@ std::shared_ptr<STNeutron> NDLibrary::load_STNeutron(const std::string& symbol,
   // Get reference to the STNeutronList
   STNeutronList& stlist = st_neutron_data_[symbol_zaid];
 
-  // Go through all tables to see if we find a matching temperature.
-  double min_diff = 1.E30;
   std::size_t i_min_diff = stlist.temperatures.size();
   for (std::size_t i = 0; i < stlist.temperatures.size(); i++) {
     double Tdiff = std::abs(temperature - stlist.temperatures[i]);
-    if (Tdiff <= tolerance && Tdiff < min_diff) {
-      min_diff = Tdiff;
+    double Tdiff_1 = 1.E300;
+    if (i < stlist.temperatures.size() - 1) {
+      Tdiff_1 = std::abs(temperature - stlist.temperatures[i]);
+    }
+
+    if (Tdiff_1 < Tdiff) {
+      continue;
+    } else if (Tdiff <= tolerance) {
       i_min_diff = i;
+      break;
     }
   }
 
@@ -219,14 +227,19 @@ std::shared_ptr<STThermalScatteringLaw> NDLibrary::load_STTSL(
   // Get reference to the STThermalScatteringLawList
   STThermalScatteringLawList& stlist = st_tsl_data_[tsl_name];
 
-  // Go through all tables to see if we find a matching temperature.
-  double min_diff = 1.E30;
   std::size_t i_min_diff = stlist.temperatures.size();
   for (std::size_t i = 0; i < stlist.temperatures.size(); i++) {
     double Tdiff = std::abs(temperature - stlist.temperatures[i]);
-    if (Tdiff <= tolerance && Tdiff < min_diff) {
-      min_diff = Tdiff;
+    double Tdiff_1 = 1.E300;
+    if (i < stlist.temperatures.size() - 1) {
+      Tdiff_1 = std::abs(temperature - stlist.temperatures[i]);
+    }
+
+    if (Tdiff_1 < Tdiff) {
+      continue;
+    } else if (Tdiff <= tolerance) {
       i_min_diff = i;
+      break;
     }
   }
 
