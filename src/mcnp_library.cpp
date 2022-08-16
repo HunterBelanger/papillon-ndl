@@ -37,8 +37,7 @@ MCNPLibrary::MCNPLibrary(const std::string& fname) : NDLibrary() {
   std::filesystem::path xsdir_fname(fname);
   if (std::filesystem::exists(xsdir_fname) == false) {
     std::stringstream mssg;
-    mssg << "The provided xsdir file name \"" << fname << "\" ";
-    mssg << "does not exist.";
+    mssg << "The provided xsdir file name \"" << fname << "\" does not exist.";
     throw PNDLException(mssg.str());
   }
 
