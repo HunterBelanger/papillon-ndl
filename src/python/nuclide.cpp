@@ -55,6 +55,7 @@ void init_Element(py::module& m) {
       .def(py::init<const std::string&>())
       .def("Z", &Element::Z)
       .def("atomic_numer", &Element::atomic_number)
+      .def("largest_isotope", &Element::largest_isotope)
       .def("symbol", &Element::symbol)
       .def("name", &Element::name)
       .def("zaid", &Element::zaid)

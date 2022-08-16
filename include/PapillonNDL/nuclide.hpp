@@ -87,17 +87,31 @@ class Nuclide {
     uint8_t Z_ = zaid.Z();
     uint32_t A_ = zaid.A();
     level_ = 0;
+    Element el(1);
+    try {
+      el = Element(Z_);
+    } catch (PNDLException& err) {
+      std::string mssg = "Could not create Nuclide for Z = " + std::to_string(Z_) + ".";
+      err.add_to_exception(mssg);
+      throw err;
+    }
 
-    if (A_ > 300 && A_ < 600) {
-      A_ -= 300;
-      level_ = 1;
-    } else if (A_ > 600 && A_ < 900) {
-      A_ -= 600;
-      level_ = 2;
-    } else if (A_ > 900) {
-      std::string mssg = "ZAID with A > 900 indicates an isomer level > 2. ";
-      mssg += "Cannot create a Nuclde with isomer level greater than 2.";
-      throw PNDLException(mssg);
+    if (A_ > 300) {
+      level_++;
+      A_ -= 400;
+
+      while (A_ > el.largest_isotope() && A_ > 100) {
+        A_ -= 100;
+        level_++;
+      }
+
+      if (A_ > el.largest_isotope()) {
+        std::stringstream mssg;
+        mssg << "ZAID = " << zaid << " indicates Z = " << +Z_ << ", A = " << A_;
+        mssg << ", m = " << +level_ << ". The largest possible atomic mass for ";
+        mssg << el.symbol() << " is " << el.largest_isotope() << ".";
+        throw PNDLException(mssg.str());
+      }
     }
 
     try {
@@ -176,7 +190,14 @@ class Nuclide {
   /**
    * @brief Returns the ZAID for the nuclide.
    */
-  ZAID zaid() const { return ZAID(this->Z(), this->A() + 300 * level_); }
+  ZAID zaid() const {
+    uint32_t A_za = this->A();
+    if (this->level() > 0) {
+      A_za += 300;
+      A_za += static_cast<uint32_t>(this->level()) * 100;
+    }
+    return ZAID(this->Z(), A_za);
+  }
 
   /**
    * @brief Returns the symbol of the nuclide.
@@ -253,7 +274,12 @@ template <>
 struct std::hash<pndl::Nuclide> {
   std::size_t operator()(const pndl::Nuclide& nuc) const noexcept {
     std::hash<uint32_t> h;
-    return h(nuc.Z() * 1000 + nuc.A() + nuc.level() * 300);
+    uint32_t A = nuc.A();
+    if (nuc.level() > 0) {
+      A += 300;
+      A += static_cast<uint32_t>(nuc.level()) * 100;
+    }
+    return h(nuc.Z() * 1000 + A);
   }
 };
 

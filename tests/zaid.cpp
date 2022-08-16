@@ -159,13 +159,13 @@ TEST(Nuclide, Nuclide) {
   EXPECT_FALSE(U235 == U235m1);
   EXPECT_TRUE(U235 == U235);
 
-  ZAID zaid_U235m2(92, 835);
+  ZAID zaid_U235m2(92, 735);
   Nuclide U235m2(zaid_U235m2);
   EXPECT_EQ(U235m2.Z(), 92);
   EXPECT_EQ(U235m2.atomic_number(), 92);
   EXPECT_EQ(U235m2.A(), 235);
   EXPECT_EQ(U235m2.atomic_mass(), 235);
-  EXPECT_EQ(U235m2.zaid().zaid(), 92835);
+  EXPECT_EQ(U235m2.zaid().zaid(), 92735);
   EXPECT_TRUE(U235m2.symbol() == "U235m2");
   EXPECT_TRUE(U235m2.isotope_symbol() == "U235");
   EXPECT_TRUE(U235m2.element_symbol() == "U");

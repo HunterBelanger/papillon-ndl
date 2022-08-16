@@ -86,6 +86,13 @@ class Element {
   uint8_t atomic_number() const { return Z_; }
 
   /**
+   * @breif Returns the lartgest possible atomic mass number for the element.
+   */
+  uint32_t largest_isotope() const {
+    return elements_table[static_cast<std::size_t>(Z_ - 1)].largest_isotope;
+  }
+
+  /**
    * @brief Returns the symbol of the element.
    */
   const std::string& symbol() const {
@@ -119,6 +126,7 @@ class Element {
   struct Info {
     std::string name;
     std::string symbol;
+    uint32_t largest_isotope;
   };
   static constexpr uint8_t N_ELEM{118};
 
