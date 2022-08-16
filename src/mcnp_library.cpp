@@ -231,6 +231,9 @@ MCNPLibrary::MCNPLibrary(const std::string& fname) : NDLibrary() {
       lst.second.temperatures[i] = lst.second.tables[i].temperature;
     }
   }
+
+  // Populate the symbol lists
+  this->populate_symbol_lists();
 }
 
 }  // namespace pndl

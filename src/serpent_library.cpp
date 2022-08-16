@@ -77,6 +77,7 @@ SerpentLibrary::SerpentLibrary(const std::string& fname) : NDLibrary() {
     if (type_str[0] != '1' && type_str[0] != '3') continue;
 
     // Check if this is an alias. If so, read next line
+
     if (read_zaids.find(zaid_str) != read_zaids.end()) continue;
     read_zaids.emplace(zaid_str);
 
@@ -136,6 +137,9 @@ SerpentLibrary::SerpentLibrary(const std::string& fname) : NDLibrary() {
       lst.second.temperatures[i] = lst.second.tables[i].temperature;
     }
   }
+
+  // Populate the symbol lists
+  this->populate_symbol_lists();
 }
 
 }  // namespace pndl

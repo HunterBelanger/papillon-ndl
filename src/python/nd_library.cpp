@@ -39,7 +39,9 @@ void init_NDLibrary(py::module& m) {
       .def("nearest_temperature", &NDLibrary::nearest_temperature)
       .def("atomic_weight_ratio", &NDLibrary::atomic_weight_ratio)
       .def("load_STNeutron", &NDLibrary::load_STNeutron)
-      .def("load_STTSL", &NDLibrary::load_STTSL);
+      .def("load_STTSL", &NDLibrary::load_STTSL)
+      .def("list_STNeutron", &NDLibrary::list_STNeutron)
+      .def("list_STTSL", &NDLibrary::list_STTSL);
 }
 
 void init_MCNPLibrary(py::module& m) {

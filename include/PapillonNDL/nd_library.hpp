@@ -103,6 +103,20 @@ class NDLibrary {
                                                      double temperature,
                                                      double tolerance = 1.);
 
+  /**
+   * @breif Returns a vector containing all of the available symbols for
+   *        STNeutron data.
+   */
+  const std::vector<std::string>& list_STNeutron() const {
+    return st_neutron_symbols_;
+  }
+
+  /**
+   * @breif Returns a vector containing all of the available symbols for
+   *        STThermalScatteringLaw data.
+   */
+  const std::vector<std::string>& list_STTSL() const { return st_tsl_symbols_; }
+
  protected:
   NDLibrary() = default;
 
@@ -128,8 +142,11 @@ class NDLibrary {
   std::unordered_map<ZAID, double> atomic_weight_ratios_;
   std::unordered_map<ZAID, STNeutronList> st_neutron_data_;
   std::unordered_map<std::string, STThermalScatteringLawList> st_tsl_data_;
+  std::vector<std::string> st_neutron_symbols_;
+  std::vector<std::string> st_tsl_symbols_;
 
   ZAID symbol_to_zaid(const std::string& symbol) const;
+  void populate_symbol_lists();
 };
 
 }  // namespace pndl

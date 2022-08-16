@@ -54,9 +54,9 @@ const std::vector<double>& NDLibrary::temperatures(
     symbol_zaid = this->symbol_to_zaid(symbol);
   } catch (PNDLException& err) {
     std::stringstream mssg;
-    mssg << "The symbol \"" << symbol << "\" is not a valid element or ";
-    mssg << "nuclide. No thermal scattering law is associated with ";
-    mssg << "this symbol.";
+    mssg << "The symbol \"" << symbol
+         << "\" is not a valid element or nuclide. No thermal scattering law "
+            "is associated with this symbol.";
     err.add_to_exception(mssg.str());
     throw err;
   }
@@ -65,8 +65,8 @@ const std::vector<double>& NDLibrary::temperatures(
   if (st_neutron_data_.find(symbol_zaid) == st_neutron_data_.end()) {
     // Nothing found.
     std::stringstream mssg;
-    mssg << "No data associated with the symbol \"" << symbol << "\", ZAID ";
-    mssg << symbol_zaid.zaid() << " was found.";
+    mssg << "No data associated with the symbol \"" << symbol << "\", ZAID "
+         << symbol_zaid.zaid() << " was found.";
     throw PNDLException(mssg.str());
   }
 
@@ -94,9 +94,9 @@ double NDLibrary::nearest_temperature(const std::string& symbol,
       symbol_zaid = this->symbol_to_zaid(symbol);
     } catch (PNDLException& err) {
       std::stringstream mssg;
-      mssg << "The symbol \"" << symbol << "\" is not a valid element or ";
-      mssg << "nuclide. No thermal scattering law is associated with ";
-      mssg << "this symbol.";
+      mssg << "The symbol \"" << symbol
+           << "\" is not a valid element or nuclide. No thermal scattering law "
+              "is associated with this symbol.";
       err.add_to_exception(mssg.str());
       throw err;
     }
@@ -105,8 +105,8 @@ double NDLibrary::nearest_temperature(const std::string& symbol,
     if (st_neutron_data_.find(symbol_zaid) == st_neutron_data_.end()) {
       // Nothing found.
       std::stringstream mssg;
-      mssg << "No data associated with the symbol \"" << symbol << "\", ZAID ";
-      mssg << symbol_zaid.zaid() << " was found.";
+      mssg << "No data associated with the symbol \"" << symbol << "\", ZAID "
+           << symbol_zaid.zaid() << " was found.";
       throw PNDLException(mssg.str());
     }
 
@@ -117,7 +117,7 @@ double NDLibrary::nearest_temperature(const std::string& symbol,
     double Tdiff = std::abs(temperature - (*temps)[i]);
     double Tdiff_1 = 1.E300;
     if (i < temps->size() - 1) {
-      Tdiff_1 = std::abs(temperature - (*temps)[i+1]);
+      Tdiff_1 = std::abs(temperature - (*temps)[i + 1]);
     }
 
     if (Tdiff_1 < Tdiff) {
@@ -148,8 +148,8 @@ std::shared_ptr<STNeutron> NDLibrary::load_STNeutron(const std::string& symbol,
   if (st_neutron_data_.find(symbol_zaid) == st_neutron_data_.end()) {
     // Nothing found.
     std::stringstream mssg;
-    mssg << "No data associated with the symbol \"" << symbol << "\", ZAID ";
-    mssg << symbol_zaid.zaid() << " was found.";
+    mssg << "No data associated with the symbol \"" << symbol << "\", ZAID "
+         << symbol_zaid.zaid() << " was found.";
     throw PNDLException(mssg.str());
   }
 
@@ -175,8 +175,8 @@ std::shared_ptr<STNeutron> NDLibrary::load_STNeutron(const std::string& symbol,
   if (i_min_diff == stlist.temperatures.size()) {
     // We didn't find a temperature within tolerance
     std::stringstream mssg;
-    mssg << "Could not find data for " << symbol << " within " << tolerance;
-    mssg << " Kelvin of desired temperature of " << temperature << " Kelvin.";
+    mssg << "Could not find data for " << symbol << " within " << tolerance
+         << " Kelvin of desired temperature of " << temperature << " Kelvin.";
     throw PNDLException(mssg.str());
   }
 
@@ -197,8 +197,8 @@ std::shared_ptr<STNeutron> NDLibrary::load_STNeutron(const std::string& symbol,
       }
     } catch (PNDLException& err) {
       std::stringstream mssg;
-      mssg << "Could not load STNeutron data for ACE file at ";
-      mssg << stlist.tables[i_min_diff].file << ".";
+      mssg << "Could not load STNeutron data for ACE file at "
+           << stlist.tables[i_min_diff].file << ".";
       err.add_to_exception(mssg.str());
       throw err;
     }
@@ -246,8 +246,8 @@ std::shared_ptr<STThermalScatteringLaw> NDLibrary::load_STTSL(
   if (i_min_diff == stlist.temperatures.size()) {
     // We didn't find a temperature within tolerance
     std::stringstream mssg;
-    mssg << "Could not find data for " << tsl_name << " within " << tolerance;
-    mssg << " Kelvin of desired temperature of " << temperature << " Kelvin.";
+    mssg << "Could not find data for " << tsl_name << " within " << tolerance
+         << " Kelvin of desired temperature of " << temperature << " Kelvin.";
     throw PNDLException(mssg.str());
   }
 
@@ -261,8 +261,8 @@ std::shared_ptr<STThermalScatteringLaw> NDLibrary::load_STTSL(
           std::make_shared<STThermalScatteringLaw>(ace);
     } catch (PNDLException& err) {
       std::stringstream mssg;
-      mssg << "Could not load STThermalScatteringLaw data for ACE file at ";
-      mssg << stlist.tables[i_min_diff].file << ".";
+      mssg << "Could not load STThermalScatteringLaw data for ACE file at "
+           << stlist.tables[i_min_diff].file << ".";
       err.add_to_exception(mssg.str());
       throw err;
     }
@@ -277,8 +277,8 @@ double NDLibrary::atomic_weight_ratio(const std::string& symbol) const {
     symbol_zaid = this->symbol_to_zaid(symbol);
   } catch (PNDLException& err) {
     std::stringstream mssg;
-    mssg << "The symbol \"" << symbol << "\" is not a valid element or ";
-    mssg << "nuclide.";
+    mssg << "The symbol \"" << symbol
+         << "\" is not a valid element or nuclide.";
     err.add_to_exception(mssg.str());
     throw err;
   }
@@ -309,12 +309,52 @@ ZAID NDLibrary::symbol_to_zaid(const std::string& symbol) const {
   }
 
   std::stringstream mssg;
-  mssg << "The symbol \"" << symbol << "\" is neither a valid nuclide,";
-  mssg << " nor a valid element.";
+  mssg << "The symbol \"" << symbol
+       << "\" is neither a valid nuclide, nor a valid element.";
   throw PNDLException(mssg.str());
 
   // NEVER GETS HERE
   return ZAID(0, 0);
+}
+
+void NDLibrary::populate_symbol_lists() {
+  // Do STNeutron data
+  std::vector<ZAID> st_neutron_zaids;
+  st_neutron_zaids.reserve(st_neutron_data_.size());
+  for (const auto& entry : st_neutron_data_) st_neutron_zaids.push_back(entry.first);
+  std::sort(st_neutron_zaids.begin(), st_neutron_zaids.end());
+  for (const auto& zaid : st_neutron_zaids) {
+    if (zaid.A() == 0) {
+      // We have an Element (like evaluation for natural C)
+      try {
+        Element elem(zaid);
+        st_neutron_symbols_.push_back(elem.symbol());
+      } catch (PNDLException& err) {
+        std::stringstream mssg;
+        mssg << "Could not create Element for ZAID " << zaid
+             << ". Z = " << +zaid.Z() << ", A = " << zaid.A() << ".";
+        err.add_to_exception(mssg.str());
+        throw err;
+      }
+    } else {
+      // We have a Nuclide
+      try {
+        Nuclide nuc(zaid);
+        st_neutron_symbols_.push_back(nuc.symbol());
+      } catch (PNDLException& err) {
+        std::stringstream mssg;
+        mssg << "Could not create Nuclide for ZAID " << zaid << ".";
+        err.add_to_exception(mssg.str());
+        throw err;
+      }
+    }
+  }
+
+  // Do STNeutron data
+  for (const auto& entry : st_tsl_data_) {
+    st_tsl_symbols_.push_back(entry.first);
+  }
+  std::sort(st_tsl_symbols_.begin(), st_tsl_symbols_.end());
 }
 
 }  // namespace pndl
