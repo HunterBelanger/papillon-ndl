@@ -117,8 +117,19 @@ class NDLibrary {
    */
   const std::vector<std::string>& list_STTSL() const { return st_tsl_symbols_; }
 
+  /**
+   * @brief Returns the path to the file containing the library directory.
+   */
+  const std::string& directory_file() const { return xsdir_fname_; }
+
  protected:
-  NDLibrary() = default;
+  NDLibrary(const std::string& fname)
+      : xsdir_fname_(fname),
+        atomic_weight_ratios_(),
+        st_neutron_data_(),
+        st_tsl_data_(),
+        st_neutron_symbols_(),
+        st_tsl_symbols_(){};
 
   struct TableEntry {
     std::filesystem::path file;
@@ -139,6 +150,7 @@ class NDLibrary {
     std::vector<double> temperatures;
   };
 
+  std::string xsdir_fname_;
   std::unordered_map<ZAID, double> atomic_weight_ratios_;
   std::unordered_map<ZAID, STNeutronList> st_neutron_data_;
   std::unordered_map<std::string, STThermalScatteringLawList> st_tsl_data_;

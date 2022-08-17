@@ -33,7 +33,7 @@
 
 namespace pndl {
 
-SerpentLibrary::SerpentLibrary(const std::string& fname) : NDLibrary() {
+SerpentLibrary::SerpentLibrary(const std::string& fname) : NDLibrary(fname) {
   std::filesystem::path xsdir_fname(fname);
   if (std::filesystem::exists(xsdir_fname) == false) {
     std::stringstream mssg;

@@ -33,7 +33,7 @@
 
 namespace pndl {
 
-MCNPLibrary::MCNPLibrary(const std::string& fname) : NDLibrary() {
+MCNPLibrary::MCNPLibrary(const std::string& fname) : NDLibrary(fname) {
   std::filesystem::path xsdir_fname(fname);
   if (std::filesystem::exists(xsdir_fname) == false) {
     std::stringstream mssg;
