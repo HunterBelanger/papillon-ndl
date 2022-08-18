@@ -36,6 +36,7 @@
 #include <ostream>
 #include <regex>
 #include <string>
+#include <sstream>
 
 namespace pndl {
 
