@@ -57,6 +57,9 @@ set(PNDL_SOURCE_LIST src/element.cpp
                      src/st_thermal_scattering_law.cpp
                      src/urr_ptables.cpp
                      src/version.cpp
+                     src/nd_library.cpp
+                     src/mcnp_library.cpp
+                     src/serpent_library.cpp
 )
 
 # Only let a static library be built on Windows
@@ -149,6 +152,7 @@ if(PNDL_PYTHON)
                                     src/python/ce_neutron.cpp
                                     src/python/prng.cpp
                                     src/python/nuclide.cpp
+                                    src/python/nd_library.cpp
   )
   
   # Require C++20 standard

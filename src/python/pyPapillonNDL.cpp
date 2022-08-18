@@ -84,6 +84,9 @@ extern void init_ZAID(py::module&);
 extern void init_Element(py::module&);
 extern void init_Isotope(py::module&);
 extern void init_Nuclide(py::module&);
+extern void init_NDLibrary(py::module&);
+extern void init_MCNPLibrary(py::module&);
+extern void init_SerpentLibrary(py::module&);
 
 PYBIND11_MODULE(pyPapillonNDL, m) {
   init_ACE(m);
@@ -144,6 +147,9 @@ PYBIND11_MODULE(pyPapillonNDL, m) {
   init_Element(m);
   init_Isotope(m);
   init_Nuclide(m);
+  init_NDLibrary(m);
+  init_MCNPLibrary(m);
+  init_SerpentLibrary(m);
 
   m.attr("__author__") = "Hunter Belanger";
   m.attr("__copyright__") = "Copyright 2021, Hunter Belanger";

@@ -26,13 +26,14 @@
 
 #include <PapillonNDL/ce_neutron.hpp>
 #include <PapillonNDL/ce_neutron_base.hpp>
+#include <memory>
 
 namespace py = pybind11;
 
 using namespace pndl;
 
 void init_CENeutronBase(py::module& m) {
-  py::class_<CENeutronBase>(m, "CENeutronBase")
+  py::class_<CENeutronBase, std::shared_ptr<CENeutronBase>>(m, "CENeutronBase")
       .def("zaid", &CENeutronBase::zaid)
       .def("awr", &CENeutronBase::awr)
       .def("fissile", &CENeutronBase::fissile)
@@ -51,7 +52,8 @@ void init_CENeutronBase(py::module& m) {
 }
 
 void init_STNeutron(py::module& m) {
-  py::class_<STNeutron, CENeutronBase>(m, "STNeutron")
+  py::class_<STNeutron, CENeutronBase, std::shared_ptr<STNeutron>>(m,
+                                                                   "STNeutron")
       .def(py::init<const ACE&>())
       .def(py::init<const ACE&, const STNeutron&>())
       .def("temperature", &STNeutron::temperature)

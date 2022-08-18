@@ -68,7 +68,7 @@ class Element {
       throw PNDLException(mssg);
     }
   }
-  
+
   /**
    * @param name_or_symbol String containing either the name or the symbol of
    *                       the desired element.
@@ -84,6 +84,13 @@ class Element {
    * @brief Returns the atomic number of the element.
    */
   uint8_t atomic_number() const { return Z_; }
+
+  /**
+   * @breif Returns the lartgest possible atomic mass number for the element.
+   */
+  uint32_t largest_isotope() const {
+    return elements_table[static_cast<std::size_t>(Z_ - 1)].largest_isotope;
+  }
 
   /**
    * @brief Returns the symbol of the element.
@@ -119,6 +126,7 @@ class Element {
   struct Info {
     std::string name;
     std::string symbol;
+    uint32_t largest_isotope;
   };
   static constexpr uint8_t N_ELEM{118};
 

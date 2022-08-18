@@ -179,7 +179,7 @@ void ACE::read_ascii(std::ifstream& file) {
   }
 
   uint32_t zaid_int = static_cast<uint32_t>(nxs_[1]);
-  uint8_t Z_ = zaid_int / 1000;
+  uint8_t Z_ = static_cast<uint8_t>(zaid_int / 1000);
   uint32_t A_ = zaid_int - (Z_ * 1000);
   zaid_ = ZAID(Z_, A_);
 
@@ -248,7 +248,7 @@ void ACE::read_binary(std::ifstream& file) {
   }
 
   uint32_t zaid_int = static_cast<uint32_t>(nxs_[1]);
-  uint8_t Z_ = zaid_int / 1000;
+  uint8_t Z_ = static_cast<uint8_t>(zaid_int / 1000);
   uint32_t A_ = zaid_int - (Z_ * 1000);
   zaid_ = ZAID(Z_, A_);
 
