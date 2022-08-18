@@ -182,24 +182,20 @@ MCNPLibrary::MCNPLibrary(const std::string& fname) : NDLibrary(fname) {
     std::filesystem::path ace_path = datapath / fname_str;
     const std::regex zaid_ext_regex("([.][\\w]{3})");
     ACE::Type ace_type = ACE::Type::ASCII;
+    const char zaid_suffix = zaid_str.back();
     if (ftype_str == "2") ace_type = ACE::Type::BINARY;
     zaid_str = std::regex_replace(zaid_str, zaid_ext_regex, "");
-    bool is_number = true;
-    for (std::size_t i = 0; i < zaid_str.size(); i++) {
-      if (std::isdigit(zaid_str[i]) == false) {
-        is_number = false;
-        break;
-      }
-    }
 
-    if (is_number) {
+    if (zaid_suffix == 'c') {
+      // Continuous energy neutron data
       uint32_t zaid_num = std::stoul(zaid_str);
       uint8_t Z = zaid_num / 1000;
       uint32_t A = zaid_num - (Z * 1000);
       ZAID zaid(Z, A);
       st_neutron_data_[zaid].tables.push_back({ace_path, ace_type, temp});
       st_neutron_data_[zaid].loaded_data.push_back(nullptr);
-    } else {
+    } else if (zaid_suffix == 't') {
+      // Thermal scattering law
       st_tsl_data_[zaid_str].tables.push_back({ace_path, ace_type, temp});
       st_tsl_data_[zaid_str].loaded_data.push_back(nullptr);
     }

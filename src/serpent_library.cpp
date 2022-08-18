@@ -86,16 +86,9 @@ SerpentLibrary::SerpentLibrary(const std::string& fname) : NDLibrary(fname) {
     std::filesystem::path ace_path = path_str;
     const std::regex zaid_ext_regex("([.][\\w]{3})");
     zaid_str = std::regex_replace(zaid_str, zaid_ext_regex, "");
-    bool is_number = true;
-    for (std::size_t i = 0; i < zaid_str.size(); i++) {
-      if (std::isdigit(zaid_str[i]) == false) {
-        is_number = false;
-        break;
-      }
-    }
 
-    if (is_number) {
-      // Free-gass Neutron data
+    if (type_str[0] == '1') {
+      // Continuous Energy Neutron data
       uint32_t ZA = std::stoul(ZA_str);
       uint8_t Z = ZA / 1000;
       uint32_t A = ZA - (Z * 1000);
@@ -104,7 +97,7 @@ SerpentLibrary::SerpentLibrary(const std::string& fname) : NDLibrary(fname) {
       st_neutron_data_[zaid].loaded_data.push_back(nullptr);
       double awr = std::stod(AW_str);
       atomic_weight_ratios_[zaid] = awr;
-    } else {
+    } else if (type_str[0] == '3') {
       // Thermal Scattering Law
       st_tsl_data_[zaid_str].tables.push_back({ace_path, ace_type, temp});
       st_tsl_data_[zaid_str].loaded_data.push_back(nullptr);
