@@ -159,7 +159,7 @@ class Nuclide {
     level_ = 0;
     if (isomer_str.size() > 0) {
       isomer_str.erase(isomer_str.begin());
-      level_ = std::stoul(isomer_str);
+      level_ = static_cast<uint8_t>(std::stoul(isomer_str));
     }
   }
 

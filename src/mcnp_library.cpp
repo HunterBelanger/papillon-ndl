@@ -77,7 +77,7 @@ MCNPLibrary::MCNPLibrary(const std::string& fname) : NDLibrary(fname) {
     while (awr_stream.eof() == false) {
       awr_stream >> zaid;
       awr_stream >> awr;
-      uint8_t Z = zaid / 1000;
+      uint8_t Z = static_cast<uint8_t>(zaid / 1000);
       uint32_t A = zaid - (Z * 1000);
       ZAID zd(Z, A);
       atomic_weight_ratios_[zd] = awr;
@@ -189,7 +189,7 @@ MCNPLibrary::MCNPLibrary(const std::string& fname) : NDLibrary(fname) {
     if (zaid_suffix == 'c') {
       // Continuous energy neutron data
       uint32_t zaid_num = std::stoul(zaid_str);
-      uint8_t Z = zaid_num / 1000;
+      uint8_t Z = static_cast<uint8_t>(zaid_num / 1000);
       uint32_t A = zaid_num - (Z * 1000);
       ZAID zaid(Z, A);
       st_neutron_data_[zaid].tables.push_back({ace_path, ace_type, temp});
