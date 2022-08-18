@@ -36,6 +36,15 @@ namespace pndl {
 /**
  * @brief This class is a specialization of the NDLibrary class, which is
  *        constructed from a Serpent formated xsdir file.
+ *
+ * @warning Due to historical reasons, in many ACE libraries (mostly those
+ *          distributed for use with MCNP by LANL), Am242m1 has been given
+ *          a ZAID of 95242, and Am242 has been given a ZAID of 95642. If
+ *          this is the case for the ACE library you are using, then these
+ *          two evaluations will be switched, and looking up the symbol
+ *          "Am242" will actually provide the evaluation for Am242m1. This
+ *          can be corrected by modifying the xsdir file itself, swaping
+ *          the ZAID identifiers for the two evaluations.
  */
 class SerpentLibrary : public NDLibrary {
  public:
