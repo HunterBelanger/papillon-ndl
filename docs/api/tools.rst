@@ -50,30 +50,10 @@ Interpolation
 
 .. doxygenenum:: pndl::Interpolation
 
-Histogram
----------
+Interpolator
+------------
 
-.. doxygenstruct:: pndl::Histogram
-
-LinLin
-------
-
-.. doxygenstruct:: pndl::LinLin
-
-LinLog
-------
-
-.. doxygenstruct:: pndl::LinLog
-
-LogLin
-------
-
-.. doxygenstruct:: pndl::LogLin
-
-LogLog
-------
-
-.. doxygenstruct:: pndl::LogLog
+.. doxygenclass:: pndl::Interpolator
 
 ZAID
 ----

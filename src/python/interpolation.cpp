@@ -37,3 +37,12 @@ void init_Interpolation(py::module& m) {
       .value("LogLin", Interpolation::LogLin)
       .value("LogLog", Interpolation::LogLog);
 }
+
+void init_Interpolator(py::module& m) {
+  py::class_<Interpolator>(m, "Interpolator")
+      .def(py::init<Interpolation>())
+      .def("interpolate", &Interpolator::interpolate<double>)
+      .def("invert", &Interpolator::invert<double>)
+      .def("integrate", &Interpolator::integrate<double>)
+      .def("interpolation", &Interpolator::interpolation);
+}
