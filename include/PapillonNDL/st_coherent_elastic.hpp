@@ -30,7 +30,6 @@
 
 #include <PapillonNDL/ace.hpp>
 #include <PapillonNDL/angle_energy.hpp>
-#include <PapillonNDL/region_1d.hpp>
 #include <algorithm>
 #include <iterator>
 #include <optional>

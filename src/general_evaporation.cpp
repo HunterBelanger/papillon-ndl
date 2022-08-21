@@ -21,8 +21,7 @@
  *
  * */
 #include <PapillonNDL/general_evaporation.hpp>
-#include <PapillonNDL/multi_region_1d.hpp>
-#include <PapillonNDL/region_1d.hpp>
+#include <PapillonNDL/tabulated_1d.hpp>
 #include <cmath>
 
 namespace pndl {
@@ -62,15 +61,11 @@ GeneralEvaporation::GeneralEvaporation(const ACE& ace, std::size_t i)
 
   // Create Function1D pointer
   try {
-    if (NBT.size() == 1) {
-      temperature_ = std::make_shared<Region1D>(energy, temperature, INT[0]);
-    } else {
-      temperature_ =
-          std::make_shared<MultiRegion1D>(NBT, INT, energy, temperature);
-    }
+    temperature_ = std::make_shared<Tabulated1D>(NBT, INT, energy, temperature);
   } catch (PNDLException& error) {
     std::string mssg =
-        "Could not construct Tabular1D for the effective nuclear temperature. "
+        "Could not construct Tabulated1D for the effective nuclear "
+        "temperature. "
         "Index in the XSS block is i = " +
         std::to_string(i) + ".";
     error.add_to_exception(mssg);

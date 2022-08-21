@@ -35,8 +35,8 @@
 #include <functional>
 #include <ostream>
 #include <regex>
-#include <string>
 #include <sstream>
+#include <string>
 
 namespace pndl {
 
@@ -92,7 +92,8 @@ class Nuclide {
     try {
       el = Element(Z_);
     } catch (PNDLException& err) {
-      std::string mssg = "Could not create Nuclide for Z = " + std::to_string(Z_) + ".";
+      std::string mssg =
+          "Could not create Nuclide for Z = " + std::to_string(Z_) + ".";
       err.add_to_exception(mssg);
       throw err;
     }
@@ -109,7 +110,8 @@ class Nuclide {
       if (A_ > el.largest_isotope()) {
         std::stringstream mssg;
         mssg << "ZAID = " << zaid << " indicates Z = " << +Z_ << ", A = " << A_;
-        mssg << ", m = " << +level_ << ". The largest possible atomic mass for ";
+        mssg << ", m = " << +level_
+             << ". The largest possible atomic mass for ";
         mssg << el.symbol() << " is " << el.largest_isotope() << ".";
         throw PNDLException(mssg.str());
       }

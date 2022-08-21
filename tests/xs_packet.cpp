@@ -21,13 +21,13 @@ TEST(XSPacket, Add) {
 
   XSPacket xs3 = xs1 + xs2;
 
-  EXPECT_DOUBLE_EQ(xs3.total, 2.*xs1.total);
-  EXPECT_DOUBLE_EQ(xs3.elastic, 2.*xs1.elastic);
-  EXPECT_DOUBLE_EQ(xs3.inelastic, 2.*xs1.inelastic);
-  EXPECT_DOUBLE_EQ(xs3.absorption, 2.*xs1.absorption);
-  EXPECT_DOUBLE_EQ(xs3.fission, 2.*xs1.fission);
-  EXPECT_DOUBLE_EQ(xs3.capture, 2.*xs1.capture);
-  EXPECT_DOUBLE_EQ(xs3.heating, 2.*xs1.heating);
+  EXPECT_DOUBLE_EQ(xs3.total, 2. * xs1.total);
+  EXPECT_DOUBLE_EQ(xs3.elastic, 2. * xs1.elastic);
+  EXPECT_DOUBLE_EQ(xs3.inelastic, 2. * xs1.inelastic);
+  EXPECT_DOUBLE_EQ(xs3.absorption, 2. * xs1.absorption);
+  EXPECT_DOUBLE_EQ(xs3.fission, 2. * xs1.fission);
+  EXPECT_DOUBLE_EQ(xs3.capture, 2. * xs1.capture);
+  EXPECT_DOUBLE_EQ(xs3.heating, 2. * xs1.heating);
 }
 
 TEST(XSPacket, Sub) {
@@ -65,23 +65,23 @@ TEST(XSPacket, Mult) {
 
   XSPacket xs2 = xs1 * 2.;
 
-  EXPECT_DOUBLE_EQ(xs2.total, 2.*xs1.total);
-  EXPECT_DOUBLE_EQ(xs2.elastic, 2.*xs1.elastic);
-  EXPECT_DOUBLE_EQ(xs2.inelastic, 2.*xs1.inelastic);
-  EXPECT_DOUBLE_EQ(xs2.absorption, 2.*xs1.absorption);
-  EXPECT_DOUBLE_EQ(xs2.fission, 2.*xs1.fission);
-  EXPECT_DOUBLE_EQ(xs2.capture, 2.*xs1.capture);
-  EXPECT_DOUBLE_EQ(xs2.heating, 2.*xs1.heating);
+  EXPECT_DOUBLE_EQ(xs2.total, 2. * xs1.total);
+  EXPECT_DOUBLE_EQ(xs2.elastic, 2. * xs1.elastic);
+  EXPECT_DOUBLE_EQ(xs2.inelastic, 2. * xs1.inelastic);
+  EXPECT_DOUBLE_EQ(xs2.absorption, 2. * xs1.absorption);
+  EXPECT_DOUBLE_EQ(xs2.fission, 2. * xs1.fission);
+  EXPECT_DOUBLE_EQ(xs2.capture, 2. * xs1.capture);
+  EXPECT_DOUBLE_EQ(xs2.heating, 2. * xs1.heating);
 
   XSPacket xs3 = 3. * xs1;
 
-  EXPECT_DOUBLE_EQ(xs3.total, 3.*xs1.total);
-  EXPECT_DOUBLE_EQ(xs3.elastic, 3.*xs1.elastic);
-  EXPECT_DOUBLE_EQ(xs3.inelastic, 3.*xs1.inelastic);
-  EXPECT_DOUBLE_EQ(xs3.absorption, 3.*xs1.absorption);
-  EXPECT_DOUBLE_EQ(xs3.fission, 3.*xs1.fission);
-  EXPECT_DOUBLE_EQ(xs3.capture, 3.*xs1.capture);
-  EXPECT_DOUBLE_EQ(xs3.heating, 3.*xs1.heating);
+  EXPECT_DOUBLE_EQ(xs3.total, 3. * xs1.total);
+  EXPECT_DOUBLE_EQ(xs3.elastic, 3. * xs1.elastic);
+  EXPECT_DOUBLE_EQ(xs3.inelastic, 3. * xs1.inelastic);
+  EXPECT_DOUBLE_EQ(xs3.absorption, 3. * xs1.absorption);
+  EXPECT_DOUBLE_EQ(xs3.fission, 3. * xs1.fission);
+  EXPECT_DOUBLE_EQ(xs3.capture, 3. * xs1.capture);
+  EXPECT_DOUBLE_EQ(xs3.heating, 3. * xs1.heating);
 }
 
 TEST(XSPacket, Div) {
@@ -96,13 +96,13 @@ TEST(XSPacket, Div) {
 
   XSPacket xs2 = xs1 / 2.;
 
-  EXPECT_DOUBLE_EQ(xs2.total, 0.5*xs1.total);
-  EXPECT_DOUBLE_EQ(xs2.elastic, 0.5*xs1.elastic);
-  EXPECT_DOUBLE_EQ(xs2.inelastic, 0.5*xs1.inelastic);
-  EXPECT_DOUBLE_EQ(xs2.absorption, 0.5*xs1.absorption);
-  EXPECT_DOUBLE_EQ(xs2.fission, 0.5*xs1.fission);
-  EXPECT_DOUBLE_EQ(xs2.capture, 0.5*xs1.capture);
-  EXPECT_DOUBLE_EQ(xs2.heating, 0.5*xs1.heating);
+  EXPECT_DOUBLE_EQ(xs2.total, 0.5 * xs1.total);
+  EXPECT_DOUBLE_EQ(xs2.elastic, 0.5 * xs1.elastic);
+  EXPECT_DOUBLE_EQ(xs2.inelastic, 0.5 * xs1.inelastic);
+  EXPECT_DOUBLE_EQ(xs2.absorption, 0.5 * xs1.absorption);
+  EXPECT_DOUBLE_EQ(xs2.fission, 0.5 * xs1.fission);
+  EXPECT_DOUBLE_EQ(xs2.capture, 0.5 * xs1.capture);
+  EXPECT_DOUBLE_EQ(xs2.heating, 0.5 * xs1.heating);
 }
 
 TEST(XSPacket, AddAssign) {
@@ -119,13 +119,13 @@ TEST(XSPacket, AddAssign) {
 
   xs1 += xs2;
 
-  EXPECT_DOUBLE_EQ(xs1.total, 2.*xs2.total);
-  EXPECT_DOUBLE_EQ(xs1.elastic, 2.*xs2.elastic);
-  EXPECT_DOUBLE_EQ(xs1.inelastic, 2.*xs2.inelastic);
-  EXPECT_DOUBLE_EQ(xs1.absorption, 2.*xs2.absorption);
-  EXPECT_DOUBLE_EQ(xs1.fission, 2.*xs2.fission);
-  EXPECT_DOUBLE_EQ(xs1.capture, 2.*xs2.capture);
-  EXPECT_DOUBLE_EQ(xs1.heating, 2.*xs2.heating);
+  EXPECT_DOUBLE_EQ(xs1.total, 2. * xs2.total);
+  EXPECT_DOUBLE_EQ(xs1.elastic, 2. * xs2.elastic);
+  EXPECT_DOUBLE_EQ(xs1.inelastic, 2. * xs2.inelastic);
+  EXPECT_DOUBLE_EQ(xs1.absorption, 2. * xs2.absorption);
+  EXPECT_DOUBLE_EQ(xs1.fission, 2. * xs2.fission);
+  EXPECT_DOUBLE_EQ(xs1.capture, 2. * xs2.capture);
+  EXPECT_DOUBLE_EQ(xs1.heating, 2. * xs2.heating);
 }
 
 TEST(XSPacket, SubAssign) {
@@ -164,13 +164,13 @@ TEST(XSPacket, MultAssign) {
   XSPacket xs2 = xs1;
   xs2 *= 2.;
 
-  EXPECT_DOUBLE_EQ(xs2.total, 2.*xs1.total);
-  EXPECT_DOUBLE_EQ(xs2.elastic, 2.*xs1.elastic);
-  EXPECT_DOUBLE_EQ(xs2.inelastic, 2.*xs1.inelastic);
-  EXPECT_DOUBLE_EQ(xs2.absorption, 2.*xs1.absorption);
-  EXPECT_DOUBLE_EQ(xs2.fission, 2.*xs1.fission);
-  EXPECT_DOUBLE_EQ(xs2.capture, 2.*xs1.capture);
-  EXPECT_DOUBLE_EQ(xs2.heating, 2.*xs1.heating);
+  EXPECT_DOUBLE_EQ(xs2.total, 2. * xs1.total);
+  EXPECT_DOUBLE_EQ(xs2.elastic, 2. * xs1.elastic);
+  EXPECT_DOUBLE_EQ(xs2.inelastic, 2. * xs1.inelastic);
+  EXPECT_DOUBLE_EQ(xs2.absorption, 2. * xs1.absorption);
+  EXPECT_DOUBLE_EQ(xs2.fission, 2. * xs1.fission);
+  EXPECT_DOUBLE_EQ(xs2.capture, 2. * xs1.capture);
+  EXPECT_DOUBLE_EQ(xs2.heating, 2. * xs1.heating);
 }
 
 TEST(XSPacket, DivAssign) {
@@ -186,15 +186,14 @@ TEST(XSPacket, DivAssign) {
   XSPacket xs2 = xs1;
   xs2 /= 2.;
 
-  EXPECT_DOUBLE_EQ(xs2.total, 0.5*xs1.total);
-  EXPECT_DOUBLE_EQ(xs2.elastic, 0.5*xs1.elastic);
-  EXPECT_DOUBLE_EQ(xs2.inelastic, 0.5*xs1.inelastic);
-  EXPECT_DOUBLE_EQ(xs2.absorption, 0.5*xs1.absorption);
-  EXPECT_DOUBLE_EQ(xs2.fission, 0.5*xs1.fission);
-  EXPECT_DOUBLE_EQ(xs2.capture, 0.5*xs1.capture);
-  EXPECT_DOUBLE_EQ(xs2.heating, 0.5*xs1.heating);
+  EXPECT_DOUBLE_EQ(xs2.total, 0.5 * xs1.total);
+  EXPECT_DOUBLE_EQ(xs2.elastic, 0.5 * xs1.elastic);
+  EXPECT_DOUBLE_EQ(xs2.inelastic, 0.5 * xs1.inelastic);
+  EXPECT_DOUBLE_EQ(xs2.absorption, 0.5 * xs1.absorption);
+  EXPECT_DOUBLE_EQ(xs2.fission, 0.5 * xs1.fission);
+  EXPECT_DOUBLE_EQ(xs2.capture, 0.5 * xs1.capture);
+  EXPECT_DOUBLE_EQ(xs2.heating, 0.5 * xs1.heating);
 }
 
-}
-}
-
+}  // namespace
+}  // namespace pndl

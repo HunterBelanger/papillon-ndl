@@ -33,6 +33,7 @@
 #include <cmath>
 #include <cstdint>
 #include <ostream>
+#include <variant>
 
 namespace pndl {
 
@@ -299,6 +300,133 @@ struct LogLog {
       throw PNDLException(mssg);
     }
   }
+};
+
+/**
+ * @brief A generic interface for any Interpolation rule.
+ */
+class Interpolator {
+ public:
+  /**
+   * @param interp Interpolation rule to use for all functions.
+   */
+  Interpolator(Interpolation interp) : interpolator_() {
+    switch (interp) {
+      case Interpolation::Histogram:
+        interpolator_ = Histogram();
+        break;
+      case Interpolation::LinLin:
+        interpolator_ = LinLin();
+        break;
+      case Interpolation::LinLog:
+        interpolator_ = LinLog();
+        break;
+      case Interpolation::LogLin:
+        interpolator_ = LogLin();
+        break;
+      case Interpolation::LogLog:
+        interpolator_ = LogLog();
+        break;
+    }
+  }
+
+  /**
+   * @brief Interpolates between (x1,y1) and (x2,y2), calculating y for a given
+   * x.
+   * @param x Value at which to perform the interpolation.
+   * @param x1 x coordinate of the first known point.
+   * @param y1 y coordinate of the first known point.
+   * @param x2 x coordinate of the second known point.
+   * @param y2 y coordinate of the second known point.
+   */
+  template <class T>
+  T interpolate(T x, T x1, T y1, T x2, T y2) const {
+    auto doInterp = [&x, &x1, &x2, &y1, &y2](auto& interp) {
+      return interp.interpolate(x, x1, y1, x2, y2);
+    };
+    return std::visit(doInterp, interpolator_);
+  }
+
+  /**
+   * @brief Reverse interpolates between (x1,y1) and (x2,y2), calculating x for
+   * a given y.
+   * @param y Value at which to perform the inversion.
+   * @param x1 x coordinate of the first known point.
+   * @param y1 y coordinate of the first known point.
+   * @param x2 x coordinate of the second known point.
+   * @param y2 y coordinate of the second known point.
+   */
+  template <class T>
+  T invert(T y, T x1, T y1, T x2, T y2) const {
+    auto doInvert = [&y, &x1, &x2, &y1, &y2](auto& interp) {
+      return interp.invert(y, x1, y1, x2, y2);
+    };
+    return std::visit(doInvert, interpolator_);
+  }
+
+  /**
+   * @brief Integrates between x_low and x_hi according to the provided
+   *        interpolation rule, and the known points (x1,y1) and (x2,y2).
+   * @param x_low Lower bound of integration.
+   * @param x_hi Upper bound of integration.
+   * @param x1 x coordinate of the first known point.
+   * @param y1 y coordinate of the first known point.
+   * @param x2 x coordinate of the second known point.
+   * @param y2 y coordinate of the second known point.
+   */
+  template <class T>
+  T integrate(T x_low, T x_hi, T x1, T y1, T x2, T y2) const {
+    auto doIntegrate = [&x_low, &x_hi, &x1, &x2, &y1, &y2](auto& interp) {
+      return interp.integrate(x_low, x_hi, x1, y1, x2, y2);
+    };
+    return std::visit(doIntegrate, interpolator_);
+  }
+
+  /**
+   * @brief Checks that the x-grid is valid for the given interpolation rule.
+   * @param first Iterator to the first x value.
+   * @param last Iterator to one after the last x value.
+   */
+  template <class ForwardIt>
+  void verify_x_grid(ForwardIt first, ForwardIt last) const {
+    auto doVerifyX = [&first, &last](auto& interp) {
+      interp.verify_x_grid(first, last);
+    };
+    std::visit(doVerifyX, interpolator_);
+  }
+
+  /**
+   * @brief Checks that the y-grid is valid for the given interpolation rule.
+   * @param first Iterator to the first y value.
+   * @param last Iterator to one after the last y value.
+   */
+  template <class ForwardIt>
+  void verify_y_grid(ForwardIt first, ForwardIt last) const {
+    auto doVerifyY = [&first, &last](auto& interp) {
+      interp.verify_y_grid(first, last);
+    };
+    std::visit(doVerifyY, interpolator_);
+  }
+
+  /**
+   * @brief Returns the current Interpolation rule.
+   */
+  Interpolation interpolation() const {
+    if (std::holds_alternative<Histogram>(interpolator_)) {
+      return Interpolation::Histogram;
+    } else if (std::holds_alternative<LinLin>(interpolator_)) {
+      return Interpolation::LinLin;
+    } else if (std::holds_alternative<LinLog>(interpolator_)) {
+      return Interpolation::LinLog;
+    } else if (std::holds_alternative<LogLin>(interpolator_)) {
+      return Interpolation::LogLin;
+    } else {
+      return Interpolation::LogLog;
+    }
+  }
+
+ private:
+  std::variant<Histogram, LinLin, LinLog, LogLin, LogLog> interpolator_;
 };
 
 }  // namespace pndl

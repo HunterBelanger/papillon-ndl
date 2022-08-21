@@ -30,7 +30,7 @@
 
 #include <PapillonNDL/ace.hpp>
 #include <PapillonNDL/angle_energy.hpp>
-#include <PapillonNDL/region_1d.hpp>
+#include <PapillonNDL/tabulated_1d.hpp>
 #include <algorithm>
 
 namespace pndl {
@@ -50,7 +50,7 @@ class STIncoherentElastic : public AngleEnergy {
   /**
    * @brief Returns the cross section function.
    */
-  const Region1D& xs() const { return *xs_; }
+  const Tabulated1D& xs() const { return *xs_; }
 
   /**
    * @brief Evaluates the incoherent elastic scattering cross section
@@ -127,7 +127,7 @@ class STIncoherentElastic : public AngleEnergy {
   const std::vector<std::vector<double>>& cosines() const { return cosines_; }
 
  private:
-  std::shared_ptr<Region1D> xs_;
+  std::shared_ptr<Tabulated1D> xs_;
   uint32_t Nmu;
   std::vector<double> incoming_energy_;
   std::vector<std::vector<double>> cosines_;

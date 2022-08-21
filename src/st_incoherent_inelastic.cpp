@@ -36,7 +36,7 @@ STIncoherentInelastic::STIncoherentInelastic(const ACE& ace,
     uint32_t Ne = ace.xss<uint32_t>(S);  // Number of grid points
     std::vector<double> energy = ace.xss(S + 1, Ne);
     std::vector<double> xs = ace.xss(S + 1 + Ne, Ne);
-    xs_ = std::make_shared<Region1D>(energy, xs, Interpolation::LinLin);
+    xs_ = std::make_shared<Tabulated1D>(Interpolation::LinLin, energy, xs);
   } catch (PNDLException& err) {
     std::string mssg = "Could not construct cross section.";
     err.add_to_exception(mssg);
