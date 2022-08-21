@@ -340,7 +340,7 @@ class Interpolator {
    * @param y2 y coordinate of the second known point.
    */
   template <class T>
-  T interpolate(T x, T x1, T y1, T x2, T y2) {
+  T interpolate(T x, T x1, T y1, T x2, T y2) const {
     auto doInterp = [&x, &x1, &x2, &y1, &y2](auto& interp) {
       return interp.interpolate(x, x1, y1, x2, y2);
     };
@@ -357,7 +357,7 @@ class Interpolator {
    * @param y2 y coordinate of the second known point.
    */
   template <class T>
-  T invert(T y, T x1, T y1, T x2, T y2) {
+  T invert(T y, T x1, T y1, T x2, T y2) const {
     auto doInvert = [&y, &x1, &x2, &y1, &y2](auto& interp) {
       return interp.invert(y, x1, y1, x2, y2);
     };
@@ -375,7 +375,7 @@ class Interpolator {
    * @param y2 y coordinate of the second known point.
    */
   template <class T>
-  T integrate(T x_low, T x_hi, T x1, T y1, T x2, T y2) {
+  T integrate(T x_low, T x_hi, T x1, T y1, T x2, T y2) const {
     auto doIntegrate = [&x_low, &x_hi, &x1, &x2, &y1, &y2](auto& interp) {
       return interp.integrate(x_low, x_hi, x1, y1, x2, y2);
     };
@@ -388,7 +388,7 @@ class Interpolator {
    * @param last Iterator to one after the last x value.
    */
   template <class ForwardIt>
-  void verify_x_grid(ForwardIt first, ForwardIt last) {
+  void verify_x_grid(ForwardIt first, ForwardIt last) const {
     auto doVerifyX = [&first, &last](auto& interp) {
       interp.verify_x_grid(first, last);
     };
@@ -401,7 +401,7 @@ class Interpolator {
    * @param last Iterator to one after the last y value.
    */
   template <class ForwardIt>
-  void verify_y_grid(ForwardIt first, ForwardIt last) {
+  void verify_y_grid(ForwardIt first, ForwardIt last) const {
     auto doVerifyY = [&first, &last](auto& interp) {
       interp.verify_y_grid(first, last);
     };
