@@ -185,7 +185,8 @@ std::shared_ptr<STNeutron> NDLibrary::load_STNeutron(const std::string& symbol,
   if (stlist.loaded_data[i_min_diff] == nullptr) {
     try {
       // Has yet to be loaded. We should do that. Start by loading ACE.
-      ACE ace(stlist.tables[i_min_diff].file.string(), stlist.tables[i_min_diff].type);
+      ACE ace(stlist.tables[i_min_diff].file.string(),
+              stlist.tables[i_min_diff].type);
 
       // Now that we have the ACE, we need to construct the STNeutron
       if (stlist.first_loaded != nullptr) {
@@ -256,7 +257,8 @@ std::shared_ptr<STThermalScatteringLaw> NDLibrary::load_STTSL(
   if (stlist.loaded_data[i_min_diff] == nullptr) {
     try {
       // Has yet to be loaded. We should do that. Start by loading ACE.
-      ACE ace(stlist.tables[i_min_diff].file.string(), stlist.tables[i_min_diff].type);
+      ACE ace(stlist.tables[i_min_diff].file.string(),
+              stlist.tables[i_min_diff].type);
       stlist.loaded_data[i_min_diff] =
           std::make_shared<STThermalScatteringLaw>(ace);
     } catch (PNDLException& err) {
@@ -321,7 +323,8 @@ void NDLibrary::populate_symbol_lists() {
   // Do STNeutron data
   std::vector<ZAID> st_neutron_zaids;
   st_neutron_zaids.reserve(st_neutron_data_.size());
-  for (const auto& entry : st_neutron_data_) st_neutron_zaids.push_back(entry.first);
+  for (const auto& entry : st_neutron_data_)
+    st_neutron_zaids.push_back(entry.first);
   std::sort(st_neutron_zaids.begin(), st_neutron_zaids.end());
   for (const auto& zaid : st_neutron_zaids) {
     if (zaid.A() == 0) {
