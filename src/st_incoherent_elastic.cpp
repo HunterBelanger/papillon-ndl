@@ -34,7 +34,7 @@ STIncoherentElastic::STIncoherentElastic(const ACE& ace)
     std::vector<double> E(2, 0.);
     E[1] = 100.;
     std::vector<double> xs_vals(2, 0.);
-    xs_ = std::make_shared<Region1D>(E, xs_vals, Interpolation::Histogram);
+    xs_ = std::make_shared<Tabulated1D>(Interpolation::Histogram, E, xs_vals);
   } else {
     // Get index to incident energy
     int32_t i = ace.jxs(3) - 1;
@@ -51,8 +51,8 @@ STIncoherentElastic::STIncoherentElastic(const ACE& ace)
       }
     }
 
-    xs_ = std::make_shared<Region1D>(incoming_energy_, xs_vals,
-                                     Interpolation::LinLin);
+    xs_ = std::make_shared<Tabulated1D>(Interpolation::LinLin, incoming_energy_,
+                                        xs_vals);
 
     // Read scattering cosines
     Nmu = static_cast<uint32_t>(ace.nxs(5) + 1);

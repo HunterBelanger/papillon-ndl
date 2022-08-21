@@ -23,11 +23,10 @@
 #include <PapillonNDL/ce_neutron_base.hpp>
 #include <PapillonNDL/constant.hpp>
 #include <PapillonNDL/difference_1d.hpp>
-#include <PapillonNDL/multi_region_1d.hpp>
 #include <PapillonNDL/pndl_exception.hpp>
 #include <PapillonNDL/polynomial_1d.hpp>
-#include <PapillonNDL/region_1d.hpp>
 #include <PapillonNDL/sum_1d.hpp>
+#include <PapillonNDL/tabulated_1d.hpp>
 #include <PapillonNDL/uncorrelated.hpp>
 #include <memory>
 #include <system_error>
@@ -171,11 +170,11 @@ std::shared_ptr<Function1D> CENeutronBase::read_tabular_nu(const ACE& ace,
     Interpolation interp = Interpolation::LinLin;
     if (NR == 1) interp = ace.xss<Interpolation>(i + 2);
 
-    return std::make_shared<Region1D>(energy, y, interp);
+    return std::make_shared<Tabulated1D>(interp, energy, y);
   } else {
     std::vector<uint32_t> breaks = ace.xss<uint32_t>(i + 1, NR);
     std::vector<Interpolation> interps = ace.xss<Interpolation>(i + 1 + NR, NR);
-    return std::make_shared<MultiRegion1D>(breaks, interps, energy, y);
+    return std::make_shared<Tabulated1D>(breaks, interps, energy, y);
   }
 }
 

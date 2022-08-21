@@ -31,14 +31,13 @@
 #include <PapillonNDL/kalbach.hpp>
 #include <PapillonNDL/level_inelastic_scatter.hpp>
 #include <PapillonNDL/maxwellian.hpp>
-#include <PapillonNDL/multi_region_1d.hpp>
 #include <PapillonNDL/multiple_distribution.hpp>
 #include <PapillonNDL/nbody.hpp>
 #include <PapillonNDL/pndl_exception.hpp>
 #include <PapillonNDL/reaction_base.hpp>
-#include <PapillonNDL/region_1d.hpp>
 #include <PapillonNDL/tabular_energy.hpp>
 #include <PapillonNDL/tabular_energy_angle.hpp>
+#include <PapillonNDL/tabulated_1d.hpp>
 #include <PapillonNDL/uncorrelated.hpp>
 #include <PapillonNDL/watt.hpp>
 #include <cmath>
@@ -79,13 +78,13 @@ ReactionBase::ReactionBase(const ACE& ace, std::size_t indx)
         Interpolation interp = Interpolation::LinLin;
         if (NR == 1) interp = ace.xss<Interpolation>(i + 2);
 
-        yield_ = std::make_shared<Region1D>(energy, y, interp);
+        yield_ = std::make_shared<Tabulated1D>(interp, energy, y);
       } else {
         std::vector<uint32_t> breaks = ace.xss<uint32_t>(i + 1, NR);
         std::vector<Interpolation> interps =
             ace.xss<Interpolation>(i + 1 + NR, NR);
 
-        yield_ = std::make_shared<MultiRegion1D>(breaks, interps, energy, y);
+        yield_ = std::make_shared<Tabulated1D>(breaks, interps, energy, y);
       }
     }
   } catch (PNDLException& error) {
@@ -190,11 +189,7 @@ void ReactionBase::load_neutron_distributions(
     std::vector<double> energy = ace.xss(i + 5 + 2 * NR, NE);
     std::vector<double> prob = ace.xss(i + 5 + 2 * NR + NE, NE);
 
-    if (NBT.size() == 1) {
-      probability = std::make_shared<Region1D>(energy, prob, INT[0]);
-    } else {
-      probability = std::make_shared<MultiRegion1D>(NBT, INT, energy, prob);
-    }
+    probability = std::make_shared<Tabulated1D>(NBT, INT, energy, prob);
 
     // Build law accordinly
     std::shared_ptr<AngleEnergy> angle_energy(nullptr);

@@ -22,7 +22,6 @@
  * */
 #include <PapillonNDL/discrete_cosines_energies.hpp>
 #include <PapillonNDL/pndl_exception.hpp>
-#include <PapillonNDL/region_1d.hpp>
 #include <algorithm>
 #include <cmath>
 #include <optional>

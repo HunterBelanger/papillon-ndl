@@ -20,8 +20,7 @@
  * along with PapillonNDL. If not, see <https://www.gnu.org/licenses/>.
  *
  * */
-#include <PapillonNDL/multi_region_1d.hpp>
-#include <PapillonNDL/region_1d.hpp>
+#include <PapillonNDL/tabulated_1d.hpp>
 #include <PapillonNDL/watt.hpp>
 #include <cmath>
 
@@ -50,14 +49,11 @@ Watt::Watt(const ACE& ace, std::size_t i) : a_(), b_(), restriction_energy_() {
 
   // Create Function1D pointer
   try {
-    if (NBT_a.size() == 1) {
-      a_ = std::make_shared<Region1D>(energy_a, a, INT_a[0]);
-    } else {
-      a_ = std::make_shared<MultiRegion1D>(NBT_a, INT_a, energy_a, a);
-    }
+    a_ = std::make_shared<Tabulated1D>(NBT_a, INT_a, energy_a, a);
   } catch (PNDLException& error) {
     std::string mssg =
-        "Could not construct Tabular1D for the 'a'. Index in the XSS block is "
+        "Could not construct Tabulated1D for the 'a'. Index in the XSS block "
+        "is "
         "i = " +
         std::to_string(original_i) + ".";
     error.add_to_exception(mssg);
@@ -86,14 +82,11 @@ Watt::Watt(const ACE& ace, std::size_t i) : a_(), b_(), restriction_energy_() {
 
   // Create Function1D pointer
   try {
-    if (NBT_b.size() == 1) {
-      b_ = std::make_shared<Region1D>(energy_b, b, INT_b[0]);
-    } else {
-      b_ = std::make_shared<MultiRegion1D>(NBT_b, INT_b, energy_b, b);
-    }
+    b_ = std::make_shared<Tabulated1D>(NBT_b, INT_b, energy_b, b);
   } catch (PNDLException& error) {
     std::string mssg =
-        "Could not construct Tabular1D for the 'b'. Index in the XSS block is "
+        "Could not construct Tabulated1D for the 'b'. Index in the XSS block "
+        "is "
         "i = " +
         std::to_string(original_i) + ".";
     error.add_to_exception(mssg);

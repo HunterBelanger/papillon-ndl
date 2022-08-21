@@ -30,7 +30,7 @@
 
 #include <PapillonNDL/ace.hpp>
 #include <PapillonNDL/angle_energy.hpp>
-#include <PapillonNDL/region_1d.hpp>
+#include <PapillonNDL/tabulated_1d.hpp>
 
 namespace pndl {
 
@@ -53,7 +53,7 @@ class STIncoherentInelastic {
   /**
    * @brief Returns the cross section function.
    */
-  const Region1D& xs() const { return *xs_; }
+  const Tabulated1D& xs() const { return *xs_; }
 
   /**
    * @brief Evaluates the incoherent inelastic scattering cross section
@@ -84,7 +84,7 @@ class STIncoherentInelastic {
   const AngleEnergy& distribution() const { return *angle_energy_; }
 
  private:
-  std::shared_ptr<Region1D> xs_;
+  std::shared_ptr<Tabulated1D> xs_;
   std::shared_ptr<AngleEnergy> angle_energy_;
 };
 

@@ -25,9 +25,9 @@
 #include <PapillonNDL/evaporation.hpp>
 #include <PapillonNDL/general_evaporation.hpp>
 #include <PapillonNDL/maxwellian.hpp>
-#include <PapillonNDL/multi_region_1d.hpp>
 #include <PapillonNDL/pndl_exception.hpp>
 #include <PapillonNDL/tabular_energy.hpp>
+#include <PapillonNDL/tabulated_1d.hpp>
 #include <PapillonNDL/watt.hpp>
 #include <iostream>
 
@@ -52,12 +52,12 @@ DelayedGroup::DelayedGroup(const ACE& ace, std::size_t i, std::size_t g)
     Interpolation interp = Interpolation::LinLin;
     if (NR == 1) interp = ace.xss<Interpolation>(i + 2);
 
-    probability_ = std::make_shared<Region1D>(energy, y, interp);
+    probability_ = std::make_shared<Tabulated1D>(interp, energy, y);
   } else {
     std::vector<uint32_t> breaks = ace.xss<uint32_t>(i + 1, NR);
     std::vector<Interpolation> interps = ace.xss<Interpolation>(i + 1 + NR, NR);
 
-    probability_ = std::make_shared<MultiRegion1D>(breaks, interps, energy, y);
+    probability_ = std::make_shared<Tabulated1D>(breaks, interps, energy, y);
   }
 
   // Get energy distribution location
