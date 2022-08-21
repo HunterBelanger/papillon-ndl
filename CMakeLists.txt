@@ -17,8 +17,7 @@ option(PNDL_TESTS "Build PapillonNDL tests" OFF)
 
 # List of source files for PapillonNDL
 set(PNDL_SOURCE_LIST src/element.cpp
-                     src/region_1d.cpp
-                     src/multi_region_1d.cpp
+                     src/tabulated_1d.cpp
                      src/polynomial_1d.cpp
                      src/ace.cpp
                      src/isotropic.cpp
