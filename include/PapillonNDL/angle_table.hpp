@@ -29,6 +29,7 @@
  */
 
 #include <PapillonNDL/angle_law.hpp>
+#include <PapillonNDL/legendre.hpp>
 #include <PapillonNDL/pctable.hpp>
 #include <functional>
 
@@ -54,6 +55,12 @@ class AngleTable : public AngleLaw {
    */
   AngleTable(const std::vector<double>& cosines, const std::vector<double>& pdf,
              const std::vector<double>& cdf, Interpolation interp);
+
+  /**
+   * @param legendre Legendre distribution which will be linearized to create an
+   *                 AngleTable.
+   */
+  AngleTable(const Legendre& legendre);
 
   /**
    * @param table PCTable contianing the PDF and CDF for the cosine

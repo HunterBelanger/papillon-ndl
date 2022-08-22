@@ -77,6 +77,7 @@ void init_AngleTable(py::module& m) {
       .def(py::init<const ACE&, size_t>())
       .def(py::init<const std::vector<double>&, const std::vector<double>&,
                     const std::vector<double>&, Interpolation>())
+      .def(py::init<const Legendre&>())
       .def(py::init<const PCTable&>())
       .def("sample_mu", &AngleTable::sample_mu)
       .def("size", &AngleTable::size)
