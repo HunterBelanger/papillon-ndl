@@ -91,7 +91,8 @@ void init_Tabulated1D(py::module& m) {
       .def("x", &Tabulated1D::x)
       .def("y", &Tabulated1D::y)
       .def("min_x", &Tabulated1D::min_x)
-      .def("max_x", &Tabulated1D::max_x);
+      .def("max_x", &Tabulated1D::max_x)
+      .def("linearize", &Tabulated1D::linearize);
 }
 
 void init_Sum1D(py::module& m) {
