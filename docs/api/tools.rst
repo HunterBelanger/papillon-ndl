@@ -16,7 +16,7 @@ MCNPLibrary
 .. doxygenclass:: pndl::MCNPLibrary
 
 SerpentLibrary
------------
+--------------
 
 .. doxygenclass:: pndl::SerpentLibrary
 
@@ -54,6 +54,14 @@ Interpolator
 ------------
 
 .. doxygenclass:: pndl::Interpolator
+
+Linearization
+-------------
+
+.. doxygenfunction:: pndl::linearize(const std::vector<double> &x, const std::vector<double> &y, std::function<double(double)> f, double tolerance = 0.001)
+
+.. doxygenfunction:: pndl::linearize(double x_min, double x_max, std::function<double(double)> f, double tolerance = 0.001)
+
 
 ZAID
 ----

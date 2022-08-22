@@ -19,6 +19,7 @@ option(PNDL_TESTS "Build PapillonNDL tests" OFF)
 set(PNDL_SOURCE_LIST src/element.cpp
                      src/tabulated_1d.cpp
                      src/polynomial_1d.cpp
+                     src/linearize.cpp
                      src/ace.cpp
                      src/isotropic.cpp
                      src/equiprobable_angle_bins.cpp
@@ -136,6 +137,7 @@ if(PNDL_PYTHON)
                                     src/python/ace.cpp
                                     src/python/xs_packet.cpp
                                     src/python/function_1d.cpp
+                                    src/python/linearize.cpp
                                     src/python/frame.cpp
                                     src/python/angle_law.cpp
                                     src/python/angle_distribution.cpp
