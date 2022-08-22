@@ -20,10 +20,11 @@
  * along with PapillonNDL. If not, see <https://www.gnu.org/licenses/>.
  *
  * */
+#include <PapillonNDL/linearize.hpp>
 #include <PapillonNDL/pndl_exception.hpp>
 #include <PapillonNDL/tabulated_1d.hpp>
-#include <PapillonNDL/linearize.hpp>
 #include <cstdint>
+
 #include "PapillonNDL/interpolation.hpp"
 
 namespace pndl {
