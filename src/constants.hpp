@@ -26,6 +26,7 @@
 constexpr double SEC_TO_SHAKE = 1.E-8;
 constexpr double SHAKE_TO_SEC = 1.E8;
 constexpr double EV_TO_K = 1.160451812E4;
+constexpr double K_TO_EV = 1. / EV_TO_K;
 constexpr double MEV_TO_EV = 1.E6;
 constexpr double EV_TO_MEV = 1.E-6;
 constexpr double PI = 3.14159265358979323846264338327950288;
