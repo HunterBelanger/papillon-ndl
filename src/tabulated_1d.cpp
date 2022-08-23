@@ -20,8 +20,12 @@
  * along with PapillonNDL. If not, see <https://www.gnu.org/licenses/>.
  *
  * */
+#include <PapillonNDL/linearize.hpp>
 #include <PapillonNDL/pndl_exception.hpp>
 #include <PapillonNDL/tabulated_1d.hpp>
+#include <cstdint>
+
+#include "PapillonNDL/interpolation.hpp"
 
 namespace pndl {
 
@@ -107,6 +111,26 @@ Tabulated1D::Tabulated1D(Interpolation interp, const std::vector<double>& x,
         "Tabulated1D.";
     error.add_to_exception(mssg);
     throw error;
+  }
+}
+
+void Tabulated1D::linearize(double tolerance) {
+  // Check if we are already linear
+  if (interpolation_.size() == 1 &&
+      interpolation_[0] == Interpolation::LinLin) {
+    return;
+  }
+
+  std::vector<double> x = x_;
+  std::vector<double> y = y_;
+
+  try {
+    Tabulated1D new_tab = pndl::linearize(x, y, *this, tolerance);
+    *this = new_tab;
+  } catch (PNDLException& err) {
+    std::string mssg = "Could not linearize Tabulated1D.";
+    err.add_to_exception(mssg);
+    throw err;
   }
 }
 

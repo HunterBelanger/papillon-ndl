@@ -24,16 +24,6 @@ Tabulated1D
 
 .. doxygenclass:: pndl::Tabulated1D
 
-Region1D
---------
-
-.. doxygenclass:: pndl::Region1D
-
-MultiRegion1D
--------------
-
-.. doxygenclass:: pndl::MultiRegion1D
-
 Sum1D
 -----
 

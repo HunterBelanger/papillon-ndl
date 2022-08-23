@@ -21,7 +21,14 @@
  *
  * */
 #include <PapillonNDL/angle_table.hpp>
+#include <PapillonNDL/linearize.hpp>
 #include <PapillonNDL/pndl_exception.hpp>
+#include <PapillonNDL/tabulated_1d.hpp>
+#include <functional>
+
+#include "PapillonNDL/interpolation.hpp"
+#include "PapillonNDL/legendre.hpp"
+#include "PapillonNDL/pctable.hpp"
 
 namespace pndl {
 
@@ -75,6 +82,37 @@ AngleTable::AngleTable(const PCTable& table) : distribution_(table) {
         "Largest posible cosine value is 1. Largest given cosine is " +
         std::to_string(distribution_.max_value()) + ".";
     throw PNDLException(mssg);
+  }
+}
+
+AngleTable::AngleTable(const Legendre& legendre)
+    : distribution_({-1., 1.}, {0.5, 0.5}, {0., 1.}, Interpolation::LinLin) {
+  std::function<double(double)> l =
+      std::bind(&Legendre::pdf, legendre, std::placeholders::_1);
+  try {
+    Tabulated1D tab_pdf = linearize(-1., 1., l);
+
+    std::vector<double> cosines = tab_pdf.x();
+    std::vector<double> pdf = tab_pdf.y();
+    std::vector<double> cdf(pdf.size(), 0.);
+
+    // Trapezoid rule
+    for (std::size_t i = 0; i < cosines.size() - 1; i++) {
+      cdf[i + 1] =
+          0.5 * (pdf[i] + pdf[i + 1]) * (cosines[i + 1] - cosines[i]) + cdf[i];
+    }
+
+    const double norm = cdf.back();
+    for (std::size_t i = 0; i < cosines.size(); i++) {
+      pdf[i] /= norm;
+      cdf[i] /= norm;
+    }
+
+    distribution_ = PCTable(cosines, pdf, cdf, Interpolation::LinLin);
+  } catch (PNDLException& err) {
+    std::string mssg = "Could not linearize Legenre distribution.";
+    err.add_to_exception(mssg);
+    throw err;
   }
 }
 

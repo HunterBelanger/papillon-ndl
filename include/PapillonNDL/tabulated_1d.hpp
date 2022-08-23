@@ -157,6 +157,15 @@ class Tabulated1D : public Function1D {
    */
   double max_x() const { return x_.back(); }
 
+  /**
+   * @brief Linearizes the function to be linearly interpolable to within the
+   *        given tolerance.
+   *
+   * @param tolerance Maximum relative absolute error for linear interpolation.
+   *                  The default tolerance is 0.001, or 0.1%.
+   */
+  void linearize(double tolerance = 0.001);
+
  private:
   class InterpolationRange {
    public:
