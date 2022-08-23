@@ -135,6 +135,23 @@ ReactionBase::ReactionBase(const ACE& ace, std::size_t indx)
   }
 }
 
+ReactionBase::ReactionBase(uint32_t mt, double q, double awr, double threshold,
+                           std::shared_ptr<Function1D> yield,
+                           std::shared_ptr<AngleEnergy> neutron_distribution)
+    : mt_(mt),
+      q_(q),
+      awr_(awr),
+      threshold_(threshold),
+      yield_(yield),
+      neutron_distribution_(neutron_distribution) {
+  // Make sure the threshold is >= 0
+  if (threshold_ < 0.) {
+    std::string mssg =
+        "Reaction threshold must be greater than or equal to zero.";
+    throw PNDLException(mssg);
+  }
+}
+
 void ReactionBase::load_neutron_distributions(
     const ACE& ace, std::size_t indx,
     std::vector<std::shared_ptr<AngleEnergy>>& distributions,

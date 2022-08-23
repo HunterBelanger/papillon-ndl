@@ -23,6 +23,9 @@
 #include <PapillonNDL/reaction.hpp>
 #include <memory>
 
+#include "PapillonNDL/pndl_exception.hpp"
+#include "PapillonNDL/reaction_base.hpp"
+
 /**
  * @file
  * @author Hunter Belanger
@@ -66,6 +69,19 @@ Reaction<CrossSection>::Reaction(const ACE& ace, std::size_t indx,
     error.add_to_exception(mssg);
     throw error;
   }
+}
+
+Reaction<CrossSection>::Reaction(
+    const CrossSection& xs, uint32_t mt, double q, double awr, double threshold,
+    std::shared_ptr<Function1D> yield,
+    std::shared_ptr<AngleEnergy> neutron_distribution) try
+    : ReactionBase(mt, q, awr, threshold, yield, neutron_distribution),
+      xs_(nullptr) {
+  xs_ = std::make_shared<CrossSection>(xs);
+} catch (PNDLException& err) {
+  std::string mssg = "Could not create ReactionBase.";
+  err.add_to_exception(mssg);
+  throw err;
 }
 
 }  // namespace pndl

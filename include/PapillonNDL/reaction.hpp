@@ -60,6 +60,20 @@ class Reaction<CrossSection> : public ReactionBase {
            const Reaction& reac);
 
   /**
+   * @param xs CrossSection for the reaction.
+   * @param mt The MT identifier of the reaction.
+   * @param q The Q-value of the reaction.
+   * @param awr Atomic Weight Ratio of the nuclide.
+   * @param threshold The energy threshold for the reaction.
+   * @param yield Average number of neutrons emitted, as a function of incident
+   *              particle energy.
+   * @param neutron_distribution Distribution for outgoing neutrons.
+   */
+  Reaction(const CrossSection& xs, uint32_t mt, double q, double awr,
+           double threshold, std::shared_ptr<Function1D> yield,
+           std::shared_ptr<AngleEnergy> neutron_distribution);
+
+  /**
    * @brief Returns the CrossSection for the reaction.
    */
   const CrossSection& xs() const { return *xs_; }

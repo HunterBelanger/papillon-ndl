@@ -49,5 +49,8 @@ void init_STReaction(py::module& m) {
       .def(py::init<const ACE&, size_t, std::shared_ptr<EnergyGrid>>())
       .def(py::init<const ACE&, size_t, std::shared_ptr<EnergyGrid>,
                     const STReaction&>())
+      .def(
+          py::init<const CrossSection&, uint32_t, double, double, double,
+                   std::shared_ptr<Function1D>, std::shared_ptr<AngleEnergy>>())
       .def("xs", &STReaction::xs);
 }

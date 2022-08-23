@@ -32,6 +32,7 @@
 #include <PapillonNDL/angle_energy.hpp>
 #include <PapillonNDL/frame.hpp>
 #include <PapillonNDL/function_1d.hpp>
+#include <cstdint>
 #include <memory>
 
 namespace pndl {
@@ -97,6 +98,19 @@ class ReactionBase {
    * @param indx Reaction index in the MT array.
    */
   ReactionBase(const ACE& ace, std::size_t indx);
+
+  /**
+   * @param mt The MT identifier of the reaction.
+   * @param q The Q-value of the reaction.
+   * @param awr Atomic Weight Ratio of the nuclide.
+   * @param threshold The energy threshold for the reaction.
+   * @param yield Average number of neutrons emitted, as a function of incident
+   *              particle energy.
+   * @param neutron_distribution Distribution for outgoing neutrons.
+   */
+  ReactionBase(uint32_t mt, double q, double awr, double threshold,
+               std::shared_ptr<Function1D> yield,
+               std::shared_ptr<AngleEnergy> neutron_distribution);
 
   // Private helper methods
   void load_neutron_distributions(
