@@ -32,6 +32,7 @@
 #include <PapillonNDL/angle_energy.hpp>
 #include <PapillonNDL/frame.hpp>
 #include <PapillonNDL/function_1d.hpp>
+#include <PapillonNDL/tabulated_1d.hpp>
 #include <cstdint>
 #include <memory>
 
