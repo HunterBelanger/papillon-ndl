@@ -22,6 +22,7 @@
  * */
 #include <PapillonNDL/continuous_energy_discrete_cosines.hpp>
 #include <PapillonNDL/pndl_exception.hpp>
+#include <algorithm>
 #include <cmath>
 #include <ios>
 #include <iostream>
