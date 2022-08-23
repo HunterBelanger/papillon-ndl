@@ -150,6 +150,11 @@ ReactionBase::ReactionBase(uint32_t mt, double q, double awr, double threshold,
         "Reaction threshold must be greater than or equal to zero.";
     throw PNDLException(mssg);
   }
+
+  if (awr_ <= 0.) {
+    std::string mssg = "Atomic weight ratio must be greater than zero.";
+    throw PNDLException(mssg);
+  }
 }
 
 void ReactionBase::load_neutron_distributions(
