@@ -23,7 +23,6 @@
 #ifndef PAPILLON_NDL_ANGLE_ENERGY_H
 #define PAPILLON_NDL_ANGLE_ENERGY_H
 
-#include <PapillonNDL/tabulated_1d.hpp>
 #include <functional>
 #include <memory>
 #include <optional>
