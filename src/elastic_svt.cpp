@@ -34,14 +34,14 @@ ElasticSVT::ElasticSVT(const AngleDistribution& angle, double awr,
                        double temperature, double tar_threshold)
     : angle_(angle),
       awr_(awr),
-      temperature_(temperature),
+      kT_(temperature * K_TO_EV * EV_TO_MEV),
       tar_threshold_(tar_threshold) {
   if (awr_ <= 0.) {
     std::string mssg = "Atomic weight ratio must be greater than zero.";
     throw PNDLException(mssg);
   }
 
-  if (temperature_ < 0.) {
+  if (kT_ < 0.) {
     std::string mssg = "Temperature must be greater than or equal to zero.";
     throw PNDLException(mssg);
   }
@@ -53,28 +53,31 @@ ElasticSVT::ElasticSVT(const AngleDistribution& angle, double awr,
   }
 }
 
+double ElasticSVT::temperature() const { return kT_ * MEV_TO_EV * EV_TO_K; }
+
 inline double ElasticSVT::Vector::magnitude() const {
   return std::sqrt(x * x + y * y + z * z);
 }
 
-inline ElasticSVT::Vector ElasticSVT::Vector::rotate(double mu, double phi) const {
+inline ElasticSVT::Vector ElasticSVT::Vector::rotate(double mu,
+                                                     double phi) const {
   double xo, yo, zo;
   const double c = std::cos(phi);
   const double s = std::sin(phi);
-  const double C = std::sqrt(1. - mu*mu);
+  const double C = std::sqrt(1. - mu * mu);
 
-  if (std::abs(1. - z*z) > 1.E-10) {
-    const double denom = std::sqrt(1. - z*z);
+  if (std::abs(1. - z * z) > 1.E-10) {
+    const double denom = std::sqrt(1. - z * z);
 
-    xo = x*mu + C*(c*x*z - s*y)/denom;
-    yo = y*mu + C*(c*y*z + s*x)/denom;
-    zo = z*mu - c*C*denom;
+    xo = x * mu + C * (c * x * z - s * y) / denom;
+    yo = y * mu + C * (c * y * z + s * x) / denom;
+    zo = z * mu - c * C * denom;
   } else {
-    const double denom = std::sqrt(1. - y*y);
+    const double denom = std::sqrt(1. - y * y);
 
-    xo = x*mu + C*(c*x*y + s*z)/denom;
-    yo = y*mu - c*C*denom;
-    zo = z*mu + C*(c*y*z - s*x)/denom;
+    xo = x * mu + C * (c * x * y + s * z) / denom;
+    yo = y * mu - c * C * denom;
+    zo = z * mu + C * (c * y * z - s * x) / denom;
   }
 
   return {xo, yo, zo};
@@ -82,11 +85,14 @@ inline ElasticSVT::Vector ElasticSVT::Vector::rotate(double mu, double phi) cons
 
 AngleEnergyPacket ElasticSVT::sample_angle_energy(
     double E_in, std::function<double()> rng) const {
+  // Direction in
+  const Vector u_n(0., 0., 1.);
+
   // Get the "velocity" of the incident neutron in the lab frame
-  const Vector v_n = Vector(0., 0., 1.) * std::sqrt(E_in);
+  const Vector v_n = u_n * std::sqrt(E_in);
 
   // Get the "velocity" of the target nuclide
-  const Vector v_t = sample_target_velocity(rng);
+  const Vector v_t = sample_target_velocity(E_in, rng);
 
   // Calculate the "velocity" of the center of mass.
   const Vector v_cm = (v_n + (v_t * awr_)) / (awr_ + 1.);
@@ -110,25 +116,27 @@ AngleEnergyPacket ElasticSVT::sample_angle_energy(
   const Vector v_n_out = V_n_out + v_cm;
 
   // Calculate "speed" in the LAB frame
-  const double S_out = v_n_out.magnitude();
+  const double s_n_out = v_n_out.magnitude();
+
+  // Calculate direction in the LAB frrame
+  const Vector u_n_out = v_n_out / s_n_out;
 
   // Calculate outgoing energy in LAB frame
-  const double E_out = S_out * S_out;
+  const double E_out = s_n_out * s_n_out;
 
   // Calculate the cosine of the scattering angle in the LAB frame
-  const double mu_lab = v_n.dot(v_n_out);
+  const double mu_lab = u_n.dot(u_n_out);
 
   return {mu_lab, E_out};
 }
 
 ElasticSVT::Vector ElasticSVT::sample_target_velocity(
     double Ein, std::function<double()> rng) const {
-  if (Ein >= tar_threshold_ * temperature_ * K_TO_EV * EV_TO_MEV && awr_ > 1.) {
+  if (Ein >= tar_threshold_ * kT_ && awr_ > 1.) {
     return {0., 0., 0.};
   }
 
-  const double y =
-      std::sqrt(0.5 * awr_ * Ein / (temperature_ * K_TO_EV * EV_TO_MEV));
+  const double y = std::sqrt(awr_ * Ein / kT_);
   double x_sqrd = 0.;
   double mu = 0.;
 
@@ -154,15 +162,27 @@ ElasticSVT::Vector ElasticSVT::sample_target_velocity(
   }
 
   // Get speed of target
-  double s_t =
-      std::sqrt(x_sqrd * 2. * temperature_ * K_TO_EV * EV_TO_MEV / awr_);
+  double s_t = std::sqrt(x_sqrd * kT_ / awr_);
 
   // Use mu to get the direction vector of the target. We know in the sample
   // method that we always assume the same incident neutron vector:
   const Vector u_n{0., 0., 1.};
-  Vector u_t = u_n.rotate(mu, 2.*PI*rng());
+  const Vector u_t = u_n.rotate(mu, 2. * PI * rng());
 
   return u_t * s_t;
 }
 
 }  // namespace pndl
+
+/*
+ * REFERENCES
+ *
+ * [1] R. R. Coveyou, R. R. Bate, and R. K. Osborn, “Effect of moderator
+ * temperature upon neutron flux in infinite, capturing medium,” J Nucl Energy
+ * 1954, vol. 2, no. 3–4, pp. 153–167, 1956, doi: 10.1016/0891-3919(55)90030-9.
+ *
+ * [2] P. K. Romano and J. A. Walsh, “An improved target velocity sampling
+ * algorithm for free gas elastic scattering,” Ann Nucl Energy, vol. 114, no.
+ * Ann.  Nucl. Energy 36 2009, pp. 318–324, 2018,
+ * doi: 10.1016/j.anucene.2017.12.044.
+ */
