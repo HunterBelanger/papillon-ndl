@@ -20,20 +20,29 @@
  * along with PapillonNDL. If not, see <https://www.gnu.org/licenses/>.
  *
  * */
-#ifndef PAPILLON_NDL_CONSTANTS_H
-#define PAPILLON_NDL_CONSTANTS_H
+#ifndef PAPILLON_NDL_SVT_H
+#define PAPILLON_NDL_SVT_H
 
-#include <limits>
-#include <locale>
+#include <functional>
 
-constexpr double SEC_TO_SHAKE = 1.E-8;
-constexpr double SHAKE_TO_SEC = 1.E8;
-constexpr double EV_TO_K = 1.160451812E4;
-constexpr double K_TO_EV = 1. / EV_TO_K;
-constexpr double MEV_TO_EV = 1.E6;
-constexpr double EV_TO_MEV = 1.E-6;
-constexpr double PI = 3.14159265358979323846264338327950288;
-constexpr double INF = std::numeric_limits<double>::max();
-constexpr unsigned int N_LETHARGY_BINS = 8192;
+#include "vector.hpp"
 
-#endif  // PAPILLON_NDL_CONSTANTS_H
+namespace pndl {
+
+/**
+ * @brief Samples the velocity of a target nuclide from a Maxwelliam spectrum,
+ *        while assuming that the elastic scatting cross section is constant in
+ *        the vicinity of Ein. It is always assumed that the direction of the
+ *        incident neutron is (0,0,1).
+ * @param Ein Incident energy of the neutron in MeV.
+ * @param kT Temperature of the "free-gas" in MeV.
+ * @param awr Atomic weight ratio of the nuclide.
+ * @param rng Random number generator function.
+ */
+Vector sample_target_velocity(const double& Ein, const double& kT,
+                              const double& awr,
+                              const std::function<double()>& rng);
+
+}  // namespace pndl
+
+#endif

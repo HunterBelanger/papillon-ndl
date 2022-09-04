@@ -20,6 +20,8 @@
  * along with PapillonNDL. If not, see <https://www.gnu.org/licenses/>.
  *
  * */
+#include "PapillonNDL/angle_energy.hpp"
+
 #include <pybind11/functional.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
@@ -28,6 +30,7 @@
 #include <PapillonNDL/cm_distribution.hpp>
 #include <PapillonNDL/continuous_energy_discrete_cosines.hpp>
 #include <PapillonNDL/discrete_cosines_energies.hpp>
+#include <PapillonNDL/elastic_svt.hpp>
 #include <PapillonNDL/energy_angle_table.hpp>
 #include <PapillonNDL/kalbach.hpp>
 #include <PapillonNDL/kalbach_table.hpp>
@@ -288,4 +291,19 @@ void init_Absorption(py::module& m) {
       .def("sample_angle_energy", &Absorption::sample_angle_energy)
       .def("angle_pdf", &Absorption::angle_pdf)
       .def("pdf", &Absorption::pdf);
+}
+
+void init_ElasticSVT(py::module& m) {
+  py::class_<ElasticSVT, AngleEnergy, std::shared_ptr<ElasticSVT>>(m,
+                                                                   "ElasticSVT")
+      .def(py::init<const AngleDistribution&, double, double, bool, double>(),
+           py::arg("angle"), py::arg("awr"), py::arg("temperature"),
+           py::arg("use_tar") = true, py::arg("tar_threshold") = 400.)
+      .def("sample_angle_energy", &ElasticSVT::sample_angle_energy)
+      .def("angle_pdf", &ElasticSVT::angle_pdf)
+      .def("pdf", &ElasticSVT::pdf)
+      .def("awr", &ElasticSVT::awr)
+      .def("use_tar", &ElasticSVT::use_tar)
+      .def("tar_threshold", &ElasticSVT::tar_threshold)
+      .def("temperature", &ElasticSVT::temperature);
 }
