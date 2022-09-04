@@ -108,36 +108,10 @@ class ElasticSVT : public AngleEnergy {
   double tar_threshold() const { return tar_threshold_; }
 
  private:
-  struct Vector {
-    double x, y, z;
-
-    Vector(double x, double y, double z) : x(x), y(y), z(z) {}
-
-    Vector operator+(const Vector& v) const {
-      return {x + v.x, y + v.y, z + v.z};
-    }
-
-    Vector operator-(const Vector& v) const {
-      return {x - v.x, y - v.y, z - v.z};
-    }
-
-    Vector operator*(const double& c) const { return {x * c, y * c, z * c}; }
-
-    Vector operator/(const double& c) const { return {x / c, y / c, z / c}; }
-
-    double dot(const Vector& v) const { return x * v.x + y * v.y + z * v.z; }
-
-    double magnitude() const;
-
-    Vector rotate(double mu, double phi) const;
-  };
-
   AngleDistribution angle_;
   double awr_;
   double kT_;  // Temperature in MeV
   double tar_threshold_;
-
-  Vector sample_target_velocity(double Ein, std::function<double()> rng) const;
 };
 
 }  // namespace pndl
