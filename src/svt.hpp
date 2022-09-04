@@ -30,9 +30,10 @@
 namespace pndl {
 
 /**
- * @brief Samples the velocity of a target nuclide from a Maxwelliam spectrum.
- *        It is always assumed that the direction of the incident neutron is
- *        (0,0,1).
+ * @brief Samples the velocity of a target nuclide from a Maxwelliam spectrum,
+ *        while assuming that the elastic scatting cross section is constant in
+ *        the vicinity of Ein. It is always assumed that the direction of the
+ *        incident neutron is (0,0,1).
  * @param Ein Incident energy of the neutron in MeV.
  * @param kT Temperature of the "free-gas" in MeV.
  * @param awr Atomic weight ratio of the nuclide.
