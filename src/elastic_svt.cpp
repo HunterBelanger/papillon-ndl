@@ -33,10 +33,11 @@
 namespace pndl {
 
 ElasticSVT::ElasticSVT(const AngleDistribution& angle, double awr,
-                       double temperature, double tar_threshold)
+                       double temperature, bool use_tar, double tar_threshold)
     : angle_(angle),
       awr_(awr),
       kT_(temperature * K_TO_EV * EV_TO_MEV),
+      use_tar_(use_tar),
       tar_threshold_(tar_threshold) {
   if (awr_ <= 0.) {
     std::string mssg = "Atomic weight ratio must be greater than zero.";
@@ -53,6 +54,8 @@ ElasticSVT::ElasticSVT(const AngleDistribution& angle, double awr,
         "Target At Rest threshold must be greater than or equal to zero.";
     throw PNDLException(mssg);
   }
+
+  if (use_tar_ == false) tar_threshold_ = INF;
 }
 
 double ElasticSVT::temperature() const { return kT_ * MEV_TO_EV * EV_TO_K; }
@@ -66,8 +69,7 @@ AngleEnergyPacket ElasticSVT::sample_angle_energy(
   const Vector v_n = u_n * std::sqrt(E_in);
 
   // Get the "velocity" of the target nuclide
-  bool TAR = false;
-  if (E_in >= tar_threshold_ * kT_ && awr_ > 1.) TAR = true;
+  const bool TAR = (use_tar_ && E_in >= tar_threshold_ * kT_) ? true : false;
   const Vector v_t =
       TAR ? Vector(0., 0., 0.) : sample_target_velocity(E_in, kT_, awr_, rng);
 

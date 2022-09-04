@@ -65,12 +65,14 @@ class ElasticSVT : public AngleEnergy {
    * @param angle The AngleDistribution for elastic scattering. This
    *              distribution must be given in the center of mass frame.
    * @param awr Atomic weight ratio of the nuclide.
-   * @param tempereature Temperature in Kelvin of the nuclide.
-   * @param tar_threshold The threshold for applying the target-at-rest
-   *                      approximation.
+   * @param temperature Temperature in Kelvin of the nuclide.
+   * @param use_tar Flag for using the Target At Rest approximation. Default
+   *                value is true.
+   * @param tar_threshold The threshold for applying the Target At Rest
+   *                      approximation. Default value is 400.
    */
   ElasticSVT(const AngleDistribution& angle, double awr, double temperature,
-             double tar_threshold);
+             bool use_tar = true, double tar_threshold = 400.);
 
   AngleEnergyPacket sample_angle_energy(
       double E_in, std::function<double()> rng) const override final;
@@ -102,6 +104,13 @@ class ElasticSVT : public AngleEnergy {
   double temperature() const;
 
   /**
+   * @brief If true, the Target At Rest approximation is used for incident
+   *        energies which are larger than tar_threshold * kT. If false, the
+   *        Target At Rest approximation is never used.
+   */
+  bool use_tar() const { return use_tar_; };
+
+  /**
    * @brief Returns the threshold for the application of the Target At Rest
    *        approximation.
    */
@@ -111,6 +120,7 @@ class ElasticSVT : public AngleEnergy {
   AngleDistribution angle_;
   double awr_;
   double kT_;  // Temperature in MeV
+  bool use_tar_;
   double tar_threshold_;
 };
 
