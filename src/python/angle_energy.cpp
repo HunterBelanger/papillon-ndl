@@ -30,6 +30,7 @@
 #include <PapillonNDL/cm_distribution.hpp>
 #include <PapillonNDL/continuous_energy_discrete_cosines.hpp>
 #include <PapillonNDL/discrete_cosines_energies.hpp>
+#include <PapillonNDL/elastic_dbrc.hpp>
 #include <PapillonNDL/elastic_svt.hpp>
 #include <PapillonNDL/energy_angle_table.hpp>
 #include <PapillonNDL/kalbach.hpp>
@@ -302,8 +303,28 @@ void init_ElasticSVT(py::module& m) {
       .def("sample_angle_energy", &ElasticSVT::sample_angle_energy)
       .def("angle_pdf", &ElasticSVT::angle_pdf)
       .def("pdf", &ElasticSVT::pdf)
+      .def("angle_distribution", &ElasticSVT::angle_distribution)
       .def("awr", &ElasticSVT::awr)
       .def("use_tar", &ElasticSVT::use_tar)
       .def("tar_threshold", &ElasticSVT::tar_threshold)
       .def("temperature", &ElasticSVT::temperature);
+}
+
+void init_ElasticDBRC(py::module& m) {
+  py::class_<ElasticDBRC, AngleEnergy, std::shared_ptr<ElasticDBRC>>(
+      m, "ElasticDBRC")
+      .def(py::init<const CrossSection&, const AngleDistribution&, double,
+                    double, bool, double>(),
+           py::arg("xs"), py::arg("angle"), py::arg("awr"),
+           py::arg("temperature"), py::arg("use_tar") = true,
+           py::arg("tar_threshold") = 400.)
+      .def("sample_angle_energy", &ElasticDBRC::sample_angle_energy)
+      .def("angle_pdf", &ElasticDBRC::angle_pdf)
+      .def("pdf", &ElasticDBRC::pdf)
+      .def("elastic_0K_xs", &ElasticDBRC::elastic_0K_xs)
+      .def("angle_distribution", &ElasticDBRC::angle_distribution)
+      .def("awr", &ElasticDBRC::awr)
+      .def("use_tar", &ElasticDBRC::use_tar)
+      .def("tar_threshold", &ElasticDBRC::tar_threshold)
+      .def("temperature", &ElasticDBRC::temperature);
 }
