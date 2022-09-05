@@ -21,6 +21,12 @@
  *
  * */
 #include <PapillonNDL/ce_neutron.hpp>
+#include <PapillonNDL/constant.hpp>
+#include <PapillonNDL/elastic_dbrc.hpp>
+#include <PapillonNDL/elastic_svt.hpp>
+#include <sstream>
+
+#include "PapillonNDL/pndl_exception.hpp"
 
 namespace pndl {
 
@@ -62,11 +68,25 @@ CENeutron<CrossSection>::CENeutron(const ACE& ace)
   uint32_t NMT = ace.nxs(3);
   reaction_indices_.fill(-1);
   int32_t current_reaction_index = 0;
-  mt_list_.resize(NMT, 0);
-  reactions_.reserve(NMT);
-  for (uint32_t indx = 0; indx < mt_list_.size(); indx++) {
+
+  // Use NMT+1 as we are adding elastic scattering
+  mt_list_.reserve(NMT + 1);
+  reactions_.reserve(NMT + 1);
+
+  // Add elastic scattering
+  mt_list_.push_back(2);
+  std::shared_ptr<Function1D> elastic_yield = std::make_shared<Constant>(1.);
+  std::shared_ptr<AngleEnergy> elastic_dist = std::make_shared<ElasticSVT>(
+      elastic_angle_, awr_, temperature_, true, 400.);
+  reactions_.emplace_back(*elastic_xs_, 2, 0., awr_, 0., elastic_yield,
+                          elastic_dist);
+  reaction_indices_[2] = current_reaction_index;
+  current_reaction_index++;
+
+  // Add other reactions
+  for (uint32_t indx = 0; indx < NMT; indx++) {
     uint32_t MT = ace.xss<uint32_t>(ace.MTR() + indx);
-    mt_list_[indx] = MT;
+    mt_list_.push_back(MT);
     reactions_.emplace_back(ace, indx, energy_grid_);
     reaction_indices_[MT] = current_reaction_index;
     current_reaction_index++;
@@ -131,12 +151,55 @@ CENeutron<CrossSection>::CENeutron(const ACE& ace, const CENeutron& nuclide)
   uint32_t NMT = ace.nxs(3);
   reaction_indices_.fill(-1);
   int32_t current_reaction_index = 0;
-  mt_list_.resize(NMT, 0);
-  reactions_.reserve(NMT);
-  for (uint32_t indx = 0; indx < mt_list_.size(); indx++) {
+
+  // Use NMT+1 as we are adding elastic scattering
+  mt_list_.reserve(NMT + 1);
+  reactions_.reserve(NMT + 1);
+
+  // Add elastic scattering, which should be inherited from the provided
+  // nuclide.
+  mt_list_.push_back(2);
+  std::shared_ptr<Function1D> elastic_yield = std::make_shared<Constant>(1.);
+  std::shared_ptr<AngleEnergy> elastic_dist = nullptr;
+  const AngleEnergy& orig_elastic_dist =
+      nuclide.reactions_[nuclide.reaction_indices_[2]].neutron_distribution();
+
+  // Determine true type of the original elastic distribution
+  if (typeid(orig_elastic_dist) == typeid(ElasticSVT)) {
+    // Using SVT
+    const auto& orig_dist = static_cast<const ElasticSVT&>(
+        nuclide.reactions_[nuclide.reaction_indices_[2]]
+            .neutron_distribution());
+    elastic_dist = std::make_shared<ElasticSVT>(
+        elastic_angle_, awr_, temperature_, orig_dist.use_tar(),
+        orig_dist.tar_threshold());
+  } else if (typeid(orig_elastic_dist) == typeid(ElasticDBRC)) {
+    // Using DBRC
+    const auto& orig_dist = static_cast<const ElasticDBRC&>(
+        nuclide.reactions_[nuclide.reaction_indices_[2]]
+            .neutron_distribution());
+    elastic_dist = std::make_shared<ElasticDBRC>(
+        orig_dist.elastic_0K_xs(), elastic_angle_, awr_, temperature_,
+        orig_dist.use_tar(), orig_dist.tar_threshold());
+  } else {
+    // Unknown
+    std::stringstream mssg;
+    mssg << "Unknown elastic scattering distribution type: ";
+    mssg << typeid(orig_elastic_dist).name() << ".";
+    throw PNDLException(mssg.str());
+  }
+
+  reactions_.emplace_back(*elastic_xs_, 2, 0., awr_, 0., elastic_yield,
+                          elastic_dist);
+  reaction_indices_[2] = current_reaction_index;
+  current_reaction_index++;
+
+  // Add other reactions
+  for (uint32_t indx = 0; indx < NMT; indx++) {
     uint32_t MT = ace.xss<uint32_t>(ace.MTR() + indx);
-    mt_list_[indx] = MT;
-    reactions_.emplace_back(ace, indx, energy_grid_);
+    mt_list_.push_back(MT);
+    reactions_.emplace_back(ace, indx, energy_grid_,
+                            nuclide.reactions_[nuclide.reaction_indices_[MT]]);
     reaction_indices_[MT] = current_reaction_index;
     current_reaction_index++;
   }
@@ -219,6 +282,43 @@ std::shared_ptr<CrossSection> CENeutron<CrossSection>::compute_fission_xs() {
   }
 
   return std::make_shared<CrossSection>(fiss_xs, energy_grid_, lowest_index);
+}
+
+void CENeutron<CrossSection>::use_SVT(bool use_tar, double tar_threshold) {
+  std::shared_ptr<Function1D> elastic_yield = std::make_shared<Constant>(1.);
+  std::shared_ptr<AngleEnergy> elastic_dist = std::make_shared<ElasticSVT>(
+      elastic_angle_, awr_, temperature_, use_tar, tar_threshold);
+  reactions_[reaction_indices_[2]] =
+      STReaction(*elastic_xs_, 2, 0., awr_, 0., elastic_yield, elastic_dist);
+}
+
+void CENeutron<CrossSection>::use_DBRC(const CrossSection& xs, bool use_tar,
+                                       double tar_threshold) {
+  std::shared_ptr<Function1D> elastic_yield = std::make_shared<Constant>(1.);
+  std::shared_ptr<AngleEnergy> elastic_dist = std::make_shared<ElasticDBRC>(
+      xs, elastic_angle_, awr_, temperature_, use_tar, tar_threshold);
+  reactions_[reaction_indices_[2]] =
+      STReaction(*elastic_xs_, 2, 0., awr_, 0., elastic_yield, elastic_dist);
+}
+
+bool CENeutron<CrossSection>::using_SVT() const {
+  const AngleEnergy& elastic_dist = this->reaction(2).neutron_distribution();
+
+  if (typeid(elastic_dist) == typeid(ElasticSVT)) {
+    return true;
+  }
+
+  return false;
+}
+
+bool CENeutron<CrossSection>::using_DBRC() const {
+  const AngleEnergy& elastic_dist = this->reaction(2).neutron_distribution();
+
+  if (typeid(elastic_dist) == typeid(ElasticDBRC)) {
+    return true;
+  }
+
+  return false;
 }
 
 }  // namespace pndl

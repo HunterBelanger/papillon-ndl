@@ -32,6 +32,8 @@
 #include <PapillonNDL/reaction.hpp>
 #include <PapillonNDL/urr_ptables.hpp>
 
+#include "PapillonNDL/cross_section.hpp"
+
 namespace pndl {
 
 template <typename XSType>
@@ -122,6 +124,40 @@ class CENeutron<CrossSection> : public CENeutronBase {
    * @brief Returns a reference to the URRPTables instance.
    */
   const URRPTables& urr_ptables() const { return *urr_ptables_; }
+
+  /**
+   * @brief Sets elastic scattering to use the Sample Velocity of Target
+   * algorithm.
+   * @param use_tar Flag for using the Target At Rest approximation. Default
+   *                value is true.
+   * @param tar_threshold The threshold for applying the Target At Rest
+   *                      approximation. Default value is 400.
+   */
+  void use_SVT(bool use_tar = true, double tar_threshold = 400.);
+
+  /**
+   * @brief Sets elastic scattering to use the Doppler Broadening Resonance
+   * Correction algorithm.
+   * @param xs The 0 Kelvin elastic scattering cross section for the nuclide.
+   * @param use_tar Flag for using the Target At Rest approximation. Default
+   *                value is true.
+   * @param tar_threshold The threshold for applying the Target At Rest
+   *                      approximation. Default value is 400.
+   */
+  void use_DBRC(const CrossSection& xs, bool use_tar = true,
+                double tar_threshold = 400.);
+
+  /**
+   * @brief Returns true if the STNeutron instance is using ElasticSVT for an
+   *        elastic scattering distribution.
+   */
+  bool using_SVT() const;
+
+  /**
+   * @brief Returns true if the STNeutron instance is using ElasticDBRC for an
+   *        elastic scattering distribution.
+   */
+  bool using_DBRC() const;
 
  private:
   double temperature_;

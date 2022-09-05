@@ -73,6 +73,9 @@ class Reaction<CrossSection> : public ReactionBase {
            double threshold, std::shared_ptr<Function1D> yield,
            std::shared_ptr<AngleEnergy> neutron_distribution);
 
+  Reaction(const Reaction&) = default;
+  Reaction& operator=(const Reaction&) = default;
+
   /**
    * @brief Returns the CrossSection for the reaction.
    */

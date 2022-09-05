@@ -65,5 +65,9 @@ void init_STNeutron(py::module& m) {
       .def("disappearance_xs", &STNeutron::disappearance_xs)
       .def("photon_production_xs", &STNeutron::photon_production_xs)
       .def("reaction", &STNeutron::reaction)
-      .def("urr_ptables", &STNeutron::urr_ptables);
+      .def("urr_ptables", &STNeutron::urr_ptables)
+      .def("use_SVT", &STNeutron::use_SVT)
+      .def("use_DBRC", &STNeutron::use_DBRC)
+      .def("using_SVT", &STNeutron::using_SVT)
+      .def("using_DBRC", &STNeutron::using_DBRC);
 }

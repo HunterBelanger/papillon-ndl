@@ -45,6 +45,7 @@ namespace pndl {
 class ReactionBase {
  public:
   ReactionBase(const ReactionBase&) = default;
+  ReactionBase& operator=(const ReactionBase&) = default;
 
   /**
    * @brief Returns the MT of the reaction.
