@@ -73,3 +73,8 @@ ElasticSVT
 ----------
 
 .. doxygenclass:: pndl::ElasticSVT
+
+ElasticDBRC
+-----------
+
+.. doxygenclass:: pndl::ElasticDBRC

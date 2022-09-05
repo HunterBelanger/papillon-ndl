@@ -44,6 +44,7 @@ set(PNDL_SOURCE_LIST src/element.cpp
                      src/cm_distribution.cpp
                      src/svt.cpp
                      src/elastic_svt.cpp
+                     src/elastic_dbrc.cpp
                      src/energy_grid.cpp
                      src/cross_section.cpp
                      src/delayed_group.cpp

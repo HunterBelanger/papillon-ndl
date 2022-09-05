@@ -23,6 +23,8 @@
 
 #include "svt.hpp"
 
+#include <cmath>
+
 namespace pndl {
 
 Vector sample_target_velocity(const double& Ein, const double& kT,
