@@ -69,6 +69,11 @@ Absorption
 
 .. doxygenclass:: pndl::Absorption
 
+Elastic
+-------
+
+.. doxygenclass:: pndl::Elastic
+
 ElasticSVT
 ----------
 
