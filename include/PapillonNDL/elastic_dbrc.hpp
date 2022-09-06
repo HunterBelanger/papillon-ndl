@@ -23,9 +23,8 @@
 #ifndef PAPILLON_NDL_ELASTIC_DBRC_H
 #define PAPILLON_NDL_ELASTIC_DBRC_H
 
-#include <PapillonNDL/angle_distribution.hpp>
-#include <PapillonNDL/angle_energy.hpp>
 #include <PapillonNDL/cross_section.hpp>
+#include <PapillonNDL/elastic.hpp>
 #include <functional>
 #include <optional>
 
@@ -54,7 +53,7 @@ namespace pndl {
  *        Since H1 is actually has a slightly smaller mass than a neutron, the
  *        target at rest approximation is generally inadequate.
  */
-class ElasticDBRC : public AngleEnergy {
+class ElasticDBRC : public Elastic {
  public:
   /**
    * @param xs The 0 Kelvin elastic scattering cross section for the nuclide.
@@ -84,11 +83,9 @@ class ElasticDBRC : public AngleEnergy {
     return std::nullopt;
   }
 
-  /**
-   * @brief Returns the AngleDistribution which describes the distribution for
-   *        the cosine of the scattering angle in the center-of-mass frame.
-   */
-  const AngleDistribution& angle_distribution() const { return angle_; }
+  std::shared_ptr<Elastic> clone() const override final {
+    return std::make_shared<ElasticDBRC>(*this);
+  }
 
   /**
    * @brief Returns the 0 Kelvin elastic scattering cross section for the
@@ -96,36 +93,8 @@ class ElasticDBRC : public AngleEnergy {
    */
   const CrossSection& elastic_0K_xs() const { return xs_; }
 
-  /**
-   * @breif Returns the Atomic Weight Ratio for the nuclide.
-   */
-  double awr() const { return awr_; }
-
-  /**
-   * @breif Returns the temperature for the nuclide in Kelvin.
-   */
-  double temperature() const;
-
-  /**
-   * @brief If true, the Target At Rest approximation is used for incident
-   *        energies which are larger than tar_threshold * kT. If false, the
-   *        Target At Rest approximation is never used.
-   */
-  bool use_tar() const { return use_tar_; };
-
-  /**
-   * @brief Returns the threshold for the application of the Target At Rest
-   *        approximation.
-   */
-  double tar_threshold() const { return tar_threshold_; }
-
  private:
   CrossSection xs_;
-  AngleDistribution angle_;
-  double awr_;
-  double kT_;  // Temperature in MeV
-  bool use_tar_;
-  double tar_threshold_;
 };
 
 }  // namespace pndl

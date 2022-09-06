@@ -23,6 +23,7 @@
 #ifndef PAPILLON_NDL_SVT_H
 #define PAPILLON_NDL_SVT_H
 
+#include <PapillonNDL/cross_section.hpp>
 #include <functional>
 
 #include "vector.hpp"
@@ -42,6 +43,21 @@ namespace pndl {
 Vector sample_target_velocity(const double& Ein, const double& kT,
                               const double& awr,
                               const std::function<double()>& rng);
+
+/**
+ * @brief Samples the velocity of a target nuclide from a Maxwelliam spectrum,
+ *        while assuming that the elastic scatting cross section is constant in
+ *        the vicinity of Ein. It is always assumed that the direction of the
+ *        incident neutron is (0,0,1).
+ * @param Ein Incident energy of the neutron in MeV.
+ * @param xs Elastic scattering CrossSection at 0 Kelvin.
+ * @param kT Temperature of the "free-gas" in MeV.
+ * @param awr Atomic weight ratio of the nuclide.
+ * @param rng Random number generator function.
+ */
+Vector sample_target_velocity_dbrc(const double& Ein, const CrossSection& xs,
+                                   const double& kT, const double& awr,
+                                   const std::function<double()>& rng);
 
 }  // namespace pndl
 

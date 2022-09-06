@@ -66,4 +66,54 @@ Vector sample_target_velocity(const double& Ein, const double& kT,
   return u_t * s_t;
 }
 
+double find_max_xs_value(const CrossSection& xs, const double& Emin,
+                         const double& Emax) {
+  const std::size_t i_min = xs.energy_grid().get_lower_index(Emin);
+  // const double xs_Emin = xs(Emin, i_min);
+  const double xs_Emin = xs(Emin);
+  const std::size_t i_max = xs.energy_grid().get_lower_index(Emax);
+  // const double xs_Emax = xs(Emax, i_max);
+  const double xs_Emax = xs(Emax);
+  double xs_max = std::max(xs_Emin, xs_Emax);
+
+  for (std::size_t i = i_min + 1; i <= i_max; i++) {
+    if (xs.xs()[i] > xs_max) xs_max = xs.xs()[i];
+  }
+
+  return xs_max;
+}
+
+Vector sample_target_velocity_dbrc(const double& Ein, const CrossSection& xs,
+                                   const double& kT, const double& awr,
+                                   const std::function<double()>& rng) {
+  // Get min and max energies for finding the max, based on incident energy
+  const Vector v_n(0., 0., std::sqrt(Ein));
+  const double y = std::sqrt(awr * Ein / kT);
+  const double y_min = std::max(0., y - 4.);
+  const double Er_min = y_min * y_min * kT / awr;
+  const double y_max = y + 4.;
+  const double Er_max = y_max * y_max * kT / awr;
+  const double xs_max = find_max_xs_value(xs, Er_min, Er_max);
+
+  Vector v_t(0., 0., 0.);
+  bool sample_velocity = true;
+  while (sample_velocity) {
+    v_t = sample_target_velocity(Ein, kT, awr, rng);
+
+    const Vector vr = v_n - v_t;
+    const double Er = vr.dot(vr);
+
+    if (Er < Er_min || Er > Er_max) continue;
+
+    const std::size_t i_Er = xs.energy_grid().get_lower_index(Er);
+    const double xs_Er = xs(Er, i_Er);
+
+    if (rng() * xs_max < xs_Er) {
+      sample_velocity = false;
+    }
+  }
+
+  return v_t;
+}
+
 }  // namespace pndl

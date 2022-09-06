@@ -26,7 +26,6 @@
 #include <cmath>
 #include <functional>
 
-#include "constants.hpp"
 #include "svt.hpp"
 #include "vector.hpp"
 
@@ -34,82 +33,12 @@ namespace pndl {
 
 ElasticDBRC::ElasticDBRC(const CrossSection& xs, const AngleDistribution& angle,
                          double awr, double temperature, bool use_tar,
-                         double tar_threshold)
-    : xs_(xs),
-      angle_(angle),
-      awr_(awr),
-      kT_(temperature * K_TO_EV * EV_TO_MEV),
-      use_tar_(use_tar),
-      tar_threshold_(tar_threshold) {
-  if (awr_ <= 0.) {
-    std::string mssg = "Atomic weight ratio must be greater than zero.";
-    throw PNDLException(mssg);
-  }
-
-  if (kT_ < 0.) {
-    std::string mssg = "Temperature must be greater than or equal to zero.";
-    throw PNDLException(mssg);
-  }
-
-  if (tar_threshold_ < 0.) {
-    std::string mssg =
-        "Target At Rest threshold must be greater than or equal to zero.";
-    throw PNDLException(mssg);
-  }
-
-  if (use_tar_ == false) tar_threshold_ = INF;
-}
-
-double ElasticDBRC::temperature() const { return kT_ * MEV_TO_EV * EV_TO_K; }
-
-double find_max_xs_value(const CrossSection& xs, const double& Emin,
-                         const double& Emax) {
-  const std::size_t i_min = xs.energy_grid().get_lower_index(Emin);
-  // const double xs_Emin = xs(Emin, i_min);
-  const double xs_Emin = xs(Emin);
-  const std::size_t i_max = xs.energy_grid().get_lower_index(Emax);
-  // const double xs_Emax = xs(Emax, i_max);
-  const double xs_Emax = xs(Emax);
-  double xs_max = std::max(xs_Emin, xs_Emax);
-
-  for (std::size_t i = i_min + 1; i <= i_max; i++) {
-    if (xs.xs()[i] > xs_max) xs_max = xs.xs()[i];
-  }
-
-  return xs_max;
-}
-
-Vector sample_target_velocity_dbrc(const double& Ein, const CrossSection& xs,
-                                   const double& kT, const double& awr,
-                                   const std::function<double()>& rng) {
-  // Get min and max energies for finding the max, based on incident energy
-  const Vector v_n(0., 0., std::sqrt(Ein));
-  const double y = std::sqrt(awr * Ein / kT);
-  const double y_min = std::max(0., y - 4.);
-  const double Er_min = y_min * y_min * kT / awr;
-  const double y_max = y + 4.;
-  const double Er_max = y_max * y_max * kT / awr;
-  const double xs_max = find_max_xs_value(xs, Er_min, Er_max);
-
-  Vector v_t(0., 0., 0.);
-  bool sample_velocity = true;
-  while (sample_velocity) {
-    v_t = sample_target_velocity(Ein, kT, awr, rng);
-
-    const Vector vr = v_n - v_t;
-    const double Er = vr.dot(vr);
-
-    if (Er < Er_min || Er > Er_max) continue;
-
-    const std::size_t i_Er = xs.energy_grid().get_lower_index(Er);
-    const double xs_Er = xs(Er, i_Er);
-
-    if (rng() * xs_max < xs_Er) {
-      sample_velocity = false;
-    }
-  }
-
-  return v_t;
+                         double tar_threshold) try
+    : Elastic(angle, awr, temperature, use_tar, tar_threshold), xs_(xs) {
+} catch (PNDLException& err) {
+  std::string mssg = "Could not construct Elastic instance.";
+  err.add_to_exception(mssg);
+  throw err;
 }
 
 AngleEnergyPacket ElasticDBRC::sample_angle_energy(

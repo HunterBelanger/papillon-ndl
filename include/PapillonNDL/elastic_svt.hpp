@@ -23,9 +23,9 @@
 #ifndef PAPILLON_NDL_ELASTIC_SVT_H
 #define PAPILLON_NDL_ELASTIC_SVT_H
 
-#include <PapillonNDL/angle_distribution.hpp>
-#include <PapillonNDL/angle_energy.hpp>
+#include <PapillonNDL/elastic.hpp>
 #include <functional>
+#include <memory>
 #include <optional>
 
 /**
@@ -59,7 +59,7 @@ namespace pndl {
  *        Since H1 is actually has a slightly smaller mass than a neutron, the
  *        target at rest approximation is generally inadequate.
  */
-class ElasticSVT : public AngleEnergy {
+class ElasticSVT : public Elastic {
  public:
   /**
    * @param angle The AngleDistribution for elastic scattering. This
@@ -87,41 +87,9 @@ class ElasticSVT : public AngleEnergy {
     return std::nullopt;
   }
 
-  /**
-   * @brief Returns the AngleDistribution which describes the distribution for
-   *        the cosine of the scattering angle in the center-of-mass frame.
-   */
-  const AngleDistribution& angle_distribution() const { return angle_; }
-
-  /**
-   * @breif Returns the Atomic Weight Ratio for the nuclide.
-   */
-  double awr() const { return awr_; }
-
-  /**
-   * @breif Returns the temperature for the nuclide in Kelvin.
-   */
-  double temperature() const;
-
-  /**
-   * @brief If true, the Target At Rest approximation is used for incident
-   *        energies which are larger than tar_threshold * kT. If false, the
-   *        Target At Rest approximation is never used.
-   */
-  bool use_tar() const { return use_tar_; };
-
-  /**
-   * @brief Returns the threshold for the application of the Target At Rest
-   *        approximation.
-   */
-  double tar_threshold() const { return tar_threshold_; }
-
- private:
-  AngleDistribution angle_;
-  double awr_;
-  double kT_;  // Temperature in MeV
-  bool use_tar_;
-  double tar_threshold_;
+  std::shared_ptr<Elastic> clone() const override final {
+    return std::make_shared<ElasticSVT>(*this);
+  }
 };
 
 }  // namespace pndl

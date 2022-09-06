@@ -26,39 +26,20 @@
 #include <cmath>
 #include <functional>
 
-#include "constants.hpp"
 #include "svt.hpp"
 #include "vector.hpp"
 
 namespace pndl {
 
 ElasticSVT::ElasticSVT(const AngleDistribution& angle, double awr,
-                       double temperature, bool use_tar, double tar_threshold)
-    : angle_(angle),
-      awr_(awr),
-      kT_(temperature * K_TO_EV * EV_TO_MEV),
-      use_tar_(use_tar),
-      tar_threshold_(tar_threshold) {
-  if (awr_ <= 0.) {
-    std::string mssg = "Atomic weight ratio must be greater than zero.";
-    throw PNDLException(mssg);
-  }
-
-  if (kT_ < 0.) {
-    std::string mssg = "Temperature must be greater than or equal to zero.";
-    throw PNDLException(mssg);
-  }
-
-  if (tar_threshold_ < 0.) {
-    std::string mssg =
-        "Target At Rest threshold must be greater than or equal to zero.";
-    throw PNDLException(mssg);
-  }
-
-  if (use_tar_ == false) tar_threshold_ = INF;
+                       double temperature, bool use_tar,
+                       double tar_threshold) try
+    : Elastic(angle, awr, temperature, use_tar, tar_threshold) {
+} catch (PNDLException& err) {
+  std::string mssg = "Could not construct Elastic instance.";
+  err.add_to_exception(mssg);
+  throw err;
 }
-
-double ElasticSVT::temperature() const { return kT_ * MEV_TO_EV * EV_TO_K; }
 
 AngleEnergyPacket ElasticSVT::sample_angle_energy(
     double E_in, std::function<double()> rng) const {
