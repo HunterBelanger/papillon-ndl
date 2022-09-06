@@ -21,6 +21,9 @@
  *
  * */
 #include <PapillonNDL/ce_neutron.hpp>
+#include <PapillonNDL/elastic_svt.hpp>
+
+#include "PapillonNDL/pndl_exception.hpp"
 
 namespace pndl {
 
@@ -34,6 +37,7 @@ CENeutron<CrossSection>::CENeutron(const ACE& ace)
       heating_number_(nullptr),
       fission_xs_(nullptr),
       photon_production_xs_(nullptr),
+      elastic_distribution_(nullptr),
       reactions_(),
       urr_ptables_(nullptr) {
   // Construct energy grid
@@ -90,6 +94,16 @@ CENeutron<CrossSection>::CENeutron(const ACE& ace)
     std::string mssg = "Could not construct URRPTables for nuclide data.";
     error.add_to_exception(mssg);
     throw error;
+  }
+
+  // Make elastic scatter distribution
+  try {
+    elastic_distribution_ =
+        std::make_shared<ElasticSVT>(elastic_angle_, awr_, temperature_);
+  } catch (PNDLException& err) {
+    std::string mssg = "Could not create Elastic AngleEnergy distribution.";
+    err.add_to_exception(mssg);
+    throw err;
   }
 }
 
@@ -103,6 +117,7 @@ CENeutron<CrossSection>::CENeutron(const ACE& ace, const CENeutron& nuclide)
       heating_number_(nullptr),
       fission_xs_(nullptr),
       photon_production_xs_(nullptr),
+      elastic_distribution_(nullptr),
       reactions_(),
       urr_ptables_(nullptr) {
   // Construct energy grid
@@ -136,7 +151,8 @@ CENeutron<CrossSection>::CENeutron(const ACE& ace, const CENeutron& nuclide)
   for (uint32_t indx = 0; indx < mt_list_.size(); indx++) {
     uint32_t MT = ace.xss<uint32_t>(ace.MTR() + indx);
     mt_list_[indx] = MT;
-    reactions_.emplace_back(ace, indx, energy_grid_);
+    reactions_.emplace_back(ace, indx, energy_grid_,
+                            nuclide.reactions_[nuclide.reaction_indices_[MT]]);
     reaction_indices_[MT] = current_reaction_index;
     current_reaction_index++;
   }
@@ -160,6 +176,27 @@ CENeutron<CrossSection>::CENeutron(const ACE& ace, const CENeutron& nuclide)
     error.add_to_exception(mssg);
     throw error;
   }
+
+  // Make elastic scatter distribution
+  try {
+    elastic_distribution_ = nuclide.elastic_distribution_->clone();
+    elastic_distribution_->set_temperature(temperature_);
+  } catch (PNDLException& err) {
+    std::string mssg = "Could not create Elastic AngleEnergy distribution.";
+    err.add_to_exception(mssg);
+    throw err;
+  }
+}
+
+void CENeutron<CrossSection>::set_elastic_distribution(
+    const std::shared_ptr<Elastic>& elastic) {
+  if (elastic == nullptr) {
+    std::string mssg =
+        "Provided a nullptr for elastic AngleEnergy distribution.";
+    throw PNDLException(mssg);
+  }
+
+  elastic_distribution_ = elastic;
 }
 
 std::shared_ptr<CrossSection> CENeutron<CrossSection>::compute_fission_xs() {
