@@ -88,49 +88,39 @@ class URRPTables {
   bool is_valid() const { return energy_->size() > 2; }
 
   /**
-   * @brief Determines the cross section band from the incident energy
-   *        and the random variable.
-   * @param E Incident energy (MeV).
-   * @param xi Random variable in the interval [0,1).
-   */
-  std::size_t sample_xs_band(double E, double xi) const {
-    // Find the energy index
-    std::size_t i = 0;
-    auto Eit = std::lower_bound(energy_->begin(), energy_->end(), E);
-    if (Eit == energy_->begin()) {
-      i = 0;
-    } else if (Eit == energy_->end()) {
-      i = energy_->size() - 1;
-    } else {
-      i = std::distance(energy_->begin(), Eit) - 1;
-    }
-
-    // Get reference to the PTable
-    const PTable& ptable = (*ptables_)[i];
-
-    // Figure out which band we have sampled
-    for (std::size_t b = 0; b < ptable.cdf.size(); b++) {
-      if (ptable.cdf[b] >= xi) return b;
-    }
-
-    // SHOULD NEVER GET HERE
-    return this->n_xs_bands() - 1;
-  }
-
-  /**
    * @brief Calculates the cross section for a given incident energy and
    *        cross section band.
    * @param E Incident energy (MeV).
    * @param i Index of E in the global energy grid, for evaluating cross
    *          sections.
-   * @param b Index of the sampled cross section band.
+   * @param xi Random variable in the interval [0,1).
    */
-  XSPacket evaluate_xs_band(double E, std::size_t i, std::size_t b) const {
+  XSPacket evaluate_xs_band(double E, std::size_t i, double xi) const {
+    // Find the energy index for sampling band
+    std::size_t iE = 0;
+    auto Eit = std::lower_bound(energy_->begin(), energy_->end(), E);
+    if (Eit == energy_->begin()) {
+      iE = 0;
+    } else if (Eit == energy_->end()) {
+      iE = energy_->size() - 1;
+    } else {
+      iE = std::distance(energy_->begin(), Eit) - 1;
+    }
+
+    // Get reference to the PTable
+    const PTable& ptable = (*ptables_)[iE];
+
+    // Figure out which band we have sampled
+    std::size_t b = 0;
+    for (b = 0; b < ptable.cdf.size(); b++) {
+      if (ptable.cdf[b] >= xi) break;
+    }
+
     // Find the energy index and interpolation factor
     std::size_t j = 0;
     double f = 0.;
     std::vector<double>& energy = *energy_;
-    auto Eit = std::lower_bound(energy.begin(), energy.end(), E);
+    Eit = std::lower_bound(energy.begin(), energy.end(), E);
     if (Eit == energy.begin()) {
       j = 0;
       f = 0.;
@@ -240,13 +230,13 @@ class URRPTables {
    * @brief Calculates the cross section for a given incident energy and
    *        cross section band.
    * @param E Incident energy (MeV).
-   * @param b Index of the sampled cross section band.
+   * @param xi Random variable in the interval [0,1).
    */
-  XSPacket evaluate_xs_band(double E, std::size_t b) const {
+  XSPacket evaluate_xs_band(double E, double xi) const {
     // Get the energy index
     std::size_t i = this->elastic_.energy_grid().get_lower_index(E);
     // Call the other method
-    return this->evaluate_xs_band(E, i, b);
+    return this->evaluate_xs_band(E, i, xi);
   }
 
   /**
