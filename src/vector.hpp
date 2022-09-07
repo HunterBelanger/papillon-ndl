@@ -33,7 +33,8 @@ struct Vector {
   double x, y, z;
 
   Vector(double x, double y, double z) : x(x), y(y), z(z) {}
-  Vector(const std::array<double, 3>& vals): x(vals[0]), y(vals[1]), z(vals[2]) {}
+  Vector(const std::array<double, 3>& vals)
+      : x(vals[0]), y(vals[1]), z(vals[2]) {}
 
   std::array<double, 3> array() const { return {x, y, z}; }
 
