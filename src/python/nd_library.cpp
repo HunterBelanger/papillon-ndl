@@ -39,8 +39,10 @@ void init_NDLibrary(py::module& m) {
       .def("temperatures", &NDLibrary::temperatures)
       .def("nearest_temperature", &NDLibrary::nearest_temperature)
       .def("atomic_weight_ratio", &NDLibrary::atomic_weight_ratio)
-      .def("load_STNeutron", &NDLibrary::load_STNeutron)
-      .def("load_STTSL", &NDLibrary::load_STTSL)
+      .def("load_STNeutron", &NDLibrary::load_STNeutron, py::arg("symbol"),
+           py::arg("temperature"), py::arg("tolerance") = 1.)
+      .def("load_STTSL", &NDLibrary::load_STTSL, py::arg("symbol"),
+           py::arg("temperature"), py::arg("tolerance") = 1.)
       .def("list_STNeutron", &NDLibrary::list_STNeutron)
       .def("list_STTSL", &NDLibrary::list_STTSL);
 }

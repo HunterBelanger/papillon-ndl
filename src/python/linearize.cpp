@@ -35,10 +35,13 @@ void init_Linearize(py::module& m) {
   m.def(
       "linearize",
       py::overload_cast<const std::vector<double>&, const std::vector<double>&,
-                        std::function<double(double)>, double>(&linearize));
+                        std::function<double(double)>, double>(&linearize),
+      py::arg("x"), py::arg("y"), py::arg("f"), py::arg("tolerance") = 0.001);
 
   m.def(
       "linearize",
       py::overload_cast<double, double, std::function<double(double)>, double>(
-          &linearize));
+          &linearize),
+      py::arg("x_min"), py::arg("x_max"), py::arg("f"),
+      py::arg("tolerance") = 0.001);
 }
