@@ -23,6 +23,7 @@
 #ifndef PAPILLON_NDL_VECTOR_H
 #define PAPILLON_NDL_VECTOR_H
 
+#include <array>
 #include <cmath>
 
 #include "constants.hpp"
@@ -32,6 +33,10 @@ struct Vector {
   double x, y, z;
 
   Vector(double x, double y, double z) : x(x), y(y), z(z) {}
+  Vector(const std::array<double, 3>& vals)
+      : x(vals[0]), y(vals[1]), z(vals[2]) {}
+
+  std::array<double, 3> array() const { return {x, y, z}; }
 
   Vector operator+(const Vector& v) const {
     return {x + v.x, y + v.y, z + v.z};

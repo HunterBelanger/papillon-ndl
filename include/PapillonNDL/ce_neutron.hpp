@@ -29,8 +29,10 @@
  */
 
 #include <PapillonNDL/ce_neutron_base.hpp>
+#include <PapillonNDL/elastic.hpp>
 #include <PapillonNDL/reaction.hpp>
 #include <PapillonNDL/urr_ptables.hpp>
+#include <memory>
 
 namespace pndl {
 
@@ -123,6 +125,18 @@ class CENeutron<CrossSection> : public CENeutronBase {
    */
   const URRPTables& urr_ptables() const { return *urr_ptables_; }
 
+  /**
+   * @brief Returns a reference to the Elastic instance which contains the
+   *        AngleEnergy distribution for elastic scattering.
+   */
+  const Elastic& elastic() const { return *elastic_distribution_; }
+
+  /**
+   * @brief Returns a modifiable reference to the Elastic instance which
+   *        contains the AngleEnergy distribution for elastic scattering.
+   */
+  Elastic& elastic() { return *elastic_distribution_; }
+
  private:
   double temperature_;
 
@@ -133,6 +147,8 @@ class CENeutron<CrossSection> : public CENeutronBase {
   std::shared_ptr<CrossSection> heating_number_;
   std::shared_ptr<CrossSection> fission_xs_;
   std::shared_ptr<CrossSection> photon_production_xs_;
+
+  std::shared_ptr<Elastic> elastic_distribution_;
 
   std::vector<STReaction> reactions_;
 

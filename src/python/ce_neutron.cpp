@@ -20,6 +20,8 @@
  * along with PapillonNDL. If not, see <https://www.gnu.org/licenses/>.
  *
  * */
+#include <pybind11/cast.h>
+#include <pybind11/detail/common.h>
 #include <pybind11/functional.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
@@ -65,5 +67,9 @@ void init_STNeutron(py::module& m) {
       .def("disappearance_xs", &STNeutron::disappearance_xs)
       .def("photon_production_xs", &STNeutron::photon_production_xs)
       .def("reaction", &STNeutron::reaction)
-      .def("urr_ptables", &STNeutron::urr_ptables);
+      .def("urr_ptables", &STNeutron::urr_ptables)
+      .def("elastic", py::overload_cast<>(&STNeutron::elastic, py::const_),
+           py::return_value_policy::reference_internal)
+      .def("elastic", py::overload_cast<>(&STNeutron::elastic),
+           py::return_value_policy::reference_internal);
 }

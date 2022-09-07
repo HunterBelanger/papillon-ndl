@@ -20,17 +20,21 @@
  * along with PapillonNDL. If not, see <https://www.gnu.org/licenses/>.
  *
  * */
-#include "PapillonNDL/angle_energy.hpp"
 
+#include <pybind11/cast.h>
 #include <pybind11/functional.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
 #include <PapillonNDL/absorption.hpp>
+#include <PapillonNDL/angle_energy.hpp>
 #include <PapillonNDL/cm_distribution.hpp>
 #include <PapillonNDL/continuous_energy_discrete_cosines.hpp>
+#include <PapillonNDL/cross_section.hpp>
 #include <PapillonNDL/discrete_cosines_energies.hpp>
+#include <PapillonNDL/elastic.hpp>
 #include <PapillonNDL/elastic_dbrc.hpp>
+#include <PapillonNDL/elastic_doppler_broadener.hpp>
 #include <PapillonNDL/elastic_svt.hpp>
 #include <PapillonNDL/energy_angle_table.hpp>
 #include <PapillonNDL/kalbach.hpp>
@@ -41,6 +45,7 @@
 #include <PapillonNDL/st_incoherent_elastic.hpp>
 #include <PapillonNDL/tabular_energy_angle.hpp>
 #include <PapillonNDL/uncorrelated.hpp>
+#include <array>
 #include <optional>
 
 namespace py = pybind11;
@@ -73,6 +78,24 @@ class PyAngleEnergy : public AngleEnergy {
                             double E_out) const override {
     PYBIND11_OVERRIDE_PURE(std::optional<double>, AngleEnergy, pdf, E_in, mu,
                            E_out);
+  }
+};
+
+// Trampoline class for abstract pndl::ElasticDopplerBroadener
+class PyElasticDopplerBroadener : public ElasticDopplerBroadener {
+ public:
+  using ElasticDopplerBroadener::ElasticDopplerBroadener;
+  using array3 = std::array<double, 3>;
+
+  std::array<double, 3> sample_target_velocity(
+      const double& Ein, const double& kT, const double& awr,
+      const std::function<double()>& rng) const override {
+    PYBIND11_OVERRIDE_PURE(array3, ElasticDopplerBroadener,
+                           sample_target_velocity, Ein, kT, awr, rng);
+  }
+
+  std::string algorithm() const override {
+    PYBIND11_OVERRIDE_PURE(std::string, ElasticDopplerBroadener, algorithm);
   }
 };
 
@@ -294,37 +317,47 @@ void init_Absorption(py::module& m) {
       .def("pdf", &Absorption::pdf);
 }
 
-void init_ElasticSVT(py::module& m) {
-  py::class_<ElasticSVT, AngleEnergy, std::shared_ptr<ElasticSVT>>(m,
-                                                                   "ElasticSVT")
-      .def(py::init<const AngleDistribution&, double, double, bool, double>(),
-           py::arg("angle"), py::arg("awr"), py::arg("temperature"),
-           py::arg("use_tar") = true, py::arg("tar_threshold") = 400.)
-      .def("sample_angle_energy", &ElasticSVT::sample_angle_energy)
-      .def("angle_pdf", &ElasticSVT::angle_pdf)
-      .def("pdf", &ElasticSVT::pdf)
-      .def("angle_distribution", &ElasticSVT::angle_distribution)
-      .def("awr", &ElasticSVT::awr)
-      .def("use_tar", &ElasticSVT::use_tar)
-      .def("tar_threshold", &ElasticSVT::tar_threshold)
-      .def("temperature", &ElasticSVT::temperature);
-}
+void init_Elastic(py::module& m) {
+  py::class_<ElasticDopplerBroadener, PyElasticDopplerBroadener,
+             std::shared_ptr<ElasticDopplerBroadener>>(
+      m, "ElasticDopplerBroadener")
+      .def(py::init<>())
+      .def("sample_target_velocity",
+           &ElasticDopplerBroadener::sample_target_velocity)
+      .def("algorithm", &ElasticDopplerBroadener::algorithm);
 
-void init_ElasticDBRC(py::module& m) {
-  py::class_<ElasticDBRC, AngleEnergy, std::shared_ptr<ElasticDBRC>>(
-      m, "ElasticDBRC")
-      .def(py::init<const CrossSection&, const AngleDistribution&, double,
-                    double, bool, double>(),
-           py::arg("xs"), py::arg("angle"), py::arg("awr"),
+  py::class_<ElasticSVT, ElasticDopplerBroadener, std::shared_ptr<ElasticSVT>>(
+      m, "ElasticSVT")
+      .def(py::init<>())
+      .def("sample_target_velocity", &ElasticSVT::sample_target_velocity)
+      .def("algorithm", &ElasticSVT::algorithm);
+
+  py::class_<ElasticDBRC, ElasticDopplerBroadener,
+             std::shared_ptr<ElasticDBRC>>(m, "ElasticDBRC")
+      .def(py::init<const CrossSection&>())
+      .def("sample_target_velocity", &ElasticDBRC::sample_target_velocity)
+      .def("algorithm", &ElasticDBRC::algorithm)
+      .def("elastic_0K_xs", &ElasticDBRC::elastic_0K_xs);
+
+  py::class_<Elastic, AngleEnergy, std::shared_ptr<Elastic>>(m, "Elastic")
+      .def(py::init<std::shared_ptr<ElasticDopplerBroadener>,
+                    const AngleDistribution&, double, double, bool, double>(),
+           py::arg("broadener"), py::arg("angle"), py::arg("awr"),
            py::arg("temperature"), py::arg("use_tar") = true,
            py::arg("tar_threshold") = 400.)
-      .def("sample_angle_energy", &ElasticDBRC::sample_angle_energy)
-      .def("angle_pdf", &ElasticDBRC::angle_pdf)
-      .def("pdf", &ElasticDBRC::pdf)
-      .def("elastic_0K_xs", &ElasticDBRC::elastic_0K_xs)
-      .def("angle_distribution", &ElasticDBRC::angle_distribution)
-      .def("awr", &ElasticDBRC::awr)
-      .def("use_tar", &ElasticDBRC::use_tar)
-      .def("tar_threshold", &ElasticDBRC::tar_threshold)
-      .def("temperature", &ElasticDBRC::temperature);
+      .def("elastic_doppler_broadener", &Elastic::elastic_doppler_broadener)
+      .def("set_elastic_doppler_broadener",
+           &Elastic::set_elastic_doppler_broadener)
+      .def("sample_angle_energy", &Elastic::sample_angle_energy)
+      .def("angle_pdf", &Elastic::angle_pdf)
+      .def("pdf", &Elastic::pdf)
+      .def("angle_distribution", &Elastic::angle_distribution)
+      .def("awr", &Elastic::awr)
+      .def("use_tar", &Elastic::use_tar)
+      .def("set_use_tar", &Elastic::set_use_tar)
+      .def("tar_threshold", &Elastic::tar_threshold)
+      .def("set_tar_threshold", &Elastic::set_tar_threshold)
+      .def("temperature", &Elastic::temperature)
+      .def("set_temperature", &Elastic::set_temperature)
+      .def("clone", &Elastic::clone);
 }
