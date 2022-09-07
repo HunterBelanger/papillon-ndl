@@ -68,11 +68,8 @@ void init_STNeutron(py::module& m) {
       .def("photon_production_xs", &STNeutron::photon_production_xs)
       .def("reaction", &STNeutron::reaction)
       .def("urr_ptables", &STNeutron::urr_ptables)
-      .def("elastic_distribution",
-           py::overload_cast<>(&STNeutron::elastic_distribution, py::const_),
+      .def("elastic", py::overload_cast<>(&STNeutron::elastic, py::const_),
            py::return_value_policy::reference_internal)
-      .def("elastic_distribution",
-           py::overload_cast<>(&STNeutron::elastic_distribution),
-           py::return_value_policy::reference_internal)
-      .def("elastic_distribution", &STNeutron::set_elastic_distribution);
+      .def("elastic", py::overload_cast<>(&STNeutron::elastic),
+           py::return_value_policy::reference_internal);
 }

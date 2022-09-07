@@ -74,6 +74,11 @@ Elastic
 
 .. doxygenclass:: pndl::Elastic
 
+ElasticDopplerBroadener
+-----------------------
+
+.. doxygenclass:: pndl::ElasticDopplerBroadener
+
 ElasticSVT
 ----------
 

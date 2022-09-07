@@ -42,7 +42,6 @@ set(PNDL_SOURCE_LIST src/element.cpp
                      src/tabular_energy_angle.cpp
                      src/multiple_distribution.cpp
                      src/cm_distribution.cpp
-                     src/svt.cpp
                      src/elastic.cpp
                      src/elastic_svt.cpp
                      src/elastic_dbrc.cpp

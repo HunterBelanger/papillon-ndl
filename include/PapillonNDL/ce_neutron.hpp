@@ -129,20 +129,13 @@ class CENeutron<CrossSection> : public CENeutronBase {
    * @brief Returns a reference to the Elastic instance which contains the
    *        AngleEnergy distribution for elastic scattering.
    */
-  const Elastic& elastic_distribution() const { return *elastic_distribution_; }
+  const Elastic& elastic() const { return *elastic_distribution_; }
 
   /**
    * @brief Returns a modifiable reference to the Elastic instance which
    *        contains the AngleEnergy distribution for elastic scattering.
    */
-  Elastic& elastic_distribution() { return *elastic_distribution_; }
-
-  /**
-   * @brief Sets an new Elastic scattering distribution.
-   * @param elastic Pointer to new Elastic instance to be used for elastic
-   *                scattering.
-   */
-  void set_elastic_distribution(const std::shared_ptr<Elastic>& elastic);
+  Elastic& elastic() { return *elastic_distribution_; }
 
  private:
   double temperature_;

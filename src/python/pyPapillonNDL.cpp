@@ -57,8 +57,6 @@ extern void init_AngleEnergyPacket(py::module&);
 extern void init_AngleEnergy(py::module&);
 extern void init_Uncorrelated(py::module&);
 extern void init_Elastic(py::module&);
-extern void init_ElasticSVT(py::module&);
-extern void init_ElasticDBRC(py::module&);
 extern void init_NBody(py::module&);
 extern void init_KalbachTable(py::module&);
 extern void init_Kalbach(py::module&);
@@ -123,8 +121,6 @@ PYBIND11_MODULE(pyPapillonNDL, m) {
   init_AngleEnergy(m);
   init_Uncorrelated(m);
   init_Elastic(m);
-  init_ElasticSVT(m);
-  init_ElasticDBRC(m);
   init_NBody(m);
   init_KalbachTable(m);
   init_Kalbach(m);

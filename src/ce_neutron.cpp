@@ -22,8 +22,7 @@
  * */
 #include <PapillonNDL/ce_neutron.hpp>
 #include <PapillonNDL/elastic_svt.hpp>
-
-#include "PapillonNDL/pndl_exception.hpp"
+#include <PapillonNDL/pndl_exception.hpp>
 
 namespace pndl {
 
@@ -98,8 +97,8 @@ CENeutron<CrossSection>::CENeutron(const ACE& ace)
 
   // Make elastic scatter distribution
   try {
-    elastic_distribution_ =
-        std::make_shared<ElasticSVT>(elastic_angle_, awr_, temperature_);
+    elastic_distribution_ = std::make_shared<Elastic>(
+        std::make_shared<ElasticSVT>(), elastic_angle_, awr_, temperature_);
   } catch (PNDLException& err) {
     std::string mssg = "Could not create Elastic AngleEnergy distribution.";
     err.add_to_exception(mssg);
@@ -186,17 +185,6 @@ CENeutron<CrossSection>::CENeutron(const ACE& ace, const CENeutron& nuclide)
     err.add_to_exception(mssg);
     throw err;
   }
-}
-
-void CENeutron<CrossSection>::set_elastic_distribution(
-    const std::shared_ptr<Elastic>& elastic) {
-  if (elastic == nullptr) {
-    std::string mssg =
-        "Provided a nullptr for elastic AngleEnergy distribution.";
-    throw PNDLException(mssg);
-  }
-
-  elastic_distribution_ = elastic;
 }
 
 std::shared_ptr<CrossSection> CENeutron<CrossSection>::compute_fission_xs() {

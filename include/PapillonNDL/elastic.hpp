@@ -25,6 +25,7 @@
 
 #include <PapillonNDL/angle_distribution.hpp>
 #include <PapillonNDL/angle_energy.hpp>
+#include <PapillonNDL/elastic_doppler_broadener.hpp>
 #include <functional>
 #include <memory>
 #include <optional>
@@ -35,8 +36,6 @@
  */
 
 namespace pndl {
-
-struct Vector;
 
 /**
  * @brief This class is used to sample elastic scattering of neutrons off of a
@@ -53,10 +52,55 @@ struct Vector;
 class Elastic : public AngleEnergy {
  public:
   /**
+   * @param broadener Shared pointer to the broadening method for sampling the
+   *                  target velocity.
+   * @param angle The AngleDistribution for elastic scattering. This
+   *              distribution must be given in the center of mass frame.
+   * @param awr Atomic weight ratio of the nuclide.
+   * @param temperature Temperature in Kelvin of the nuclide.
+   * @param use_tar Flag for using the Target At Rest approximation. Default
+   *                value is true.
+   * @param tar_threshold The threshold for applying the Target At Rest
+   *                      approximation. Default value is 400.
+   */
+  Elastic(std::shared_ptr<ElasticDopplerBroadener> broadener,
+          const AngleDistribution& angle, double awr, double temperature,
+          bool use_tar = true, double tar_threshold = 400.);
+
+  AngleEnergyPacket sample_angle_energy(
+      double E_in, std::function<double()> rng) const override final;
+
+  std::optional<double> angle_pdf(double /*E_in*/,
+                                  double /*mu*/) const override final {
+    return std::nullopt;
+  }
+
+  std::optional<double> pdf(double /*E_in*/, double /*mu*/,
+                            double /*E_out*/) const override final {
+    return std::nullopt;
+  }
+
+  /**
    * @brief Returns the AngleDistribution which describes the distribution for
    *        the cosine of the scattering angle in the center-of-mass frame.
    */
   const AngleDistribution& angle_distribution() const { return angle_; }
+
+  /**
+   * @brief Returns a reference to the ElasticDopplerBroadener for sampling the
+   *        target velocity.
+   */
+  const ElasticDopplerBroadener& elastic_doppler_broadener() const {
+    return *broadener_;
+  }
+
+  /**
+   * @brief Sets a new elastic scattering broadening method, for sampling the
+   *        velocity of target.
+   * @brief broadener Shared pointer to the new broadening method.
+   */
+  void set_elastic_doppler_broadener(
+      std::shared_ptr<ElasticDopplerBroadener> broadener);
 
   /**
    * @breif Returns the Atomic Weight Ratio for the nuclide.
@@ -106,7 +150,9 @@ class Elastic : public AngleEnergy {
   /**
    * @brief Makes a copy of the current elastic distribution.
    */
-  virtual std::shared_ptr<Elastic> clone() const = 0;
+  std::shared_ptr<Elastic> clone() const {
+    return std::make_shared<Elastic>(*this);
+  }
 
  protected:
   AngleDistribution angle_;
@@ -114,19 +160,7 @@ class Elastic : public AngleEnergy {
   double kT_;  // Temperature in MeV
   bool use_tar_;
   double tar_threshold_;
-
-  /**
-   * @param angle The AngleDistribution for elastic scattering. This
-   *              distribution must be given in the center of mass frame.
-   * @param awr Atomic weight ratio of the nuclide.
-   * @param temperature Temperature in Kelvin of the nuclide.
-   * @param use_tar Flag for using the Target At Rest approximation. Default
-   *                value is true.
-   * @param tar_threshold The threshold for applying the Target At Rest
-   *                      approximation. Default value is 400.
-   */
-  Elastic(const AngleDistribution& angle, double awr, double temperature,
-          bool use_tar = true, double tar_threshold = 400.);
+  std::shared_ptr<ElasticDopplerBroadener> broadener_;
 };
 
 }  // namespace pndl
