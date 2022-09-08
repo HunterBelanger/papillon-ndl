@@ -43,6 +43,7 @@
 #include <PapillonNDL/nbody.hpp>
 #include <PapillonNDL/st_coherent_elastic.hpp>
 #include <PapillonNDL/st_incoherent_elastic.hpp>
+#include <PapillonNDL/summed_fission_spectrum.hpp>
 #include <PapillonNDL/tabular_energy_angle.hpp>
 #include <PapillonNDL/uncorrelated.hpp>
 #include <array>
@@ -293,6 +294,16 @@ void init_MultipleDistribution(py::module& m) {
            py::return_value_policy::reference_internal)
       .def("angle_pdf", &MultipleDistribution::angle_pdf)
       .def("pdf", &MultipleDistribution::pdf);
+}
+
+void init_SummedFissionSpectrum(py::module& m) {
+  py::class_<SummedFissionSpectrum, AngleEnergy,
+             std::shared_ptr<SummedFissionSpectrum>>(m, "SummedFissionSpectrum")
+      .def(py::init<std::shared_ptr<STReaction>, std::shared_ptr<STReaction>,
+                    std::shared_ptr<STReaction>, std::shared_ptr<STReaction>>())
+      .def("sample_angle_energy", &SummedFissionSpectrum::sample_angle_energy)
+      .def("angle_pdf", &SummedFissionSpectrum::angle_pdf)
+      .def("pdf", &SummedFissionSpectrum::pdf);
 }
 
 void init_CMDistribution(py::module& m) {
