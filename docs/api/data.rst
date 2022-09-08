@@ -38,6 +38,11 @@ STReaction
 
 .. doxygenclass:: pndl::Reaction< CrossSection >
 
+Fission
+-------
+
+.. doxygenclass:: pndl::Fission
+
 DelayedGroup
 ------------
 
