@@ -41,6 +41,7 @@ set(PNDL_SOURCE_LIST src/element.cpp
                      src/energy_angle_table.cpp
                      src/tabular_energy_angle.cpp
                      src/multiple_distribution.cpp
+                     src/summed_fission_spectrum.cpp
                      src/cm_distribution.cpp
                      src/elastic.cpp
                      src/elastic_svt.cpp
@@ -48,6 +49,7 @@ set(PNDL_SOURCE_LIST src/element.cpp
                      src/energy_grid.cpp
                      src/cross_section.cpp
                      src/delayed_group.cpp
+                     src/fission.cpp
                      src/ce_neutron_base.cpp
                      src/ce_neutron.cpp
                      src/reaction_base.cpp
@@ -153,6 +155,7 @@ if(PNDL_PYTHON)
                                     src/python/cross_section.cpp
                                     src/python/reaction.cpp
                                     src/python/delayed_group.cpp
+                                    src/python/fission.cpp
                                     src/python/ce_neutron.cpp
                                     src/python/prng.cpp
                                     src/python/nuclide.cpp
