@@ -36,7 +36,8 @@ CENeutron<CrossSection>::CENeutron(const ACE& ace)
       heating_number_(nullptr),
       fission_xs_(nullptr),
       photon_production_xs_(nullptr),
-      elastic_distribution_(nullptr),
+      elastic_(nullptr),
+      fission_(nullptr),
       reactions_(),
       urr_ptables_(nullptr) {
   // Construct energy grid
@@ -65,14 +66,36 @@ CENeutron<CrossSection>::CENeutron(const ACE& ace)
   uint32_t NMT = ace.nxs(3);
   reaction_indices_.fill(-1);
   int32_t current_reaction_index = 0;
-  mt_list_.resize(NMT, 0);
+  mt_list_.reserve(NMT);
   reactions_.reserve(NMT);
-  for (uint32_t indx = 0; indx < mt_list_.size(); indx++) {
+  for (uint32_t indx = 0; indx < NMT; indx++) {
     uint32_t MT = ace.xss<uint32_t>(ace.MTR() + indx);
-    mt_list_[indx] = MT;
-    reactions_.emplace_back(ace, indx, energy_grid_);
-    reaction_indices_[MT] = current_reaction_index;
-    current_reaction_index++;
+    if (MT != 18 && MT != 19 && MT != 20 && MT != 21 && MT != 38) {
+      mt_list_.push_back(MT);
+      reactions_.emplace_back(ace, indx, energy_grid_);
+      reaction_indices_[MT] = current_reaction_index;
+      current_reaction_index++;
+    }
+  }
+
+  // Make elastic scatter distribution
+  try {
+    elastic_ = std::make_shared<Elastic>(
+        std::make_shared<ElasticSVT>(),
+        AngleDistribution(ace, ace.xss<int>(ace.LAND())), awr_, temperature_);
+  } catch (PNDLException& err) {
+    std::string mssg = "Could not create Elastic AngleEnergy distribution.";
+    err.add_to_exception(mssg);
+    throw err;
+  }
+
+  // Make fission info
+  try {
+    fission_ = std::make_shared<Fission>(ace, energy_grid_);
+  } catch (PNDLException& err) {
+    std::string mssg = "Could not create Fission instance.";
+    err.add_to_exception(mssg);
+    throw err;
   }
 
   fission_xs_ = compute_fission_xs();
@@ -93,16 +116,6 @@ CENeutron<CrossSection>::CENeutron(const ACE& ace)
     std::string mssg = "Could not construct URRPTables for nuclide data.";
     error.add_to_exception(mssg);
     throw error;
-  }
-
-  // Make elastic scatter distribution
-  try {
-    elastic_distribution_ = std::make_shared<Elastic>(
-        std::make_shared<ElasticSVT>(), elastic_angle_, awr_, temperature_);
-  } catch (PNDLException& err) {
-    std::string mssg = "Could not create Elastic AngleEnergy distribution.";
-    err.add_to_exception(mssg);
-    throw err;
   }
 }
 
@@ -116,7 +129,8 @@ CENeutron<CrossSection>::CENeutron(const ACE& ace, const CENeutron& nuclide)
       heating_number_(nullptr),
       fission_xs_(nullptr),
       photon_production_xs_(nullptr),
-      elastic_distribution_(nullptr),
+      elastic_(nullptr),
+      fission_(nullptr),
       reactions_(),
       urr_ptables_(nullptr) {
   // Construct energy grid
@@ -147,13 +161,35 @@ CENeutron<CrossSection>::CENeutron(const ACE& ace, const CENeutron& nuclide)
   int32_t current_reaction_index = 0;
   mt_list_.resize(NMT, 0);
   reactions_.reserve(NMT);
-  for (uint32_t indx = 0; indx < mt_list_.size(); indx++) {
+  for (uint32_t indx = 0; indx < NMT; indx++) {
     uint32_t MT = ace.xss<uint32_t>(ace.MTR() + indx);
-    mt_list_[indx] = MT;
-    reactions_.emplace_back(ace, indx, energy_grid_,
-                            nuclide.reactions_[nuclide.reaction_indices_[MT]]);
-    reaction_indices_[MT] = current_reaction_index;
-    current_reaction_index++;
+    if (MT != 18 && MT != 19 && MT != 20 && MT != 21 && MT != 38) {
+      mt_list_.push_back(MT);
+      reactions_.emplace_back(
+          ace, indx, energy_grid_,
+          nuclide.reactions_[nuclide.reaction_indices_[MT]]);
+      reaction_indices_[MT] = current_reaction_index;
+      current_reaction_index++;
+    }
+  } 
+
+  // Make elastic scatter distribution
+  try {
+    elastic_ = nuclide.elastic_->clone();
+    elastic_->set_temperature(temperature_);
+  } catch (PNDLException& err) {
+    std::string mssg = "Could not create Elastic AngleEnergy distribution.";
+    err.add_to_exception(mssg);
+    throw err;
+  }
+
+  // Make fission info
+  try {
+    fission_ = std::make_shared<Fission>(ace, energy_grid_, *nuclide.fission_);
+  } catch (PNDLException& err) {
+    std::string mssg = "Could not create Fission instance.";
+    err.add_to_exception(mssg);
+    throw err;
   }
 
   fission_xs_ = compute_fission_xs();
@@ -175,16 +211,6 @@ CENeutron<CrossSection>::CENeutron(const ACE& ace, const CENeutron& nuclide)
     error.add_to_exception(mssg);
     throw error;
   }
-
-  // Make elastic scatter distribution
-  try {
-    elastic_distribution_ = nuclide.elastic_distribution_->clone();
-    elastic_distribution_->set_temperature(temperature_);
-  } catch (PNDLException& err) {
-    std::string mssg = "Could not create Elastic AngleEnergy distribution.";
-    err.add_to_exception(mssg);
-    throw err;
-  }
 }
 
 std::shared_ptr<CrossSection> CENeutron<CrossSection>::compute_fission_xs() {
@@ -192,33 +218,33 @@ std::shared_ptr<CrossSection> CENeutron<CrossSection>::compute_fission_xs() {
     return std::make_shared<CrossSection>(0., energy_grid_);
   }
 
-  if (this->has_reaction(18)) {
-    return std::make_shared<CrossSection>(this->reaction(18).xs());
+  if (fission_->has_reaction(18)) {
+    return std::make_shared<CrossSection>(fission_->reaction(18).xs());
   }
 
   // Life is difficult. We need to sum the products.
   std::size_t lowest_index = energy_grid_->size();
-  if (this->has_reaction(19)) {
-    if (this->reaction(19).xs().index() < lowest_index) {
-      lowest_index = this->reaction(19).xs().index();
+  if (fission_->has_reaction(19)) {
+    if (fission_->reaction(19).xs().index() < lowest_index) {
+      lowest_index = fission_->reaction(19).xs().index();
     }
   }
 
-  if (this->has_reaction(20)) {
-    if (this->reaction(20).xs().index() < lowest_index) {
-      lowest_index = this->reaction(20).xs().index();
+  if (fission_->has_reaction(20)) {
+    if (fission_->reaction(20).xs().index() < lowest_index) {
+      lowest_index = fission_->reaction(20).xs().index();
     }
   }
 
-  if (this->has_reaction(21)) {
-    if (this->reaction(21).xs().index() < lowest_index) {
-      lowest_index = this->reaction(21).xs().index();
+  if (fission_->has_reaction(21)) {
+    if (fission_->reaction(21).xs().index() < lowest_index) {
+      lowest_index = fission_->reaction(21).xs().index();
     }
   }
 
-  if (this->has_reaction(38)) {
-    if (this->reaction(38).xs().index() < lowest_index) {
-      lowest_index = this->reaction(38).xs().index();
+  if (fission_->has_reaction(38)) {
+    if (fission_->reaction(38).xs().index() < lowest_index) {
+      lowest_index = fission_->reaction(38).xs().index();
     }
   }
 
@@ -226,20 +252,20 @@ std::shared_ptr<CrossSection> CENeutron<CrossSection>::compute_fission_xs() {
   std::vector<double> fiss_xs(energy_grid_->size() - lowest_index, 0.);
 
   for (std::size_t i = lowest_index; i < energy_grid_->size(); i++) {
-    if (this->has_reaction(19)) {
-      fiss_xs[i - lowest_index] += this->reaction(19).xs()[i];
+    if (fission_->has_reaction(19)) {
+      fiss_xs[i - lowest_index] += fission_->reaction(19).xs()[i];
     }
 
-    if (this->has_reaction(20)) {
-      fiss_xs[i - lowest_index] += this->reaction(20).xs()[i];
+    if (fission_->has_reaction(20)) {
+      fiss_xs[i - lowest_index] += fission_->reaction(20).xs()[i];
     }
 
-    if (this->has_reaction(21)) {
-      fiss_xs[i - lowest_index] += this->reaction(21).xs()[i];
+    if (fission_->has_reaction(21)) {
+      fiss_xs[i - lowest_index] += fission_->reaction(21).xs()[i];
     }
 
-    if (this->has_reaction(38)) {
-      fiss_xs[i - lowest_index] += this->reaction(38).xs()[i];
+    if (fission_->has_reaction(38)) {
+      fiss_xs[i - lowest_index] += fission_->reaction(38).xs()[i];
     }
   }
 
