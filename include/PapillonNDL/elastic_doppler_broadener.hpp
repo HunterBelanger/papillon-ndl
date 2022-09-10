@@ -23,18 +23,19 @@
 #ifndef PAPILLON_NDL_ELASTIC_DOPPLER_BROADENER_H
 #define PAPILLON_NDL_ELASTIC_DOPPLER_BROADENER_H
 
-#include <array>
-#include <functional>
-#include <string>
-
 /**
  * @file
  * @author Hunter Belanger
  */
 
+#include <array>
+#include <functional>
+#include <string>
+#include <memory>
+
 namespace pndl {
 
-class ElasticDopplerBroadener {
+class ElasticDopplerBroadener : public std::enable_shared_from_this<ElasticDopplerBroadener> {
  public:
   ElasticDopplerBroadener() = default;
   ~ElasticDopplerBroadener() = default;

@@ -23,15 +23,15 @@
 #ifndef PAPILLON_NDL_CM_DISTRIBUTION_H
 #define PAPILLON_NDL_CM_DISTRIBUTION_H
 
-#include <PapillonNDL/angle_energy.hpp>
-#include <PapillonNDL/frame.hpp>
-#include <memory>
-#include <vector>
-
 /**
  * @file
  * @author Hunter Belanger
  */
+
+#include <PapillonNDL/angle_energy.hpp>
+#include <PapillonNDL/frame.hpp>
+#include <memory>
+#include <vector>
 
 namespace pndl {
 

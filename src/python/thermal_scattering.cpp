@@ -25,11 +25,11 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
-#include <PapillonNDL/st_tsl_reaction.hpp>
 #include <PapillonNDL/st_coherent_elastic.hpp>
 #include <PapillonNDL/st_incoherent_elastic_ace.hpp>
 #include <PapillonNDL/st_incoherent_inelastic.hpp>
 #include <PapillonNDL/st_thermal_scattering_law.hpp>
+#include <PapillonNDL/st_tsl_reaction.hpp>
 
 namespace py = pybind11;
 
@@ -46,13 +46,13 @@ class PySTTSLReaction : public STTSLReaction {
 
   AngleEnergyPacket sample_angle_energy(
       double E_in, std::function<double()> rng) const override {
-    PYBIND11_OVERRIDE_PURE(AngleEnergyPacket, STTSLReaction, sample_angle_energy,
-                           E_in, rng);
+    PYBIND11_OVERRIDE_PURE(AngleEnergyPacket, STTSLReaction,
+                           sample_angle_energy, E_in, rng);
   }
 
   std::optional<double> angle_pdf(double E_in, double mu) const override {
-    PYBIND11_OVERRIDE_PURE(std::optional<double>, STTSLReaction, angle_pdf, E_in,
-                           mu);
+    PYBIND11_OVERRIDE_PURE(std::optional<double>, STTSLReaction, angle_pdf,
+                           E_in, mu);
   }
 
   std::optional<double> pdf(double E_in, double mu,
@@ -63,9 +63,10 @@ class PySTTSLReaction : public STTSLReaction {
 };
 
 void init_STTSLReaction(py::module& m) {
-  py::class_<STTSLReaction, PySTTSLReaction, std::shared_ptr<STTSLReaction>>(m, "STTSLReaction")
-    .def(py::init<>())
-    .def("xs", &STTSLReaction::xs);
+  py::class_<STTSLReaction, PySTTSLReaction, std::shared_ptr<STTSLReaction>>(
+      m, "STTSLReaction")
+      .def(py::init<>())
+      .def("xs", &STTSLReaction::xs);
 }
 
 void init_STCoherentElastic(py::module& m) {
@@ -82,7 +83,8 @@ void init_STCoherentElastic(py::module& m) {
 
 void init_STInoherentElasticACE(py::module& m) {
   py::class_<STIncoherentElasticACE, AngleEnergy,
-             std::shared_ptr<STIncoherentElasticACE>>(m, "STIncoherentElasticACE")
+             std::shared_ptr<STIncoherentElasticACE>>(m,
+                                                      "STIncoherentElasticACE")
       .def(py::init<const ACE&>())
       .def("xs", py::overload_cast<>(&STIncoherentElasticACE::xs, py::const_),
            py::return_value_policy::reference_internal)
@@ -96,8 +98,8 @@ void init_STInoherentElasticACE(py::module& m) {
 }
 
 void init_STIncoherentInelastic(py::module& m) {
-  py::class_<STIncoherentInelastic, STTSLReaction, std::shared_ptr<STIncoherentInelastic>>(
-      m, "STIncoherentInelastic")
+  py::class_<STIncoherentInelastic, STTSLReaction,
+             std::shared_ptr<STIncoherentInelastic>>(m, "STIncoherentInelastic")
       .def(py::init<const ACE&, bool>())
       .def("xs", py::overload_cast<>(&STIncoherentInelastic::xs, py::const_),
            py::return_value_policy::reference_internal)
@@ -114,7 +116,8 @@ void init_STIncoherentInelastic(py::module& m) {
 void init_STThermalScatteringLaw(py::module& m) {
   py::class_<STThermalScatteringLaw, std::shared_ptr<STThermalScatteringLaw>>(
       m, "STThermalScatteringLaw")
-      .def(py::init<const ACE&, bool>())
+      .def(py::init<const ACE&, bool>(), py::arg("ace"),
+           py::arg("unit_based_interpolation") = false)
       .def("zaid", &STThermalScatteringLaw::zaid)
       .def("awr", &STThermalScatteringLaw::awr)
       .def("temperature", &STThermalScatteringLaw::temperature)

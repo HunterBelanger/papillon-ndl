@@ -23,15 +23,15 @@
 #ifndef PAPILLON_NDL_ELASTIC_SVT_H
 #define PAPILLON_NDL_ELASTIC_SVT_H
 
-#include <PapillonNDL/elastic_doppler_broadener.hpp>
-#include <functional>
-#include <memory>
-#include <optional>
-
 /**
  * @file
  * @author Hunter Belanger
  */
+
+#include <PapillonNDL/elastic_doppler_broadener.hpp>
+#include <functional>
+#include <memory>
+#include <optional>
 
 namespace pndl {
 

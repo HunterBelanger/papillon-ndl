@@ -23,6 +23,11 @@
 #ifndef PAPILLON_NDL_CONTINUOUS_ENERGY_DISCRETE_COSINES_H
 #define PAPILLON_NDL_CONTINUOUS_ENERGY_DISCRETE_COSINES_H
 
+/**
+ * @file
+ * @author Hunter Belanger
+ */
+
 #include <PapillonNDL/ace.hpp>
 #include <PapillonNDL/angle_energy.hpp>
 

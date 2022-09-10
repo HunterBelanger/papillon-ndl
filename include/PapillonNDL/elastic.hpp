@@ -23,17 +23,17 @@
 #ifndef PAPILLON_NDL_ELASTIC_H
 #define PAPILLON_NDL_ELASTIC_H
 
+/**
+ * @file
+ * @author Hunter Belanger
+ */
+
 #include <PapillonNDL/angle_distribution.hpp>
 #include <PapillonNDL/angle_energy.hpp>
 #include <PapillonNDL/elastic_doppler_broadener.hpp>
 #include <functional>
 #include <memory>
 #include <optional>
-
-/**
- * @file
- * @author Hunter Belanger
- */
 
 namespace pndl {
 

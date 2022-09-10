@@ -23,6 +23,11 @@
 #ifndef PAPILLON_NDL_VERSION_H
 #define PAPILLON_NDL_VERSION_H
 
+/**
+ * @file
+ * @author Hunter Belanger
+ */
+
 namespace pndl {
 extern const unsigned int VERSION_MAJOR;
 extern const unsigned int VERSION_MINOR;

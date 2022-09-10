@@ -26,10 +26,6 @@
 #include <PapillonNDL/tabulated_1d.hpp>
 #include <functional>
 
-#include "PapillonNDL/interpolation.hpp"
-#include "PapillonNDL/legendre.hpp"
-#include "PapillonNDL/pctable.hpp"
-
 namespace pndl {
 
 AngleTable::AngleTable(const ACE& ace, std::size_t i) : distribution_(ace, i) {

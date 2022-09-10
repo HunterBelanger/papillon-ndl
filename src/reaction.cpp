@@ -21,10 +21,9 @@
  *
  * */
 #include <PapillonNDL/reaction.hpp>
+#include <PapillonNDL/pndl_exception.hpp>
 #include <memory>
 
-#include "PapillonNDL/pndl_exception.hpp"
-#include "PapillonNDL/reaction_base.hpp"
 
 /**
  * @file

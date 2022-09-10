@@ -23,14 +23,14 @@
 #ifndef PAPILLON_NDL_ABSORPTION_H
 #define PAPILLON_NDL_ABSORPTION_H
 
-#include <PapillonNDL/angle_energy.hpp>
-#include <cstddef>
-#include <optional>
-
 /**
  * @file
  * @author Hunter Belanger
  */
+
+#include <PapillonNDL/angle_energy.hpp>
+#include <cstddef>
+#include <optional>
 
 namespace pndl {
 

@@ -31,7 +31,6 @@
 #include <PapillonNDL/summed_fission_spectrum.hpp>
 #include <PapillonNDL/tabulated_1d.hpp>
 #include <memory>
-#include "PapillonNDL/function_1d.hpp"
 
 namespace pndl {
 

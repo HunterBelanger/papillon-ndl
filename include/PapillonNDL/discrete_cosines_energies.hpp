@@ -23,13 +23,13 @@
 #ifndef PAPILLON_NDL_DISCRETE_COSINES_ENERGIES_H
 #define PAPILLON_NDL_DISCRETE_COSINES_ENERGIES_H
 
-#include <PapillonNDL/ace.hpp>
-#include <PapillonNDL/angle_energy.hpp>
-
 /**
  * @file
  * @author Hunter Belanger
  */
+
+#include <PapillonNDL/ace.hpp>
+#include <PapillonNDL/angle_energy.hpp>
 
 namespace pndl {
 

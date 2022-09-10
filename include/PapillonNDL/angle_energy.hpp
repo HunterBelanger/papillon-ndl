@@ -23,14 +23,14 @@
 #ifndef PAPILLON_NDL_ANGLE_ENERGY_H
 #define PAPILLON_NDL_ANGLE_ENERGY_H
 
-#include <functional>
-#include <memory>
-#include <optional>
-
 /**
  * @file
  * @author Hunter Belanger
  */
+
+#include <functional>
+#include <memory>
+#include <optional>
 
 namespace pndl {
 

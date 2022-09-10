@@ -23,15 +23,15 @@
 #ifndef PAPILLON_NDL_ELASTIC_DBRC_H
 #define PAPILLON_NDL_ELASTIC_DBRC_H
 
-#include <PapillonNDL/cross_section.hpp>
-#include <PapillonNDL/elastic_doppler_broadener.hpp>
-#include <functional>
-#include <optional>
-
 /**
  * @file
  * @author Hunter Belanger
  */
+
+#include <PapillonNDL/cross_section.hpp>
+#include <PapillonNDL/elastic_doppler_broadener.hpp>
+#include <functional>
+#include <optional>
 
 namespace pndl {
 

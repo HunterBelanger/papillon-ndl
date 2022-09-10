@@ -21,19 +21,11 @@
  *
  * */
 #include <PapillonNDL/ce_neutron_base.hpp>
-#include <PapillonNDL/constant.hpp>
-#include <PapillonNDL/difference_1d.hpp>
 #include <PapillonNDL/pndl_exception.hpp>
-#include <PapillonNDL/polynomial_1d.hpp>
-#include <PapillonNDL/sum_1d.hpp>
-#include <PapillonNDL/tabulated_1d.hpp>
-#include <PapillonNDL/uncorrelated.hpp>
 #include <cstdint>
 #include <memory>
 #include <system_error>
 #include <vector>
-
-#include "PapillonNDL/delayed_group.hpp"
 
 namespace pndl {
 

@@ -25,8 +25,6 @@
 #include <PapillonNDL/tabulated_1d.hpp>
 #include <cstdint>
 
-#include "PapillonNDL/interpolation.hpp"
-
 namespace pndl {
 
 Tabulated1D::Tabulated1D(const std::vector<uint32_t>& NBT,

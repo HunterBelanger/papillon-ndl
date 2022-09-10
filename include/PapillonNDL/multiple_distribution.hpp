@@ -23,14 +23,14 @@
 #ifndef PAPILLON_NDL_MULTIPLE_DISTRIBUTION_H
 #define PAPILLON_NDL_MULTIPLE_DISTRIBUTION_H
 
-#include <PapillonNDL/angle_energy.hpp>
-#include <PapillonNDL/tabulated_1d.hpp>
-#include <vector>
-
 /**
  * @file
  * @author Hunter Belanger
  */
+
+#include <PapillonNDL/angle_energy.hpp>
+#include <PapillonNDL/tabulated_1d.hpp>
+#include <vector>
 
 namespace pndl {
 
