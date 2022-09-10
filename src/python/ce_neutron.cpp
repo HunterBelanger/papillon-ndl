@@ -39,16 +39,6 @@ void init_CENeutronBase(py::module& m) {
       .def("zaid", &CENeutronBase::zaid)
       .def("awr", &CENeutronBase::awr)
       .def("fissile", &CENeutronBase::fissile)
-      .def("elastic_angle_distribution",
-           &CENeutronBase::elastic_angle_distribution)
-      .def("nu_total", &CENeutronBase::nu_total,
-           py::return_value_policy::reference_internal)
-      .def("nu_prompt", &CENeutronBase::nu_prompt,
-           py::return_value_policy::reference_internal)
-      .def("nu_delayed", &CENeutronBase::nu_delayed,
-           py::return_value_policy::reference_internal)
-      .def("n_delayed_groups", &CENeutronBase::n_delayed_groups)
-      .def("delayed_group", &CENeutronBase::delayed_group)
       .def("mt_list", &CENeutronBase::mt_list)
       .def("has_reaction", &CENeutronBase::has_reaction);
 }
@@ -71,5 +61,7 @@ void init_STNeutron(py::module& m) {
       .def("elastic", py::overload_cast<>(&STNeutron::elastic, py::const_),
            py::return_value_policy::reference_internal)
       .def("elastic", py::overload_cast<>(&STNeutron::elastic),
+           py::return_value_policy::reference_internal)
+      .def("fission", &STNeutron::fission,
            py::return_value_policy::reference_internal);
 }

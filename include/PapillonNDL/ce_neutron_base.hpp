@@ -63,47 +63,14 @@ class CENeutronBase {
   bool fissile() const { return fissile_; }
 
   /**
-   * @brief Returns the function for total nu.
-   */
-  const Function1D& nu_total() const { return *nu_total_; }
-
-  /**
-   * @brief Returns the function for prompt nu.
-   */
-  const Function1D& nu_prompt() const { return *nu_prompt_; }
-
-  /**
-   * @brief Returns the function for delayed nu.
-   */
-  const Function1D& nu_delayed() const { return *nu_delayed_; }
-
-  /**
-   * @brief Returns the AngleDistribution for elastic scattering.
-   */
-  const AngleDistribution& elastic_angle_distribution() const {
-    return elastic_angle_;
-  }
-
-  /**
-   * @brief Returns the number of delayed neutron groups.
-   */
-  std::size_t n_delayed_groups() const { return delayed_groups_.size(); }
-
-  /**
-   * @brief Returns the ith delayed group data.
-   * @param i Index of the delayed group.
-   */
-  const DelayedGroup& delayed_group(std::size_t i) const {
-    return delayed_groups_[i];
-  }
-
-  /**
-   * @brief Returns a list of all MT reactions present for the nuclide.
+   * @brief Returns a list of all scattering and absorption MT reactions present
+   *        for the nuclide (other than elastic).
    */
   const std::vector<uint32_t>& mt_list() const { return mt_list_; }
 
   /**
-   * @brief Checks to see if a nucldie has a given reaction.
+   * @brief Checks to see if a nucldie has a given scattering or absorption
+   *        reaction.
    * @param mt MT reaction to search for.
    */
   bool has_reaction(uint32_t mt) const {
@@ -115,13 +82,6 @@ class CENeutronBase {
   double awr_;
   bool fissile_;
 
-  AngleDistribution elastic_angle_;
-
-  std::shared_ptr<Function1D> nu_total_;
-  std::shared_ptr<Function1D> nu_prompt_;
-  std::shared_ptr<Function1D> nu_delayed_;
-  std::vector<DelayedGroup> delayed_groups_;
-
   std::vector<uint32_t> mt_list_;
   std::array<int32_t, 892> reaction_indices_;
 
@@ -129,12 +89,6 @@ class CENeutronBase {
    * @param ace ACE file from which to construct the data.
    */
   CENeutronBase(const ACE& ace);
-
-  // Private helper methods
-  void read_fission_data(const ACE& ace);
-  std::shared_ptr<Function1D> read_nu(const ACE& ace, std::size_t i);
-  std::shared_ptr<Function1D> read_polynomial_nu(const ACE& ace, std::size_t i);
-  std::shared_ptr<Function1D> read_tabular_nu(const ACE& ace, std::size_t i);
 };
 
 }  // namespace pndl

@@ -19,6 +19,11 @@ MultipleDistribution
 
 .. doxygenclass:: pndl::MultipleDistribution
 
+SummedFissionSpectrum
+---------------------
+
+.. doxygenclass:: pndl::SummedFissionSpectrum
+
 CMDistribution
 --------------------
 
