@@ -63,5 +63,9 @@ void init_STNeutron(py::module& m) {
       .def("elastic", py::overload_cast<>(&STNeutron::elastic),
            py::return_value_policy::reference_internal)
       .def("fission", &STNeutron::fission,
-           py::return_value_policy::reference_internal);
+           py::return_value_policy::reference_internal)
+      .def("evaluate_xs",
+           py::overload_cast<double>(&STNeutron::evaluate_xs, py::const_))
+      .def("evaluate_xs", py::overload_cast<double, std::size_t>(
+                              &STNeutron::evaluate_xs, py::const_));
 }

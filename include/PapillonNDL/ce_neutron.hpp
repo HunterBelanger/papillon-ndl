@@ -30,9 +30,10 @@
 
 #include <PapillonNDL/ce_neutron_base.hpp>
 #include <PapillonNDL/elastic.hpp>
+#include <PapillonNDL/fission.hpp>
 #include <PapillonNDL/reaction.hpp>
 #include <PapillonNDL/urr_ptables.hpp>
-#include <PapillonNDL/fission.hpp>
+#include <PapillonNDL/xs_packet.hpp>
 #include <memory>
 
 namespace pndl {
@@ -143,6 +144,42 @@ class CENeutron<CrossSection> : public CENeutronBase {
    *        fission information.
    */
   const Fission& fission() { return *fission_; }
+
+  /**
+   * @brief Evaluates the important nuclide cross sections at a given energy,
+   *        with the grid point already provided.
+   * @param E Energy to evaluate the cross section at.
+   * @param i Index of the points for interpolation in the frame of the energy
+   *          grid.
+   */
+  XSPacket evaluate_xs(double Ein, std::size_t i) const {
+    XSPacket xs;
+    xs.total = total_xs_->evaluate(Ein, i);
+    xs.elastic = elastic_xs_->evaluate(Ein, i);
+    xs.fission = fission_xs_->evaluate(Ein, i);
+    xs.absorption = disappearance_xs_->evaluate(Ein, i) + xs.fission;
+    xs.heating = heating_number_->evaluate(Ein, i);
+    xs.inelastic = xs.total - xs.elastic - xs.absorption;
+
+    if (xs.inelastic < 0.) xs.inelastic = 0.;
+
+    if (this->has_reaction(102)) {
+      xs.capture = this->reaction(102).xs()(Ein, i);
+    } else {
+      xs.capture = 0.;
+    }
+
+    return xs;
+  }
+
+  /**
+   * @brief Evaluates the important nuclide cross sections at a given energy.
+   * @param E Energy to evaluate the cross section at.
+   */
+  XSPacket evaluate_xs(double Ein) const {
+    std::size_t i = energy_grid_->get_lower_index(Ein);
+    return this->evaluate_xs(Ein, i);
+  }
 
  private:
   double temperature_;
