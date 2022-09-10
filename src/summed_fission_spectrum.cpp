@@ -55,17 +55,17 @@ inline void SummedFissionSpectrum::compute_probabilities(
 
   // Get the energy index from the energy grid
   std::size_t i = reactions_[0]->xs().energy_grid().get_lower_index(E_in);
-  xs[0] = reactions_[0]->xs()(E_in, i);
-  xs[1] = reactions_[1]->xs()(E_in, i);
-  xs[2] = reactions_[2]->xs()(E_in, i);
-  xs[3] = reactions_[3]->xs()(E_in, i);
+  if (E_in > reactions_[0]->threshold()) xs[0] = reactions_[0]->xs()(E_in, i);
+  if (E_in > reactions_[1]->threshold()) xs[1] = reactions_[1]->xs()(E_in, i);
+  if (E_in > reactions_[2]->threshold()) xs[2] = reactions_[2]->xs()(E_in, i);
+  if (E_in > reactions_[3]->threshold()) xs[3] = reactions_[3]->xs()(E_in, i);
   const double xs_tot = xs[0] + xs[1] + xs[2] + xs[3];
 
   // Calculate probabilities
   probs[0] = xs[0] / xs_tot;
-  probs[1] = probs[0] + (xs[1] / xs_tot);
-  probs[2] = probs[1] + (xs[2] / xs_tot);
-  probs[3] = probs[2] + (xs[3] / xs_tot);
+  probs[1] = xs[1] / xs_tot;
+  probs[2] = xs[2] / xs_tot;
+  probs[3] = xs[3] / xs_tot;
 }
 
 AngleEnergyPacket SummedFissionSpectrum::sample_angle_energy(
@@ -73,43 +73,58 @@ AngleEnergyPacket SummedFissionSpectrum::sample_angle_energy(
   // Get probabilities
   std::array<double, 4> probs{0., 0., 0., 0.};
   this->compute_probabilities(probs, E_in);
+  std::array<double, 3> cumul{probs[0], probs[0] + probs[1],
+                              probs[0] + probs[1] + probs[2]};
 
   // Sample the distribution to use
   const double xi = rng();
-  if (xi < probs[0]) {
+  if (xi < cumul[0]) {
     return reactions_[0]->neutron_distribution().sample_angle_energy(E_in, rng);
-  } else if (xi < probs[1]) {
+  } else if (xi < cumul[1]) {
     return reactions_[1]->neutron_distribution().sample_angle_energy(E_in, rng);
-  } else if (xi < probs[2]) {
+  } else if (xi < cumul[2]) {
     return reactions_[2]->neutron_distribution().sample_angle_energy(E_in, rng);
   } else {
     return reactions_[3]->neutron_distribution().sample_angle_energy(E_in, rng);
   }
 }
 
-std::optional<double> SummedFissionSpectrum::angle_pdf(double E_in, double mu) const {
+std::optional<double> SummedFissionSpectrum::angle_pdf(double E_in,
+                                                       double mu) const {
   // Get probabilities
-  std::array<double, 4> probs {0., 0., 0., 0.};
+  std::array<double, 4> probs{0., 0., 0., 0.};
   this->compute_probabilities(probs, E_in);
 
   double pdf = 0;
 
   if (probs[0] > 0.) {
-    const auto pdf_0 = reactions_[0]->neutron_distribution().angle_pdf(E_in, mu);
-    if (pdf_0) pdf += probs[0] * pdf_0.value();
-    else return std::nullopt;
+    const auto pdf_0 =
+        reactions_[0]->neutron_distribution().angle_pdf(E_in, mu);
+    if (pdf_0)
+      pdf += probs[0] * pdf_0.value();
+    else
+      return std::nullopt;
   } else if (probs[1] > 0.) {
-    const auto pdf_1 = reactions_[1]->neutron_distribution().angle_pdf(E_in, mu);
-    if (pdf_1) pdf += (probs[1] - probs[0]) * pdf_1.value();
-    else return std::nullopt;
+    const auto pdf_1 =
+        reactions_[1]->neutron_distribution().angle_pdf(E_in, mu);
+    if (pdf_1)
+      pdf += probs[1] * pdf_1.value();
+    else
+      return std::nullopt;
   } else if (probs[2] > 0.) {
-    const auto pdf_2 = reactions_[2]->neutron_distribution().angle_pdf(E_in, mu);
-    if (pdf_2) pdf += (probs[2] - probs[1]) * pdf_2.value();
-    else return std::nullopt;
+    const auto pdf_2 =
+        reactions_[2]->neutron_distribution().angle_pdf(E_in, mu);
+    if (pdf_2)
+      pdf += probs[2] * pdf_2.value();
+    else
+      return std::nullopt;
   } else if (probs[3] > 0.) {
-    const auto pdf_3 = reactions_[3]->neutron_distribution().angle_pdf(E_in, mu);
-    if (pdf_3) pdf += (probs[3] - probs[2]) * pdf_3.value();
-    else return std::nullopt;
+    const auto pdf_3 =
+        reactions_[3]->neutron_distribution().angle_pdf(E_in, mu);
+    if (pdf_3)
+      pdf += probs[3] * pdf_3.value();
+    else
+      return std::nullopt;
   }
 
   return pdf;
@@ -118,27 +133,39 @@ std::optional<double> SummedFissionSpectrum::angle_pdf(double E_in, double mu) c
 std::optional<double> SummedFissionSpectrum::pdf(double E_in, double mu,
                                                  double E_out) const {
   // Get probabilities
-  std::array<double, 4> probs {0., 0., 0., 0.};
+  std::array<double, 4> probs{0., 0., 0., 0.};
   this->compute_probabilities(probs, E_in);
 
   double pdf = 0;
 
   if (probs[0] > 0.) {
-    const auto pdf_0 = reactions_[0]->neutron_distribution().pdf(E_in, mu, E_out);
-    if (pdf_0) pdf += probs[0] * pdf_0.value();
-    else return std::nullopt;
+    const auto pdf_0 =
+        reactions_[0]->neutron_distribution().pdf(E_in, mu, E_out);
+    if (pdf_0)
+      pdf += probs[0] * pdf_0.value();
+    else
+      return std::nullopt;
   } else if (probs[1] > 0.) {
-    const auto pdf_1 = reactions_[1]->neutron_distribution().pdf(E_in, mu, E_out);
-    if (pdf_1) pdf += (probs[1] - probs[0]) * pdf_1.value();
-    else return std::nullopt;
+    const auto pdf_1 =
+        reactions_[1]->neutron_distribution().pdf(E_in, mu, E_out);
+    if (pdf_1)
+      pdf += probs[1] * pdf_1.value();
+    else
+      return std::nullopt;
   } else if (probs[2] > 0.) {
-    const auto pdf_2 = reactions_[2]->neutron_distribution().pdf(E_in, mu, E_out);
-    if (pdf_2) pdf += (probs[2] - probs[1]) * pdf_2.value();
-    else return std::nullopt;
+    const auto pdf_2 =
+        reactions_[2]->neutron_distribution().pdf(E_in, mu, E_out);
+    if (pdf_2)
+      pdf += probs[2] * pdf_2.value();
+    else
+      return std::nullopt;
   } else if (probs[3] > 0.) {
-    const auto pdf_3 = reactions_[3]->neutron_distribution().pdf(E_in, mu, E_out);
-    if (pdf_3) pdf += (probs[3] - probs[2]) * pdf_3.value();
-    else return std::nullopt;
+    const auto pdf_3 =
+        reactions_[3]->neutron_distribution().pdf(E_in, mu, E_out);
+    if (pdf_3)
+      pdf += probs[3] * pdf_3.value();
+    else
+      return std::nullopt;
   }
 
   return pdf;
