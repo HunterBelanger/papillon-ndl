@@ -29,8 +29,9 @@
  */
 
 #include <PapillonNDL/ace.hpp>
-#include <PapillonNDL/angle_energy.hpp>
+#include <PapillonNDL/st_tsl_reaction.hpp>
 #include <PapillonNDL/tabulated_1d.hpp>
+#include <optional>
 
 namespace pndl {
 
@@ -38,7 +39,7 @@ namespace pndl {
  * @brief Holds the Incoherent Inelastic scattering data for a single nuclide
  *        at a single temperature.
  */
-class STIncoherentInelastic {
+class STIncoherentInelastic : public STTSLReaction {
  public:
   /**
    * @param ace ACE file which contains thermal scattering law.
@@ -48,19 +49,21 @@ class STIncoherentInelastic {
    *        based interpolation will be applied to the sampling of the energy.
    */
   STIncoherentInelastic(const ACE& ace, bool unit_based_interpolation = false);
-  ~STIncoherentInelastic() = default;
+  ~STIncoherentInelastic() = default; 
 
-  /**
-   * @brief Returns the cross section function.
-   */
-  const Tabulated1D& xs() const { return *xs_; }
+  double xs(double E) const override final { return xs_->evaluate(E); } 
 
-  /**
-   * @brief Evaluates the incoherent inelastic scattering cross section
-   *        at energy E.
-   * @param E Incident energy at which to evaluate the cross section in MeV.
-   */
-  double xs(double E) const { return xs_->evaluate(E); }
+  AngleEnergyPacket sample_angle_energy(double E_in, std::function<double()> rng) const override final {
+    return angle_energy_->sample_angle_energy(E_in, rng);
+  }
+
+  std::optional<double> angle_pdf(double E_in, double mu) const override final {
+    return angle_energy_->angle_pdf(E_in, mu);
+  }
+
+  std::optional<double> pdf(double E_in, double mu, double E_out) const override final {
+    return angle_energy_->pdf(E_in, mu, E_out);
+  }
 
   /**
    * @brief Retruns the maximum energy value which is tabulated for the
@@ -69,14 +72,9 @@ class STIncoherentInelastic {
   double max_energy() const { return this->xs_->max_x(); }
 
   /**
-   * @brief Sample the angle-energy distribution.
-   * @param E_in Incident energy in MeV.
-   * @param rng Random number generation function.
+   * @brief Returns the cross section function.
    */
-  AngleEnergyPacket sample_angle_energy(double E_in,
-                                        std::function<double()> rng) const {
-    return angle_energy_->sample_angle_energy(E_in, rng);
-  }
+  const Tabulated1D& xs() const { return *xs_; }
 
   /**
    * @brief Returns the AngleEnergy distribution.

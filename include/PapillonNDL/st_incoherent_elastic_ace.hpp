@@ -20,8 +20,8 @@
  * along with PapillonNDL. If not, see <https://www.gnu.org/licenses/>.
  *
  * */
-#ifndef PAPILLON_NDL_ST_INCOHERENT_ELASTIC_H
-#define PAPILLON_NDL_ST_INCOHERENT_ELASTIC_H
+#ifndef PAPILLON_NDL_ST_INCOHERENT_ELASTIC_ACE_H
+#define PAPILLON_NDL_ST_INCOHERENT_ELASTIC_ACE_H
 
 /**
  * @file
@@ -29,7 +29,7 @@
  */
 
 #include <PapillonNDL/ace.hpp>
-#include <PapillonNDL/angle_energy.hpp>
+#include <PapillonNDL/st_tsl_reaction.hpp>
 #include <PapillonNDL/tabulated_1d.hpp>
 #include <algorithm>
 
@@ -37,27 +37,17 @@ namespace pndl {
 
 /**
  * @brief Holds the Incoherent Elastic scattering data for a single nuclide
- *        at a single temperature.
+ *        at a single temperature, according to the ACE format.
  */
-class STIncoherentElastic : public AngleEnergy {
+class STIncoherentElasticACE : public STTSLReaction {
  public:
   /**
    * @param ace ACE file which contains thermal scattering law.
    */
-  STIncoherentElastic(const ACE& ace);
-  ~STIncoherentElastic() = default;
+  STIncoherentElasticACE(const ACE& ace);
+  ~STIncoherentElasticACE() = default; 
 
-  /**
-   * @brief Returns the cross section function.
-   */
-  const Tabulated1D& xs() const { return *xs_; }
-
-  /**
-   * @brief Evaluates the incoherent elastic scattering cross section
-   *        at energy E.
-   * @param E Incident energy at which to evaluate the cross section in MeV.
-   */
-  double xs(double E) const { return xs_->evaluate(E); }
+  double xs(double E) const override final { return xs_->evaluate(E); }
 
   AngleEnergyPacket sample_angle_energy(
       double E_in, std::function<double()> rng) const override final {
@@ -113,6 +103,11 @@ class STIncoherentElastic : public AngleEnergy {
                             double /*E_out*/) const override final {
     return std::nullopt;
   }
+
+  /**
+   * @brief Returns the cross section function.
+   */
+  const Tabulated1D& xs() const { return *xs_; }
 
   /**
    * @brief Returns vector to the incoming energy grid.

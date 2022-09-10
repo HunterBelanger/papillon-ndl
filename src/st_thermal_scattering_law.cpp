@@ -21,6 +21,8 @@
  *
  * */
 #include <PapillonNDL/st_thermal_scattering_law.hpp>
+#include <PapillonNDL/st_coherent_elastic.hpp>
+#include <PapillonNDL/st_incoherent_elastic_ace.hpp>
 
 namespace pndl {
 
@@ -62,11 +64,11 @@ STThermalScatteringLaw::STThermalScatteringLaw(const ACE& ace,
         throw err;
       }
       has_coherent_elastic_ = true;
-      incoherent_elastic_ = std::make_shared<STIncoherentElastic>(ace);
+      incoherent_elastic_ = std::make_shared<STIncoherentElasticACE>(ace);
     } else {
       // Incoherent
       try {
-        incoherent_elastic_ = std::make_shared<STIncoherentElastic>(ace);
+        incoherent_elastic_ = std::make_shared<STIncoherentElasticACE>(ace);
       } catch (PNDLException& err) {
         std::string mssg =
             "Could not construct Incoherent Elastic scattering data.";
@@ -77,7 +79,7 @@ STThermalScatteringLaw::STThermalScatteringLaw(const ACE& ace,
       coherent_elastic_ = std::make_shared<STCoherentElastic>(ace);
     }
   } else {
-    incoherent_elastic_ = std::make_shared<STIncoherentElastic>(ace);
+    incoherent_elastic_ = std::make_shared<STIncoherentElasticACE>(ace);
     coherent_elastic_ = std::make_shared<STCoherentElastic>(ace);
   }
 }

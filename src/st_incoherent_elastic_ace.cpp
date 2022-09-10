@@ -20,12 +20,12 @@
  * along with PapillonNDL. If not, see <https://www.gnu.org/licenses/>.
  *
  * */
+#include <PapillonNDL/st_incoherent_elastic_ace.hpp>
 #include <PapillonNDL/pndl_exception.hpp>
-#include <PapillonNDL/st_incoherent_elastic.hpp>
 
 namespace pndl {
 
-STIncoherentElastic::STIncoherentElastic(const ACE& ace)
+STIncoherentElasticACE::STIncoherentElasticACE(const ACE& ace)
     : xs_(nullptr), Nmu(0), incoming_energy_(), cosines_() {
   // Fist make sure ACE file does indeed give coherent elastic scattering
   int32_t elastic_mode = ace.nxs(4);

@@ -58,7 +58,7 @@ set(PNDL_SOURCE_LIST src/element.cpp
                      src/discrete_cosines_energies.cpp
                      src/st_incoherent_inelastic.cpp
                      src/st_coherent_elastic.cpp
-                     src/st_incoherent_elastic.cpp
+                     src/st_incoherent_elastic_ace.cpp
                      src/st_thermal_scattering_law.cpp
                      src/urr_ptables.cpp
                      src/version.cpp

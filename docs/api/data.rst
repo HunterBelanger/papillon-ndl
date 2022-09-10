@@ -53,15 +53,20 @@ STThermalScatteringLaw
 
 .. doxygenclass:: pndl::STThermalScatteringLaw
 
+STTSLReaction
+-------------
+
+.. doxygenclass:: pndl::STTSLReaction
+
 STCoherentElastic
 -----------------
 
 .. doxygenclass:: pndl::STCoherentElastic
 
-STIncoherentElastic
--------------------
+STIncoherentElasticACE
+----------------------
 
-.. doxygenclass:: pndl::STIncoherentElastic
+.. doxygenclass:: pndl::STIncoherentElasticACE
 
 STIncoherentInelastic
 ---------------------

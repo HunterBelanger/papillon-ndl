@@ -41,8 +41,6 @@
 #include <PapillonNDL/kalbach_table.hpp>
 #include <PapillonNDL/multiple_distribution.hpp>
 #include <PapillonNDL/nbody.hpp>
-#include <PapillonNDL/st_coherent_elastic.hpp>
-#include <PapillonNDL/st_incoherent_elastic.hpp>
 #include <PapillonNDL/summed_fission_spectrum.hpp>
 #include <PapillonNDL/tabular_energy_angle.hpp>
 #include <PapillonNDL/uncorrelated.hpp>
@@ -252,33 +250,6 @@ void init_ContinuousEnergyDiscreteCosines(py::module& m) {
            &ContinuousEnergyDiscreteCosines::unit_based_interpolation)
       .def("angle_pdf", &ContinuousEnergyDiscreteCosines::angle_pdf)
       .def("pdf", &ContinuousEnergyDiscreteCosines::pdf);
-}
-
-void init_STCoherentElastic(py::module& m) {
-  py::class_<STCoherentElastic, AngleEnergy,
-             std::shared_ptr<STCoherentElastic>>(m, "STCoherentElastic")
-      .def(py::init<const ACE&>())
-      .def("xs", &STCoherentElastic::xs)
-      .def("sample_angle_energy", &STCoherentElastic::sample_angle_energy)
-      .def("bragg_edges", &STCoherentElastic::bragg_edges)
-      .def("structure_factor_sum", &STCoherentElastic::structure_factor_sum)
-      .def("angle_pdf", &STCoherentElastic::angle_pdf)
-      .def("pdf", &STCoherentElastic::pdf);
-}
-
-void init_STInoherentElastic(py::module& m) {
-  py::class_<STIncoherentElastic, AngleEnergy,
-             std::shared_ptr<STIncoherentElastic>>(m, "STIncoherentElastic")
-      .def(py::init<const ACE&>())
-      .def("xs", py::overload_cast<>(&STIncoherentElastic::xs, py::const_),
-           py::return_value_policy::reference_internal)
-      .def("xs",
-           py::overload_cast<double>(&STIncoherentElastic::xs, py::const_))
-      .def("sample_angle_energy", &STIncoherentElastic::sample_angle_energy)
-      .def("incoming_energy", &STIncoherentElastic::incoming_energy)
-      .def("cosines", &STIncoherentElastic::cosines)
-      .def("angle_pdf", &STIncoherentElastic::angle_pdf)
-      .def("pdf", &STIncoherentElastic::pdf);
 }
 
 void init_MultipleDistribution(py::module& m) {

@@ -28,9 +28,8 @@
  * @author Hunter Belanger
  */
 
-#include <PapillonNDL/st_coherent_elastic.hpp>
-#include <PapillonNDL/st_incoherent_elastic.hpp>
 #include <PapillonNDL/st_incoherent_inelastic.hpp>
+#include <PapillonNDL/st_tsl_reaction.hpp>
 #include <PapillonNDL/zaid.hpp>
 
 namespace pndl {
@@ -85,23 +84,24 @@ class STThermalScatteringLaw {
   bool has_incoherent_elastic() const { return has_incoherent_elastic_; }
 
   /**
-   * @brief Returns the STCoherentElastic instance.
+   * @brief Returns a STTSLReaction reference to the coherent elastic scattering
+   *        data.
    */
-  const STCoherentElastic& coherent_elastic() const {
-    return *coherent_elastic_;
-  }
+  const STTSLReaction& coherent_elastic() const { return *coherent_elastic_; }
 
   /**
-   * @brief Returns the STIncoherentElastic instance.
+   * @brief Returns a STTSLReaction reference to the incoherent elastic
+   *        scattering data.
    */
-  const STIncoherentElastic& incoherent_elastic() const {
+  const STTSLReaction& incoherent_elastic() const {
     return *incoherent_elastic_;
   }
 
   /**
-   * @brief Returns the STIncoherentInelastic instance.
+   * @brief Returns a STTSLReaction reference to the incoherent inelastic data
+   *        scattering data.
    */
-  const STIncoherentInelastic& incoherent_inelastic() const {
+  const STTSLReaction& incoherent_inelastic() const {
     return *incoherent_inelastic_;
   }
 
@@ -123,8 +123,8 @@ class STThermalScatteringLaw {
   bool has_coherent_elastic_;
   bool has_incoherent_elastic_;
 
-  std::shared_ptr<STCoherentElastic> coherent_elastic_;
-  std::shared_ptr<STIncoherentElastic> incoherent_elastic_;
+  std::shared_ptr<STTSLReaction> coherent_elastic_;
+  std::shared_ptr<STTSLReaction> incoherent_elastic_;
   std::shared_ptr<STIncoherentInelastic> incoherent_inelastic_;
 };
 }  // namespace pndl

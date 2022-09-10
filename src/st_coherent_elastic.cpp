@@ -23,6 +23,8 @@
 #include <PapillonNDL/pndl_exception.hpp>
 #include <PapillonNDL/st_coherent_elastic.hpp>
 
+#include "constants.hpp"
+
 namespace pndl {
 
 STCoherentElastic::STCoherentElastic(const ACE& ace)

@@ -29,7 +29,7 @@
  */
 
 #include <PapillonNDL/ace.hpp>
-#include <PapillonNDL/angle_energy.hpp>
+#include <PapillonNDL/st_tsl_reaction.hpp>
 #include <algorithm>
 #include <iterator>
 #include <optional>
@@ -40,7 +40,7 @@ namespace pndl {
  * @brief Holds the Coherent Elastic scattering data for a single nuclide
  *        at a single temperature.
  */
-class STCoherentElastic : public AngleEnergy {
+class STCoherentElastic : public STTSLReaction {
  public:
   /**
    * @param ace ACE file which contains thermal scattering law.
@@ -48,12 +48,7 @@ class STCoherentElastic : public AngleEnergy {
   STCoherentElastic(const ACE& ace);
   ~STCoherentElastic() = default;
 
-  /**
-   * @brief Evaluates the coherent elastic scattering cross section
-   *        at energy E.
-   * @param E Incident energy at which to evaluate the cross section in MeV.
-   */
-  double xs(double E) const {
+  double xs(double E) const override final {
     if (bragg_edges_.size() == 0) return 0.;
 
     if (E > bragg_edges_.front() && E < bragg_edges_.back()) {
