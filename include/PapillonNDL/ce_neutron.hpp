@@ -146,7 +146,6 @@ class CENeutron<CrossSection> : public CENeutronBase {
 
  private:
   double temperature_;
-
   std::shared_ptr<EnergyGrid> energy_grid_;
   std::shared_ptr<CrossSection> total_xs_;
   std::shared_ptr<CrossSection> disappearance_xs_;
@@ -154,13 +153,9 @@ class CENeutron<CrossSection> : public CENeutronBase {
   std::shared_ptr<CrossSection> heating_number_;
   std::shared_ptr<CrossSection> fission_xs_;
   std::shared_ptr<CrossSection> photon_production_xs_;
-
   std::shared_ptr<Elastic> elastic_;
-
   std::shared_ptr<Fission> fission_;
-
   std::vector<STReaction> reactions_;
-
   std::shared_ptr<URRPTables> urr_ptables_;
 
   // Private Helper Methods

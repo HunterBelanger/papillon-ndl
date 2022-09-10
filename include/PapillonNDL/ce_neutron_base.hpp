@@ -63,12 +63,14 @@ class CENeutronBase {
   bool fissile() const { return fissile_; }
 
   /**
-   * @brief Returns a list of all MT reactions present for the nuclide.
+   * @brief Returns a list of all scattering and absorption MT reactions present
+   *        for the nuclide (other than elastic).
    */
   const std::vector<uint32_t>& mt_list() const { return mt_list_; }
 
   /**
-   * @brief Checks to see if a nucldie has a given reaction.
+   * @brief Checks to see if a nucldie has a given scattering or absorption
+   *        reaction.
    * @param mt MT reaction to search for.
    */
   bool has_reaction(uint32_t mt) const {

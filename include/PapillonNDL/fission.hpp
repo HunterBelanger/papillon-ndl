@@ -41,7 +41,8 @@
 namespace pndl {
 
 /**
- * @brief This class contains all of the information for the nuclide which is related to 
+ * @brief This class contains all of the information for the nuclide which is
+ * related to
  */
 class Fission {
  public:
@@ -98,7 +99,9 @@ class Fission {
   const std::vector<uint32_t>& mt_list() const { return mt_list_; }
 
   /**
-   * @brief Checks to see if a given fission reaction is present.
+   * @brief Checks to see if a given fission reaction is present. The only MT
+   *        values which could possibly be present are 18, 19, 20, 21, and 38.
+   *        All other MTs are guaranteed to return false.
    * @param mt MT fission reaction to search for.
    */
   bool has_reaction(uint32_t mt) const {
@@ -117,7 +120,10 @@ class Fission {
   }
 
   /**
-   * @brief Retrieved a given MT fission reaction.
+   * @brief Retrieves a given MT fission reaction. The only MT values which
+   *        could possibly be present are 18, 19, 20, 21, and 38 (check with
+   *        has_reaction). All other MTs are guaranteed to throw a
+   *        PNDLException.
    * @param mt MT fission reaction to return.
    */
   const STReaction& reaction(uint32_t mt) const {
@@ -128,11 +134,16 @@ class Fission {
       throw PNDLException(mssg);
     }
 
-    if (mt == 18) return *mt18_;
-    else if (mt == 19) return *mt19_;
-    else if (mt == 20) return *mt20_;
-    else if (mt == 21) return *mt21_;
-    else return *mt38_;
+    if (mt == 18)
+      return *mt18_;
+    else if (mt == 19)
+      return *mt19_;
+    else if (mt == 20)
+      return *mt20_;
+    else if (mt == 21)
+      return *mt21_;
+    else
+      return *mt38_;
   }
 
  private:
