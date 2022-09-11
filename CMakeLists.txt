@@ -14,6 +14,7 @@ option(PNDL_SHARED "Build PapillonNDL as a shared library" ON)
 option(PNDL_PYTHON "Enable Python interface to PapillonNDL" ON)
 option(PNDL_INSTALL "Install the PapillonNDL library and header files" ON)
 option(PNDL_TESTS "Build PapillonNDL tests" OFF)
+option(PNDL_TOOLS "Build sampling tools for PapillonNDL and OpenMC" OFF)
 
 # List of source files for PapillonNDL
 set(PNDL_SOURCE_LIST src/element.cpp
@@ -203,6 +204,11 @@ if(PNDL_PYTHON)
             DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/pyPapillonNDL
     )
   endif()
+endif()
+
+# Add the tools subdirectory if we want to build the samplers for PapillonNDL and OpenMC
+if(PNDL_TOOLS)
+  add_subdirectory(tools)
 endif()
 
 # Install PapillonNDL
