@@ -327,7 +327,8 @@ void init_Elastic(py::module& m) {
            py::arg("broadener"), py::arg("angle"), py::arg("awr"),
            py::arg("temperature"), py::arg("use_tar") = true,
            py::arg("tar_threshold") = 400.)
-      .def("elastic_doppler_broadener", &Elastic::elastic_doppler_broadener)
+      .def("elastic_doppler_broadener", &Elastic::elastic_doppler_broadener,
+           py::return_value_policy::reference_internal)
       .def("set_elastic_doppler_broadener",
            &Elastic::set_elastic_doppler_broadener)
       .def("sample_angle_energy", &Elastic::sample_angle_energy)
