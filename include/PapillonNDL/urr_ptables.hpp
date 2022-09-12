@@ -98,95 +98,78 @@ class URRPTables {
   XSPacket evaluate_xs_band(double E, std::size_t i, double xi) const {
     // Find the energy index for sampling band
     std::size_t iE = 0;
+    double f = 0.;
     auto Eit = std::lower_bound(energy_->begin(), energy_->end(), E);
     if (Eit == energy_->begin()) {
       iE = 0;
+      f = 0.;
     } else if (Eit == energy_->end()) {
       iE = energy_->size() - 1;
-    } else {
-      iE = std::distance(energy_->begin(), Eit) - 1;
-    }
-
-    // Get reference to the PTable
-    const PTable& ptable = (*ptables_)[iE];
-
-    // Figure out which band we have sampled
-    std::size_t b = 0;
-    for (b = 0; b < ptable.cdf.size(); b++) {
-      if (ptable.cdf[b] >= xi) break;
-    }
-
-    // Find the energy index and interpolation factor
-    std::size_t j = 0;
-    double f = 0.;
-    std::vector<double>& energy = *energy_;
-    Eit = std::lower_bound(energy.begin(), energy.end(), E);
-    if (Eit == energy.begin()) {
-      j = 0;
-      f = 0.;
-    } else if (Eit == energy.end()) {
-      j = energy.size() - 2;
       f = 1.;
     } else {
-      j = std::distance(energy.begin(), Eit) - 1;
+      iE = std::distance(energy_->begin(), Eit) - 1;
       if (interp_ == Interpolation::LinLin) {
-        f = (E - energy[j]) / (energy[j + 1] - energy[j]);
+        f = (E - (*energy_)[iE]) / ((*energy_)[iE + 1] - (*energy_)[iE]);
       } else {
-        f = std::log(E / energy[j]) / std::log(energy[j + 1] / energy[j]);
+        f = std::log(E / (*energy_)[iE]) /
+            std::log((*energy_)[iE + 1] / (*energy_)[iE]);
       }
+    }
+
+    // Get reference to the upper and lower PTable
+    const PTable& ptable_low = (*ptables_)[iE];
+    const PTable& ptable_hi = (*ptables_)[iE + 1];
+
+    // Figure out which band we have sampled
+    std::size_t b_low = 0;
+    for (b_low = 0; b_low < ptable_low.cdf.size(); b_low++) {
+      if (ptable_low.cdf[b_low] >= xi) break;
+    }
+    std::size_t b_hi = 0;
+    for (b_hi = 0; b_hi < ptable_hi.cdf.size(); b_hi++) {
+      if (ptable_hi.cdf[b_hi] >= xi) break;
     }
 
     // XSPacket struct which will contain the returned cross sections
     XSPacket xsout{0., 0., 0., 0., 0., 0., 0.};
-    std::vector<PTable>& ptabs = *ptables_;
 
     // Evaluate the cross sections depending on interpolation
+    const auto& xsb_low = ptable_low.xs_bands[b_low];
+    const auto& xsb_hi = ptable_hi.xs_bands[b_hi];
     if (interp_ == Interpolation::LinLin) {
-      xsout.elastic =
-          ptabs[j].xs_bands[b].elastic +
-          f * (ptabs[j + 1].xs_bands[b].elastic - ptabs[j].xs_bands[b].elastic);
-      xsout.capture =
-          ptabs[j].xs_bands[b].capture +
-          f * (ptabs[j + 1].xs_bands[b].capture - ptabs[j].xs_bands[b].capture);
-      xsout.fission =
-          ptabs[j].xs_bands[b].fission +
-          f * (ptabs[j + 1].xs_bands[b].fission - ptabs[j].xs_bands[b].fission);
-      xsout.heating =
-          ptabs[j].xs_bands[b].heating +
-          f * (ptabs[j + 1].xs_bands[b].heating - ptabs[j].xs_bands[b].heating);
+      xsout.elastic = xsb_low.elastic + f * (xsb_hi.elastic - xsb_low.elastic);
+      xsout.capture = xsb_low.capture + f * (xsb_hi.capture - xsb_low.capture);
+      xsout.fission = xsb_low.fission + f * (xsb_hi.fission - xsb_low.fission);
+      xsout.heating = xsb_low.heating + f * (xsb_hi.heating - xsb_low.heating);
     } else {
-      if (ptabs[j].xs_bands[b].elastic > 0. &&
-          ptabs[j + 1].xs_bands[b].elastic > 0.) {
-        xsout.elastic = std::exp(std::log(ptabs[j].xs_bands[b].elastic) +
-                                 f * std::log(ptabs[j + 1].xs_bands[b].elastic /
-                                              ptabs[j].xs_bands[b].elastic));
+      if (xsb_low.elastic > 0. && xsb_hi.elastic) {
+        xsout.elastic =
+            std::exp(std::log(xsb_low.elastic) +
+                     f * std::log(xsb_hi.elastic / xsb_low.elastic));
       } else {
         xsout.elastic = 0.;
       }
 
-      if (ptabs[j].xs_bands[b].capture > 0. &&
-          ptabs[j + 1].xs_bands[b].capture > 0.) {
-        xsout.capture = std::exp(std::log(ptabs[j].xs_bands[b].capture) +
-                                 f * std::log(ptabs[j + 1].xs_bands[b].capture /
-                                              ptabs[j].xs_bands[b].capture));
+      if (xsb_low.capture > 0. && xsb_hi.capture) {
+        xsout.capture =
+            std::exp(std::log(xsb_low.capture) +
+                     f * std::log(xsb_hi.capture / xsb_low.capture));
       } else {
         xsout.capture = 0.;
       }
 
-      if (ptabs[j].xs_bands[b].fission > 0. &&
-          ptabs[j + 1].xs_bands[b].fission > 0.) {
-        xsout.fission = std::exp(std::log(ptabs[j].xs_bands[b].fission) +
-                                 f * std::log(ptabs[j + 1].xs_bands[b].fission /
-                                              ptabs[j].xs_bands[b].fission));
+      if (xsb_low.fission > 0. && xsb_hi.fission) {
+        xsout.fission =
+            std::exp(std::log(xsb_low.fission) +
+                     f * std::log(xsb_hi.fission / xsb_low.fission));
       } else {
         xsout.fission = 0.;
       }
 
-      if (ptabs[j].xs_bands[b].heating > 0. &&
-          ptabs[j + 1].xs_bands[b].heating > 0.) {
-        xsout.heating = std::exp(std::log(ptabs[j].xs_bands[b].heating) +
-                                 f * std::log(ptabs[j + 1].xs_bands[b].heating /
-                                              ptabs[j].xs_bands[b].heating));
+      if (xsb_low.heating > 0. && xsb_hi.heating) {
+        xsout.heating =
+            std::exp(std::log(xsb_low.heating) +
+                     f * std::log(xsb_hi.heating / xsb_low.heating));
       } else {
         xsout.heating = 0.;
       }
