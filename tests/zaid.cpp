@@ -184,6 +184,9 @@ TEST(Nuclide, Nuclide) {
   EXPECT_TRUE(U235 < Pu239);
   EXPECT_TRUE(U235m1 < Pu239);
 
+  Nuclide Pm143("Pm143");
+  EXPECT_EQ(Pm143.zaid().zaid(), 61143);
+
   std::hash<Nuclide> nhash;
   std::hash<uint32_t> uhash;
   EXPECT_EQ(nhash(U235m1), uhash(U235m1.zaid().zaid()));
