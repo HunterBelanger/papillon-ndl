@@ -29,17 +29,13 @@ FetchContent_MakeAvailable(NDArray)
 
 #===============================================================================
 # Get OpenMC
-find_package(OpenMC 0.13.1 QUIET)
-if (NOT OpenMC_FOUND)
-  message(STATUS "Could not find OpenMC v0.13.1 already installed.")
-  message(STATUS "Downloading OpenMC v0.13.1")
-  include(FetchContent)
-  FetchContent_Declare(OpenMC
-    GIT_REPOSITORY https://github.com/openmc-dev/openmc
-    GIT_TAG        v0.13.1
-  )
-  FetchContent_MakeAvailable(OpenMC)
-endif()
+message(STATUS "Downloading OpenMC v0.13.1")
+include(FetchContent)
+FetchContent_Declare(OpenMC
+  GIT_REPOSITORY https://github.com/openmc-dev/openmc
+  GIT_TAG        v0.13.1
+)
+FetchContent_MakeAvailable(OpenMC)
 
 # Build PapillonNDL sampler
 add_executable(spndl src/spndl.cpp)
