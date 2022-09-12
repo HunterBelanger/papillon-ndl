@@ -55,9 +55,13 @@ class CrossSection {
    * @param get_index Flag to indicate wether the cross section values begin
    *                  at i, or if the energy grid index is at i. Default
    *                  value is true.
+   * @param is_heating Flat to indicate that heating numbers are stored, and not
+   *                   cross sections. This allows the storred values to be
+   *                   negative without error.
    */
   CrossSection(const ACE& ace, std::size_t i,
-               std::shared_ptr<EnergyGrid> E_grid, bool get_index = true);
+               std::shared_ptr<EnergyGrid> E_grid, bool get_index = true,
+               bool is_heating = false);
 
   /**
    * @param xs Vector containing the cross section values.

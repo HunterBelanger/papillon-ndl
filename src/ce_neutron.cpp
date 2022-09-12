@@ -52,7 +52,7 @@ CENeutron<CrossSection>::CENeutron(const ACE& ace)
   elastic_xs_ = std::make_shared<CrossSection>(ace, ace.ESZ() + 3 * NE,
                                                energy_grid_, false);
   heating_number_ = std::make_shared<CrossSection>(ace, ace.ESZ() + 4 * NE,
-                                                   energy_grid_, false);
+                                                   energy_grid_, false, true);
 
   // Get photon production XS if present
   if (ace.jxs(11) != 0) {
@@ -101,13 +101,13 @@ CENeutron<CrossSection>::CENeutron(const ACE& ace)
   fission_xs_ = compute_fission_xs();
 
   // Make the PTables. Grab reference to MT 102
+  std::shared_ptr<CrossSection> capture_xs_ = nullptr;
   if (this->has_reaction(102) == false) {
-    std::string mssg =
-        "Nuclide does not have a radiative capture cross section.";
-    throw PNDLException(mssg);
+    capture_xs_ = std::make_shared<CrossSection>(0., energy_grid_);
+  } else {
+    capture_xs_ = std::make_shared<CrossSection>(this->reaction(102).xs());
   }
-  std::shared_ptr<CrossSection> capture_xs_ =
-      std::make_shared<CrossSection>(this->reaction(102).xs());
+  
   try {
     urr_ptables_ = std::make_shared<URRPTables>(ace, *elastic_xs_, *capture_xs_,
                                                 *fission_xs_, *heating_number_,
@@ -145,7 +145,7 @@ CENeutron<CrossSection>::CENeutron(const ACE& ace, const CENeutron& nuclide)
   elastic_xs_ = std::make_shared<CrossSection>(ace, ace.ESZ() + 3 * NE,
                                                energy_grid_, false);
   heating_number_ = std::make_shared<CrossSection>(ace, ace.ESZ() + 4 * NE,
-                                                   energy_grid_, false);
+                                                   energy_grid_, false, true);
 
   // Get photon production XS if present
   if (ace.jxs(11) != 0) {
@@ -195,13 +195,13 @@ CENeutron<CrossSection>::CENeutron(const ACE& ace, const CENeutron& nuclide)
   fission_xs_ = compute_fission_xs();
 
   // Make the PTables. Grab reference to MT 102
+  std::shared_ptr<CrossSection> capture_xs_ = nullptr;
   if (this->has_reaction(102) == false) {
-    std::string mssg =
-        "Nuclide does not have a radiative capture cross section.";
-    throw PNDLException(mssg);
+    capture_xs_ = std::make_shared<CrossSection>(0., energy_grid_);
+  } else {
+    capture_xs_ = std::make_shared<CrossSection>(this->reaction(102).xs());
   }
-  std::shared_ptr<CrossSection> capture_xs_ =
-      std::make_shared<CrossSection>(this->reaction(102).xs());
+  
   try {
     urr_ptables_ = std::make_shared<URRPTables>(ace, *elastic_xs_, *capture_xs_,
                                                 *fission_xs_, *heating_number_,

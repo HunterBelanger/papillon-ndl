@@ -28,7 +28,7 @@
 namespace pndl {
 
 CrossSection::CrossSection(const ACE& ace, std::size_t i,
-                           std::shared_ptr<EnergyGrid> E_grid, bool get_index)
+                           std::shared_ptr<EnergyGrid> E_grid, bool get_index, bool is_heating)
     : energy_grid_(E_grid), values_(nullptr), index_(0), single_value_(false) {
   uint32_t NE = ace.nxs(2);
   if (get_index) {
@@ -48,12 +48,14 @@ CrossSection::CrossSection(const ACE& ace, std::size_t i,
     throw PNDLException(mssg);
   }
 
-  for (std::size_t l = 0; l < values_->size(); l++) {
-    if ((*values_)[l] < 0.) {
-      std::string mssg =
-          "Negative cross section found at element " + std::to_string(l) +
-          " in cross section grid starting at " + std::to_string(i) + ".";
-      throw PNDLException(mssg);
+  if (is_heating == false) {
+    for (std::size_t l = 0; l < values_->size(); l++) {
+      if ((*values_)[l] < 0.) {
+        std::string mssg =
+            "Negative cross section found at element " + std::to_string(l) +
+            " in cross section grid starting at " + std::to_string(i) + ".";
+        throw PNDLException(mssg);
+      }
     }
   }
 }

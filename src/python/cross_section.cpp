@@ -31,7 +31,10 @@ using namespace pndl;
 
 void init_CrossSection(py::module& m) {
   py::class_<CrossSection, std::shared_ptr<CrossSection>>(m, "CrossSection")
-      .def(py::init<const ACE&, size_t, std::shared_ptr<EnergyGrid>, bool>())
+      .def(py::init<const ACE&, size_t, std::shared_ptr<EnergyGrid>, bool,
+                    bool>(),
+           py::arg("ace"), py::arg("i"), py::arg("E_grid"),
+           py::arg("get_index") = true, py::arg("is_heating") = false)
       .def(py::init<const std::vector<double>&, std::shared_ptr<EnergyGrid>,
                     size_t>())
       .def(py::init<double, std::shared_ptr<EnergyGrid>>())
