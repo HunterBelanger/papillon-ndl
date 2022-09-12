@@ -114,6 +114,7 @@ MCNPLibrary::MCNPLibrary(const std::string& fname) : NDLibrary(fname) {
                      xsdir_buffer.begin() + match.position());
   std::stringstream directory_stream(xsdir_buffer);
   std::string zaid_str;
+  std::string zaid_str_new;
   std::string awr_str;
   std::string fname_str;
   std::string access_str;
@@ -127,7 +128,11 @@ MCNPLibrary::MCNPLibrary(const std::string& fname) : NDLibrary(fname) {
   directory_stream >> zaid_str;  // Get rid of 'directory' in stream
   bool get_zaid_str = true;
   while (directory_stream.eof() == false) {
-    if (get_zaid_str) directory_stream >> zaid_str;
+    if (get_zaid_str) {
+      directory_stream >> zaid_str;
+    } else {
+      zaid_str = zaid_str_new;
+    }
 
     directory_stream >> awr_str;
     directory_stream >> fname_str;
@@ -169,12 +174,16 @@ MCNPLibrary::MCNPLibrary(const std::string& fname) : NDLibrary(fname) {
 
     directory_stream >> ptable_str;
     if (ptable_str == "+") {
+      // The "ptable" keyword is on the next line. Go grab it.
       directory_stream >> ptable_str;
       get_zaid_str = true;
     } else if (ptable_str.size() != 6) {
-      zaid_str = ptable_str;
+      // The next item wasn't "+" or "ptable", so we actually just read the next
+      // ZAID. Keep it for later.
+      zaid_str_new = ptable_str;
       get_zaid_str = false;
     } else {
+      // We just read "ptable" and it was on the main line
       get_zaid_str = true;
     }
 
