@@ -79,30 +79,23 @@ NBody::NBody(uint16_t n, double Ap, double AWR, double Q)
 
 AngleEnergyPacket NBody::sample_angle_energy(
     double E_in, std::function<double()> rng) const {
-  double Emax = ((Ap_ + 1.) / Ap_) * ((A_ / (A_ + 1.)) * E_in + Q_);
-  double x = maxwellian_spectrum(rng);
+  const double Emax = ((Ap_ - 1.) / Ap_) * ((A_ / (A_ + 1.)) * E_in + Q_);
+  const double x = maxwellian_spectrum(rng);
   double y = 0.;
-  double xi1, xi2, xi3, xi4, xi5, xi6;
   switch (n_) {
-    case 3:
+    case 3: {
       y = maxwellian_spectrum(rng);
       break;
-    case 4:
-      xi1 = rng();
-      xi2 = rng();
-      xi3 = rng();
-      y = -std::log(xi1 * xi2 * xi3);
+    }
+    case 4: {
+      y = -std::log(rng() * rng() * rng());
       break;
-    case 5:
-      xi1 = rng();
-      xi2 = rng();
-      xi3 = rng();
-      xi4 = rng();
-      xi5 = rng();
-      xi6 = rng();
-      y = -std::log(xi1 * xi2 * xi3 * xi4) -
-          std::log(xi5) * std::pow(std::cos(0.5 * PI * xi6), 2.);
+    }
+    case 5: {
+      y = -std::log(rng() * rng() * rng() * rng()) -
+          std::log(rng()) * std::pow(std::cos(0.5 * PI * rng()), 2.);
       break;
+    }
   }
 
   double E_out = (x / (x + y)) * Emax;
@@ -112,13 +105,8 @@ AngleEnergyPacket NBody::sample_angle_energy(
 }
 
 double NBody::maxwellian_spectrum(std::function<double()>& rng) const {
-  double xi1 = rng();
-  double xi2 = rng();
-  double xi3 = rng();
-
-  double a = PI * xi3 / 2.;
-
-  return -(std::log(xi1) + std::log(xi2) * std::cos(a) * std::cos(a));
+  const double a = PI * rng() / 2.;
+  return -(std::log(rng()) + std::log(rng()) * std::cos(a) * std::cos(a));
 }
 
 std::optional<double> NBody::angle_pdf(double /*E_in*/, double /*mu*/) const {
@@ -128,7 +116,7 @@ std::optional<double> NBody::angle_pdf(double /*E_in*/, double /*mu*/) const {
 
 std::optional<double> NBody::pdf(double E_in, double /*mu*/,
                                  double E_out) const {
-  double Emax = ((Ap_ + 1.) / Ap_) * ((A_ / (A_ + 1.)) * E_in + Q_);
+  double Emax = ((Ap_ - 1.) / Ap_) * ((A_ / (A_ + 1.)) * E_in + Q_);
   double C = 0;
   switch (n_) {
     case 3:
