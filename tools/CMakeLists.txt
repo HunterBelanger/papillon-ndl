@@ -30,7 +30,6 @@ FetchContent_MakeAvailable(NDArray)
 #===============================================================================
 # Get OpenMC
 message(STATUS "Downloading OpenMC v0.13.1")
-include(FetchContent)
 FetchContent_Declare(OpenMC
   GIT_REPOSITORY https://github.com/openmc-dev/openmc
   GIT_TAG        v0.13.1
@@ -50,6 +49,10 @@ target_compile_features(sopenmc PRIVATE cxx_std_17)
 target_compile_options(sopenmc PRIVATE -W -Wall -Wextra -Wpedantic)
 target_compile_options(sopenmc PRIVATE $<$<CONFIG:DEBUG>:-g>)
 target_link_libraries(sopenmc PUBLIC libopenmc docopt NDArray)
+find_package(OpenMP QUIET)
+if(OpenMP_CXX_FOUND AND OPENMC_USE_OPENMP)
+  target_link_libraries(sopenmc PUBLIC OpenMP::OpenMP_CXX)
+endif()
 
 # Copy python comparison file
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/compare.py ${CMAKE_CURRENT_BINARY_DIR}/compare.py COPYONLY)
