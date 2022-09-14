@@ -29,6 +29,8 @@
 #include <PapillonNDL/pndl_exception.hpp>
 #include <PapillonNDL/urr_ptables.hpp>
 #include <algorithm>
+#include <iomanip>
+#include <ios>
 #include <sstream>
 
 namespace pndl {
@@ -107,26 +109,66 @@ URRPTables::URRPTables(const ACE& ace, const CrossSection& elastic,
     ptables_->back().xs_bands.resize(Nptables);
     for (std::size_t ipt = 0; ipt < Nptables; ipt++) {
       ptables_->back().xs_bands[ipt].total = ace.xss(indx + ipt);
+      if (ptables_->back().xs_bands[ipt].total < 0.) {
+        std::stringstream mssg;
+        mssg << "Nevative total cross section in xs band index " << ipt;
+        mssg << " and incident energy " << (*energy_)[ie] << " MeV (index ";
+        mssg << ie << "). Value of xs is " << std::scientific
+             << ptables_->back().xs_bands[ipt].total << ".";
+        throw PNDLException(mssg.str());
+      }
     }
     indx += Nptables;
 
     for (std::size_t ipt = 0; ipt < Nptables; ipt++) {
       ptables_->back().xs_bands[ipt].elastic = ace.xss(indx + ipt);
+      if (ptables_->back().xs_bands[ipt].elastic < 0.) {
+        std::stringstream mssg;
+        mssg << "Nevative elastic cross section in xs band index " << ipt;
+        mssg << " and incident energy " << (*energy_)[ie] << " MeV (index ";
+        mssg << ie << "). Value of xs is " << std::scientific
+             << ptables_->back().xs_bands[ipt].elastic << ".";
+        throw PNDLException(mssg.str());
+      }
     }
     indx += Nptables;
 
     for (std::size_t ipt = 0; ipt < Nptables; ipt++) {
       ptables_->back().xs_bands[ipt].fission = ace.xss(indx + ipt);
+      if (ptables_->back().xs_bands[ipt].fission < 0.) {
+        std::stringstream mssg;
+        mssg << "Nevative fission cross section in xs band index " << ipt;
+        mssg << " and incident energy " << (*energy_)[ie] << " MeV (index ";
+        mssg << ie << "). Value of xs is " << std::scientific
+             << ptables_->back().xs_bands[ipt].fission << ".";
+        throw PNDLException(mssg.str());
+      }
     }
     indx += Nptables;
 
     for (std::size_t ipt = 0; ipt < Nptables; ipt++) {
       ptables_->back().xs_bands[ipt].capture = ace.xss(indx + ipt);
+      if (ptables_->back().xs_bands[ipt].capture < 0.) {
+        std::stringstream mssg;
+        mssg << "Nevative capture cross section in xs band index " << ipt;
+        mssg << " and incident energy " << (*energy_)[ie] << " MeV (index ";
+        mssg << ie << "). Value of xs is " << std::scientific
+             << ptables_->back().xs_bands[ipt].capture << ".";
+        throw PNDLException(mssg.str());
+      }
     }
     indx += Nptables;
 
     for (std::size_t ipt = 0; ipt < Nptables; ipt++) {
       ptables_->back().xs_bands[ipt].heating = ace.xss(indx + ipt);
+      if (ptables_->back().xs_bands[ipt].heating < 0.) {
+        std::stringstream mssg;
+        mssg << "Nevative heating number in xs band index " << ipt;
+        mssg << " and incident energy " << (*energy_)[ie] << " MeV (index ";
+        mssg << ie << "). Value of heating number is " << std::scientific
+             << ptables_->back().xs_bands[ipt].heating << ".";
+        throw PNDLException(mssg.str());
+      }
     }
     indx += Nptables;
   }
