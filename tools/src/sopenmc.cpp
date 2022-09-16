@@ -432,7 +432,7 @@ int main(int argc, char** argv) {
   } else if (args["elastic-svt"].asBool()) {
     mode = RunMode::ELASTIC_SVT;
     T = std::stod(args["<T>"].asString());
-  } else if (args["elastic-dbrc"]) {
+  } else if (args["elastic-dbrc"].asBool()) {
     mode = RunMode::ELASTIC_DBRC;
     T = std::stod(args["<T>"].asString());
   } else if (args["coherent-elastic"].asBool()) {
