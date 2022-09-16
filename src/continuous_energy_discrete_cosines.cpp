@@ -134,45 +134,38 @@ ContinuousEnergyDiscreteCosines::ContinuousEnergyDiscreteCosines(
         Noe++;
       }
 
-      // Check all cosines for the current outgoing energy
-      /* The cosines SHOULD all be sorted, but this sometimes isn't the case
-         in the ACE files, so I have commented out this check for now. Not
-         sure what to do about it for now.
-      if(!std::is_sorted(tables_.back().cosines[oe].begin(),
-      tables_.back().cosines[oe].end())) { std::string mssg =
-      "ContinuousEnergyDiscreteCosines::ContinuousEnergyDiscreteCosines: Cosines
-      are not sorted for incoming energy index " + std::to_string(ie) + ",
-      outgoing energy index " + std::to_string(oe) + "."; throw
-      PNDLException(mssg, __FILE__, __LINE__);
-      }*/
+      // Check all cosines for the current outgoing energy.
+      // The cosines SHOULD all be sorted, but this sometimes isn't the case
+      // in the ACE files. If it isn't, since the angles are all equiprobable, I
+      // just sort them.
+      if (!std::is_sorted(tables_.back().cosines[oe].begin(),
+                          tables_.back().cosines[oe].end())) {
+        std::sort(tables_.back().cosines[oe].begin(),
+                  tables_.back().cosines[oe].end());
+      }
 
-      /* All of the cosines should of course be within the interval [-1,1],
-       * but I have found thermal scattering laws which is is blatantly not
-       * the case. One such example is the light water evaluation at 294K,
-       * where there is an upper limit of 1.225. Because of this, I have
-       * commented out these two checks. To ensure valid results, we must
-       * make sure that we validate the cosine range before returning
-       * sampled values.
-       * */
-      /*if (tables_.back().cosines[oe].front() < -1.) {
-        std::string mssg =
-            "ContinuousEnergyDiscreteCosines::ContinuousEnergyDiscreteCosines: "
-            "Lowest scattering cosine is less than -1 for incoming energy "
-            "index " +
-            std::to_string(ie) + ", outgoing energy index " +
-            std::to_string(oe) + ".";
-        throw PNDLException(mssg, __FILE__, __LINE__);
+      // All of the cosines should of course be within the interval [-1,1],
+      // but I have found thermal scattering laws which is is blatantly not
+      // the case. One such example is the light water evaluation at 294K,
+      // where there is an upper limit of 1.225, for the ENDF/B-VII.1 data
+      // for MCNP.
+      if (tables_.back().cosines[oe].front() < -1.) {
+        std::stringstream mssg;
+        mssg << "Lowest scattering cosine is less than -1 for incoming energy "
+                "index "
+             << std::to_string(ie) << ", outgoing energy index "
+             << std::to_string(oe) << ".";
+        throw PNDLException(mssg.str());
       }
 
       if (tables_.back().cosines[oe].back() > 1.) {
-        std::string mssg =
-            "ContinuousEnergyDiscreteCosines::ContinuousEnergyDiscreteCosines: "
-            "Largest scattering cosine is greater than 1 for incoming energy "
-            "index " +
-            std::to_string(ie) + ", outgoing energy index " +
-            std::to_string(oe) + ".";
-        throw PNDLException(mssg, __FILE__, __LINE__);
-      }*/
+        std::stringstream mssg;
+        mssg << "Largest scattering cosine is greater than 1 for incoming "
+                "energy index "
+             << std::to_string(ie) << ", outgoing energy index "
+             << std::to_string(oe) << ".";
+        throw PNDLException(mssg.str());
+      }
     }  // For all outgoing energies
 
     // Check outgoing energy distribution
@@ -199,16 +192,22 @@ ContinuousEnergyDiscreteCosines::ContinuousEnergyDiscreteCosines(
     }
 
     for (std::size_t z = 0; z < Noe; z++) {
+      // Negative pdf values in the TSLs seems to be systematic. They are always
+      // very small in magnitude (usually -1.E-20). Inorder to actually have TSL
+      // data to read and use, I simply set it to zero, so long as it wasn't too
+      // large a negative value.
       if (tables_.back().pdf[z] < 0.) {
-        std::stringstream mssg;
-        mssg << "Negative PDF value found for incoming energy index ";
-        mssg << ie << ", and outgoing energy index " << z << ". ";
-        mssg << "PDF value is " << std::scientific;
-        mssg << tables_.back().pdf[z] << ".";
-        throw PNDLException(mssg.str());
+        if (std::abs(tables_.back().pdf[z]) < 1.E-15) {
+          tables_.back().pdf[z] = 0.;
+        } else {
+          std::stringstream mssg;
+          mssg << "Large negative PDF value found for incoming energy index "
+               << ie << ", and outgoing energy index " << z << ". PDF value is "
+               << std::scientific << tables_.back().pdf[z] << ".";
+          throw PNDLException(mssg.str());
+        }
       }
     }
-
   }  // For all incident energies
 }
 
