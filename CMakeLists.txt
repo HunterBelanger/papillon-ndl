@@ -123,18 +123,13 @@ endif()
 
 # If building the Python bindings
 if(PNDL_PYTHON)
-  find_package(pybind11 QUIET)
-  if(NOT pybind11_FOUND)
-    message(STATUS "Could not find a local install of Pybind11")
-    message(STATUS "Will download Pybind11 instead")
-    FetchContent_Declare(pybind11
-      GIT_REPOSITORY https://github.com/pybind/pybind11
-      GIT_TAG        v2.10.0
-    )
-    FetchContent_MakeAvailable(pybind11)
-  else()
-    message(STATUS "Using local install of Pybind11")
-  endif()
+  # Require download of Pybind11
+  message(STATUS "Will download Pybind11 instead")
+  FetchContent_Declare(pybind11
+    GIT_REPOSITORY https://github.com/pybind/pybind11
+    GIT_TAG        v2.10.0
+  )
+  FetchContent_MakeAvailable(pybind11)
 
   find_package(Python REQUIRED)
 
