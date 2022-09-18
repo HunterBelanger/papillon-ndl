@@ -28,7 +28,7 @@
  * @author Hunter Belanger
  */
 
-#include <PapillonNDL/ce_neutron.hpp>
+#include <PapillonNDL/st_neutron.hpp>
 #include <PapillonNDL/st_thermal_scattering_law.hpp>
 #include <PapillonNDL/zaid.hpp>
 #include <filesystem>

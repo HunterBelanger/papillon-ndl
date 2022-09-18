@@ -20,14 +20,16 @@
  * along with PapillonNDL. If not, see <https://www.gnu.org/licenses/>.
  *
  * */
-#include <PapillonNDL/ce_neutron.hpp>
 #include <PapillonNDL/elastic_svt.hpp>
 #include <PapillonNDL/pndl_exception.hpp>
+#include <PapillonNDL/st_neutron.hpp>
 
 namespace pndl {
 
-CENeutron<CrossSection>::CENeutron(const ACE& ace)
-    : CENeutronBase(ace),
+STNeutron::STNeutron(const ACE& ace)
+    : zaid_(ace.zaid()),
+      awr_(ace.awr()),
+      fissile_(ace.fissile()),
       temperature_(ace.temperature()),
       energy_grid_(nullptr),
       total_xs_(nullptr),
@@ -38,8 +40,10 @@ CENeutron<CrossSection>::CENeutron(const ACE& ace)
       photon_production_xs_(nullptr),
       elastic_(nullptr),
       fission_(nullptr),
-      reactions_(),
-      urr_ptables_(nullptr) {
+      urr_ptables_(nullptr),
+      mt_list_(),
+      reaction_indices_(),
+      reactions_() {
   // Construct energy grid
   energy_grid_ = std::make_shared<EnergyGrid>(ace);
 
@@ -97,6 +101,9 @@ CENeutron<CrossSection>::CENeutron(const ACE& ace)
     err.add_to_exception(mssg);
     throw err;
   }
+  // Add fission MTs to mt_list
+  mt_list_.insert(mt_list_.end(), fission_->mt_list().begin(),
+                  fission_->mt_list().end());
 
   fission_xs_ = compute_fission_xs();
 
@@ -107,7 +114,7 @@ CENeutron<CrossSection>::CENeutron(const ACE& ace)
   } else {
     capture_xs_ = std::make_shared<CrossSection>(this->reaction(102).xs());
   }
-  
+
   try {
     urr_ptables_ = std::make_shared<URRPTables>(ace, *elastic_xs_, *capture_xs_,
                                                 *fission_xs_, *heating_number_,
@@ -119,8 +126,10 @@ CENeutron<CrossSection>::CENeutron(const ACE& ace)
   }
 }
 
-CENeutron<CrossSection>::CENeutron(const ACE& ace, const CENeutron& nuclide)
-    : CENeutronBase(nuclide),
+STNeutron::STNeutron(const ACE& ace, const STNeutron& nuclide)
+    : zaid_(nuclide.zaid_),
+      awr_(nuclide.awr_),
+      fissile_(nuclide.fissile_),
       temperature_(ace.temperature()),
       energy_grid_(nullptr),
       total_xs_(nullptr),
@@ -131,8 +140,10 @@ CENeutron<CrossSection>::CENeutron(const ACE& ace, const CENeutron& nuclide)
       photon_production_xs_(nullptr),
       elastic_(nullptr),
       fission_(nullptr),
-      reactions_(),
-      urr_ptables_(nullptr) {
+      urr_ptables_(nullptr),
+      mt_list_(),
+      reaction_indices_(),
+      reactions_() {
   // Construct energy grid
   energy_grid_ = std::make_shared<EnergyGrid>(ace);
 
@@ -171,7 +182,7 @@ CENeutron<CrossSection>::CENeutron(const ACE& ace, const CENeutron& nuclide)
       reaction_indices_[MT] = current_reaction_index;
       current_reaction_index++;
     }
-  } 
+  }
 
   // Make elastic scatter distribution
   try {
@@ -191,6 +202,9 @@ CENeutron<CrossSection>::CENeutron(const ACE& ace, const CENeutron& nuclide)
     err.add_to_exception(mssg);
     throw err;
   }
+  // Add fission MTs to mt_list
+  mt_list_.insert(mt_list_.end(), fission_->mt_list().begin(),
+                  fission_->mt_list().end());
 
   fission_xs_ = compute_fission_xs();
 
@@ -201,7 +215,7 @@ CENeutron<CrossSection>::CENeutron(const ACE& ace, const CENeutron& nuclide)
   } else {
     capture_xs_ = std::make_shared<CrossSection>(this->reaction(102).xs());
   }
-  
+
   try {
     urr_ptables_ = std::make_shared<URRPTables>(ace, *elastic_xs_, *capture_xs_,
                                                 *fission_xs_, *heating_number_,
@@ -213,7 +227,7 @@ CENeutron<CrossSection>::CENeutron(const ACE& ace, const CENeutron& nuclide)
   }
 }
 
-std::shared_ptr<CrossSection> CENeutron<CrossSection>::compute_fission_xs() {
+std::shared_ptr<CrossSection> STNeutron::compute_fission_xs() {
   if (!fissile_) {
     return std::make_shared<CrossSection>(0., energy_grid_);
   }

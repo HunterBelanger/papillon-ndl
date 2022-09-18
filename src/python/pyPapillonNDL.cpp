@@ -81,7 +81,6 @@ extern void init_DelayedGroup(py::module&);
 extern void init_Fission(py::module&);
 extern void init_ReactionBase(py::module& m);
 extern void init_STReaction(py::module& m);
-extern void init_CENeutronBase(py::module& m);
 extern void init_STNeutron(py::module& m);
 extern void init_PRNG(py::module&);
 extern void init_ZAID(py::module&);
@@ -148,7 +147,6 @@ PYBIND11_MODULE(pyPapillonNDL, m) {
   init_STReaction(m);
   init_DelayedGroup(m);
   init_Fission(m);
-  init_CENeutronBase(m);
   init_STNeutron(m);
   init_PRNG(m);
   init_ZAID(m);

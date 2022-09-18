@@ -1,7 +1,7 @@
 #include <docopt.h>
 
 #include <PapillonNDL/absorption.hpp>
-#include <PapillonNDL/ce_neutron.hpp>
+#include <PapillonNDL/st_neutron.hpp>
 #include <PapillonNDL/elastic_dbrc.hpp>
 #include <PapillonNDL/st_coherent_elastic.hpp>
 #include <PapillonNDL/st_incoherent_elastic_ace.hpp>

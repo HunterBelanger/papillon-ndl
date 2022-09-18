@@ -4,17 +4,10 @@
 Nuclear Data Interface
 ======================
 
-CENeutronBase
--------------
-
-.. doxygenclass:: pndl::CENeutronBase
-
 STNeutron
 ---------
 
-.. doxygentypedef:: pndl::STNeutron
-
-.. doxygenclass:: pndl::CENeutron< CrossSection >
+.. doxygenclass:: pndl::STNeutron
 
 EnergyGrid
 ----------

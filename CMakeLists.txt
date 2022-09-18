@@ -51,8 +51,7 @@ set(PNDL_SOURCE_LIST src/element.cpp
                      src/cross_section.cpp
                      src/delayed_group.cpp
                      src/fission.cpp
-                     src/ce_neutron_base.cpp
-                     src/ce_neutron.cpp
+                     src/st_neutron.cpp
                      src/reaction_base.cpp
                      src/reaction.cpp
                      src/continuous_energy_discrete_cosines.cpp
@@ -152,7 +151,7 @@ if(PNDL_PYTHON)
                                     src/python/reaction.cpp
                                     src/python/delayed_group.cpp
                                     src/python/fission.cpp
-                                    src/python/ce_neutron.cpp
+                                    src/python/st_neutron.cpp
                                     src/python/prng.cpp
                                     src/python/nuclide.cpp
                                     src/python/nd_library.cpp

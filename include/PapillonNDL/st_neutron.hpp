@@ -20,15 +20,14 @@
  * along with PapillonNDL. If not, see <https://www.gnu.org/licenses/>.
  *
  * */
-#ifndef PAPILLON_NDL_CE_NEUTRON_H
-#define PAPILLON_NDL_CE_NEUTRON_H
+#ifndef PAPILLON_NDL_ST_NEUTRON_H
+#define PAPILLON_NDL_ST_NEUTRON_H
 
 /**
  * @file
  * @author Hunter Belanger
  */
 
-#include <PapillonNDL/ce_neutron_base.hpp>
 #include <PapillonNDL/elastic.hpp>
 #include <PapillonNDL/fission.hpp>
 #include <PapillonNDL/reaction.hpp>
@@ -38,21 +37,17 @@
 
 namespace pndl {
 
-template <typename XSType>
-class CENeutron {};
-
 /**
  * @brief Holds all continuous energy data for single nuclide, at a single
  *        temperature.
  *
  */
-template <>
-class CENeutron<CrossSection> : public CENeutronBase {
+class STNeutron {
  public:
   /**
    * @param ace ACE file from which to construct the data.
    */
-  CENeutron(const ACE& ace);
+  STNeutron(const ACE& ace);
 
   /**
    * @param ace ACE file from which to take the new cross sections.
@@ -60,7 +55,22 @@ class CENeutron<CrossSection> : public CENeutronBase {
    *                nuclide. Secondary distributions and fission data
    *                will be shared between the two data sets.
    */
-  CENeutron(const ACE& ace, const CENeutron& nuclide);
+  STNeutron(const ACE& ace, const STNeutron& nuclide);
+
+  /**
+   * @brief Returns the nuclide ZAID.
+   */
+  const ZAID& zaid() const { return zaid_; }
+
+  /**
+   * @brief Returns the nuclide Atomic Weight Ratio.
+   */
+  double awr() const { return awr_; }
+
+  /**
+   * @brief Returns true if the nuclide is fissile, and false otherwise.
+   */
+  bool fissile() const { return fissile_; }
 
   /**
    * @brief Returns the temperature at which the data has been prepared.
@@ -108,6 +118,25 @@ class CENeutron<CrossSection> : public CENeutronBase {
   }
 
   /**
+   * @brief Returns a list of all scattering and absorption MT reactions present
+   *        for the nuclide (other than elastic).
+   */
+  const std::vector<uint32_t>& mt_list() const { return mt_list_; }
+
+  /**
+   * @brief Checks to see if a nucldie has a given scattering or absorption
+   *        reaction.
+   * @param mt MT reaction to search for.
+   */
+  bool has_reaction(uint32_t mt) const {
+    if (mt == 18 || mt == 19 || mt == 20 || mt == 21 || mt == 38) {
+      return fission_->has_reaction(mt);
+    } else {
+      return (mt > 891 || reaction_indices_[mt] < 0) ? false : true;
+    }
+  }
+
+  /**
    * @brief Retrieved a given MT reaction.
    * @param mt MT reaction to return.
    */
@@ -119,7 +148,11 @@ class CENeutron<CrossSection> : public CENeutronBase {
       throw PNDLException(mssg);
     }
 
-    return reactions_[reaction_indices_[mt]];
+    if (mt == 18 || mt == 19 || mt == 20 || mt == 21 || mt == 38) {
+      return fission_->reaction(mt);
+    } else {
+      return reactions_[reaction_indices_[mt]];
+    }
   }
 
   /**
@@ -182,7 +215,11 @@ class CENeutron<CrossSection> : public CENeutronBase {
   }
 
  private:
+  ZAID zaid_;
+  double awr_;
+  bool fissile_;
   double temperature_;
+
   std::shared_ptr<EnergyGrid> energy_grid_;
   std::shared_ptr<CrossSection> total_xs_;
   std::shared_ptr<CrossSection> disappearance_xs_;
@@ -190,20 +227,18 @@ class CENeutron<CrossSection> : public CENeutronBase {
   std::shared_ptr<CrossSection> heating_number_;
   std::shared_ptr<CrossSection> fission_xs_;
   std::shared_ptr<CrossSection> photon_production_xs_;
+
   std::shared_ptr<Elastic> elastic_;
   std::shared_ptr<Fission> fission_;
-  std::vector<STReaction> reactions_;
   std::shared_ptr<URRPTables> urr_ptables_;
+
+  std::vector<uint32_t> mt_list_;
+  std::array<int32_t, 892> reaction_indices_;
+  std::vector<STReaction> reactions_;
 
   // Private Helper Methods
   std::shared_ptr<CrossSection> compute_fission_xs();
 };
-
-/**
- * @brief Alias for a CENeutron<CrossSection>, which contains all data for a
- *        nuclide at a single temperature.
- */
-using STNeutron = CENeutron<CrossSection>;
 
 }  // namespace pndl
 
