@@ -155,7 +155,8 @@ class Nuclide {
       throw err;
     }
 
-    std::string symbol_for_isomer = std::regex_replace(symbol, isotope_regex, "");
+    std::string symbol_for_isomer =
+        std::regex_replace(symbol, isotope_regex, "");
     const std::regex isomer_regex("([m][0-2])");
     std::regex_search(symbol_for_isomer, match, isomer_regex);
     std::string isomer_str(match[0].first, match[0].second);

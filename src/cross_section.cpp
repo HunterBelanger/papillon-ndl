@@ -28,7 +28,8 @@
 namespace pndl {
 
 CrossSection::CrossSection(const ACE& ace, std::size_t i,
-                           std::shared_ptr<EnergyGrid> E_grid, bool get_index, bool is_heating)
+                           std::shared_ptr<EnergyGrid> E_grid, bool get_index,
+                           bool is_heating)
     : energy_grid_(E_grid), values_(nullptr), index_(0), single_value_(false) {
   uint32_t NE = ace.nxs(2);
   if (get_index) {

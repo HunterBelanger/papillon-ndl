@@ -45,7 +45,7 @@ class STIncoherentElasticACE : public STTSLReaction {
    * @param ace ACE file which contains thermal scattering law.
    */
   STIncoherentElasticACE(const ACE& ace);
-  ~STIncoherentElasticACE() = default; 
+  ~STIncoherentElasticACE() = default;
 
   double xs(double E) const override final { return xs_->evaluate(E); }
 

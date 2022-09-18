@@ -42,7 +42,8 @@ namespace pndl {
  *        21, and MT 38. These stand for first chance, second chance, third
  *        chance, and fourth chance fission respectively. If these four are
  *        provided insteadd of MT 18, then the prompt fission spectrum is the
- *        average of these four different spectra. This class handles this niche case.
+ *        average of these four different spectra. This class handles this niche
+ * case.
  */
 class SummedFissionSpectrum : public AngleEnergy {
  public:

@@ -35,7 +35,8 @@ void init_ACE(py::module& m) {
       .value("BINARY", ACE::Type::BINARY);
 
   py::class_<ACE>(m, "ACE")
-      .def(py::init<std::string, ACE::Type>(), py::arg("fname"), py::arg("type") = ACE::Type::ASCII)
+      .def(py::init<std::string, ACE::Type>(), py::arg("fname"),
+           py::arg("type") = ACE::Type::ASCII)
       .def("zaid", &ACE::zaid)
       .def("temperature", &ACE::temperature)
       .def("awr", &ACE::awr)

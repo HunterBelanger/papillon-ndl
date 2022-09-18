@@ -20,10 +20,10 @@
  * along with PapillonNDL. If not, see <https://www.gnu.org/licenses/>.
  *
  * */
-#include <PapillonNDL/st_incoherent_inelastic.hpp>
 #include <PapillonNDL/continuous_energy_discrete_cosines.hpp>
 #include <PapillonNDL/discrete_cosines_energies.hpp>
 #include <PapillonNDL/pndl_exception.hpp>
+#include <PapillonNDL/st_incoherent_inelastic.hpp>
 
 namespace pndl {
 

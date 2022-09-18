@@ -20,8 +20,8 @@
  * along with PapillonNDL. If not, see <https://www.gnu.org/licenses/>.
  *
  * */
-#include <PapillonNDL/st_incoherent_elastic_ace.hpp>
 #include <PapillonNDL/pndl_exception.hpp>
+#include <PapillonNDL/st_incoherent_elastic_ace.hpp>
 
 namespace pndl {
 

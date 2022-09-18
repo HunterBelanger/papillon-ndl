@@ -30,12 +30,13 @@
 
 #include <array>
 #include <functional>
-#include <string>
 #include <memory>
+#include <string>
 
 namespace pndl {
 
-class ElasticDopplerBroadener : public std::enable_shared_from_this<ElasticDopplerBroadener> {
+class ElasticDopplerBroadener
+    : public std::enable_shared_from_this<ElasticDopplerBroadener> {
  public:
   ElasticDopplerBroadener() = default;
   ~ElasticDopplerBroadener() = default;

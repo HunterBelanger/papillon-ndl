@@ -73,7 +73,8 @@ Fission::Fission(const ACE& ace, std::shared_ptr<EnergyGrid> energy_grid)
         } else {
           // Both prompt and total given
           uint32_t KNU_prmpt = ace.NU() + 1;
-          uint32_t KNU_tot = ace.NU() + std::abs(ace.xss<int32_t>(ace.NU())) + 1;
+          uint32_t KNU_tot =
+              ace.NU() + std::abs(ace.xss<int32_t>(ace.NU())) + 1;
 
           total = read_nu(ace, KNU_tot);
           prompt = read_nu(ace, KNU_prmpt);
@@ -186,7 +187,7 @@ Fission::Fission(const ACE& ace, std::shared_ptr<EnergyGrid> energy_grid)
       err.add_to_exception(mssg);
       throw err;
     }
-  } 
+  }
 }
 
 Fission::Fission(const ACE& ace, std::shared_ptr<EnergyGrid> energy_grid,
@@ -214,23 +215,23 @@ Fission::Fission(const ACE& ace, std::shared_ptr<EnergyGrid> energy_grid,
         uint32_t MT = ace.xss<uint32_t>(ace.MTR() + indx);
         if (MT == 18) {
           mt18_ = std::make_shared<STReaction>(ace, indx, energy_grid,
-                                              *fission.mt18_);
+                                               *fission.mt18_);
           mt_list_.push_back(18);
         } else if (MT == 19) {
           mt19_ = std::make_shared<STReaction>(ace, indx, energy_grid,
-                                              *fission.mt19_);
+                                               *fission.mt19_);
           mt_list_.push_back(19);
         } else if (MT == 20) {
           mt20_ = std::make_shared<STReaction>(ace, indx, energy_grid,
-                                              *fission.mt20_);
+                                               *fission.mt20_);
           mt_list_.push_back(20);
         } else if (MT == 21) {
           mt21_ = std::make_shared<STReaction>(ace, indx, energy_grid,
-                                              *fission.mt21_);
+                                               *fission.mt21_);
           mt_list_.push_back(21);
         } else if (MT == 38) {
           mt38_ = std::make_shared<STReaction>(ace, indx, energy_grid,
-                                              *fission.mt38_);
+                                               *fission.mt38_);
           mt_list_.push_back(38);
         }
       }
@@ -258,7 +259,7 @@ Fission::Fission(const ACE& ace, std::shared_ptr<EnergyGrid> energy_grid,
       err.add_to_exception(mssg);
       throw err;
     }
-  } 
+  }
 }
 
 std::shared_ptr<Function1D> Fission::read_nu(const ACE& ace, std::size_t i) {

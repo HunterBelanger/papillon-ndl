@@ -49,11 +49,12 @@ class STIncoherentInelastic : public STTSLReaction {
    *        based interpolation will be applied to the sampling of the energy.
    */
   STIncoherentInelastic(const ACE& ace, bool unit_based_interpolation = false);
-  ~STIncoherentInelastic() = default; 
+  ~STIncoherentInelastic() = default;
 
-  double xs(double E) const override final { return xs_->evaluate(E); } 
+  double xs(double E) const override final { return xs_->evaluate(E); }
 
-  AngleEnergyPacket sample_angle_energy(double E_in, std::function<double()> rng) const override final {
+  AngleEnergyPacket sample_angle_energy(
+      double E_in, std::function<double()> rng) const override final {
     return angle_energy_->sample_angle_energy(E_in, rng);
   }
 
@@ -61,7 +62,8 @@ class STIncoherentInelastic : public STTSLReaction {
     return angle_energy_->angle_pdf(E_in, mu);
   }
 
-  std::optional<double> pdf(double E_in, double mu, double E_out) const override final {
+  std::optional<double> pdf(double E_in, double mu,
+                            double E_out) const override final {
     return angle_energy_->pdf(E_in, mu, E_out);
   }
 

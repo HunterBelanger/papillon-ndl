@@ -20,10 +20,9 @@
  * along with PapillonNDL. If not, see <https://www.gnu.org/licenses/>.
  *
  * */
-#include <PapillonNDL/reaction.hpp>
 #include <PapillonNDL/pndl_exception.hpp>
+#include <PapillonNDL/reaction.hpp>
 #include <memory>
-
 
 /**
  * @file

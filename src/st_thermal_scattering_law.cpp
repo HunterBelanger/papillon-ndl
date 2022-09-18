@@ -20,9 +20,9 @@
  * along with PapillonNDL. If not, see <https://www.gnu.org/licenses/>.
  *
  * */
-#include <PapillonNDL/st_thermal_scattering_law.hpp>
 #include <PapillonNDL/st_coherent_elastic.hpp>
 #include <PapillonNDL/st_incoherent_elastic_ace.hpp>
+#include <PapillonNDL/st_thermal_scattering_law.hpp>
 
 namespace pndl {
 

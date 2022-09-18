@@ -44,7 +44,6 @@ class STTSLReaction : public AngleEnergy {
    * @param E Incident energy at which to evaluate the cross section in MeV.
    */
   virtual double xs(double E) const = 0;
-  
 };
 
 }  // namespace pndl
