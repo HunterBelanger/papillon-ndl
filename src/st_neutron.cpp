@@ -23,6 +23,7 @@
 #include <PapillonNDL/elastic_svt.hpp>
 #include <PapillonNDL/pndl_exception.hpp>
 #include <PapillonNDL/st_neutron.hpp>
+#include <algorithm>
 
 namespace pndl {
 
@@ -104,6 +105,7 @@ STNeutron::STNeutron(const ACE& ace)
   // Add fission MTs to mt_list
   mt_list_.insert(mt_list_.end(), fission_->mt_list().begin(),
                   fission_->mt_list().end());
+  std::sort(mt_list_.begin(), mt_list_.end());
 
   fission_xs_ = compute_fission_xs();
 
@@ -205,6 +207,7 @@ STNeutron::STNeutron(const ACE& ace, const STNeutron& nuclide)
   // Add fission MTs to mt_list
   mt_list_.insert(mt_list_.end(), fission_->mt_list().begin(),
                   fission_->mt_list().end());
+  std::sort(mt_list_.begin(), mt_list_.end());
 
   fission_xs_ = compute_fission_xs();
 
