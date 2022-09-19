@@ -73,7 +73,7 @@ class Watt : public EnergyLaw {
   const Tabulated1D& b() const { return *a_; }
 
   /**
-   * @brief Returns the the bin boundaries in a vector.
+   * @brief Returns the value of the cuttoff energy of the distribution in MeV.
    */
   double U() const { return restriction_energy_; }
 

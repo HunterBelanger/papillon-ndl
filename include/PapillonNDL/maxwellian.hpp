@@ -66,7 +66,7 @@ class Maxwellian : public EnergyLaw {
   const Tabulated1D& temperature() const { return *temperature_; }
 
   /**
-   * @brief Returns the the bin boundaries in a vector.
+   * @brief Returns the value of the cuttoff energy of the distribution in MeV.
    */
   double U() const { return restriction_energy_; }
 
