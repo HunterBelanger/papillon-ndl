@@ -39,7 +39,7 @@ class ElasticDopplerBroadener
     : public std::enable_shared_from_this<ElasticDopplerBroadener> {
  public:
   ElasticDopplerBroadener() = default;
-  ~ElasticDopplerBroadener() = default;
+  virtual ~ElasticDopplerBroadener() = default;
 
   /**
    * @brief Samples the velocity of a target nuclide for using in sampling an
