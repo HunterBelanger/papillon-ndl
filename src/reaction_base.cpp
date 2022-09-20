@@ -131,7 +131,7 @@ ReactionBase::ReactionBase(const ACE& ace, std::size_t indx)
     }
   } else {
     // This is an absorption reaction
-    neutron_distribution_ = std::make_shared<Absorption>();
+    neutron_distribution_ = std::make_shared<Absorption>(mt_);
   }
 }
 

@@ -293,7 +293,7 @@ void init_CMDistribution(py::module& m) {
 void init_Absorption(py::module& m) {
   py::class_<Absorption, AngleEnergy, std::shared_ptr<Absorption>>(m,
                                                                    "Absorption")
-      .def(py::init<>())
+      .def(py::init<uint32_t>())
       .def("sample_angle_energy", &Absorption::sample_angle_energy)
       .def("angle_pdf", &Absorption::angle_pdf)
       .def("pdf", &Absorption::pdf);

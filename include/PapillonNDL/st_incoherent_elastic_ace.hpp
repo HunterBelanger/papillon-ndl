@@ -29,6 +29,7 @@
  */
 
 #include <PapillonNDL/ace.hpp>
+#include <PapillonNDL/pndl_exception.hpp>
 #include <PapillonNDL/st_tsl_reaction.hpp>
 #include <PapillonNDL/tabulated_1d.hpp>
 #include <algorithm>
@@ -51,7 +52,12 @@ class STIncoherentElasticACE : public STTSLReaction {
 
   AngleEnergyPacket sample_angle_energy(
       double E_in, std::function<double()> rng) const override final {
-    if (incoming_energy_.size() == 0) return {1., 0.};
+    if (incoming_energy_.size() == 0) {
+      std::string mssg =
+          "Incoherent elastic scattering is not possible. Cannot sample "
+          "distribution.";
+      throw PNDLException(mssg);
+    }
 
     // Get energy index
     auto Eit = std::lower_bound(incoming_energy_.begin(),

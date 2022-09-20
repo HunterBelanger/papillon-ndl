@@ -29,6 +29,7 @@
  */
 
 #include <PapillonNDL/ace.hpp>
+#include <PapillonNDL/pndl_exception.hpp>
 #include <PapillonNDL/st_tsl_reaction.hpp>
 #include <algorithm>
 #include <iterator>
@@ -65,7 +66,12 @@ class STCoherentElastic : public STTSLReaction {
 
   AngleEnergyPacket sample_angle_energy(
       double E_in, std::function<double()> rng) const override final {
-    if (bragg_edges_.size() == 0) return {1., 0.};
+    if (bragg_edges_.size() == 0) {
+      std::string mssg =
+          "Coherent elastic scattering is not possible. Cannot sample "
+          "distribution.";
+      throw PNDLException(mssg);
+    }
 
     if (E_in > bragg_edges_.front()) {
       // Get index for lower bragg edge

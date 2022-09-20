@@ -51,7 +51,7 @@ Fission::Fission(const ACE& ace, std::shared_ptr<EnergyGrid> energy_grid)
     nu_total_ = std::make_shared<Constant>(0.);
     nu_prompt_ = std::make_shared<Constant>(0.);
     nu_delayed_ = std::make_shared<Constant>(0.);
-    prompt_spectrum_ = std::make_shared<Absorption>();
+    prompt_spectrum_ = std::make_shared<Absorption>(18);
   } else {
     try {
       // Temporary values
@@ -180,7 +180,7 @@ Fission::Fission(const ACE& ace, std::shared_ptr<EnergyGrid> energy_grid)
         // There is no fission apparently. All the nu should have been set to
         // zero, no delayed groups should be present, and we will just set the
         // prompt spectrum to absorption.
-        prompt_spectrum_ = std::make_shared<Absorption>();
+        prompt_spectrum_ = std::make_shared<Absorption>(18);
       }
     } catch (PNDLException& err) {
       std::string mssg = "Could not create prompt spectrum.";
@@ -252,7 +252,7 @@ Fission::Fission(const ACE& ace, std::shared_ptr<EnergyGrid> energy_grid,
         // There is no fission apparently. All the nu should have been set to
         // zero, no delayed groups should be present, and we will just set the
         // prompt spectrum to absorption.
-        prompt_spectrum_ = std::make_shared<Absorption>();
+        prompt_spectrum_ = std::make_shared<Absorption>(18);
       }
     } catch (PNDLException& err) {
       std::string mssg = "Could not create prompt spectrum.";

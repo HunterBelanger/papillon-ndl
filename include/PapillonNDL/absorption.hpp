@@ -29,20 +29,25 @@
  */
 
 #include <PapillonNDL/angle_energy.hpp>
+#include <PapillonNDL/pndl_exception.hpp>
 #include <cstddef>
 #include <optional>
 
 namespace pndl {
 
 /**
- * @brief A distribution to represent absorption.
+ * @brief A distribution to represent absorption. When you try to sample from
+ *        it, a PNDLException is thrown.
  */
 class Absorption : public AngleEnergy {
  public:
-  Absorption() {}
+  Absorption(uint32_t mt) : mt_(mt) {}
 
   AngleEnergyPacket sample_angle_energy(
       double /*E_in*/, std::function<double()> /*rng*/) const override final {
+    std::string mssg =
+        "Distribution for MT " + std::to_string(mt_) + " is absorption.";
+    throw PNDLException(mssg);
     return {1., 0.};
   }
 
@@ -55,6 +60,9 @@ class Absorption : public AngleEnergy {
                             double /*E_out*/) const override final {
     return std::nullopt;
   }
+
+ private:
+  uint32_t mt_;
 };
 
 }  // namespace pndl
