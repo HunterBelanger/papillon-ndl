@@ -177,19 +177,19 @@ MCNPLibrary::MCNPLibrary(const std::string& fname) : NDLibrary(fname) {
       // The "ptable" keyword is on the next line. Go grab it.
       directory_stream >> ptable_str;
       get_zaid_str = true;
-    } else if (ptable_str.size() != 6) {
+    } else if (ptable_str == "ptable") {
+      // We just read "ptable" and it was on the main line
+      get_zaid_str = true;
+    } else {
       // The next item wasn't "+" or "ptable", so we actually just read the next
       // ZAID. Keep it for later.
       zaid_str_new = ptable_str;
       get_zaid_str = false;
-    } else {
-      // We just read "ptable" and it was on the main line
-      get_zaid_str = true;
     }
 
     double temp = std::stod(temp_str) * MEV_TO_EV * EV_TO_K;
     std::filesystem::path ace_path = datapath / fname_str;
-    const std::regex zaid_ext_regex("([.][\\w]{3})");
+    const std::regex zaid_ext_regex("([.][\\w]{3,5})");
     ACE::Type ace_type = ACE::Type::ASCII;
     const char zaid_suffix = zaid_str.back();
     if (ftype_str == "2") ace_type = ACE::Type::BINARY;
