@@ -45,6 +45,40 @@ your linker search path, then this should be as easy as:
 
   g++ pndl_test.cpp -lPapillonNDL -o pndltest
 
+------------------------------
+Loading a Nuclear Data Library
+------------------------------
+
+If you already have an ACE library on your system, from either MCNP or Serpent,
+you can start using this data easily with the MCNPLibrary and SerpentLibrary
+helper classes. Including the relative header file is all is necessary. As an
+example, if you want to use an MCNP xsdir file, then first make sure that the
+``PapillonNDL/mcnp_library.hpp`` header file included in the executable.
+
+.. code-block:: c++
+
+  MCNPLibrary lib("/home/hunter/Documents/nuclear_data/lib80x/ace/lib80x.xsdir");
+
+From a library, you can directly load a nuclide using the element symbol, and
+the atomic mass number of the isotope. You must also specify the desired
+temperature for the data, and a temperature tolerance (which is 1 Kelvin by
+default). If you don’t know what temperatures are provided in the library, you
+can get a list of the provided data for the symbol:
+
+.. code-block:: c++
+
+   const std::vector<double>& U238_temps = lib.temperatures("U238");
+
+Let's grab the evaluation for U238 at 293.6 Kelvin:
+
+.. code-block:: c++
+
+   std::shared_ptr<STNeutron> U238 = lib.load_STNeutron("U238", 293.6);
+
+A library will return the STNeutron in a shared pointer, allowing it to keep
+its own copy, so that the data wont be reloaded and dupilcated if the same
+nuclide and temperature combination is requested later on.
+
 -------------------------
 Evaluating Cross Sections
 -------------------------
@@ -151,33 +185,44 @@ an outgoing angle and energy in the laboratory frame with
 The cosine of the scattering angle is then stored in ``out.cosine_angle``,
 and the energy is in ``out.energy``.
 
+Absorption reactions which do not emit neutrons have a special type of
+distribution which will throw a PNDLException if you try to sample them.
+
 ------------
 Fission Data
 ------------
 
 Often we want to look up lots of particular fission data for isotopes
-such as U235. While the fission cross section is contained in the
-MT=18 reaction (or sometimes MT=19,20,21, and 38), helper methods to
+such as U235. While the fission cross section is directly stored in the
+STNeutron, other pieces of fission data are stored in the Fission class,
+contained in the STNeutron instance. Methods of the Fission class allow us to
 access other bits of fission data such as the number of neutrons per
-fission, the fission neutron spectrum, and delayed group info/spectra are
-provided in the STNeutron class.
+fission, the prompt neutron spectrum, and delayed group info/spectra.
 
 .. code-block:: c++
 
   // Total number of fission neutrons for fissions induced by 3 MeV
   // neutrons.
-  double nu = U235.nu_total()(3.);
-  double nu_prmpt = U235.nu_prompt()(3.);
-  double nu_delyd = U235.nu_delayed()(3.);
+  double nu = U235.fission().nu_total()(3.);
+  double nu_prmpt = U235.fission().nu_prompt()(3.);
+  double nu_delyd = U235.fission().nu_delayed()(3.);
+
+The prompt spectrum is also provided here, and can be sampled like a regular
+reaction distribution.
+
+.. code-block:: c++
+  
+  // Sample an angle-energy pair for prompt fission induced at 1.2 eV.
+  pndl::AngleEnergyPacket prmpt = U235.fission().prompt_spectrum().sample_angle_energy(1.2E-6, rng);
 
 Information for a delayed neutron group is also available in a DelayedGroup class:
 
 .. code-block:: c++
 
-  size_t delayed_grps = U235.n_delayed_groups();
+  size_t delayed_grps = U235.fission().n_delayed_groups();
 
   // Delayed groups are indexed starting from 0
-  const pndl::DelayedGroup& dg1 = U235.delayed_group(1);
+  const pndl::DelayedGroup& dg1 = U235.fission().delayed_group(1);
 
   // The decay constant for the group is given in units of
   // inverse seconds.
