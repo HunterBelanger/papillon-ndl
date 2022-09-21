@@ -9,9 +9,9 @@ Build Requirements
 ------------------
 
 To build the C++ library on linux, a C++ compiler is required, which supports
-the C++20 standard. On Linux systems, the only current option which satisfied
-this is GCC >= 11. On Windows, you will need MSVC >= 19.29. You will also need
-cmake >= 3.11, whether you use Windows or linux.
+the C++20 standard. On GNU/Linux systems, using GCC >= 11 or Clang >= 15 will
+satisfy this requirement. On Windows, you will need MSVC >= 19.29. Also needed
+is cmake >= 3.11, whether you use Windows or linux.
 
 In addition, if you would like to build the Python API, you will also need to
 ensure that the Python development headers are installed on your system.
@@ -36,12 +36,13 @@ following command:
 
 Other Linux Distributions
 -------------------------
-Unfortunately, GCC-11 is quite new, and many distrubtions do not yet ship this
-compiler toolchain, or have specific installation commands. If you are not
-using one of the distributions listed above, first check to see if there is
-a specific method to install GCC-11 form your distributions repositories. If
-not, I recommend building GCC-11 from source. This is outside the scope of these
-installation instruction, but instructions are readily found online.
+Unfortunately, GCC 11 and Clang 15 are quite new, and many distrubtions do not
+yet ship these compiler toolchains, or have specific installation commands. If
+you are not using one of the distributions listed above, first check to see if
+there is a specific method to install GCC 11, GCC 12 or Clang 15 form your
+distributions repositories. If not, I recommend building the most recent
+version of Clang from source. This is outside the scope of these installation
+instruction, but instructions are readily found online.
 
 Windows
 --------
@@ -110,6 +111,11 @@ PNDL_PYTHON
 PNDL_TESTS
   This is used to build the unit tests, and is turned off by default.
 
+PNDL_TOOLS
+  This option will build the PapillonNDL sampler, and the OpenMC sampler. It
+  will therefore download and compile all of OpenMC. This should only be needed
+  by developers, and is turned off by default.
+
 PNDL_SHARED
   Builds a shared library, as opposed to a static library. This is turned on by
   default. When building on Windows, this will automatically be turned off.
@@ -125,7 +131,7 @@ are therefore listed here:
 CMAKE_BUILD_TYPE
   If you are looking for sane optimizations (``-O2``) in a normal build, set
   this to ``Release``. When doing development, it is often adventageous to set
-  this to ``Debug``, which provides debug symbols.
+  this to ``RelWithDebInfo`` or ``Debug``, which provides debug symbols.
 
 CMAKE_INSTALL_PREFIX
   This is the location to where the libararies and header files will be
