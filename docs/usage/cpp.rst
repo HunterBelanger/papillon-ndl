@@ -57,7 +57,7 @@ example, if you want to use an MCNP xsdir file, then first make sure that the
 
 .. code-block:: c++
 
-  MCNPLibrary lib("/home/hunter/Documents/nuclear_data/lib80x/ace/lib80x.xsdir");
+  pndl::MCNPLibrary lib("/home/hunter/Documents/nuclear_data/lib80x/ace/lib80x.xsdir");
 
 From a library, you can directly load a nuclide using the element symbol, and
 the atomic mass number of the isotope. You must also specify the desired
