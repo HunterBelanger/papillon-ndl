@@ -62,6 +62,16 @@ Linearization
 
 .. doxygenfunction:: pndl::linearize(double x_min, double x_max, std::function<double(double)> f, double tolerance = 0.001)
 
+Random Number Generation
+------------------------
+
+.. doxygenfunction:: pndl::rng
+
+.. doxygenfunction:: pndl::rng_seed
+
+.. doxygenfunction:: pndl::rng_reset
+
+.. doxygenfunction:: pndl::rng_advance
 
 ZAID
 ----

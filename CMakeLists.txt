@@ -65,6 +65,7 @@ set(PNDL_SOURCE_LIST src/element.cpp
                      src/nd_library.cpp
                      src/mcnp_library.cpp
                      src/serpent_library.cpp
+                     src/rng.cpp
 )
 
 # Only let a static library be built on Windows

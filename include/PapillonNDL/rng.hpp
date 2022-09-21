@@ -20,18 +20,41 @@
  * along with PapillonNDL. If not, see <https://www.gnu.org/licenses/>.
  *
  * */
-#include <pybind11/functional.h>
-#include <pybind11/pybind11.h>
+#ifndef PAPILLON_NDL_RNG_H
+#define PAPILLON_NDL_RNG_H
 
-#include <PapillonNDL/rng.hpp>
-#include <functional>
-#include <random>
+/**
+ * @file
+ * @author Hunter Belanger
+ */
 
-namespace py = pybind11;
+#include <cstddef>
+#include <cstdint>
 
-void init_PRNG(py::module& m) {
-  m.def("rng", &pndl::rng);
-  m.def("rng_seed", &pndl::rng_seed);
-  m.def("rng_reset", &pndl::rng_reset);
-  m.def("rng_advance", &pndl::rng_advance);
+namespace pndl {
+
+/**
+ * @brief Returns a pseudo random number on the interval [0,1).
+ */
+double rng();
+
+/**
+ * @brief Resets the seed of rng to the default value.
+ */
+void rng_reset();
+
+/**
+ * @brief Sets the seed of rng to a specific value.
+ * @param seed New seed for rng.
+ */
+void rng_seed(std::uint64_t seed);
+
+/**
+ * @brief Advances rng by a specified number of steps.
+ * @brief n Number of steps to advance rng.
+ */
+void rng_advance(std::uint64_t n);
+
 }
+
+#endif

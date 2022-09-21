@@ -20,18 +20,23 @@
  * along with PapillonNDL. If not, see <https://www.gnu.org/licenses/>.
  *
  * */
-#include <pybind11/functional.h>
-#include <pybind11/pybind11.h>
-
 #include <PapillonNDL/rng.hpp>
-#include <functional>
 #include <random>
 
-namespace py = pybind11;
+namespace pndl {
 
-void init_PRNG(py::module& m) {
-  m.def("rng", &pndl::rng);
-  m.def("rng_seed", &pndl::rng_seed);
-  m.def("rng_reset", &pndl::rng_reset);
-  m.def("rng_advance", &pndl::rng_advance);
-}
+using LCG = std::linear_congruential_engine<uint64_t, 2806196910506780709ULL, 1,
+                                            0x8000000000000000>;
+
+static LCG lcg;
+static std::uniform_real_distribution<double> unit_dist;
+
+double rng() { return unit_dist(lcg); }
+
+void rng_reset() { lcg.seed(lcg.default_seed); }
+
+void rng_seed(std::uint64_t seed) { lcg.seed(seed); }
+
+void rng_advance(std::uint64_t n) { lcg.discard(n); }
+
+}  // namespace pndl
