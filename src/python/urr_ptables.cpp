@@ -46,6 +46,7 @@ void init_URRPtable(py::module& m) {
   py::class_<URRPTables, std::shared_ptr<URRPTables>>(m, "URRPTables")
       .def(py::init<const ACE&, const CrossSection&, const CrossSection&,
                     const CrossSection&, const CrossSection&,
+                    const CrossSection&, const CrossSection&,
                     const std::vector<STReaction>&>())
       .def("is_valid", &URRPTables::is_valid)
       .def("evaluate_xs_band", py::overload_cast<double, std::size_t, double>(

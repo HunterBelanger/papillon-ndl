@@ -35,12 +35,15 @@
 
 namespace pndl {
 
-URRPTables::URRPTables(const ACE& ace, const CrossSection& elastic,
-                       const CrossSection& capture, const CrossSection& fission,
-                       const CrossSection& heating,
+URRPTables::URRPTables(const ACE& ace, const CrossSection& total,
+                       const CrossSection& disappearance,
+                       const CrossSection& elastic, const CrossSection& capture,
+                       const CrossSection& fission, const CrossSection& heating,
                        const std::vector<STReaction>& reactions)
     : interp_(Interpolation::LinLin),
       factors_(false),
+      total_(total),
+      disappearance_(disappearance),
       elastic_(elastic),
       capture_(capture),
       fission_(fission),

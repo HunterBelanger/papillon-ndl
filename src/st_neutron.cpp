@@ -118,9 +118,9 @@ STNeutron::STNeutron(const ACE& ace)
   }
 
   try {
-    urr_ptables_ = std::make_shared<URRPTables>(ace, *elastic_xs_, *capture_xs_,
-                                                *fission_xs_, *heating_number_,
-                                                reactions_);
+    urr_ptables_ = std::make_shared<URRPTables>(
+        ace, *total_xs_, *disappearance_xs_, *elastic_xs_, *capture_xs_,
+        *fission_xs_, *heating_number_, reactions_);
   } catch (PNDLException& error) {
     std::string mssg = "Could not construct URRPTables for nuclide data.";
     error.add_to_exception(mssg);
@@ -220,9 +220,9 @@ STNeutron::STNeutron(const ACE& ace, const STNeutron& nuclide)
   }
 
   try {
-    urr_ptables_ = std::make_shared<URRPTables>(ace, *elastic_xs_, *capture_xs_,
-                                                *fission_xs_, *heating_number_,
-                                                reactions_);
+    urr_ptables_ = std::make_shared<URRPTables>(
+        ace, *total_xs_, *disappearance_xs_, *elastic_xs_, *capture_xs_,
+        *fission_xs_, *heating_number_, reactions_);
   } catch (PNDLException& error) {
     std::string mssg = "Could not construct URRPTables for nuclide data.";
     error.add_to_exception(mssg);

@@ -36,6 +36,7 @@
 #include <algorithm>
 #include <cmath>
 #include <functional>
+#include <iostream>
 #include <memory>
 #include <vector>
 
@@ -71,13 +72,16 @@ class URRPTables {
  public:
   /**
    * @param ace ACE file containing the probability tables.
+   * @param total Total cross section of the nuclide.
+   * @param disappearance Dissappearance cross section of the nuclide.
    * @param elastic Elastic cross section of the nuclide.
    * @param capture Capture cross section of the nuclide.
    * @param fission Fission cross section of the nuclide.
    * @param heating Heating number CrossSection of the nuclide.
    * @param reactions Vector of all STReaction instances for the nuclide.
    */
-  URRPTables(const ACE& ace, const CrossSection& elastic,
+  URRPTables(const ACE& ace, const CrossSection& total,
+             const CrossSection& disappearance, const CrossSection& elastic,
              const CrossSection& capture, const CrossSection& fission,
              const CrossSection& heating,
              const std::vector<STReaction>& reactions);
@@ -100,14 +104,22 @@ class URRPTables {
     std::size_t iE = 0;
     double f = 0.;
     auto Eit = std::lower_bound(energy_->begin(), energy_->end(), E);
-    if (Eit == energy_->begin()) {
-      iE = 0;
-      f = 0.;
-    } else if (Eit == energy_->end()) {
-      iE = energy_->size() - 1;
-      f = 1.;
+    if (Eit == energy_->begin() || Eit == energy_->end()) {
+      // Our incident energy is too low or too high. We just use the smooth
+      // crosss sections.
+      XSPacket xs;
+      xs.total = total_.evaluate(E, i);
+      xs.elastic = elastic_.evaluate(E, i);
+      xs.fission = fission_.evaluate(E, i);
+      xs.absorption = disappearance_.evaluate(E, i) + xs.fission;
+      xs.heating = heating_.evaluate(E, i);
+      xs.capture = capture_.evaluate(E, i);
+      xs.inelastic = xs.total - xs.elastic - xs.absorption;
+      if (xs.inelastic < 0.) xs.inelastic = 0.;
+      return xs;
     } else {
       iE = std::distance(energy_->begin(), Eit) - 1;
+
       if (interp_ == Interpolation::LinLin) {
         f = (E - (*energy_)[iE]) / ((*energy_)[iE + 1] - (*energy_)[iE]);
       } else {
@@ -115,6 +127,9 @@ class URRPTables {
             std::log((*energy_)[iE + 1] / (*energy_)[iE]);
       }
     }
+
+    std::cout << "iE = " << iE << "\n";
+    std::cout << "f = " << f << "\n";
 
     // Get reference to the upper and lower PTable
     const PTable& ptable_low = (*ptables_)[iE];
@@ -287,6 +302,8 @@ class URRPTables {
  private:
   Interpolation interp_;
   bool factors_;
+  CrossSection total_;  // MT 1
+  CrossSection disappearance_;
   CrossSection elastic_;  // MT 2
   CrossSection capture_;  // MT 102
   CrossSection fission_;  // MT 18
