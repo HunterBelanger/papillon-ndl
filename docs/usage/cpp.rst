@@ -9,13 +9,13 @@ Reading an ACE File
 -------------------
 
 Most use cases of PapillonNDL only require the inclusion of a single header
-file: ``PapillonNDL/ce_neutron.hpp``. This allows you to first read an ACE file,
+file: ``PapillonNDL/st_neutron.hpp``. This allows you to first read an ACE file,
 and then construct a STNeutron object from it (assuming it is an ACE file with
 continuous energy neutron data !).
 
 .. code-block:: c++
 
-  #include <PapillonNDL/ce_neutron.hpp>
+  #include <PapillonNDL/st_neutron.hpp>
   #include <iostream>
 
   int main() {
@@ -73,7 +73,7 @@ Let's grab the evaluation for U238 at 293.6 Kelvin:
 
 .. code-block:: c++
 
-   std::shared_ptr<STNeutron> U238 = lib.load_STNeutron("U238", 293.6);
+   std::shared_ptr<pndl::STNeutron> U238 = lib.load_STNeutron("U238", 293.6);
 
 A library will return the STNeutron in a shared pointer, allowing it to keep
 its own copy, so that the data wont be reloaded and dupilcated if the same
@@ -188,6 +188,55 @@ and the energy is in ``out.energy``.
 Absorption reactions which do not emit neutrons have a special type of
 distribution which will throw a PNDLException if you try to sample them.
 
+------------------
+Elastic Scattering
+------------------
+
+PapillonNDL treats elastic scattering differently than other reactions. This is
+because many different algorithms can be used for elastic scattering, and the
+choice of algorithm can have a large impact on simulation results. The elastic
+scattering data is stored in the Elastic class, which also inherits from
+AngleEnergy.
+
+By default, PapillonNDL will use the Sample Target Velocity (SVT) method to
+sample elastic scattering. This approximation is also refered to as the
+Constant Cross Section (CXS) approximation. While used ubiquitously in Monte
+Carlo codes, it is known to give inaccurate results when used for large
+nucleids which have resonances at low energies. If desired, you can manally
+change the approximation, by giving the Elastic instance a new
+ElasticDopplerBroadener. The two possible broadeners are ElasticSVT (the
+default), or ElasticDBRC, which applied the Doppler Broadening Rejection
+Correction (DBRC). This method requires the 0 Kelvin elastic scattering cross
+section, so we will load that, and the apply DBRC to U235.
+
+.. code-block:: c++
+
+   std::shared_ptr<pndl::STNeutron> U235_0K = lib.load_STNeutron("U235", 0.);
+   auto dbrc = std::make_shared<pndl::ElasticDBRC>(U235_0K->elastic_xs());
+   U235.elastic().set_elastic_doppler_broadener(dbrc);
+
+Another approximation we can change is the use of the Target at Rest (TAR)
+approximation. By default, TAR is used for all nuclides when the incident
+energy Ein is larger than 400kT, where k is the Boltzmann constant, and T is
+the nuclide temperature. It is generally a good idea to use this approximation
+when Ein > 400kT, as it does not significantly change results, and speeds up
+calculations. Most codes however do not use TAR for Hydrogen-1, as it is
+lighter than a neutron, and using this approximation can lead to inaccurate
+energy transfers. You can turn off TAR with
+
+.. code-block:: c++
+
+   U235.elastic().set_use_tar(false);
+
+You may prefer to change the threshold at which TAR is applied. If you would
+rather only use TAR when Ein > 700kT, then you can use something like the
+following:
+
+.. code-block:: c++
+
+   U235.elastic().set_use_tar(true);
+   U235.elastic().set_tar_threshold(700.);
+
 ------------
 Fission Data
 ------------
@@ -238,7 +287,55 @@ the delayed family.
 
 .. code-block:: c++
 
-  double E_out = dg1.sample_energy(3., rng);
+  double E_out = df1.sample_energy(3., rng);
+
+---------------------------
+Unresolved Resonance Region
+---------------------------
+
+At high energies, it becomes impossible to determine resonanace parameters.
+This region is called the Unresolved Resonance Region (URR). To correctly treat
+this portion of the energy spectrum, probability tables can be used. This
+information is stored in the URRPTables class. If the result of
+URRPTables.is_valid() is true, then URR data is provided, and can be used in
+transport.
+
+.. code-block:: c++
+
+   if (U235.urr_ptables().is_valid()) {
+     std::cout << "URR PTables are valid for U235 !\n";
+   }
+
+We can get the minimum and maximum energy for the URR with the following
+methods:
+
+.. code-block:: c++
+
+   double URR_Emin = U235.urr_ptables().min_energy();
+   double URR_Emax = U235.urr_ptables().max_energy();
+
+If we have a neutron energy which is within the URR region, we sample a random
+number xi. This same random value must be used for the given nuclide, no matter
+the temperature, untill the neutron has undergone a collision. It is used to
+sample the cross sections from the probability tables, for the given nuclide
+over the given flight.
+
+.. code-block:: c++
+
+   double Ein = 0.01; // 0.01 MeV
+   double xi = rng();
+   pndl::XSPacket xs;
+   
+   if (URR_Emin < Ein && Ein < URR_Emax) {
+     xs = U235.urr_ptables().evaluate_xs_band(Ein, xi);
+
+     std::cout << "Total XS = " << xs.total << "\n";
+     std::cout << "Elasic XS = " << xs.elastic << "\n";
+     std::cout << "Inelastic XS = " << xs.inelastic << "\n";
+     std::cout << "Absorption XS = " << xs.absorption << "\n";
+     std::cout << "Fission XS = " << xs.fission << "\n";
+   } 
+   
 
 This should be enough of an introduction for most users to start using the
 library to get work done, and access continuous energy neutron data. In an
