@@ -23,19 +23,19 @@
 #include <pybind11/functional.h>
 #include <pybind11/pybind11.h>
 
-#include <PapillonNDL/delayed_group.hpp>
+#include <PapillonNDL/delayed_family.hpp>
 
 namespace py = pybind11;
 
 using namespace pndl;
 
-void init_DelayedGroup(py::module& m) {
-  py::class_<DelayedGroup>(m, "DelayedGroup")
+void init_DelayedFamily(py::module& m) {
+  py::class_<DelayedFamily>(m, "DelayedFamily")
       .def(py::init<const ACE&, size_t, size_t>())
-      .def("decay_constant", &DelayedGroup::decay_constant)
-      .def("probability", &DelayedGroup::probability,
+      .def("decay_constant", &DelayedFamily::decay_constant)
+      .def("probability", &DelayedFamily::probability,
            py::return_value_policy::reference_internal)
-      .def("sample_energy", &DelayedGroup::sample_energy)
-      .def("energy", &DelayedGroup::energy,
+      .def("sample_energy", &DelayedFamily::sample_energy)
+      .def("energy", &DelayedFamily::energy,
            py::return_value_policy::reference_internal);
 }

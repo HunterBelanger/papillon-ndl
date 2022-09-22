@@ -30,7 +30,7 @@
 
 #include <PapillonNDL/ace.hpp>
 #include <PapillonNDL/angle_energy.hpp>
-#include <PapillonNDL/delayed_group.hpp>
+#include <PapillonNDL/delayed_family.hpp>
 #include <PapillonNDL/energy_grid.hpp>
 #include <PapillonNDL/function_1d.hpp>
 #include <PapillonNDL/reaction.hpp>
@@ -81,16 +81,16 @@ class Fission {
   const AngleEnergy& prompt_spectrum() const { return *prompt_spectrum_; }
 
   /**
-   * @brief Returns the number of delayed neutron groups.
+   * @brief Returns the number of delayed neutron families.
    */
-  std::size_t n_delayed_groups() const { return delayed_groups_.size(); }
+  std::size_t n_delayed_families() const { return delayed_families_.size(); }
 
   /**
-   * @brief Returns the ith delayed group data.
-   * @param i Index of the delayed group.
+   * @brief Returns the ith delayed family data.
+   * @param i Index of the delayed family.
    */
-  const DelayedGroup& delayed_group(std::size_t i) const {
-    return delayed_groups_[i];
+  const DelayedFamily& delayed_family(std::size_t i) const {
+    return delayed_families_[i];
   }
 
   /**
@@ -157,7 +157,7 @@ class Fission {
   std::shared_ptr<STReaction> mt21_;
   std::shared_ptr<STReaction> mt38_;
   std::shared_ptr<const AngleEnergy> prompt_spectrum_;
-  std::vector<DelayedGroup> delayed_groups_;
+  std::vector<DelayedFamily> delayed_families_;
   std::vector<uint32_t> mt_list_;
 
   // Private helper methods

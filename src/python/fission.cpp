@@ -44,8 +44,8 @@ void init_Fission(py::module& m) {
            py::return_value_policy::reference_internal)
       .def("prompt_spectrum", &Fission::prompt_spectrum,
            py::return_value_policy::reference_internal)
-      .def("n_delayed_groups", &Fission::n_delayed_groups)
-      .def("delayed_group", &Fission::delayed_group)
+      .def("n_delayed_families", &Fission::n_delayed_families)
+      .def("delayed_family", &Fission::delayed_family)
       .def("mt_list", &Fission::mt_list)
       .def("has_reaction", &Fission::has_reaction)
       .def("reaction", &Fission::reaction);

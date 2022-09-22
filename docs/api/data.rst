@@ -36,10 +36,10 @@ Fission
 
 .. doxygenclass:: pndl::Fission
 
-DelayedGroup
-------------
+DelayedFamily
+-------------
 
-.. doxygenclass:: pndl::DelayedGroup
+.. doxygenclass:: pndl::DelayedFamily
 
 STThermalScatteringLaw
 ----------------------

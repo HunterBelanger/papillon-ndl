@@ -20,8 +20,8 @@
  * along with PapillonNDL. If not, see <https://www.gnu.org/licenses/>.
  *
  * */
-#ifndef PAPILLON_NDL_DELAYED_GROUP_H
-#define PAPILLON_NDL_DELAYED_GROUP_H
+#ifndef PAPILLON_NDL_DELAYED_FAMILY_H
+#define PAPILLON_NDL_DELAYED_FAMILY_H
 
 /**
  * @file
@@ -33,38 +33,38 @@
 #include <PapillonNDL/tabulated_1d.hpp>
 #include <memory>
 
-// The delayed group numbers start at g = 1, and go up !
+// The delayed family numbers start at g = 1, and go up !
 // g = 0 would be the prompt neutorns.
 
 namespace pndl {
 
 /**
- * @brief Contains data for a delayed neutron group.
+ * @brief Contains data for a delayed neutron family.
  */
-class DelayedGroup {
+class DelayedFamily {
  public:
   /**
    * @param ace ACE file to take delayed neutron data from.
-   * @param i Index to the beinning of the delayed group data
+   * @param i Index to the beinning of the delayed family data
    *          in the XSS block.
-   * @param g Delayed group index.
+   * @param g Delayed family index.
    */
-  DelayedGroup(const ACE& ace, std::size_t i, std::size_t g);
-  ~DelayedGroup() = default;
+  DelayedFamily(const ACE& ace, std::size_t i, std::size_t g);
+  ~DelayedFamily() = default;
 
   /**
-   * @brief Returns the decay constant for the group in inverse seconds.
+   * @brief Returns the decay constant for the family in inverse seconds.
    */
   double decay_constant() const { return decay_constant_; }
 
   /**
    * @brief Returns the Tabulated1D function for the probability
-   *        of selecting the delayed group for a given energy.
+   *        of selecting the delayed family for a given energy.
    */
   const Tabulated1D& probability() const { return *probability_; }
 
   /**
-   * @brief Samples and energy from the delayed group distribution.
+   * @brief Samples and energy from the delayed family distribution.
    * @param E Incident energy.
    * @param rng Random number generation function.
    */
@@ -73,7 +73,7 @@ class DelayedGroup {
   }
 
   /**
-   * @brief Returns the EnergyLaw for the group.
+   * @brief Returns the EnergyLaw for the family.
    */
   const EnergyLaw& energy() const { return *energy_; }
 

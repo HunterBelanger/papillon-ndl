@@ -45,7 +45,7 @@ Fission::Fission(const ACE& ace, std::shared_ptr<EnergyGrid> energy_grid)
       mt21_(nullptr),
       mt38_(nullptr),
       prompt_spectrum_(nullptr),
-      delayed_groups_(),
+      delayed_families_(),
       mt_list_() {
   if (ace.fissile() == false) {
     nu_total_ = std::make_shared<Constant>(0.);
@@ -120,14 +120,14 @@ Fission::Fission(const ACE& ace, std::shared_ptr<EnergyGrid> energy_grid)
       throw err;
     }
 
-    // Read all delayed group data
+    // Read all delayed family data
     try {
       if (ace.BDD() > 0) {
         uint32_t NGRPS = ace.nxs(7);
         std::size_t g = 1;
         std::size_t i = ace.BDD();
         while (g <= NGRPS) {
-          delayed_groups_.push_back(DelayedGroup(ace, i, g));
+          delayed_families_.push_back(DelayedFamily(ace, i, g));
           uint32_t NR = ace.xss<uint32_t>(i + 1);
           uint32_t NE = ace.xss<uint32_t>(i + 2 + 2 * NR);
           i += 3 + 2 * (NR + NE);
@@ -135,7 +135,7 @@ Fission::Fission(const ACE& ace, std::shared_ptr<EnergyGrid> energy_grid)
         }
       }
     } catch (PNDLException& err) {
-      std::string mssg = "Could not readd delayed groups.";
+      std::string mssg = "Could not read delayed families.";
       err.add_to_exception(mssg);
       throw err;
     }
@@ -178,7 +178,7 @@ Fission::Fission(const ACE& ace, std::shared_ptr<EnergyGrid> energy_grid)
             std::make_shared<SummedFissionSpectrum>(mt19_, mt20_, mt21_, mt38_);
       } else {
         // There is no fission apparently. All the nu should have been set to
-        // zero, no delayed groups should be present, and we will just set the
+        // zero, no delayed families should be present, and we will just set the
         // prompt spectrum to absorption.
         prompt_spectrum_ = std::make_shared<Absorption>(18);
       }
@@ -202,7 +202,7 @@ Fission::Fission(const ACE& ace, std::shared_ptr<EnergyGrid> energy_grid,
       mt21_(nullptr),
       mt38_(nullptr),
       prompt_spectrum_(nullptr),
-      delayed_groups_(fission.delayed_groups_),
+      delayed_families_(fission.delayed_families_),
       mt_list_() {
   if (ace.fissile() == false) {
     prompt_spectrum_ = fission.prompt_spectrum_;
@@ -250,7 +250,7 @@ Fission::Fission(const ACE& ace, std::shared_ptr<EnergyGrid> energy_grid,
             std::make_shared<SummedFissionSpectrum>(mt19_, mt20_, mt21_, mt38_);
       } else {
         // There is no fission apparently. All the nu should have been set to
-        // zero, no delayed groups should be present, and we will just set the
+        // zero, no delayed families should be present, and we will just set the
         // prompt spectrum to absorption.
         prompt_spectrum_ = std::make_shared<Absorption>(18);
       }

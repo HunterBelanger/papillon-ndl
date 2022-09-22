@@ -197,7 +197,7 @@ such as U235. While the fission cross section is directly stored in the
 STNeutron, other pieces of fission data are stored in the Fission class,
 contained in the STNeutron instance. Methods of the Fission class allow us to
 access other bits of fission data such as the number of neutrons per
-fission, the prompt neutron spectrum, and delayed group info/spectra.
+fission, the prompt neutron spectrum, and delayed family info/spectra.
 
 .. code-block:: c++
 
@@ -215,26 +215,26 @@ reaction distribution.
   // Sample an angle-energy pair for prompt fission induced at 1.2 eV.
   pndl::AngleEnergyPacket prmpt = U235.fission().prompt_spectrum().sample_angle_energy(1.2E-6, rng);
 
-Information for a delayed neutron group is also available in a DelayedGroup class:
+Information for a delayed neutron family is also available in a DelayedFamily class:
 
 .. code-block:: c++
 
-  size_t delayed_grps = U235.fission().n_delayed_groups();
+  size_t delayed_fms = U235.fission().n_delayed_families();
 
-  // Delayed groups are indexed starting from 0
-  const pndl::DelayedGroup& dg1 = U235.fission().delayed_group(1);
+  // Delayed families are indexed starting from 0
+  const pndl::DelayedFamily& df1 = U235.fission().delayed_family(1);
 
-  // The decay constant for the group is given in units of
+  // The decay constant for the family is given in units of
   // inverse seconds.
-  double decay_const = dg1.decay_constant();
+  double decay_const = df1.decay_constant();
 
-  // The probability of a fission neutron being in the given group is a
+  // The probability of a fission neutron being in the given family is a
   // function of the incident energy
-  double prob_dg1 = dg1.probability()(3.);
+  double prob_df1 = df1.probability()(3.);
 
-It is always assumed that the neutrons born from a delayed group have an
+It is always assumed that the neutrons born from a delayed family have an
 isotropic angular distribution. As such, we only sample the energy from
-the delayed group
+the delayed family.
 
 .. code-block:: c++
 

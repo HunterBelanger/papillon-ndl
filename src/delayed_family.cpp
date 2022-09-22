@@ -20,7 +20,7 @@
  * along with PapillonNDL. If not, see <https://www.gnu.org/licenses/>.
  *
  * */
-#include <PapillonNDL/delayed_group.hpp>
+#include <PapillonNDL/delayed_family.hpp>
 #include <PapillonNDL/equiprobable_energy_bins.hpp>
 #include <PapillonNDL/evaporation.hpp>
 #include <PapillonNDL/general_evaporation.hpp>
@@ -35,9 +35,9 @@
 
 namespace pndl {
 
-DelayedGroup::DelayedGroup(const ACE& ace, std::size_t i, std::size_t g)
+DelayedFamily::DelayedFamily(const ACE& ace, std::size_t i, std::size_t g)
     : decay_constant_(), probability_(nullptr), energy_(nullptr) {
-  // Read Decay Constant for group
+  // Read Decay Constant for family
   decay_constant_ = ace.xss(i);
   decay_constant_ *= SHAKE_TO_SEC;
   i++;
@@ -68,7 +68,7 @@ DelayedGroup::DelayedGroup(const ACE& ace, std::size_t i, std::size_t g)
   // Write a warning for now
   if (ace.xss<int>(l) != 0) {
     // there are other distributions
-    std::cerr << "\n PapillonNDL WARNING : Delayed group " + std::to_string(g);
+    std::cerr << "\n PapillonNDL WARNING : Delayed family " + std::to_string(g);
     std::cerr << " for ZAID " << ace.zaid() << " has multiple";
     std::cerr << " energy distributions.\n";
   }
@@ -97,7 +97,7 @@ DelayedGroup::DelayedGroup(const ACE& ace, std::size_t i, std::size_t g)
 
   } else {
     // Unknown or unsuported law
-    std::string mssg = "Group " + std::to_string(g) +
+    std::string mssg = "Family " + std::to_string(g) +
                        " has unkown energy law " + std::to_string(law) + ".";
     throw PNDLException(mssg);
   }

@@ -49,7 +49,7 @@ set(PNDL_SOURCE_LIST src/element.cpp
                      src/elastic_dbrc.cpp
                      src/energy_grid.cpp
                      src/cross_section.cpp
-                     src/delayed_group.cpp
+                     src/delayed_family.cpp
                      src/fission.cpp
                      src/st_neutron.cpp
                      src/reaction_base.cpp
@@ -150,7 +150,7 @@ if(PNDL_PYTHON)
                                     src/python/energy_grid.cpp
                                     src/python/cross_section.cpp
                                     src/python/reaction.cpp
-                                    src/python/delayed_group.cpp
+                                    src/python/delayed_family.cpp
                                     src/python/fission.cpp
                                     src/python/st_neutron.cpp
                                     src/python/prng.cpp
