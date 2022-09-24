@@ -55,6 +55,6 @@ void rng_seed(std::uint64_t seed);
  */
 void rng_advance(std::uint64_t n);
 
-}
+}  // namespace pndl
 
 #endif
