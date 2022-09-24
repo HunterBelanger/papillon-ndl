@@ -36,7 +36,6 @@
 #include <algorithm>
 #include <cmath>
 #include <functional>
-#include <iostream>
 #include <memory>
 #include <vector>
 
@@ -93,7 +92,7 @@ class URRPTables {
 
   /**
    * @brief Calculates the cross section for a given incident energy and
-   *        cross section band.
+   *        probability.
    * @param E Incident energy (MeV).
    * @param i Index of E in the global energy grid, for evaluating cross
    *          sections.
@@ -127,9 +126,6 @@ class URRPTables {
             std::log((*energy_)[iE + 1] / (*energy_)[iE]);
       }
     }
-
-    std::cout << "iE = " << iE << "\n";
-    std::cout << "f = " << f << "\n";
 
     // Get reference to the upper and lower PTable
     const PTable& ptable_low = (*ptables_)[iE];
@@ -226,7 +222,7 @@ class URRPTables {
 
   /**
    * @brief Calculates the cross section for a given incident energy and
-   *        cross section band.
+   *        probability.
    * @param E Incident energy (MeV).
    * @param xi Random variable in the interval [0,1).
    */
