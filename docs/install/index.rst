@@ -46,13 +46,13 @@ instruction, but instructions are readily found online.
 
 Windows
 --------
-There are no quick and easy commands to install the necessary dependencies on
-Windows sadly. You should insall Visual Studio 2019, and when performing the
-installation, be sure to also install the Python development libraries. You
-will also have to download and install cmake separately as well. If you already
-have Visual Studio 2019 installed, you should make sure that it has been
-updated to the most recent version, or that the compiler version is at least
-MSVC >= 19.29.
+Sadly, there are no quick and easy commands to install the necessary
+dependencies on Windows. You should install Visual Studio 2019, and when
+performing the installation, be sure to also install the Python development
+libraries. You will also have to download and install cmake separately as well.
+If you already have Visual Studio 2019 installed, you should make sure that it
+has been updated to the most recent version, or that the compiler version is at
+least MSVC >= 19.29.
 
 ------------------
 Getting the Source
@@ -65,7 +65,7 @@ folder, and then run the command:
 
   git clone https://github.com/HunterBelanger/papillon-ndl.git
 
-This will download the soruce for the latest development version. If you would
+This will download the source for the latest development version. If you would
 prefer to use the latest stable version, then subsequently run
 
 .. code-block:: sh
@@ -84,8 +84,8 @@ checkout the desired version tag:
 Build
 -----
 
-Quick'n Dirty
--------------
+Quick 'n Dirty
+--------------
 If you are looking to build the C++ and Python libraries, and don't want to do
 any tinkering, then just run these commands, and you should be good to go !
 
@@ -121,7 +121,7 @@ PNDL_SHARED
   default. When building on Windows, this will automatically be turned off.
 
 PNDL_INSTALL
-  Adds and exports the installation targets for PapillonNDL. This is truned on
+  Adds and exports the installation targets for PapillonNDL. This is turned on
   by default, but can be turned off if using PapillonNDL as a build dependency
   in another project.
 
@@ -134,7 +134,7 @@ CMAKE_BUILD_TYPE
   this to ``RelWithDebInfo`` or ``Debug``, which provides debug symbols.
 
 CMAKE_INSTALL_PREFIX
-  This is the location to where the libararies and header files will be
+  This is the location to where the libraries and header files will be
   installed on your system. On linux systems, this is usually ``/usr/local``.
   If you want to change it, you can set it with this command.
 
@@ -155,8 +155,8 @@ different however).
 .. warning::
   
   Make sure the the directory where the Python library was installed is in your
-  ``PYTHONPATH`` environement variable ! If it isn't, Python won't be able to
-  find the library ! If you open python in your terminal, and can run
+  ``PYTHONPATH`` environement variable! If it isn't, Python won't be able to
+  find the library! If you open python in your terminal, and can run
   ``import pyPapillonNDL`` without an error, you should be fine. If you do get
   an error, add the path to the ``pyPapillonNDL`` library to your ``PYTHONPATH``.
 

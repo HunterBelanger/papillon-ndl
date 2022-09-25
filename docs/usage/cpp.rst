@@ -11,7 +11,7 @@ Reading an ACE File
 Most use cases of PapillonNDL only require the inclusion of a single header
 file: ``PapillonNDL/st_neutron.hpp``. This allows you to first read an ACE file,
 and then construct a STNeutron object from it (assuming it is an ACE file with
-continuous energy neutron data !).
+continuous energy neutron data!).
 
 .. code-block:: c++
 
@@ -27,23 +27,23 @@ continuous energy neutron data !).
     // for a single nuclide, and at a single temperature.
     pndl::STNeutron U235(U235ace);
 
-    // Writes the ZAID to the terimal. For U235, this should
+    // Writes the ZAID to the terminal. For U235, this should
     // be 92235.
     std::cout << " ZAID: " << U235.zaid() << std::endl;
 
-    // The temperature of is given in units of kelvin !
+    // The temperature is given in units of kelvin !
     std::cout << " Temp: " << U235.temperature() << std::endl;
 
     return 0;
   }
 
-When compiling C++ which uses PapillonNDL, be sure to link to the library !
+When compiling C++ which uses PapillonNDL, be sure to link to the library!
 If the header files are already in your include path, and the library is in
 your linker search path, then this should be as easy as:
 
 .. code-block:: sh
 
-  g++ pndl_test.cpp -lPapillonNDL -o pndltest
+  g++ --std=c++20 pndl_test.cpp -lPapillonNDL -o pndltest
 
 ------------------------------
 Loading a Nuclear Data Library
@@ -95,7 +95,7 @@ these cross sections for U235 at 3MeV, then we can do
 
 The standard unit of energy in PapillonNDL is MeV. All energies are given in
 MeV, and it expects all arguments which are an energy to be in units of MeV.
-While method of evaluating the cross sections works, it is not very efficient.
+While this method of evaluating the cross sections works, it is not very efficient.
 PapillonNDL has implemented the hashing algorithm implemented in MCNP to speed
 up cross section searches. To use this feature, you need to search for the
 the index of the desired energy in the EnergyGrid of the nuclide, and then
@@ -125,7 +125,7 @@ reaction
 
   double fiss_xs_at_3mev = U235.reaction(18).xs()(3., i);
 
-Passing the index ``i`` is optional, but of course is faster.
+Passing the index ``i`` is optional, but is of course faster.
 
 -------------------------------
 Sampling Reaction Distributions
@@ -134,7 +134,7 @@ Sampling Reaction Distributions
 In Monte Carlo simulations, we often need to sample data related to reactions
 such as the number of secondary neutrons produced, and their angle-energy
 distributions. To do this, start by getting a reference to the desired
-reaction; Here, we will look at the (n,2n) reaction (MT=16):
+reaction; here, we will look at the (n,2n) reaction (MT=16):
 
 .. code-block:: c++
 
@@ -144,7 +144,7 @@ reaction; Here, we will look at the (n,2n) reaction (MT=16):
 
   double E_min = U235_n2n.threshold();
 
-  // Here, we get the xs at 6MeV, as 3MeV is bellow the threshold
+  // Here, we get the xs at 6MeV, as 3MeV is below the threshold
   // for this reaction !
   double n2n_xs_at_3mev = U235_n2n.xs()(6., i);
 
@@ -155,8 +155,8 @@ reaction; Here, we will look at the (n,2n) reaction (MT=16):
   double n_out = U235_n2n.yield()(6.); 
 
 In the above example, we have been able to get lots of data about the
-reaction, such as the Q-value, the minimum energy at which is occurs,
-and the reaction channels yield. Before we can sample from the secondary
+reaction, such as the Q-value, the minimum energy tabulated for the reaction,
+and the reaction channel's yield. Before we can sample from the secondary
 distributions however, we need a random number generator function, which
 produces random doubles on the interval [0,1). We will set one up really
 fast to demonstrate how sampling works.
@@ -198,7 +198,7 @@ choice of algorithm can have a large impact on simulation results. The elastic
 scattering data is stored in the Elastic class, which also inherits from
 AngleEnergy.
 
-By default, PapillonNDL will use the Sample Target Velocity (SVT) method to
+By default, PapillonNDL will use the Sample Velocity of Target (SVT) method to
 sample elastic scattering. This approximation is also refered to as the
 Constant Cross Section (CXS) approximation. While used ubiquitously in Monte
 Carlo codes, it is known to give inaccurate results when used for large
@@ -207,7 +207,7 @@ change the approximation, by giving the Elastic instance a new
 ElasticDopplerBroadener. The two possible broadeners are ElasticSVT (the
 default), or ElasticDBRC, which applied the Doppler Broadening Rejection
 Correction (DBRC). This method requires the 0 Kelvin elastic scattering cross
-section, so we will load that, and the apply DBRC to U235.
+section, so we will load that, and then apply DBRC to U235.
 
 .. code-block:: c++
 
@@ -316,7 +316,7 @@ methods:
 
 If we have a neutron energy which is within the URR region, we sample a random
 number xi. This same random value must be used for the given nuclide, no matter
-the temperature, untill the neutron has undergone a collision. It is used to
+the temperature, until the neutron has undergone a collision. It is used to
 sample the cross sections from the probability tables, for the given nuclide
 over the given flight.
 
