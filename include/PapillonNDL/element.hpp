@@ -1,6 +1,6 @@
 /*
  * Papillon Nuclear Data Library
- * Copyright 2021, Hunter Belanger
+ * Copyright 2021-2022, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
