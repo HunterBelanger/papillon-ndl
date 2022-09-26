@@ -37,7 +37,10 @@
 #include <cmath>
 #include <functional>
 #include <memory>
+#include <optional>
 #include <vector>
+
+#include "PapillonNDL/pndl_exception.hpp"
 
 namespace pndl {
 
@@ -92,30 +95,25 @@ class URRPTables {
 
   /**
    * @brief Calculates the cross section for a given incident energy and
-   *        probability.
+   *        probability. If the incident energy is not within the URR, or if
+   *        there are no probability tables, std::nullopt is returned.
    * @param E Incident energy (MeV).
    * @param i Index of E in the global energy grid, for evaluating cross
    *          sections.
    * @param xi Random variable in the interval [0,1).
    */
-  XSPacket evaluate_xs_band(double E, std::size_t i, double xi) const {
+  std::optional<XSPacket> evaluate_xs(double E, std::size_t i,
+                                      double xi) const {
+    if (this->is_valid() == false) {
+      return std::nullopt;
+    }
+
     // Find the energy index for sampling band
     std::size_t iE = 0;
     double f = 0.;
     auto Eit = std::lower_bound(energy_->begin(), energy_->end(), E);
     if (Eit == energy_->begin() || Eit == energy_->end()) {
-      // Our incident energy is too low or too high. We just use the smooth
-      // crosss sections.
-      XSPacket xs;
-      xs.total = total_.evaluate(E, i);
-      xs.elastic = elastic_.evaluate(E, i);
-      xs.fission = fission_.evaluate(E, i);
-      xs.absorption = disappearance_.evaluate(E, i) + xs.fission;
-      xs.heating = heating_.evaluate(E, i);
-      xs.capture = capture_.evaluate(E, i);
-      xs.inelastic = xs.total - xs.elastic - xs.absorption;
-      if (xs.inelastic < 0.) xs.inelastic = 0.;
-      return xs;
+      return std::nullopt;
     } else {
       iE = std::distance(energy_->begin(), Eit) - 1;
 
@@ -222,15 +220,20 @@ class URRPTables {
 
   /**
    * @brief Calculates the cross section for a given incident energy and
-   *        probability.
+   *        probability. If the incident energy is not within the URR, or if
+   *        there are no probability tables, std::nullopt is returned.
    * @param E Incident energy (MeV).
    * @param xi Random variable in the interval [0,1).
    */
-  XSPacket evaluate_xs_band(double E, double xi) const {
+  std::optional<XSPacket> evaluate_xs(double E, double xi) const {
+    if (this->is_valid() == false) {
+      return std::nullopt;
+    }
+
     // Get the energy index
     std::size_t i = this->elastic_.energy_grid().get_lower_index(E);
     // Call the other method
-    return this->evaluate_xs_band(E, i, xi);
+    return this->evaluate_xs(E, i, xi);
   }
 
   /**

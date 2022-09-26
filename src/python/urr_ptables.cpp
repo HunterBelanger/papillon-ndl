@@ -49,10 +49,10 @@ void init_URRPtable(py::module& m) {
                     const CrossSection&, const CrossSection&,
                     const std::vector<STReaction>&>())
       .def("is_valid", &URRPTables::is_valid)
-      .def("evaluate_xs_band", py::overload_cast<double, std::size_t, double>(
-                                   &URRPTables::evaluate_xs_band, py::const_))
-      .def("evaluate_xs_band", py::overload_cast<double, double>(
-                                   &URRPTables::evaluate_xs_band, py::const_))
+      .def("evaluate_xs", py::overload_cast<double, std::size_t, double>(
+                                   &URRPTables::evaluate_xs, py::const_))
+      .def("evaluate_xs", py::overload_cast<double, double>(
+                                   &URRPTables::evaluate_xs, py::const_))
       .def("min_energy", &URRPTables::min_energy)
       .def("max_energy", &URRPTables::max_energy)
       .def("energy_in_range", &URRPTables::energy_in_range)

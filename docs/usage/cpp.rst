@@ -327,7 +327,7 @@ over the given flight.
    pndl::XSPacket xs;
    
    if (URR_Emin < Ein && Ein < URR_Emax) {
-     xs = U235.urr_ptables().evaluate_xs_band(Ein, xi);
+     xs = U235.urr_ptables().evaluate_xs(Ein, xi).value();
 
      std::cout << "Total XS = " << xs.total << "\n";
      std::cout << "Elasic XS = " << xs.elastic << "\n";
