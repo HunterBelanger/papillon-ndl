@@ -7,16 +7,11 @@
 #include <PapillonNDL/st_incoherent_elastic_ace.hpp>
 #include <PapillonNDL/st_incoherent_inelastic.hpp>
 #include <PapillonNDL/st_thermal_scattering_law.hpp>
+#include <PapillonNDL/rng.hpp>
 #include <cstdint>
 #include <iostream>
 #include <memory>
 #include <ndarray.hpp>
-#include <random>
-
-static std::uniform_real_distribution<double> unit(0., 1.);
-static std::minstd_rand rng_engine;
-
-double rng() { return unit(rng_engine); }
 
 int reaction(const std::uint32_t mt, const std::uint64_t nsamples,
              const double Ein, const pndl::ACE& ace, NDArray<double>& data) {
@@ -45,7 +40,7 @@ int reaction(const std::uint32_t mt, const std::uint64_t nsamples,
 
   // Get all samples
   for (std::uint64_t n = 0; n < nsamples; n++) {
-    auto ae = distribution.sample_angle_energy(Ein, rng);
+    auto ae = distribution.sample_angle_energy(Ein, pndl::rng);
 
     data(0, n) = ae.energy;
     data(1, n) = ae.cosine_angle;
@@ -70,7 +65,7 @@ int elastic(const ElasticMode mode, const std::uint64_t nsamples,
 
   // Get all samples
   for (std::uint64_t n = 0; n < nsamples; n++) {
-    auto ae = nuclide.elastic().sample_angle_energy(Ein, rng);
+    auto ae = nuclide.elastic().sample_angle_energy(Ein, pndl::rng);
 
     data(0, n) = ae.energy;
     data(1, n) = ae.cosine_angle;
@@ -91,7 +86,7 @@ int coherent_elastic(const std::uint64_t nsamples, const double Ein,
 
   // Get all samples
   for (std::uint64_t n = 0; n < nsamples; n++) {
-    auto ae = distribution.sample_angle_energy(Ein, rng);
+    auto ae = distribution.sample_angle_energy(Ein, pndl::rng);
 
     data(0, n) = ae.energy;
     data(1, n) = ae.cosine_angle;
@@ -110,7 +105,7 @@ int incoherent_elastic(const std::uint64_t nsamples, const double Ein,
 
   // Get all samples
   for (std::uint64_t n = 0; n < nsamples; n++) {
-    auto ae = distribution.sample_angle_energy(Ein, rng);
+    auto ae = distribution.sample_angle_energy(Ein, pndl::rng);
 
     data(0, n) = ae.energy;
     data(1, n) = ae.cosine_angle;
@@ -125,7 +120,7 @@ int incoherent_inelastic(const std::uint64_t nsamples, const double Ein,
 
   // Get all samples
   for (std::uint64_t n = 0; n < nsamples; n++) {
-    auto ae = distribution.sample_angle_energy(Ein, rng);
+    auto ae = distribution.sample_angle_energy(Ein, pndl::rng);
 
     data(0, n) = ae.energy;
     data(1, n) = ae.cosine_angle;
