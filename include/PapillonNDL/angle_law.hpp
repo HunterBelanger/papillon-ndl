@@ -1,6 +1,6 @@
 /*
  * Papillon Nuclear Data Library
- * Copyright 2021, Hunter Belanger
+ * Copyright 2021-2022, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -45,7 +45,7 @@ class AngleLaw : public std::enable_shared_from_this<AngleLaw> {
    * @param xi Random variable from the interval [0,1).
    * @param rng Random number generator function.
    */
-  virtual double sample_mu(std::function<double()> rng) const = 0;
+  virtual double sample_mu(const std::function<double()>& rng) const = 0;
 
   /**
    * @brief Returns the PDF for the desired scattering cosine.

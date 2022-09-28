@@ -1,6 +1,6 @@
 /*
  * Papillon Nuclear Data Library
- * Copyright 2021, Hunter Belanger
+ * Copyright 2021-2022, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -44,7 +44,8 @@ class Absorption : public AngleEnergy {
   Absorption(uint32_t mt) : mt_(mt) {}
 
   AngleEnergyPacket sample_angle_energy(
-      double /*E_in*/, std::function<double()> /*rng*/) const override final {
+      double /*E_in*/,
+      const std::function<double()>& /*rng*/) const override final {
     std::string mssg =
         "Distribution for MT " + std::to_string(mt_) + " is absorption.";
     throw PNDLException(mssg);

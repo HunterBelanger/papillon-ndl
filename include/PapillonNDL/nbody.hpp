@@ -1,6 +1,6 @@
 /*
  * Papillon Nuclear Data Library
- * Copyright 2021, Hunter Belanger
+ * Copyright 2021-2022, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -56,7 +56,7 @@ class NBody : public AngleEnergy {
   ~NBody() = default;
 
   AngleEnergyPacket sample_angle_energy(
-      double E_in, std::function<double()> rng) const override final;
+      double E_in, const std::function<double()>& rng) const override final;
 
   std::optional<double> angle_pdf(double E_in, double mu) const override final;
 
@@ -89,7 +89,7 @@ class NBody : public AngleEnergy {
   double A_;
   double Q_;
 
-  double maxwellian_spectrum(std::function<double()>& rng) const;
+  double maxwellian_spectrum(const std::function<double()>& rng) const;
 };
 
 }  // namespace pndl

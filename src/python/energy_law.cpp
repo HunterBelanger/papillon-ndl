@@ -1,6 +1,6 @@
 /*
  * Papillon Nuclear Data Library
- * Copyright 2021, Hunter Belanger
+ * Copyright 2021-2022, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -43,7 +43,7 @@ class PyEnergyLaw : public EnergyLaw {
   using EnergyLaw::EnergyLaw;
 
   double sample_energy(double E_in,
-                       std::function<double()> rng) const override {
+                       const std::function<double()>& rng) const override {
     PYBIND11_OVERRIDE_PURE(double, EnergyLaw, sample_energy, E_in, rng);
   }
 

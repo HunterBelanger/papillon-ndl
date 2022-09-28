@@ -1,6 +1,6 @@
 /*
  * Papillon Nuclear Data Library
- * Copyright 2021, Hunter Belanger
+ * Copyright 2021-2022, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -94,7 +94,7 @@ EquiprobableEnergyBins::EquiprobableEnergyBins(
 }
 
 double EquiprobableEnergyBins::sample_energy(
-    double E_in, std::function<double()> rng) const {
+    double E_in, const std::function<double()>& rng) const {
   // Determine the index of the bounding tabulated incoming energies
   auto in_E_it =
       std::lower_bound(incoming_energy_.begin(), incoming_energy_.end(), E_in);

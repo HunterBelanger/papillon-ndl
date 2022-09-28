@@ -1,6 +1,6 @@
 /*
  * Papillon Nuclear Data Library
- * Copyright 2021, Hunter Belanger
+ * Copyright 2021-2022, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -44,8 +44,8 @@ LevelInelasticScatter::LevelInelasticScatter(double Q, double AWR)
   C2_ = tmp * tmp;
 }
 
-double LevelInelasticScatter::sample_energy(double E_in,
-                                            std::function<double()>) const {
+double LevelInelasticScatter::sample_energy(
+    double E_in, const std::function<double()>&) const {
   return C2_ * (E_in - C1_);
 }
 

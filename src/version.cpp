@@ -1,6 +1,6 @@
 /*
  * Papillon Nuclear Data Library
- * Copyright 2021, Hunter Belanger
+ * Copyright 2021-2022, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -24,8 +24,8 @@
 
 namespace pndl {
 const unsigned int VERSION_MAJOR = 0;
-const unsigned int VERSION_MINOR = 2;
-const unsigned int VERSION_PATCH = 1;
-const bool VERSION_DEVELOPMENT = true;
-const char* VERSION_STRING = "0.2.1-dev";
+const unsigned int VERSION_MINOR = 3;
+const unsigned int VERSION_PATCH = 0;
+const bool VERSION_DEVELOPMENT = false;
+const char* VERSION_STRING = "0.3.0";
 }  // namespace pndl

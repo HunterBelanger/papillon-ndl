@@ -1,6 +1,6 @@
 /*
  * Papillon Nuclear Data Library
- * Copyright 2021, Hunter Belanger
+ * Copyright 2021-2022, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -78,7 +78,7 @@ NBody::NBody(uint16_t n, double Ap, double AWR, double Q)
 }
 
 AngleEnergyPacket NBody::sample_angle_energy(
-    double E_in, std::function<double()> rng) const {
+    double E_in, const std::function<double()>& rng) const {
   const double Emax = ((Ap_ - 1.) / Ap_) * ((A_ / (A_ + 1.)) * E_in + Q_);
   const double x = maxwellian_spectrum(rng);
   double y = 0.;
@@ -104,7 +104,7 @@ AngleEnergyPacket NBody::sample_angle_energy(
   return {mu, E_out};
 }
 
-double NBody::maxwellian_spectrum(std::function<double()>& rng) const {
+double NBody::maxwellian_spectrum(const std::function<double()>& rng) const {
   const double a = PI * rng() / 2.;
   return -(std::log(rng()) + std::log(rng()) * std::cos(a) * std::cos(a));
 }

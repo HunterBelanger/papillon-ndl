@@ -1,6 +1,6 @@
 /*
  * Papillon Nuclear Data Library
- * Copyright 2021, Hunter Belanger
+ * Copyright 2021-2022, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -69,7 +69,7 @@ inline void SummedFissionSpectrum::compute_probabilities(
 }
 
 AngleEnergyPacket SummedFissionSpectrum::sample_angle_energy(
-    double E_in, std::function<double()> rng) const {
+    double E_in, const std::function<double()>& rng) const {
   // Get probabilities
   std::array<double, 4> probs{0., 0., 0., 0.};
   this->compute_probabilities(probs, E_in);

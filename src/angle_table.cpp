@@ -1,6 +1,6 @@
 /*
  * Papillon Nuclear Data Library
- * Copyright 2021, Hunter Belanger
+ * Copyright 2021-2022, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -112,7 +112,7 @@ AngleTable::AngleTable(const Legendre& legendre)
   }
 }
 
-double AngleTable::sample_mu(std::function<double()> rng) const {
+double AngleTable::sample_mu(const std::function<double()>& rng) const {
   double mu = distribution_.sample_value(rng());
   if (std::abs(mu) > 1.) mu = std::copysign(1., mu);
   return mu;

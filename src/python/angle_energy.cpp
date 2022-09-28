@@ -1,6 +1,6 @@
 /*
  * Papillon Nuclear Data Library
- * Copyright 2021, Hunter Belanger
+ * Copyright 2021-2022, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -63,7 +63,7 @@ class PyAngleEnergy : public AngleEnergy {
   using AngleEnergy::AngleEnergy;
 
   AngleEnergyPacket sample_angle_energy(
-      double E_in, std::function<double()> rng) const override {
+      double E_in, const std::function<double()>& rng) const override {
     PYBIND11_OVERRIDE_PURE(AngleEnergyPacket, AngleEnergy, sample_angle_energy,
                            E_in, rng);
   }

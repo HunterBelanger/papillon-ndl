@@ -1,6 +1,6 @@
 /*
  * Papillon Nuclear Data Library
- * Copyright 2021, Hunter Belanger
+ * Copyright 2021-2022, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -106,7 +106,7 @@ DiscreteCosinesEnergies::DiscreteCosinesEnergies(const ACE& ace)
 }
 
 AngleEnergyPacket DiscreteCosinesEnergies::sample_angle_energy(
-    double E_in, std::function<double()> rng) const {
+    double E_in, const std::function<double()>& rng) const {
   uint32_t j = 0;
   uint32_t k = static_cast<uint32_t>(Nmu * rng());
   // Sample j for the outgoing energy point

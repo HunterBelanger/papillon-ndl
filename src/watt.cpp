@@ -1,6 +1,6 @@
 /*
  * Papillon Nuclear Data Library
- * Copyright 2021, Hunter Belanger
+ * Copyright 2021-2022, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -101,7 +101,8 @@ Watt::Watt(std::shared_ptr<Tabulated1D> a, std::shared_ptr<Tabulated1D> b,
            double restriction_energy)
     : a_(a), b_(b), restriction_energy_(restriction_energy) {}
 
-double Watt::sample_energy(double E_in, std::function<double()> rng) const {
+double Watt::sample_energy(double E_in,
+                           const std::function<double()>& rng) const {
   double a = (*a_)(E_in);
   double b = (*b_)(E_in);
   double w = 0.;

@@ -1,6 +1,6 @@
 /*
  * Papillon Nuclear Data Library
- * Copyright 2021, Hunter Belanger
+ * Copyright 2021-2022, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -69,7 +69,7 @@ Maxwellian::Maxwellian(std::shared_ptr<Tabulated1D> temperature,
     : temperature_(temperature), restriction_energy_(restriction_energy) {}
 
 double Maxwellian::sample_energy(double E_in,
-                                 std::function<double()> rng) const {
+                                 const std::function<double()>& rng) const {
   double T = (*temperature_)(E_in);
   double xi1 = 0.;
   double xi2 = 0.;

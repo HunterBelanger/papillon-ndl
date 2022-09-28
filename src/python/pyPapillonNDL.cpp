@@ -1,6 +1,6 @@
 /*
  * Papillon Nuclear Data Library
- * Copyright 2021, Hunter Belanger
+ * Copyright 2021-2022, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -158,7 +158,7 @@ PYBIND11_MODULE(pyPapillonNDL, m) {
   init_SerpentLibrary(m);
 
   m.attr("__author__") = "Hunter Belanger";
-  m.attr("__copyright__") = "Copyright 2021, Hunter Belanger";
+  m.attr("__copyright__") = "Copyright 2021-2022, Hunter Belanger";
   m.attr("__license__") = "GPL-3.0-or-later";
   m.attr("__maintainer__") = "Hunter Belanger";
   m.attr("__email__") = "hunter.belanger@gmail.com";

@@ -1,6 +1,6 @@
 /*
  * Papillon Nuclear Data Library
- * Copyright 2021, Hunter Belanger
+ * Copyright 2021-2022, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -113,8 +113,8 @@ AngleDistribution::AngleDistribution(
   }
 }
 
-double AngleDistribution::sample_angle(double E_in,
-                                       std::function<double()> rng) const {
+double AngleDistribution::sample_angle(
+    double E_in, const std::function<double()>& rng) const {
   auto E_it = std::lower_bound(energy_grid_.begin(), energy_grid_.end(), E_in);
   if (E_it == energy_grid_.begin())
     return laws_.front()->sample_mu(rng);

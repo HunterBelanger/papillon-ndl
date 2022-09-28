@@ -1,6 +1,6 @@
 /*
  * Papillon Nuclear Data Library
- * Copyright 2021, Hunter Belanger
+ * Copyright 2021-2022, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -55,7 +55,7 @@ class Evaporation : public EnergyLaw {
   ~Evaporation() = default;
 
   double sample_energy(double E_in,
-                       std::function<double()> rng) const override final;
+                       const std::function<double()>& rng) const override final;
 
   std::optional<double> pdf(double E_in, double E_out) const override final;
 
