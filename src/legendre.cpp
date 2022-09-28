@@ -69,7 +69,7 @@ double Legendre::pdf(double mu) const {
   return pdf;
 }
 
-double Legendre::sample_mu(std::function<double()> rng) const {
+double Legendre::sample_mu(const std::function<double()>& rng) const {
   double mu = -2.;
 
   while (true) {

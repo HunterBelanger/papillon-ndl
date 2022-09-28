@@ -94,7 +94,7 @@ class DiscretePhoton : public EnergyLaw {
   ~DiscretePhoton() = default;
 
   double sample_energy(double E_in,
-                       std::function<double()> /*rng*/) const override final {
+                       const std::function<double()>& /*rng*/) const override final {
     if ((lp == 0) || (lp == 1)) return Eg;
     return Eg + (A / (A + 1.)) * E_in;
   }

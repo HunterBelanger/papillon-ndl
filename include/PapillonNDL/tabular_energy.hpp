@@ -56,7 +56,7 @@ class TabularEnergy : public EnergyLaw {
   ~TabularEnergy() = default;
 
   double sample_energy(double E_in,
-                       std::function<double()> rng) const override final;
+                       const std::function<double()>& rng) const override final;
 
   std::optional<double> pdf(double E_in, double E_out) const override final;
 

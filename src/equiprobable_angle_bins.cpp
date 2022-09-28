@@ -77,7 +77,7 @@ EquiprobableAngleBins::EquiprobableAngleBins(const std::vector<double>& bounds)
   }
 }
 
-double EquiprobableAngleBins::sample_mu(std::function<double()> rng) const {
+double EquiprobableAngleBins::sample_mu(const std::function<double()>& rng) const {
   const double xi = rng();
   std::size_t bin =
       static_cast<std::size_t>(std::floor(static_cast<double>(NBOUNDS) * xi));

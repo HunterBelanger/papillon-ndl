@@ -31,7 +31,7 @@
 namespace pndl {
 
 AngleEnergyPacket CMDistribution::sample_angle_energy(
-    double E_in, std::function<double()> rng) const {
+    double E_in, const std::function<double()>& rng) const {
   AngleEnergyPacket out = distribution_->sample_angle_energy(E_in, rng);
 
   CMToLab::transform(E_in, awr_, out);

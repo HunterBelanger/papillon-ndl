@@ -212,7 +212,7 @@ ContinuousEnergyDiscreteCosines::ContinuousEnergyDiscreteCosines(
 }
 
 AngleEnergyPacket ContinuousEnergyDiscreteCosines::sample_angle_energy(
-    double E_in, std::function<double()> rng) const {
+    double E_in, const std::function<double()>& rng) const {
   if (!unit_based_interpolation_)
     return sample_without_unit_based_interpolation(E_in, rng);
   else
@@ -221,7 +221,7 @@ AngleEnergyPacket ContinuousEnergyDiscreteCosines::sample_angle_energy(
 
 AngleEnergyPacket
 ContinuousEnergyDiscreteCosines::sample_with_unit_based_interpolation(
-    double E_in, std::function<double()> rng) const {
+    double E_in, const std::function<double()>& rng) const {
   // First we sample the outgoing energy.
   // Determine the index of the bounding tabulated incoming energies
   std::size_t l;
@@ -303,7 +303,7 @@ ContinuousEnergyDiscreteCosines::sample_with_unit_based_interpolation(
 
 AngleEnergyPacket
 ContinuousEnergyDiscreteCosines::sample_without_unit_based_interpolation(
-    double E_in, std::function<double()> rng) const {
+    double E_in, const std::function<double()>& rng) const {
   // First we sample the outgoing energy.
   // Determine the index of the bounding tabulated incoming energies
   std::size_t l;

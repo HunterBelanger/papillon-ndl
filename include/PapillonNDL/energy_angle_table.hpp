@@ -72,7 +72,7 @@ class EnergyAngleTable {
                    const std::vector<PCTable>& angle_tables);
   ~EnergyAngleTable() = default;
 
-  AngleEnergyPacket sample_angle_energy(std::function<double()> rng) const {
+  AngleEnergyPacket sample_angle_energy(const std::function<double()>& rng) const {
     double E_out, mu;
     double xi = rng();
     auto cdf_it = std::lower_bound(cdf_.begin(), cdf_.end(), xi);

@@ -62,7 +62,7 @@ Elastic::Elastic(std::shared_ptr<ElasticDopplerBroadener> broadener,
 }
 
 AngleEnergyPacket Elastic::sample_angle_energy(
-    double E_in, std::function<double()> rng) const {
+    double E_in, const std::function<double()>& rng) const {
   // Direction in
   const Vector u_n(0., 0., 1.);
 

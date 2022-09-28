@@ -73,7 +73,7 @@ TabularEnergy::TabularEnergy(const std::vector<double>& incoming_energy,
 }
 
 double TabularEnergy::sample_energy(double E_in,
-                                    std::function<double()> rng) const {
+                                    const std::function<double()>& rng) const {
   // Determine the index of the bounding tabulated incoming energies
   std::size_t l;
   double f;  // Interpolation factor

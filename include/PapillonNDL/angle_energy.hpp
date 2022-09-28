@@ -57,7 +57,7 @@ class AngleEnergy : public std::enable_shared_from_this<AngleEnergy> {
    *         AngleEnergyPacket.
    */
   virtual AngleEnergyPacket sample_angle_energy(
-      double E_in, std::function<double()> rng) const = 0;
+      double E_in, const std::function<double()>& rng) const = 0;
 
   /**
    * @brief Evaluates the marginal PDF for having a scattering cosine of mu at

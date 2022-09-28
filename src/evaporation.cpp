@@ -67,7 +67,7 @@ Evaporation::Evaporation(std::shared_ptr<Tabulated1D> temperature,
     : temperature_(temperature), restriction_energy_(restriction_energy) {}
 
 double Evaporation::sample_energy(double E_in,
-                                  std::function<double()> rng) const {
+                                  const std::function<double()>& rng) const {
   double T = (*temperature_)(E_in);
   double xi1 = 0.;
   double xi2 = 0.;

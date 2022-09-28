@@ -73,7 +73,7 @@ class ReactionBase {
    * @param rng Random number generation function.
    */
   AngleEnergyPacket sample_neutron_angle_energy(
-      double E_in, std::function<double()> rng) const {
+      double E_in, const std::function<double()>& rng) const {
     if (E_in < threshold_) return {0., 0.};
 
     return neutron_distribution_->sample_angle_energy(E_in, rng);

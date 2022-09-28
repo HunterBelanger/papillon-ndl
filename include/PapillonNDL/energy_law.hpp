@@ -47,7 +47,7 @@ class EnergyLaw : public std::enable_shared_from_this<EnergyLaw> {
    * @param rng Random number generation function.
    */
   virtual double sample_energy(double E_in,
-                               std::function<double()> rng) const = 0;
+                               const std::function<double()>& rng) const = 0;
 
   /**
    * @brief Samples the PDF for the energy transfer from E_in to E_out where

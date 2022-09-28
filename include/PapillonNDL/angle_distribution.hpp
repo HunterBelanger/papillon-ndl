@@ -62,7 +62,7 @@ class AngleDistribution {
    * @param E_in Incident energy before scatter, in MeV.
    * @param rng Random number generator function.
    */
-  double sample_angle(double E_in, std::function<double()> rng) const;
+  double sample_angle(double E_in, const std::function<double()>& rng) const;
 
   /**
    * @brief Evaluates the PDF for having a scattering cosine of mu at incoming

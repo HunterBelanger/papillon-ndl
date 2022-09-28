@@ -35,7 +35,7 @@ Uncorrelated::Uncorrelated(const AngleDistribution& angle,
 }
 
 AngleEnergyPacket Uncorrelated::sample_angle_energy(
-    double E_in, std::function<double()> rng) const {
+    double E_in, const std::function<double()>& rng) const {
   double mu = angle_.sample_angle(E_in, rng);
   double E_out = energy_->sample_energy(E_in, rng);
   return {mu, E_out};

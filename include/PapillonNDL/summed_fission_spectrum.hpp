@@ -59,7 +59,7 @@ class SummedFissionSpectrum : public AngleEnergy {
                         std::shared_ptr<STReaction> mt38);
 
   AngleEnergyPacket sample_angle_energy(
-      double E_in, std::function<double()> rng) const override final;
+      double E_in, const std::function<double()>& rng) const override final;
 
   std::optional<double> angle_pdf(double E_in, double mu) const override final;
 

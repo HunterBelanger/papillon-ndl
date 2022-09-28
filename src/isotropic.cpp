@@ -26,7 +26,7 @@
 
 namespace pndl {
 
-double Isotropic::sample_mu(std::function<double()> rng) const {
+double Isotropic::sample_mu(const std::function<double()>& rng) const {
   double mu = 2. * rng() - 1.;
   if (std::abs(mu) > 1.) mu = std::copysign(1., mu);
   return mu;

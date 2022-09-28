@@ -38,7 +38,7 @@ class PyAngleLaw : public AngleLaw {
  public:
   using AngleLaw::AngleLaw;
 
-  double sample_mu(std::function<double()> rng) const override {
+  double sample_mu(const std::function<double()>& rng) const override {
     PYBIND11_OVERRIDE_PURE(double, AngleLaw, sample_mu, rng);
   }
 

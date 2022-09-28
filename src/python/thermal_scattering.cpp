@@ -45,7 +45,7 @@ class PySTTSLReaction : public STTSLReaction {
   }
 
   AngleEnergyPacket sample_angle_energy(
-      double E_in, std::function<double()> rng) const override {
+      double E_in, const std::function<double()>& rng) const override {
     PYBIND11_OVERRIDE_PURE(AngleEnergyPacket, STTSLReaction,
                            sample_angle_energy, E_in, rng);
   }

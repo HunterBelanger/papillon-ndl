@@ -53,7 +53,7 @@ class Legendre : public AngleLaw {
    */
   Legendre(const std::vector<double>& a);
 
-  double sample_mu(std::function<double()> rng) const override final;
+  double sample_mu(const std::function<double()>& rng) const override final;
 
   double pdf(double mu) const override final;
 
