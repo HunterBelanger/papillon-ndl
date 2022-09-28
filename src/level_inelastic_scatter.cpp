@@ -44,8 +44,8 @@ LevelInelasticScatter::LevelInelasticScatter(double Q, double AWR)
   C2_ = tmp * tmp;
 }
 
-double LevelInelasticScatter::sample_energy(double E_in,
-                                            const std::function<double()>&) const {
+double LevelInelasticScatter::sample_energy(
+    double E_in, const std::function<double()>&) const {
   return C2_ * (E_in - C1_);
 }
 

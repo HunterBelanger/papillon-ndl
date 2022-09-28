@@ -82,8 +82,8 @@ GeneralEvaporation::GeneralEvaporation(std::shared_ptr<Tabulated1D> temperature,
   }
 }
 
-double GeneralEvaporation::sample_energy(double E_in,
-                                         const std::function<double()>& rng) const {
+double GeneralEvaporation::sample_energy(
+    double E_in, const std::function<double()>& rng) const {
   double T = (*temperature_)(E_in);
   double xi1 = rng();
   std::size_t bin =
