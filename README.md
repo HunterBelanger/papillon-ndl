@@ -2,6 +2,7 @@
 [![CMake Workflow](https://github.com/HunterBelanger/papillon-ndl/actions/workflows/cmake.yml/badge.svg)](https://github.com/HunterBelanger/papillon-ndl/actions)
 [![Documentation Status](https://readthedocs.org/projects/papillon-ndl/badge/?version=latest)](https://papillon-ndl.readthedocs.io/en/latest/?badge=latest)
 [![License](https://img.shields.io/badge/License-GPLv3-brightgreen)](https://github.com/HunterBelanger/papillon-ndl/blob/develop/LICENSE)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7121174.svg)](https://doi.org/10.5281/zenodo.7121174)
 
 The Papillon Nuclear Data Library (NDL) is a C++/Python library for reading,
 sampling, and interacting with continuous energy nuclear data, stored in the ACE
