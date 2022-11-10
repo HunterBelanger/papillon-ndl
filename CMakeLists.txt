@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.11)
+  cmake_minimum_required(VERSION 3.11)
 
 project(PapillonNDL
   VERSION "0.2.1"
@@ -14,7 +14,6 @@ option(PNDL_SHARED "Build PapillonNDL as a shared library" ON)
 option(PNDL_PYTHON "Enable Python interface to PapillonNDL" ON)
 option(PNDL_INSTALL "Install the PapillonNDL library and header files" ON)
 option(PNDL_TESTS "Build PapillonNDL tests" OFF)
-option(PNDL_TOOLS "Build sampling tools for PapillonNDL and OpenMC" OFF)
 
 # List of source files for PapillonNDL
 set(PNDL_SOURCE_LIST src/element.cpp
@@ -201,10 +200,9 @@ if(PNDL_PYTHON)
   endif()
 endif()
 
-# Add the tools subdirectory if we want to build the samplers for PapillonNDL and OpenMC
-if(PNDL_TOOLS)
-  add_subdirectory(tools)
-endif()
+# Add the tools subdirectory, so we can build panglos or the samplers for
+# PapillonNDL and OpenMC if desired
+add_subdirectory(tools)
 
 # Install PapillonNDL
 if(PNDL_INSTALL)

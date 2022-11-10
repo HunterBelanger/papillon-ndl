@@ -33,6 +33,7 @@ important way that you can get involved and contribute to the project!
    install/index
    usage/index
    api/index
+   tools/index
    license/index
 
 

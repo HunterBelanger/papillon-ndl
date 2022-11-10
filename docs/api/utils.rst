@@ -1,8 +1,8 @@
 .. _api_misc:
 
-===============
-Tools and Utils
-===============
+=========
+Utilities
+=========
 
 NDLibrary
 -----------

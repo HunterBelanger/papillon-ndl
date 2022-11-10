@@ -111,10 +111,18 @@ PNDL_PYTHON
 PNDL_TESTS
   This is used to build the unit tests, and is turned off by default.
 
-PNDL_TOOLS
+PNDL_SAMPLERS
   This option will build the PapillonNDL sampler, and the OpenMC sampler. It
   will therefore download and compile all of OpenMC. This should only be needed
   by developers, and is turned off by default.
+
+PNDL_PANGLOS
+  This option will build ``panglos``, which is a small  code, that processes
+  thermal scattering laws in the ENDF-6 format, and produces customized ACE
+  files, which contain distributions for incoherent inelastic scattering which
+  are continuous in both energy and angle. It will download the ENDFtk and
+  interpolation libraries from the NJOY21 project automatically for the build.
+  This is turned off by default.
 
 PNDL_SHARED
   Builds a shared library, as opposed to a static library. This is turned on by
