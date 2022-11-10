@@ -12,4 +12,4 @@ Library API
    energy_distributions.rst
    angle_energy.rst
    functions.rst
-   tools.rst
+   utils.rst
