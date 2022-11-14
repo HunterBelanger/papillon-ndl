@@ -151,14 +151,7 @@ double TabulatedSab::operator()(double a, double b) const {
   // Check that a and b are in range. If not, use the short collision time
   // approximation instead.
   if (a > alpha_.back() || b < beta_.front() || b > beta_.back()) {
-    double c = 1.;
-    if (lat_) {
-      // Although we have changed the room temp grids to the real temp for the
-      // table, we must go back to the room temp values for the SCT.
-      // c = TROOM / T_;
-      c = T_ / TROOM;
-    }
-    return sct_(a * c, orig_b * c);
+    return sct_(a, orig_b);
   }
 
   // if (a < alpha_.front()) {
@@ -204,14 +197,7 @@ double TabulatedSab::operator()(double a, double b) const {
   // necessary to get values which are similar to those of NJOY.
   if (S_bl_al < SCT_CUTOFF || S_bl_ah < SCT_CUTOFF || S_bh_al < SCT_CUTOFF ||
       S_bh_ah < SCT_CUTOFF) {
-    double c = 1.;
-    if (lat_) {
-      // Although we have changed the room temp grids to the real temp for the
-      // table, we must go back to the room temp values for the SCT.
-      // c = TROOM / T_;
-      c = T_ / TROOM;
-    }
-    return sct_(a * c, orig_b * c);
+    return sct_(a, orig_b);
   }
 
   // Get index of interpolators
