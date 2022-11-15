@@ -28,13 +28,14 @@
  * @author Hunter Belanger
  */
 
-#include <ENDFtk/section/7.hpp>
-#include <ndarray.hpp>
-
 #include "interpolator.hpp"
 #include "sab.hpp"
 #include "short_collision_time_sab.hpp"
+
+#include <ENDFtk/section/7.hpp>
 using namespace njoy::ENDFtk;
+
+#include <ndarray.hpp>
 
 #include <vector>
 
@@ -83,6 +84,36 @@ class TabulatedSab : public Sab {
    *        the absolute value.
    **/
   bool symmetric() const { return symmetric_; }
+
+  /**
+   * @brief Returns a reference to the \f$\beta\f$ grid.
+   */
+  const std::vector<double>& beta() const { return beta_; }
+
+  /**
+   * @breif Returns a reference to the \f$\beta\f$ interpolation boundaries.
+   */
+  const std::vector<long>& beta_boundaries() const { return beta_bounds_; }
+
+  /**
+   * @breif Returns a reference to the \f$\beta\f$ Interpolator instances.
+   */
+  const std::vector<Interpolator>& beta_interpolators() const { return beta_interps_; }
+
+  /**
+   * @brief Returns a reference to the \f$\alpha\f$ grid.
+   */
+  const std::vector<double>&alpha() const { return alpha_; }
+
+  /**
+   * @breif Returns a reference to the \f$\alpha\f$ interpolation boundaries.
+   */
+  const std::vector<long>& alpha_boundaries() const { return alpha_bounds_; }
+
+  /**
+   * @breif Returns a reference to the \f$\alpha\f$ Interpolator instances.
+   */
+  const std::vector<Interpolator>& alpha_interpolators() const { return alpha_interps_; }
 
  private:
   std::vector<double> beta_;
