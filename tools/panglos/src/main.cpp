@@ -28,6 +28,7 @@
 
 #include <ENDFtk.hpp>
 #include <boost/hana.hpp>  // Needed for the _c literal for constructing mt4
+#include <cstddef>
 #include <iostream>
 #include <string>
 using namespace njoy::ENDFtk;
@@ -39,11 +40,11 @@ using namespace njoy::ENDFtk;
 #include "tabulated_sab.hpp"
 
 int main(const int argc, const char** argv) {
-  //std::string fname = "tsl-HinH2O.endf";
-  //int MAT = 1;
+  std::string fname = "tsl-HinH2O.endf";
+  int MAT = 1;
 
-  std::string fname = "tsl-reactor-graphite-10P.endf";
-  int MAT = 31;
+  //std::string fname = "tsl-reactor-graphite-10P.endf";
+  //int MAT = 31;
 
   tree::Tape<std::string> pendf = tree::fromFile(fname);
   file::Type<7> mf7 = pendf.material(MAT).front().file(7).parse<7>();
@@ -107,14 +108,15 @@ int main(const int argc, const char** argv) {
   if (Egrid.back() > Emax) Egrid.back() = Emax;
 
   NDArray<double> IIxs({2, NE});
+  const std::size_t ti = 6;
   for (std::size_t i = 0; i < NE; i++) {
     const auto& E = Egrid[i];
     IIxs(0, i) = E;
-    const double b_min = Sab::min_beta(E, temps[0]);
-    const double b_max = Sab::max_beta(E, temps[0]);
+    const double b_min = Sab::min_beta(E, temps[ti]);
+    const double b_max = Sab::max_beta(E, temps[ti]);
     std::cout << "Running index " << i << ", Energy " << E << " eV.\n";
-    IIxs(1, i) = (AWR * xs_b * KB * temps[0] / (4. * E)) *
-                 tsls[0].integrate_exp_beta(E, b_min, b_max);
+    IIxs(1, i) = (AWR * xs_b * KB * temps[ti] / (4. * E)) *
+                 tsls[ti].integrate_exp_beta(E, b_min, b_max);
   }
 
   IIxs.save("iixs.npy");
