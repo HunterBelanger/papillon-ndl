@@ -26,17 +26,17 @@
  * @author Hunter Belanger
  */
 
+#include "tabulated_sab.hpp"
+
 #include <algorithm>
 #include <cmath>
 #include <exception>
-#include <stdexcept>
-
 #include <range/v3/to_container.hpp>  // Allows us to use ranges::to<cont<type>>(range);
+#include <stdexcept>
 
 #include "constants.hpp"
 #include "gauss_kronrod.hpp"
 #include "interpolator.hpp"
-#include "tabulated_sab.hpp"
 
 using ScatteringFunction =
     section::Type<7, 4>::TabulatedFunctions::ScatteringFunction;
@@ -91,7 +91,6 @@ TabulatedSab::TabulatedSab(section::Type<7, 4>::TabulatedFunctions& TSL,
   // the true temperature, as they have been stored for room temp
   // T = 0.0253 eV.
   if (lat_) {
-    // const double C = T_ / TROOM;
     const double C = TROOM / T_;
     for (auto& b : beta_) b *= C;
     for (auto& a : alpha_) a *= C;
@@ -154,11 +153,6 @@ double TabulatedSab::operator()(double a, double b) const {
     return sct_(a, orig_b);
   }
 
-  // if (a < alpha_.front()) {
-  //   // TODO
-  //   throw std::runtime_error("Cannot yet extrapolate alpha to zero.");
-  // }
-
   // Get the index in the beta grid
   auto beta_it = std::lower_bound(beta_.begin(), beta_.end(), b);
   std::size_t beta_indx = 0;
@@ -171,6 +165,35 @@ double TabulatedSab::operator()(double a, double b) const {
   }
   const double beta_low = beta_[beta_indx - 1];
   const double beta_hi = beta_[beta_indx];
+
+  // Get index of beta interpolator
+  std::size_t beta_interp_indx = 0;
+  for (std::size_t i = 0; i < beta_bounds_.size() - 1; i++) {
+    beta_interp_indx = 0;
+    if (beta_indx + 1 <= static_cast<std::size_t>(beta_bounds_[i]) &&
+        beta_indx + 1 > static_cast<std::size_t>(beta_bounds_[i + 1])) {
+      break;
+    }
+  }
+  const auto& beta_interp = beta_interps_[beta_interp_indx];
+
+  // Check if alpha is bellow the lowest tabulated value
+  if (a < alpha_.front()) {
+    Interpolator alpha_interp(Interpolation::LinLin);
+    if (data_(beta_indx, 0) - data_(beta_indx, 1) > 0.) {
+      // S is increasing with decreasing alpha. Use LogLog extrapolation.
+      alpha_interp = Interpolator(Interpolation::LogLog);
+    } else {
+      // S is decreasing with decreasing alpha. Use LogLin extrapolation.
+      alpha_interp = Interpolator(Interpolation::LogLin);
+    }
+    const double S_bh = alpha_interp.interpolate(
+        a, alpha_[0], data_(beta_indx, 0), alpha_[1], data_(beta_indx, 1));
+    const double S_bl =
+        alpha_interp.interpolate(a, alpha_[0], data_(beta_indx - 1, 0),
+                                 alpha_[1], data_(beta_indx - 1, 1));
+    return beta_interp.interpolate(b, beta_low, S_bl, beta_hi, S_bh);
+  }
 
   // Get the index in the alpha grid
   auto alpha_it = std::lower_bound(alpha_.begin(), alpha_.end(), a);
@@ -200,17 +223,7 @@ double TabulatedSab::operator()(double a, double b) const {
     return sct_(a, orig_b);
   }
 
-  // Get index of interpolators
-  std::size_t beta_interp_indx = 0;
-  for (std::size_t i = 0; i < beta_bounds_.size() - 1; i++) {
-    beta_interp_indx = 0;
-    if (beta_indx + 1 <= static_cast<std::size_t>(beta_bounds_[i]) &&
-        beta_indx + 1 > static_cast<std::size_t>(beta_bounds_[i + 1])) {
-      break;
-    }
-  }
-  const auto& beta_interp = beta_interps_[beta_interp_indx];
-
+  // Get the alpha interpolator
   std::size_t alpha_interp_indx = 0;
   for (std::size_t i = 0; i < alpha_bounds_.size() - 1; i++) {
     alpha_interp_indx = 0;
