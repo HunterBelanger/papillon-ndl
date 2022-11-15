@@ -14,6 +14,11 @@ ShortCollisionTimeSab
 
 .. doxygenclass:: ShortCollisionTimeSab
 
+FreeGasSab
+---------------------
+
+.. doxygenclass:: FreeGasSab
+
 Tabulatedsab
 ------------
 
