@@ -27,16 +27,18 @@
  */
 
 #include "tabulated_sab.hpp"
+#include "constants.hpp"
+#include "gauss_kronrod.hpp"
+#include "interpolator.hpp"
+
 
 #include <algorithm>
 #include <cmath>
 #include <exception>
-#include <range/v3/to_container.hpp>  // Allows us to use ranges::to<cont<type>>(range);
 #include <stdexcept>
 
-#include "constants.hpp"
-#include "gauss_kronrod.hpp"
-#include "interpolator.hpp"
+
+#include <range/v3/to_container.hpp>  // Allows us to use ranges::to<cont<type>>(range);
 
 using ScatteringFunction =
     section::Type<7, 4>::TabulatedFunctions::ScatteringFunction;
@@ -53,8 +55,7 @@ TabulatedSab::TabulatedSab(section::Type<7, 4>::TabulatedFunctions& TSL,
       alpha_interps_(),
       data_(),
       sct_(T, Teff, A),
-      symmetric_(LASYM == 0),
-      lat_(LAT == 1) {
+      symmetric_(LASYM == 0) {
   // Get the grid of beta values
   beta_ = ranges::to<std::vector<double>>(TSL.betas());
 
@@ -90,7 +91,7 @@ TabulatedSab::TabulatedSab(section::Type<7, 4>::TabulatedFunctions& TSL,
   // If LAT = 1, then the alpha and beta grids need to be converted to
   // the true temperature, as they have been stored for room temp
   // T = 0.0253 eV.
-  if (lat_) {
+  if (LAT == 1) {
     const double C = TROOM / T_;
     for (auto& b : beta_) b *= C;
     for (auto& a : alpha_) a *= C;
