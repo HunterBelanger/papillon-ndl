@@ -84,17 +84,6 @@ class TabulatedSab : public Sab {
    **/
   bool symmetric() const { return symmetric_; }
 
-  /**
-   * @brief If true, the initial \f$\alpha\f$ and \f$\beta\f$ grids were
-   *        calculated for room temperature. Durring construction, these
-   *        grids were converted back to the true temperature provided
-   *        (which should correspond to the temperature index). When it is
-   *        necessary to go look-up values from the SCT however, we must
-   *        convert back to room temperature values for that function
-   *        evaluation.
-   **/
-  bool lat() const { return lat_; }
-
  private:
   std::vector<double> beta_;
   std::vector<long> beta_bounds_;
@@ -105,7 +94,6 @@ class TabulatedSab : public Sab {
   NDArray<double> data_;
   ShortCollisionTimeSab sct_;
   bool symmetric_;
-  bool lat_;
 };
 
 #endif
