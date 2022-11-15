@@ -27,6 +27,7 @@ FetchContent_MakeAvailable(NDArray)
 
 add_executable(panglos src/main.cpp
                        src/short_collision_time_sab.cpp
+                       src/free_gas_sab.cpp
                        src/tabulated_sab.cpp
                        src/gauss_kronrod.cpp
 )
