@@ -26,18 +26,16 @@
  * @author Hunter Belanger
  */
 
-#include <ENDFtk.hpp>
-#include <boost/hana.hpp>  // Needed for the _c literal for constructing mt4
 #include <cstddef>
 #include <iostream>
 #include <string>
-using namespace njoy::ENDFtk;
 
 #include <ndarray.hpp>
+#include <boost/hana.hpp>  // Needed for the _c literal for constructing mt4
+#include <ENDFtk.hpp>
+using namespace njoy::ENDFtk;
 
-#include "constants.hpp"
-#include "interpolator.hpp"
-#include "tabulated_sab.hpp"
+#include "incoherent_inelastic.hpp"
 
 int main(const int argc, const char** argv) {
   std::string fname = "tsl-HinH2O.endf";
@@ -48,55 +46,14 @@ int main(const int argc, const char** argv) {
 
   tree::Tape<std::string> pendf = tree::fromFile(fname);
   file::Type<7> mf7 = pendf.material(MAT).front().file(7).parse<7>();
-  section::Type<7, 4> mt4 = mf7.section(4_c);
+  section::Type<7, 4> mt4 = mf7.section(4_c); 
 
-  auto constants = mt4.constants();
+  IncoherentInelastic ii(mt4);
 
-  const int LAT = mt4.LAT();
-  const int LASYM = mt4.LASYM();
-  const int LLN = constants.LLN();
-  const double AWR = constants.AWR()[0];
+  const double Emin = ii.Emin();
+  const double Emax = ii.Emax();
 
-  std::cout << "File: " << fname << "\n";
-  std::cout << "MAT: " << MAT << "\n";
-  std::cout << "AWR: " << AWR << "\n";
-  std::cout << "LAT: " << LAT << "\n";
-  std::cout << "LLN: " << LLN << "\n";
-  std::cout << "LASYM: " << LASYM << "\n";
-
-  auto scatteringLaw = mt4.scatteringLaw();
-
-  section::Type<7, 4>::TabulatedFunctions& tsl =
-      std::get<section::Type<7, 4>::TabulatedFunctions>(scatteringLaw);
-
-  // Get list of all provided temperatures from the scattering law
-  auto lawsForAllTemps = tsl.S();
-  std::vector<double> temps = {lawsForAllTemps[0].T().begin(),
-                               lawsForAllTemps[0].T().end()};
-
-  section::Type<7, 4>::EffectiveTemperature rawEffectiveTemp =
-      mt4.principalEffectiveTemperature();
-
-  // Get Tab1 for the effective temperature
-  Tab1 effectiveTemp =
-      makeTab1(rawEffectiveTemp.boundaries(), rawEffectiveTemp.interpolants(),
-               rawEffectiveTemp.TMOD(), rawEffectiveTemp.TEFF());
-
-  std::vector<TabulatedSab> tsls;
-  for (std::size_t i = 0; i < temps.size(); i++) {
-    const double T = temps[i];
-    const double Teff = effectiveTemp(T);
-    tsls.emplace_back(tsl, i, T, Teff, AWR, LAT, LASYM, LLN);
-  }
-
-  const double Emin = 1.E-5;
-  const double Emax = std::fmax(5., constants.EMAX());
-
-  // Calculate bound xs for a single nuclide of the principal scatterer
-  const double xs_b = constants.totalFreeCrossSections()[0] *
-                      ((AWR + 1.) / AWR) * ((AWR + 1.) / AWR) /
-                      constants.numberAtoms()[0];
-
+  // Make energy grid in log scale
   constexpr std::size_t NE = 100;
   std::vector<double> Egrid(NE, 0.);
   const double du =
@@ -104,19 +61,15 @@ int main(const int argc, const char** argv) {
   for (std::size_t i = 0; i < NE; i++) {
     Egrid[i] = std::exp(std::log(Emin) + static_cast<double>(i) * du);
   }
-
   if (Egrid.back() > Emax) Egrid.back() = Emax;
 
   NDArray<double> IIxs({2, NE});
   const std::size_t ti = 6;
   for (std::size_t i = 0; i < NE; i++) {
     const auto& E = Egrid[i];
-    IIxs(0, i) = E;
-    const double b_min = Sab::min_beta(E, temps[ti]);
-    const double b_max = Sab::max_beta(E, temps[ti]);
     std::cout << "Running index " << i << ", Energy " << E << " eV.\n";
-    IIxs(1, i) = (AWR * xs_b * KB * temps[ti] / (4. * E)) *
-                 tsls[ti].integrate_exp_beta(E, b_min, b_max);
+    IIxs(0, i) = E;
+    IIxs(1, i) = ii.xs(ti, E);
   }
 
   IIxs.save("iixs.npy");

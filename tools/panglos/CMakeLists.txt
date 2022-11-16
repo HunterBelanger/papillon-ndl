@@ -29,6 +29,7 @@ add_executable(panglos src/main.cpp
                        src/short_collision_time_sab.cpp
                        src/free_gas_sab.cpp
                        src/tabulated_sab.cpp
+                       src/incoherent_inelastic.cpp
                        src/gauss_kronrod.cpp
 )
 target_compile_features(panglos PRIVATE cxx_std_17)
