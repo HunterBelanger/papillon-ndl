@@ -33,15 +33,15 @@
 
 #include <boost/hana.hpp>  // Needed for the _c literal for constructing mt4
 
+#include <cmath>
 #include <exception>
 #include <variant>
 
-IncoherentInelastic::IncoherentInelastic(section::Type<7, 4> mt4)
+IncoherentInelastic::IncoherentInelastic(const section::Type<7, 4>& mt4)
     : sab_(),
       sab_temps_(),
       awr_(0.),
-      ii_free_xs_(0.),
-      ii_bound_xs_(0.),
+      bound_xs_(0.),
       Emin_(0.),
       Emax_(0.) {
   auto constants = mt4.constants();
@@ -54,7 +54,7 @@ IncoherentInelastic::IncoherentInelastic(section::Type<7, 4> mt4)
   auto scatteringLaw = mt4.scatteringLaw();
 
   if (std::holds_alternative<section::Type<7, 4>::TabulatedFunctions>(scatteringLaw) == false) {
-    throw std::runtime_error("No tabulated scattering law in ENDF file.");
+    throw std::runtime_error("IncoherentInelastic::IncoherentInelastic: No tabulated scattering law in ENDF file.");
   }
 
   section::Type<7, 4>::TabulatedFunctions& tsl = std::get<section::Type<7, 4>::TabulatedFunctions>(scatteringLaw);
@@ -80,17 +80,20 @@ IncoherentInelastic::IncoherentInelastic(section::Type<7, 4> mt4)
   Emax_ = std::fmax(5., constants.EMAX());
 
   // Calculate bound xs for a single nuclide of the principal scatterer
-  ii_free_xs_ = constants.totalFreeCrossSections()[0];
-  ii_bound_xs_ = ii_free_xs_ * ((awr_ + 1.) / awr_) * ((awr_ + 1.) / awr_) / constants.numberAtoms()[0];
+  bound_xs_ = constants.totalFreeCrossSections()[0] * ((awr_ + 1.) / awr_) * ((awr_ + 1.) / awr_) / constants.numberAtoms()[0];
 }
 
 double IncoherentInelastic::ddxs(std::size_t Ti, double Ein, double Eout, double mu) const {
+  if (mu < -1. || mu > 1.) {
+    throw std::runtime_error("IncoherentInelastic::ddxs: mu must be in interval [-1, 1].");
+  }
+
   const double T = sab_temps_[Ti];
   const Sab& S = *sab_[Ti];
   const double b = (Eout - Ein) / (KB * T);
   const double a =
       (Eout + Ein - 2. * mu * std::sqrt(Ein * Eout)) / (awr_ * KB * T);
-  return (awr_ * ii_bound_xs_ * KB * T / (4. * Ein)) * std::exp(-0.5 * b) *
+  return (awr_ * bound_xs_ * KB * T / (4. * Ein)) * std::exp(-0.5 * b) *
          S(a, b);
 }
 
@@ -99,6 +102,6 @@ double IncoherentInelastic::xs(std::size_t Ti, double Ein) const {
   const Sab& S = *sab_[Ti];
   const double b_min = Sab::min_beta(Ein, T);
   const double b_max = Sab::max_beta(Ein, T);
-  return (awr_ * ii_bound_xs_ * KB * T / (4. * Ein)) *
+  return (awr_ * bound_xs_ * KB * T / (4. * Ein)) *
          S.integrate_exp_beta(Ein, b_min, b_max);
 }

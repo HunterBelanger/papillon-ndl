@@ -37,9 +37,18 @@ using namespace njoy::ENDFtk;
 #include <memory>
 #include <vector>
 
+/**
+ * @brief This class contains all information for Incoherent Inelastic
+ *        scattering. It is able to calculate the double differential and
+ *        integral scattering cross sections, for any of the tabulated
+ *        temperatures provided in the the evaluation.
+ */
 class IncoherentInelastic {
 public:
-  IncoherentInelastic(section::Type<7, 4> mt4);
+  /**
+   * @param mt4 Information for MF7 MT4 from ENDFtk.
+   */
+  IncoherentInelastic(const section::Type<7, 4>& mt4);
 
   /**
    * @brief Returns the double differential cross section for incoherent
@@ -95,12 +104,17 @@ public:
    */
   double Emax() const { return Emax_; }
 
+  /**
+   * @brief Returns the bound cross section for a single istope of the principal
+   *        scatterer, in barns.
+   */
+  double bound_xs() const { return bound_xs_; }
+
 private:
   std::vector<std::unique_ptr<Sab>> sab_;
   std::vector<double> sab_temps_;
   double awr_;
-  double ii_free_xs_;
-  double ii_bound_xs_;
+  double bound_xs_;
   double Emin_;
   double Emax_;
 

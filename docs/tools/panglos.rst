@@ -4,6 +4,16 @@
 Panglos
 =======
 
+IncoherentInelastic
+-------------------
+
+.. doxygenclass:: IncoherentInelastic
+
+IncoherentElastic
+-------------------
+
+.. doxygenclass:: IncoherentElastic
+
 Sab
 ---
 
