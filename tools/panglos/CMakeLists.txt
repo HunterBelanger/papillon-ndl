@@ -31,6 +31,7 @@ add_executable(panglos src/main.cpp
                        src/tabulated_sab.cpp
                        src/incoherent_inelastic.cpp
                        src/incoherent_elastic.cpp
+                       src/coherent_elastic.cpp
                        src/gauss_kronrod.cpp
 )
 target_compile_features(panglos PRIVATE cxx_std_17)
