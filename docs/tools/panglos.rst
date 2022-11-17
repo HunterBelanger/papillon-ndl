@@ -10,9 +10,14 @@ IncoherentInelastic
 .. doxygenclass:: IncoherentInelastic
 
 IncoherentElastic
--------------------
+-----------------
 
 .. doxygenclass:: IncoherentElastic
+
+CoherentElastic
+---------------
+
+.. doxygenclass:: CoherentElastic
 
 Sab
 ---
