@@ -53,6 +53,17 @@ CoherentElastic::CoherentElastic(const section::Type<7, 2>::CoherentElastic& ce)
     structure_factor_sums_.push_back(
         ranges::to<std::vector<double>>(scaterFuncs[i]));
   }
+
+  // Write Information
+  std::cout << " Coherent Elastic\n";
+  std::cout << " ----------------\n";
+  std::cout << " Num. of Bragg Edges = " << bragg_edges_.size() << "\n";
+  if (temperature_dependent()) {
+    std::cout << " Num. of Temperatures = " << temperatures_.size() << "\n";
+  } else {
+    std::cout << " No Temperature Dependence\n";
+  }
+  std::cout << "\n";
 }
 
 double CoherentElastic::xs(double T, double Ein) const {

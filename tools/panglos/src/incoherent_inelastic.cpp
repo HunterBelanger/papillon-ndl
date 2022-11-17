@@ -35,6 +35,7 @@
 
 #include <cmath>
 #include <exception>
+#include <iostream>
 #include <variant>
 
 IncoherentInelastic::IncoherentInelastic(const section::Type<7, 4>& mt4)
@@ -81,6 +82,21 @@ IncoherentInelastic::IncoherentInelastic(const section::Type<7, 4>& mt4)
 
   // Calculate bound xs for a single nuclide of the principal scatterer
   bound_xs_ = constants.totalFreeCrossSections()[0] * ((awr_ + 1.) / awr_) * ((awr_ + 1.) / awr_) / constants.numberAtoms()[0];
+
+  // Write Information
+  std::cout << " Incoherent Inelastic\n";
+  std::cout << " --------------------\n";
+  std::cout << " LAT = " << LAT << "\n";
+  std::cout << " LLN = " << LLN << "\n";
+  std::cout << " LASYM = " << LASYM << "\n";
+  std::cout << " AWR = " << awr_ << "\n";
+  std::cout << " Bound XS = " << bound_xs_ << "\n";
+  std::cout << " Num. of Temperatures = " << sab_temps_.size() << "\n";
+  std::cout << " Emax = " << Emax_ << " eV\n";
+  if (constants.EMAX() < 5.) {
+    std::cout << " WARNING: Provided Emax in evaluation was " << constants.EMAX() << " ev.\n";
+  }
+  std::cout << "\n";
 }
 
 double IncoherentInelastic::ddxs(std::size_t Ti, double Ein, double Eout, double mu) const {

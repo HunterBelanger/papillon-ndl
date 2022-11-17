@@ -33,6 +33,7 @@
 
 #include <cmath>
 #include <exception>
+#include <iostream>
 #include <stdexcept>
 #include <variant>
 
@@ -40,7 +41,14 @@ IncoherentElastic::IncoherentElastic(
     const section::Type<7, 2>::IncoherentElastic& ie)
     : W_(makeTab1(ie.boundaries(), ie.interpolants(), ie.temperatures(),
                   ie.debyeWallerValues())),
-      bound_xs_(ie.boundCrossSection()) {}
+      bound_xs_(ie.boundCrossSection()) {
+
+  // Write Information
+  std::cout << " Incoherent Elastic\n";
+  std::cout << " ------------------\n";
+  std::cout << " Bound XS = " << bound_xs_ << "\n";
+  std::cout << "\n";
+}
 
 double IncoherentElastic::dxs(double T, double Ein, double mu) const {
   if (mu < -1. || mu > 1.) {

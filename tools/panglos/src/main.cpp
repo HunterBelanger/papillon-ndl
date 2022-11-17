@@ -45,17 +45,39 @@ int main(const int argc, const char** argv) {
   //std::string fname = "tsl-HinH2O.endf";
   //int MAT = 1;
 
-  std::string fname = "tsl-reactor-graphite-10P.endf";
-  int MAT = 31;
+  //std::string fname = "tsl-reactor-graphite-10P.endf";
+  //int MAT = 31;
+
+  std::string fname = "tsl-HinZrH.endf";
+  int MAT = 7;
 
   tree::Tape<std::string> pendf = tree::fromFile(fname);
   file::Type<7> mf7 = pendf.material(MAT).front().file(7).parse<7>();
 
   section::Type<7, 4> mt4 = mf7.section(4_c); 
   IncoherentInelastic ii(mt4);
+
+  std::unique_ptr<CoherentElastic> ce = nullptr;
+  std::unique_ptr<IncoherentElastic> ie = nullptr;
+
+  if (mf7.hasSection(2)) {
+    section::Type<7, 2> mt2 = mf7.section(2_c);  
+    const auto& scatter_law = mt2.scatteringLaw();
+
+    if (std::holds_alternative<section::Type<7,2>::CoherentElastic>(scatter_law)) {
+      ce = std::make_unique<CoherentElastic>(std::get<section::Type<7,2>::CoherentElastic>(scatter_law));
+    } else if (std::holds_alternative<section::Type<7,2>::IncoherentElastic>(scatter_law)) {
+      ie = std::make_unique<IncoherentElastic>(std::get<section::Type<7,2>::IncoherentElastic>(scatter_law));
+    } else {
+      const section::Type<7,2>::MixedElastic& me = std::get<section::Type<7,2>::MixedElastic>(scatter_law);
+      ce = std::make_unique<CoherentElastic>(me.coherent());
+      ie = std::make_unique<IncoherentElastic>(me.incoherent());
+    }
+  }
+
   const double Emin = ii.Emin();
   const double Emax = ii.Emax();
-  const std::size_t ti = 0;
+  const std::size_t ti = 3;
 
   // Make energy grid in log scale
   {
@@ -78,23 +100,7 @@ int main(const int argc, const char** argv) {
     IIxs.save("iixs.npy");
   }
 
-  // Do Elastic
-  std::unique_ptr<CoherentElastic> ce = nullptr;
-  std::unique_ptr<IncoherentElastic> ie = nullptr;
-  if (mf7.hasSection(2)) {
-    section::Type<7, 2> mt2 = mf7.section(2_c);  
-    const auto& scatter_law = mt2.scatteringLaw();
-
-    if (std::holds_alternative<section::Type<7,2>::CoherentElastic>(scatter_law)) {
-      ce = std::make_unique<CoherentElastic>(std::get<section::Type<7,2>::CoherentElastic>(scatter_law));
-    } else if (std::holds_alternative<section::Type<7,2>::IncoherentElastic>(scatter_law)) {
-      ie = std::make_unique<IncoherentElastic>(std::get<section::Type<7,2>::IncoherentElastic>(scatter_law));
-    } else {
-      const section::Type<7,2>::MixedElastic& me = std::get<section::Type<7,2>::MixedElastic>(scatter_law);
-      ce = std::make_unique<CoherentElastic>(me.coherent());
-      ie = std::make_unique<IncoherentElastic>(me.incoherent());
-    }
-  }
+  
 
   if (ce) {
     constexpr std::size_t NE = 5000;
