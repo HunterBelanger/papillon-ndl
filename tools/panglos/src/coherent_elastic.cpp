@@ -29,6 +29,9 @@
 #include "coherent_elastic.hpp"
 #include "interpolator.hpp"
 
+#include <Log.hpp>
+using namespace njoy;
+
 #include <algorithm>
 #include <range/v3/to_container.hpp>  // Allows us to use ranges::to<cont<type>>(range);
 
@@ -55,15 +58,15 @@ CoherentElastic::CoherentElastic(const section::Type<7, 2>::CoherentElastic& ce)
   }
 
   // Write Information
-  std::cout << " Coherent Elastic\n";
-  std::cout << " ----------------\n";
-  std::cout << " Num. of Bragg Edges = " << bragg_edges_.size() << "\n";
+  Log::info("Coherent Elastic");
+  Log::info("----------------");
+  Log::info("Num. of Bragg Edges = {}", bragg_edges_.size());
   if (temperature_dependent()) {
-    std::cout << " Num. of Temperatures = " << temperatures_.size() << "\n";
+    Log::info("Num. of Temperatures = {}", temperatures_.size());
   } else {
-    std::cout << " No Temperature Dependence\n";
+    Log::info("No Temperature Dependence");
   }
-  std::cout << "\n";
+  Log::info("");
 }
 
 double CoherentElastic::xs(double T, double Ein) const {

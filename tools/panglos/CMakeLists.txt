@@ -13,9 +13,15 @@ FetchContent_Declare(ENDFtk
     GIT_TAG        v0.3.0
 )
 
+FetchContent_Declare(Log
+    GIT_REPOSITORY  https://github.com/njoy/Log
+    GIT_TAG         52962b7796afe37ef1d8f7edb4bf9ecb1b868d15
+)
+
 FetchContent_MakeAvailable(
     interpolation
     ENDFtk
+    Log
 )
 
 FetchContent_Declare(NDArray
@@ -36,4 +42,9 @@ add_executable(panglos src/main.cpp
 )
 target_compile_features(panglos PRIVATE cxx_std_17)
 target_compile_options(panglos PRIVATE -W -Wall -Wextra -Wpedantic)
-target_link_libraries(panglos PRIVATE ENDFtk interpolation NDArray)
+target_link_libraries(panglos PRIVATE ENDFtk Log interpolation NDArray)
+
+find_package(OpenMP QUIET)
+if(OpenMP_CXX_FOUND)
+  target_link_libraries(panglos PRIVATE OpenMP::OpenMP_CXX)
+endif()

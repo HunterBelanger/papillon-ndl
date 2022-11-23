@@ -28,10 +28,10 @@
  * @author Hunter Belanger
  */
 
-#include "sab.hpp"
-
 #include <ENDFtk/file/7.hpp>
 #include <ENDFtk/section/7.hpp>
+
+#include "tabulated_sab.hpp"
 using namespace njoy::ENDFtk;
 
 #include <memory>
@@ -44,7 +44,7 @@ using namespace njoy::ENDFtk;
  *        temperatures provided in the the evaluation.
  */
 class IncoherentInelastic {
-public:
+ public:
   /**
    * @param mt4 Information for MF7 MT4 from ENDFtk.
    */
@@ -55,8 +55,8 @@ public:
    *        inelastic scattering. This therefore returns
             \f[
                 \sigma_{II}(E_{\text{in}}\rightarrow E_{\text{out}}, \mu) =
-                \frac{A kT \sigma_b}{4 E_{\text{in}}} e^{-\beta/2}S(\alpha,\beta)
-            \f]
+                \frac{A kT \sigma_b}{4 E_{\text{in}}}
+   e^{-\beta/2}S(\alpha,\beta) \f]
    * @param Ti Temperature index.
    * @param Ein Incident energy in eV.
    * @param Eout Exit energy in eV.
@@ -92,7 +92,7 @@ public:
    *        temperature index.
    * @param Ti Temerature index.
    */
-  const Sab& sab(std::size_t Ti) { return *sab_[Ti]; }
+  const TabulatedSab& sab(std::size_t Ti) const { return *sab_[Ti]; }
 
   /**
    * @brief Returns the minimum energy for the thermal scattering law data.
@@ -110,8 +110,8 @@ public:
    */
   double bound_xs() const { return bound_xs_; }
 
-private:
-  std::vector<std::unique_ptr<Sab>> sab_;
+ private:
+  std::vector<std::unique_ptr<TabulatedSab>> sab_;
   std::vector<double> sab_temps_;
   double awr_;
   double bound_xs_;
@@ -120,5 +120,22 @@ private:
 
   void setup_ii(const section::Type<7, 4>& mt4);
 };
+
+struct AlphaDistribution {
+  std::vector<double> alpha, pdf, cdf;
+};
+
+struct BetaDistribution {
+  std::vector<double> beta, pdf, cdf;
+  std::vector<AlphaDistribution> alpha;
+};
+
+struct LinearizedIncoherentInelastic {
+  std::vector<double> egrid, xs;
+  std::vector<BetaDistribution> beta;
+};
+
+LinearizedIncoherentInelastic linearize_ii(const IncoherentInelastic& ii,
+                                           std::size_t Ti);
 
 #endif
