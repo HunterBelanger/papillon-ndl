@@ -30,6 +30,8 @@
 #include "constants.hpp"
 #include "interpolator.hpp"
 
+#include <Log.hpp>
+using namespace njoy;
 
 #include <cmath>
 #include <exception>
@@ -44,10 +46,10 @@ IncoherentElastic::IncoherentElastic(
       bound_xs_(ie.boundCrossSection()) {
 
   // Write Information
-  std::cout << " Incoherent Elastic\n";
-  std::cout << " ------------------\n";
-  std::cout << " Bound XS = " << bound_xs_ << "\n";
-  std::cout << "\n";
+  Log::info("Incoherent Elastic");
+  Log::info("------------------");
+  Log::info("Bound XS = {}", bound_xs_);
+  Log::info("");
 }
 
 double IncoherentElastic::dxs(double T, double Ein, double mu) const {

@@ -245,6 +245,8 @@ double TabulatedSab::operator()(double a, double b) const {
 
 double TabulatedSab::integrate_alpha(double a_low, double a_hi,
                                      double b) const {
+  if (a_low == a_hi) return 0.;
+  
   auto S = [&, b](double a) { return (*this)(a, b); };
 
   bool flipped = false;
@@ -266,13 +268,12 @@ double TabulatedSab::integrate_alpha(double a_low, double a_hi,
   alpha_bounds.emplace_back(a_hi);
 
   GaussKronrodQuadrature<21> GK;
+  //GaussKronrodQuadrature<15> GK;
   double integral = 0.;
 
   for (std::size_t i = 0; i < alpha_bounds.size() - 1; i++) {
-    integral +=
-        GK.integrate(S, alpha_bounds[i], alpha_bounds[i + 1], 1.49E-8, 10)
-            .first;
-    // integral += GK.integrate(S, alpha_bounds[i], alpha_bounds[i+1]).first;
+    integral += GK.integrate(S, alpha_bounds[i], alpha_bounds[i + 1], 1.49E-8, 10) .first;
+    //integral += GK.integrate(S, alpha_bounds[i], alpha_bounds[i+1]).first;
   }
 
   if (flipped) integral = -integral;
@@ -282,6 +283,8 @@ double TabulatedSab::integrate_alpha(double a_low, double a_hi,
 
 double TabulatedSab::integrate_exp_beta(double E, double b_low,
                                         double b_hi) const {
+  if (b_low == b_hi) return 0.;
+
   auto expS = [&, E](double b) {
     return std::exp(-0.5 * b) * this->integrate_alpha(this->min_alpha(E, b),
                                                       this->max_alpha(E, b), b);
@@ -306,13 +309,12 @@ double TabulatedSab::integrate_exp_beta(double E, double b_low,
   beta_bounds.emplace_back(b_hi);
 
   GaussKronrodQuadrature<21> GK;
+  //GaussKronrodQuadrature<15> GK;
   double integral = 0.;
 
   for (std::size_t i = 0; i < beta_bounds.size() - 1; i++) {
-    integral +=
-        GK.integrate(expS, beta_bounds[i], beta_bounds[i + 1], 1.49E-8, 10)
-            .first;
-    // integral += GK.integrate(expS, beta_bounds[i], beta_bounds[i+1]).first;
+    integral += GK.integrate(expS, beta_bounds[i], beta_bounds[i + 1], 1.49E-8, 10) .first;
+    //integral += GK.integrate(expS, beta_bounds[i], beta_bounds[i+1]).first;
   }
 
   if (flipped) integral = -integral;
