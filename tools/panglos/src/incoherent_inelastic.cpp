@@ -35,12 +35,14 @@
 #include "constants.hpp"
 #include "interpolator.hpp"
 #include "linearize.hpp"
+#include "trapezoid.hpp"
 #include "tabulated_sab.hpp"
 using namespace njoy;
 
 #include <cmath>
 #include <exception>
 #include <iostream>
+#include <tuple>
 #include <utility>
 #include <variant>
 
@@ -201,7 +203,8 @@ void normalize_pdf_compute_cdf(const std::vector<double>& x,
 }
 
 void linearize_alpha(const TabulatedSab& S, const double& Ein, const double& b,
-                     AlphaDistribution& adist) {
+                     AlphaDistribution& adist,
+                     bool pedantic) {
   const double alpha_min = S.min_alpha(Ein, b);
   const double alpha_max = S.max_alpha(Ein, b);
   if (alpha_min == alpha_max) {
@@ -227,15 +230,25 @@ void linearize_alpha(const TabulatedSab& S, const double& Ein, const double& b,
     pdf_points[i] = apdf(alpha_points[i]);
   }
 
-  LinearizedFunction alpha_pdf = linearize(alpha_points, pdf_points, apdf);
+  //LinearizedFunction alpha_pdf = linearize(alpha_points, pdf_points, apdf);
+  LinearizedFunction alpha_pdf = linearize(alpha_points, pdf_points, apdf, 0.005, 1.E-14, 1.E-14);
   adist.alpha = alpha_pdf.x;
   adist.pdf = alpha_pdf.y;
+
+  if (pedantic) {
+    const double pdf_integral = S.integrate_alpha(alpha_min, alpha_max, b);
+    const double pdf_integral_trap = trapezoid(adist.alpha, adist.pdf);
+    const double rel_diff_int = std::abs((pdf_integral_trap - pdf_integral)/pdf_integral);
+    if (rel_diff_int > 0.05) {
+      Log::warning("Alpha distribution for {} eV beta {} has a relative difference of {} in integral.", Ein, b, rel_diff_int);
+    }
+  }
 
   // Compute the CDF
   normalize_pdf_compute_cdf(adist.alpha, adist.pdf, adist.cdf);
 }
 
-std::pair<std::vector<double>, std::vector<double>> determine_initial_beta_grid(
+std::tuple<std::vector<double>, std::vector<double>, double> determine_initial_beta_grid(
     const TabulatedSab& S, const double& Ein) {
   // This function gets the points in the beta grid for the outgoing energy
   // distribution. We truncate the beta distribution based on how close we are
@@ -282,7 +295,7 @@ std::pair<std::vector<double>, std::vector<double>> determine_initial_beta_grid(
 
         // Check if we are converged
         if (std::abs(c.back() - ref_integral) < beta_integral_tol * c.back()) {
-          return {b, p};
+          return {b, p, c.back()};
         }
       }
     }
@@ -296,24 +309,26 @@ std::pair<std::vector<double>, std::vector<double>> determine_initial_beta_grid(
 
         // Check if we are converged
         if (std::abs(c.back() - ref_integral) < beta_integral_tol * c.back()) {
-          return {b, p};
+          return {b, p, c.back()};
         }
       }
     }
   }
 
   // We needed all points apparently
-  return {b, p};
+  return {b, p, c.back()};
 }
 
 void linearize_beta(const TabulatedSab& S, const double& Ein,
-                    BetaDistribution& bdist) {
+                    BetaDistribution& bdist,
+                    bool pedantic) {
   // Create grid of beta points which must be in the linearization. This grid
   // comes from the tabulated beta values in the scattering law. We have a
   // special function to do this.
   std::vector<double> beta_points;
   std::vector<double> pdf_points;
-  std::tie(beta_points, pdf_points) = determine_initial_beta_grid(S, Ein);
+  double pdf_integral;
+  std::tie(beta_points, pdf_points, pdf_integral) = determine_initial_beta_grid(S, Ein);
 
   auto expS = [&S, &Ein](double b) {
     return std::exp(-0.5 * b) *
@@ -324,7 +339,17 @@ void linearize_beta(const TabulatedSab& S, const double& Ein,
   LinearizedFunction beta_pdf = linearize(beta_points, pdf_points, expS);
   bdist.beta = beta_pdf.x;
   bdist.pdf = beta_pdf.y;
-  // plot(bdist.beta, bdist.pdf);
+
+  if (pedantic) {
+    // After linearization, check that the integration of the PDF using the
+    // trapezoid rule is within certain tolerance of the pre-computed integral
+    // from when we determined the initial beta grid points.
+    const double pdf_integral_trap = trapezoid(bdist.beta, bdist.pdf);
+    const double rel_diff_int = std::abs((pdf_integral_trap - pdf_integral)/pdf_integral);
+    if (rel_diff_int > 0.05) {
+      Log::warning("Beta distribution for {} eV has a relative difference of {} in integral.", Ein, rel_diff_int);
+    }
+  }
 
   // Compute the CDF
   normalize_pdf_compute_cdf(bdist.beta, bdist.pdf, bdist.cdf);
@@ -332,12 +357,13 @@ void linearize_beta(const TabulatedSab& S, const double& Ein,
   // Now, compute the alpha distribution for each beta
   for (std::size_t i = 0; i < bdist.beta.size(); i++) {
     bdist.alpha.emplace_back();
-    linearize_alpha(S, Ein, bdist.beta[i], bdist.alpha.back());
+    linearize_alpha(S, Ein, bdist.beta[i], bdist.alpha.back(), pedantic);
   }
 }
 
 LinearizedIncoherentInelastic linearize_ii(const IncoherentInelastic& ii,
-                                           std::size_t Ti) {
+                                           std::size_t Ti,
+                                           bool pedantic) {
   LinearizedIncoherentInelastic out;
 
   // Get the S(a,b) we are evaluating
@@ -349,17 +375,22 @@ LinearizedIncoherentInelastic linearize_ii(const IncoherentInelastic& ii,
   const auto xs =
       std::bind(&IncoherentInelastic::xs, &ii, Ti, std::placeholders::_1);
 
-  std::vector<double> egrid_points, xs_points;
+  std::vector<double> egrid_points;
   egrid_points.push_back(ii.Emin());
-  xs_points.push_back(xs(egrid_points.back()));
   for (std::size_t i = 0; i < njoy_egrid.size(); i++) {
     if (njoy_egrid[i] > ii.Emin() && njoy_egrid[i] < ii.Emax()) {
       egrid_points.push_back(njoy_egrid[i]);
-      xs_points.push_back(xs(egrid_points.back()));
     }
   }
   egrid_points.push_back(ii.Emax());
-  xs_points.push_back(xs(egrid_points.back()));
+
+  std::vector<double> xs_points(egrid_points.size(), 0.);
+#ifdef _OPENMP
+#pragma omp parallel for
+#endif
+  for (std::size_t i = 0; i < egrid_points.size(); i++) {
+    xs_points[i] = xs(egrid_points[i]);
+  }
 
   LinearizedFunction iixs = linearize(egrid_points, xs_points, xs, 0.005);
   out.egrid = iixs.x;
@@ -375,7 +406,7 @@ LinearizedIncoherentInelastic linearize_ii(const IncoherentInelastic& ii,
 #endif
   for (std::size_t ie = 20; ie < out.egrid.size(); ie++) {
     const double Ein = out.egrid[ie];
-    linearize_beta(S, Ein, out.beta[ie]);
+    linearize_beta(S, Ein, out.beta[ie], pedantic);
   }
   Log::info("Linearization complete.");
   Log::info("");

@@ -26,51 +26,57 @@
  * @author Hunter Belanger
  */
 
-#include <ENDFtk.hpp>
-#include <boost/hana.hpp>  // Needed for the _c literal for constructing mt4
-#include <cstddef>
-#include <iostream>
-#include <memory>
-#include <string>
-#include <variant>
-
 #include "coherent_elastic.hpp"
 #include "incoherent_elastic.hpp"
 #include "incoherent_inelastic.hpp"
+#include "linearize.hpp"
+#include "ace.hpp"
+
+
+#include <algorithm>
+#include <cstddef>
+#include <iomanip>
+#include <iostream>
+#include <memory>
+#include <sstream>
+#include <string>
+#include <variant>
+
+
+#include <ENDFtk.hpp>
 using namespace njoy::ENDFtk;
 #include <Log.hpp>
 using namespace njoy;
-#include <ndarray.hpp>
+#include <boost/hana.hpp>  // Needed for the _c literal for constructing mt4
+#include <docopt.h>
 
-int main(const int argc, const char** argv) {
-  const std::string fname = "tsl-HinH2O.endf";
-  const int MAT = 1;
+#define VERSION_STRING "0.1.0"
 
-  //const std::string fname = "tsl-reactor-graphite-10P.endf";
-  //const int MAT = 31;
+static const std::string version =
+  "Panglos : A Thermal Scattering Law Processor\n"
+  "Version " VERSION_STRING "\n\n"
 
-  //const std::string fname = "tsl-HinZrH.endf";
-  //const int MAT = 7;
+  "Copyright (C) 2022 Hunter Belanger.\n"
+  "Released under the terms and conditions of the GPLv3 license.\n"
+  "Written by Hunter Belanger.\n";
 
-  Log::info("");
-  Log::info("Panglos : A Thermal Scattering Law Processor");
-  Log::info("-----------------------------------------------------------");
-  Log::info("Copyright (C) 2022 Hunter Belanger");
-  Log::info("Released under the terms and conditions of the GPLv3.");
-  Log::info("");
-  Log::info("File Name: {}", fname);
-  Log::info("MAT:       {}", MAT);
-  Log::info("");
+static const std::string usage =
+  "Usage:\n"
+  "  panglos process [--pedantic] <fname> <mat> <temp>\n"
+  "  panglos temps <fname> <mat>\n"
+  "  panglos (-h | --help)\n"
+  "  panglos (-v | --version)\n\n"
+  
+  "Options:\n"
+  "  -p --pedantic  Perform pedantic checks on distribution linearization\n"
+  "  -h --help      Show this help message\n"
+  "  -v --version   Show version number\n";
 
-  tree::Tape<std::string> pendf = tree::fromFile(fname);
-  file::Type<7> mf7 = pendf.material(MAT).front().file(7).parse<7>();
+static const std::string help = version + '\n' + usage;
 
-  section::Type<7, 4> mt4 = mf7.section(4_c);
-  IncoherentInelastic ii(mt4);
-
-  std::unique_ptr<CoherentElastic> ce = nullptr;
-  std::unique_ptr<IncoherentElastic> ie = nullptr;
-
+void read_elastic(const file::Type<7>& mf7,
+                  std::unique_ptr<CoherentElastic>& ce,
+                  std::unique_ptr<IncoherentElastic>& ie) {
   if (mf7.hasSection(2)) {
     section::Type<7, 2> mt2 = mf7.section(2_c);
     const auto& scatter_law = mt2.scatteringLaw();
@@ -90,38 +96,100 @@ int main(const int argc, const char** argv) {
       ie = std::make_unique<IncoherentElastic>(me.incoherent());
     }
   }
+}
 
-  const double Emin = ii.Emin();
-  const double Emax = ii.Emax();
-  const std::size_t ti = 0;
+int main(const int argc, const char** argv) {
+  // Initialize docopt
+  std::map<std::string, docopt::value> args =
+      docopt::docopt(help, {argv + 1, argv + argc}, true, version);
 
-  LinearizedIncoherentInelastic lii = linearize_ii(ii, ti);
-  NDArray<double> IIxs({2, lii.egrid.size()});
-  for (std::size_t i = 0; i < lii.egrid.size(); i++) {
-    IIxs(0, i) = lii.egrid[i];
-    IIxs(1, i) = lii.xs[i];
-  }
-  IIxs.save("iixs.npy");
+  // Read parameters
+  const std::string fname = args["<fname>"].asString();
+  const int MAT = static_cast<int>(args["<mat>"].asLong());
+  const bool get_temps = args["temps"].asBool();
+  const bool pedantic = args["--pedantic"].asBool();
 
-  if (ce) {
-    constexpr std::size_t NE = 5000;
-    std::vector<double> Egrid(NE, 0.);
-    const double du =
-        (std::log(Emax) - std::log(Emin)) / (static_cast<double>(NE) - 1.);
-    for (std::size_t i = 0; i < NE; i++) {
-      Egrid[i] = std::exp(std::log(Emin) + static_cast<double>(i) * du);
+  // Write run options
+  Log::info("");
+  Log::info("Panglos : A Thermal Scattering Law Processor");
+  Log::info("-----------------------------------------------------------");
+  Log::info("Copyright (C) 2022 Hunter Belanger");
+  Log::info("Released under the terms and conditions of the GPLv3.");
+  Log::info("");
+  Log::info("File Name:   {}", fname);
+  Log::info("MAT:         {}", MAT);
+
+  //=============================================================================
+  // Check if we were asked to just list the temperatures
+  if (get_temps) {
+    // Read ENDF file, and get MF7
+    tree::Tape<std::string> endf = tree::fromFile(fname);
+    file::Type<7> mf7 = endf.material(MAT).front().file(7).parse<7>();
+
+    // First read incoherent inelastic, which must be present
+    section::Type<7, 4> mt4 = mf7.section(4_c);
+    IncoherentInelastic ii(mt4);
+
+    std::stringstream temps;
+    temps << "[";
+    const std::size_t NT = ii.temperatures().size();
+    for (std::size_t i = 0; i < NT; i++) {
+      temps << std::fixed << std::setprecision(1);
+      temps << ii.temperatures()[i];
+      if (i != NT-1) {
+        temps << ", ";
+      }
     }
-    if (Egrid.back() > Emax) Egrid.back() = Emax;
+    temps << "]";
 
-    const double T = ii.temperatures()[ti];
-    NDArray<double> CExs({2, NE});
-    for (std::size_t i = 0; i < NE; i++) {
-      const auto& E = Egrid[i];
-      CExs(0, i) = E;
-      CExs(1, i) = ce->xs(T, E);
-    }
-    CExs.save("cexs.npy");
+    Log::info("Provided Temperatures: {}", temps.str());
+    return 0;
   }
+
+  //=============================================================================
+  const double T = std::stod(args["<temp>"].asString());
+  Log::info("Temperature: {}", T);
+  if (pedantic) {
+    Log::info("Pedantic:    True");
+  } else {
+    Log::info("Pedantic:    False");
+  }
+  Log::info("");
+
+  // Read ENDF file, and get MF7
+  tree::Tape<std::string> endf = tree::fromFile(fname);
+  file::Type<7> mf7 = endf.material(MAT).front().file(7).parse<7>();
+
+  // First read incoherent inelastic, which must be present
+  section::Type<7, 4> mt4 = mf7.section(4_c);
+  IncoherentInelastic ii(mt4);
+
+  // Check for our temperature
+  std::size_t Ti = ii.temperatures().size();
+  for (std::size_t i = 0; i < ii.temperatures().size(); i++) {
+    const double abs_temp_diff = std::abs(T - ii.temperatures()[i]);
+    if (abs_temp_diff < 1.) {
+      Ti = i;
+      break;
+    }
+  }
+  if (Ti == ii.temperatures().size()) {
+    Log::error("Could not find a tabulated scattering law for {} K.", T);
+    return 1;
+  }
+  Log::info("Processing at temperature {} K.", ii.temperatures()[Ti]);
+  Log::info("");
+
+  // If elastic components are present, read those too
+  std::unique_ptr<CoherentElastic> ce = nullptr;
+  std::unique_ptr<IncoherentElastic> ie = nullptr;
+  read_elastic(mf7, ce, ie);
+  
+  // Linearize the Incoherent Inelastic xs and distribution
+  LinearizedIncoherentInelastic lii = linearize_ii(ii, Ti, pedantic);
+
+  // Write data to ACE file
+  write_to_ace(lii, ie, ce, T);
 
   return 0;
 }
