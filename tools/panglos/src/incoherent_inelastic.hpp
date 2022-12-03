@@ -136,6 +136,7 @@ struct LinearizedIncoherentInelastic {
 };
 
 LinearizedIncoherentInelastic linearize_ii(const IncoherentInelastic& ii,
-                                           std::size_t Ti);
+                                           std::size_t Ti,
+                                           bool pedantic);
 
 #endif
