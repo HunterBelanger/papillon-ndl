@@ -100,11 +100,11 @@ target_compile_features(PapillonNDL PUBLIC cxx_std_20)
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC") # Comile options for Windows
   target_compile_options(PapillonNDL PRIVATE /W4)
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU") # Compile options for GCC
-  target_compile_options(PapillonNDL PRIVATE -W -Wall -Wextra -Wconversion -Wpedantic)
+  target_compile_options(PapillonNDL PRIVATE -W -Wall -Wextra -Wconversion -Wshadow -Wpedantic)
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang") # Compile options for Clang
-  target_compile_options(PapillonNDL PRIVATE -W -Wall -Wextra -Wconversion -Wpedantic)
+  target_compile_options(PapillonNDL PRIVATE -W -Wall -Wextra -Wconversion -Wshadow -Wpedantic)
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Intel") # Compile options for Intel
-  target_compile_options(PapillonNDL PRIVATE -W -Wall -Wextra -Wconversion -Wpedantic)
+  target_compile_options(PapillonNDL PRIVATE -W -Wall -Wextra -Wconversion -Wshadow -Wpedantic)
 endif()
 
 # Must make the static PapillonNDL position independent on linux so that
