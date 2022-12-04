@@ -140,7 +140,7 @@ class KalbachTable {
    * @param mu Cosine of scattering angle.
    */
   double angle_pdf(double mu) const {
-    auto mu_p = [](double a, double r, double mu) {
+    auto mu_p = [mu](double a, double r) {
       return 0.5 * (a / std::sinh(a)) *
              (std::cosh(a * mu) + r * std::sinh(a * mu));
     };
@@ -150,11 +150,11 @@ class KalbachTable {
     for (std::size_t i = 0; i < pdf_.size() - 1; i++) {
       if (interp_ == Interpolation::Histogram) {
         pdf_out +=
-            mu_p(A_[i], R_[i], mu) * pdf_[i] * (energy_[i + 1] - energy_[i]);
+            mu_p(A_[i], R_[i]) * pdf_[i] * (energy_[i + 1] - energy_[i]);
       } else {
         pdf_out += 0.5 * (energy_[i + 1] - energy_[i]) *
-                   (mu_p(A_[i], R_[i], mu) * pdf_[i] +
-                    mu_p(A_[i + 1], R_[i + 1], mu) * pdf_[i + 1]);
+                   (mu_p(A_[i], R_[i]) * pdf_[i] +
+                    mu_p(A_[i + 1], R_[i + 1]) * pdf_[i + 1]);
       }
     }
 
@@ -168,7 +168,7 @@ class KalbachTable {
    * @param E_out Exit energy.
    */
   double pdf(double mu, double E_out) const {
-    auto mu_p = [](double a, double r, double mu) {
+    auto mu_p = [mu](double a, double r) {
       return 0.5 * (a / std::sinh(a)) *
              (std::cosh(a * mu) + r * std::sinh(a * mu));
     };
@@ -184,15 +184,15 @@ class KalbachTable {
     if (E_out != *E_it) l--;
 
     if (interp_ == Interpolation::Histogram) {
-      double mu_pdf = mu_p(A_[l], R_[l], mu);
+      double mu_pdf = mu_p(A_[l], R_[l]);
       double E_pdf = pdf_[l];
       return mu_pdf * E_pdf;
     } else {
       double f = (E_out - energy_[l]) / (energy_[l + 1] - energy_[l]);
       double out_pdf = 0;
 
-      out_pdf += f * mu_p(A_[l + 1], R_[l + 1], mu) * pdf_[l + 1];
-      out_pdf += (1. - f) * mu_p(A_[l], R_[l], mu) * pdf_[l];
+      out_pdf += f * mu_p(A_[l + 1], R_[l + 1]) * pdf_[l + 1];
+      out_pdf += (1. - f) * mu_p(A_[l], R_[l]) * pdf_[l];
 
       return out_pdf;
     }

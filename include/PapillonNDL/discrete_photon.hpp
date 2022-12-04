@@ -70,11 +70,11 @@ class DiscretePhoton : public EnergyLaw {
   }
 
   /**
-   * @param lp Primary indicator flag (0 or 1 is primary, 2 is secondary).
-   * @param Eg Energy argument of distribution.
+   * @param l Primary indicator flag (0 or 1 is primary, 2 is secondary).
+   * @param E Energy argument of distribution.
    * @param AWR Atomic Weight Ratio of nuclide.
    */
-  DiscretePhoton(int lp, double Eg, double AWR) : lp(lp), A(AWR), Eg(Eg) {
+  DiscretePhoton(int l, double E, double AWR) : lp(l), A(AWR), Eg(E) {
     if ((lp != 0) && (lp != 1) && (lp != 2)) {
       std::string mssg = "Invalid lp of " + std::to_string(lp) + ".";
       throw PNDLException(mssg);
