@@ -90,7 +90,7 @@ class ZAID {
 };
 
 inline std::ostream& operator<<(std::ostream& strm, const ZAID& zaid) {
-  strm << +zaid.Z() << zaid.A();
+  strm << zaid.zaid();
   return strm;
 }
 
