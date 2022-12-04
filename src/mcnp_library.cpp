@@ -197,7 +197,7 @@ MCNPLibrary::MCNPLibrary(const std::string& fname) : NDLibrary(fname) {
 
     if (zaid_suffix == 'c') {
       // Continuous energy neutron data
-      uint32_t zaid_num = std::stoul(zaid_str);
+      uint32_t zaid_num = static_cast<uint32_t>(std::stoul(zaid_str));
       uint8_t Z = static_cast<uint8_t>(zaid_num / 1000);
       uint32_t A = zaid_num - (Z * 1000);
       ZAID zaid(Z, A);

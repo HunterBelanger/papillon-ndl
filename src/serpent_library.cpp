@@ -89,7 +89,7 @@ SerpentLibrary::SerpentLibrary(const std::string& fname) : NDLibrary(fname) {
 
     if (type_str[0] == '1') {
       // Continuous Energy Neutron data
-      uint32_t ZA = std::stoul(ZA_str);
+      uint32_t ZA = static_cast<uint32_t>(std::stoul(ZA_str));
       uint8_t Z = static_cast<uint8_t>(ZA / 1000);
       uint32_t A = ZA - (Z * 1000);
       ZAID zaid(Z, A);

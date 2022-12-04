@@ -140,7 +140,7 @@ std::optional<double> EquiprobableEnergyBins::pdf(double E_in,
 
 double EquiprobableEnergyBins::sample_bins(
     double xi1, double xi2, const std::vector<double>& bounds) const {
-  std::size_t bin = static_cast<std::size_t>(std::floor(bounds.size() * xi1));
+  std::size_t bin = static_cast<std::size_t>(std::floor(static_cast<double>(bounds.size()) * xi1));
   return (bounds[bin + 1] - bounds[bin]) * xi2 + bounds[bin];
 }
 
