@@ -44,10 +44,11 @@ SerpentLibrary::SerpentLibrary(const std::string& fname) : NDLibrary(fname) {
   // First, read the entire file into a string
   std::ifstream xsdir_file(xsdir_fname);
   xsdir_file.seekg(0, std::ios::end);
-  std::size_t xsdir_file_size = xsdir_file.tellg();
+  std::size_t xsdir_file_size = static_cast<std::size_t>(xsdir_file.tellg());
   std::string xsdir_buffer(xsdir_file_size, ' ');
   xsdir_file.seekg(0);
-  xsdir_file.read(&xsdir_buffer[0], xsdir_file_size);
+  xsdir_file.read(&xsdir_buffer[0],
+                  static_cast<std::streamsize>(xsdir_file_size));
   std::stringstream xsdir_stream(xsdir_buffer);
 
   // Read the xsdir line by line
@@ -89,7 +90,7 @@ SerpentLibrary::SerpentLibrary(const std::string& fname) : NDLibrary(fname) {
 
     if (type_str[0] == '1') {
       // Continuous Energy Neutron data
-      uint32_t ZA = std::stoul(ZA_str);
+      uint32_t ZA = static_cast<uint32_t>(std::stoul(ZA_str));
       uint8_t Z = static_cast<uint8_t>(ZA / 1000);
       uint32_t A = ZA - (Z * 1000);
       ZAID zaid(Z, A);

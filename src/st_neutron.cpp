@@ -49,15 +49,16 @@ STNeutron::STNeutron(const ACE& ace)
   energy_grid_ = std::make_shared<EnergyGrid>(ace);
 
   // Number of energy points
-  uint32_t NE = ace.nxs(2);
-  total_xs_ =
-      std::make_shared<CrossSection>(ace, ace.ESZ() + NE, energy_grid_, false);
-  disappearance_xs_ = std::make_shared<CrossSection>(ace, ace.ESZ() + 2 * NE,
-                                                     energy_grid_, false);
-  elastic_xs_ = std::make_shared<CrossSection>(ace, ace.ESZ() + 3 * NE,
-                                               energy_grid_, false);
-  heating_number_ = std::make_shared<CrossSection>(ace, ace.ESZ() + 4 * NE,
-                                                   energy_grid_, false, true);
+  uint32_t NE = static_cast<uint32_t>(ace.nxs(2));
+  total_xs_ = std::make_shared<CrossSection>(
+      ace, static_cast<std::size_t>(ace.ESZ()) + NE, energy_grid_, false);
+  disappearance_xs_ = std::make_shared<CrossSection>(
+      ace, static_cast<std::size_t>(ace.ESZ()) + 2 * NE, energy_grid_, false);
+  elastic_xs_ = std::make_shared<CrossSection>(
+      ace, static_cast<std::size_t>(ace.ESZ()) + 3 * NE, energy_grid_, false);
+  heating_number_ = std::make_shared<CrossSection>(
+      ace, static_cast<std::size_t>(ace.ESZ()) + 4 * NE, energy_grid_, false,
+      true);
 
   // Get photon production XS if present
   if (ace.jxs(11) != 0) {
@@ -68,13 +69,13 @@ STNeutron::STNeutron(const ACE& ace)
   }
 
   // Read all reactions
-  uint32_t NMT = ace.nxs(3);
+  uint32_t NMT = static_cast<uint32_t>(ace.nxs(3));
   reaction_indices_.fill(-1);
   int32_t current_reaction_index = 0;
   mt_list_.reserve(NMT);
   reactions_.reserve(NMT);
   for (uint32_t indx = 0; indx < NMT; indx++) {
-    uint32_t MT = ace.xss<uint32_t>(ace.MTR() + indx);
+    uint32_t MT = ace.xss<uint32_t>(static_cast<std::size_t>(ace.MTR()) + indx);
     if (MT != 18 && MT != 19 && MT != 20 && MT != 21 && MT != 38) {
       mt_list_.push_back(MT);
       reactions_.emplace_back(ace, indx, energy_grid_);
@@ -87,7 +88,9 @@ STNeutron::STNeutron(const ACE& ace)
   try {
     elastic_ = std::make_shared<Elastic>(
         std::make_shared<ElasticSVT>(),
-        AngleDistribution(ace, ace.xss<int>(ace.LAND())), awr_, temperature_);
+        AngleDistribution(ace,
+                          ace.xss<int>(static_cast<std::size_t>(ace.LAND()))),
+        awr_, temperature_);
   } catch (PNDLException& err) {
     std::string mssg = "Could not create Elastic AngleEnergy distribution.";
     err.add_to_exception(mssg);
@@ -150,15 +153,16 @@ STNeutron::STNeutron(const ACE& ace, const STNeutron& nuclide)
   energy_grid_ = std::make_shared<EnergyGrid>(ace);
 
   // Number of energy points
-  uint32_t NE = ace.nxs(2);
-  total_xs_ =
-      std::make_shared<CrossSection>(ace, ace.ESZ() + NE, energy_grid_, false);
-  disappearance_xs_ = std::make_shared<CrossSection>(ace, ace.ESZ() + 2 * NE,
-                                                     energy_grid_, false);
-  elastic_xs_ = std::make_shared<CrossSection>(ace, ace.ESZ() + 3 * NE,
-                                               energy_grid_, false);
-  heating_number_ = std::make_shared<CrossSection>(ace, ace.ESZ() + 4 * NE,
-                                                   energy_grid_, false, true);
+  uint32_t NE = static_cast<uint32_t>(ace.nxs(2));
+  total_xs_ = std::make_shared<CrossSection>(
+      ace, static_cast<std::size_t>(ace.ESZ()) + NE, energy_grid_, false);
+  disappearance_xs_ = std::make_shared<CrossSection>(
+      ace, static_cast<std::size_t>(ace.ESZ()) + 2 * NE, energy_grid_, false);
+  elastic_xs_ = std::make_shared<CrossSection>(
+      ace, static_cast<std::size_t>(ace.ESZ()) + 3 * NE, energy_grid_, false);
+  heating_number_ = std::make_shared<CrossSection>(
+      ace, static_cast<std::size_t>(ace.ESZ()) + 4 * NE, energy_grid_, false,
+      true);
 
   // Get photon production XS if present
   if (ace.jxs(11) != 0) {
@@ -169,18 +173,18 @@ STNeutron::STNeutron(const ACE& ace, const STNeutron& nuclide)
   }
 
   // Read all reactions
-  uint32_t NMT = ace.nxs(3);
+  uint32_t NMT = static_cast<uint32_t>(ace.nxs(3));
   reaction_indices_.fill(-1);
   int32_t current_reaction_index = 0;
   mt_list_.resize(NMT, 0);
   reactions_.reserve(NMT);
   for (uint32_t indx = 0; indx < NMT; indx++) {
-    uint32_t MT = ace.xss<uint32_t>(ace.MTR() + indx);
+    uint32_t MT = ace.xss<uint32_t>(static_cast<std::size_t>(ace.MTR()) + indx);
     if (MT != 18 && MT != 19 && MT != 20 && MT != 21 && MT != 38) {
       mt_list_.push_back(MT);
-      reactions_.emplace_back(
-          ace, indx, energy_grid_,
-          nuclide.reactions_[nuclide.reaction_indices_[MT]]);
+      reactions_.emplace_back(ace, indx, energy_grid_,
+                              nuclide.reactions_[static_cast<std::size_t>(
+                                  nuclide.reaction_indices_[MT])]);
       reaction_indices_[MT] = current_reaction_index;
       current_reaction_index++;
     }

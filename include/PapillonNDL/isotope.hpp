@@ -158,7 +158,7 @@ class Isotope {
     const std::regex atomic_mass_regex("([0-9]{1,3})");
     std::regex_search(symbol, match, atomic_mass_regex);
     std::string atomic_mass_str(match[0].first, match[0].second);
-    A_ = std::stoul(atomic_mass_str);
+    A_ = static_cast<uint32_t>(std::stoul(atomic_mass_str));
 
     if (A_ < element_.Z()) {
       std::string mssg = "Cannot create isotope " + element_.name() + "-" +

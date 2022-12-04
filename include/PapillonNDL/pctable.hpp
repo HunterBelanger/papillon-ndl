@@ -65,7 +65,8 @@ class PCTable {
    */
   double sample_value(double xi) const {
     auto cdf_it = std::lower_bound(cdf_.begin(), cdf_.end(), xi);
-    std::size_t l = std::distance(cdf_.begin(), cdf_it);
+    std::size_t l =
+        static_cast<std::size_t>(std::distance(cdf_.begin(), cdf_it));
     if (xi == *cdf_it) return values_[l];
 
     l--;
@@ -87,7 +88,8 @@ class PCTable {
     if (value < min_value() || value > max_value()) return 0.;
 
     auto val_it = std::lower_bound(values_.begin(), values_.end(), value);
-    std::size_t l = std::distance(values_.begin(), val_it);
+    std::size_t l =
+        static_cast<std::size_t>(std::distance(values_.begin(), val_it));
     if (value == *val_it) return pdf_[l];
 
     l--;

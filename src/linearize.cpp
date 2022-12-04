@@ -66,8 +66,8 @@ Tabulated1D linearize(const std::vector<double>& i_x,
     const double rel_diff = std::abs((f_interp - f_real) / f_real);
     if (rel_diff > tolerance) {
       // Add the mid-point
-      auto xp = x.begin() + i + 1;
-      auto yp = y.begin() + i + 1;
+      auto xp = x.begin() + static_cast<std::ptrdiff_t>(i) + 1;
+      auto yp = y.begin() + static_cast<std::ptrdiff_t>(i) + 1;
       x.insert(xp, x_mid);
       y.insert(yp, f_real);
     } else {

@@ -23,6 +23,7 @@
 #include <PapillonNDL/linearize.hpp>
 #include <PapillonNDL/pndl_exception.hpp>
 #include <PapillonNDL/tabulated_1d.hpp>
+#include <cstddef>
 #include <cstdint>
 
 namespace pndl {
@@ -59,9 +60,12 @@ Tabulated1D::Tabulated1D(const std::vector<uint32_t>& NBT,
     hi = breakpoints_[i];
 
     try {
-      regions_.push_back(InterpolationRange(
-          interpolation_[i], {x_.begin() + low, x_.begin() + hi},
-          {y_.begin() + low, y_.begin() + hi}));
+      regions_.push_back(
+          InterpolationRange(interpolation_[i],
+                             {x_.begin() + static_cast<std::ptrdiff_t>(low),
+                              x_.begin() + static_cast<std::ptrdiff_t>(hi)},
+                             {y_.begin() + static_cast<std::ptrdiff_t>(low),
+                              y_.begin() + static_cast<std::ptrdiff_t>(hi)}));
     } catch (PNDLException& error) {
       std::string mssg = "The i = " + std::to_string(i) +
                          " InterpolationRange could not be constructed when "
@@ -100,9 +104,10 @@ Tabulated1D::Tabulated1D(Interpolation interp, const std::vector<double>& x,
   // Make 1 1D region
   const std::size_t hi = breakpoints_[0];
   try {
-    regions_.push_back(InterpolationRange(interpolation_[0],
-                                          {x_.begin(), x_.begin() + hi},
-                                          {y_.begin(), y_.begin() + hi}));
+    regions_.push_back(InterpolationRange(
+        interpolation_[0],
+        {x_.begin(), x_.begin() + static_cast<std::ptrdiff_t>(hi)},
+        {y_.begin(), y_.begin() + static_cast<std::ptrdiff_t>(hi)}));
   } catch (PNDLException& error) {
     std::string mssg =
         "The InterpolationRange could not be constructed when building "

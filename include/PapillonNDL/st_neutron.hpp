@@ -151,7 +151,7 @@ class STNeutron {
     if (mt == 18 || mt == 19 || mt == 20 || mt == 21 || mt == 38) {
       return fission_->reaction(mt);
     } else {
-      return reactions_[reaction_indices_[mt]];
+      return reactions_[static_cast<std::size_t>(reaction_indices_[mt])];
     }
   }
 

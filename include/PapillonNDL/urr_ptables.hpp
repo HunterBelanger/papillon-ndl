@@ -115,7 +115,7 @@ class URRPTables {
     if (Eit == energy_->begin() || Eit == energy_->end()) {
       return std::nullopt;
     } else {
-      iE = std::distance(energy_->begin(), Eit) - 1;
+      iE = static_cast<std::size_t>(std::distance(energy_->begin(), Eit) - 1);
 
       if (interp_ == Interpolation::LinLin) {
         f = (E - (*energy_)[iE]) / ((*energy_)[iE + 1] - (*energy_)[iE]);
@@ -151,7 +151,7 @@ class URRPTables {
       xsout.fission = xsb_low.fission + f * (xsb_hi.fission - xsb_low.fission);
       xsout.heating = xsb_low.heating + f * (xsb_hi.heating - xsb_low.heating);
     } else {
-      if (xsb_low.elastic > 0. && xsb_hi.elastic) {
+      if (xsb_low.elastic > 0. && xsb_hi.elastic > 0.) {
         xsout.elastic =
             std::exp(std::log(xsb_low.elastic) +
                      f * std::log(xsb_hi.elastic / xsb_low.elastic));
@@ -159,7 +159,7 @@ class URRPTables {
         xsout.elastic = 0.;
       }
 
-      if (xsb_low.capture > 0. && xsb_hi.capture) {
+      if (xsb_low.capture > 0. && xsb_hi.capture > 0.) {
         xsout.capture =
             std::exp(std::log(xsb_low.capture) +
                      f * std::log(xsb_hi.capture / xsb_low.capture));
@@ -167,7 +167,7 @@ class URRPTables {
         xsout.capture = 0.;
       }
 
-      if (xsb_low.fission > 0. && xsb_hi.fission) {
+      if (xsb_low.fission > 0. && xsb_hi.fission > 0.) {
         xsout.fission =
             std::exp(std::log(xsb_low.fission) +
                      f * std::log(xsb_hi.fission / xsb_low.fission));
@@ -175,7 +175,7 @@ class URRPTables {
         xsout.fission = 0.;
       }
 
-      if (xsb_low.heating > 0. && xsb_hi.heating) {
+      if (xsb_low.heating > 0. && xsb_hi.heating > 0.) {
         xsout.heating =
             std::exp(std::log(xsb_low.heating) +
                      f * std::log(xsb_hi.heating / xsb_low.heating));

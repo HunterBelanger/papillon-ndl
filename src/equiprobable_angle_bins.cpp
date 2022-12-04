@@ -83,7 +83,7 @@ double EquiprobableAngleBins::sample_mu(
   std::size_t bin =
       static_cast<std::size_t>(std::floor(static_cast<double>(NBOUNDS) * xi));
   if (bin == NBOUNDS) bin--;
-  double C_b = bin * P_BIN;
+  double C_b = static_cast<double>(bin) * P_BIN;
   double mu_low = bounds_[bin];
   double mu = ((xi - C_b) / P_BIN) + mu_low;
 

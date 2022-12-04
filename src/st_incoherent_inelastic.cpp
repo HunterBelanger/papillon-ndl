@@ -32,7 +32,7 @@ STIncoherentInelastic::STIncoherentInelastic(const ACE& ace,
     : xs_(nullptr), angle_energy_(nullptr) {
   // Read the XS
   try {
-    int32_t S = ace.jxs(0) - 1;
+    std::size_t S = static_cast<std::size_t>(ace.jxs(0) - 1);
     uint32_t Ne = ace.xss<uint32_t>(S);  // Number of grid points
     std::vector<double> energy = ace.xss(S + 1, Ne);
     std::vector<double> xs = ace.xss(S + 1 + Ne, Ne);

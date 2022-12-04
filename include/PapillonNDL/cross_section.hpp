@@ -113,7 +113,9 @@ class CrossSection {
       return values_->back();
 
     const auto& egrid = energy_grid_->grid();
-    const auto erange_begin = egrid.begin() + index_;
+    const auto erange_begin =
+        egrid.begin() +
+        static_cast<std::vector<double>::difference_type>(index_);
     const auto erange_end = egrid.end();
 
     auto E_it = std::lower_bound(erange_begin, erange_end, E);
@@ -121,7 +123,8 @@ class CrossSection {
       return *(values_->begin() + std::distance(erange_begin, E_it));
     }
 
-    std::size_t i = std::distance(erange_begin, E_it) - 1;
+    std::size_t i =
+        static_cast<std::size_t>(std::distance(erange_begin, E_it) - 1);
     double E_low = egrid[index_ + i];
     double E_hi = egrid[index_ + i + 1];
     double sig_low = (*values_)[i];

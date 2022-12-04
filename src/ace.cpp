@@ -143,7 +143,7 @@ void ACE::read_ascii(std::ifstream& file) {
   }
 
   // Parse IZAW
-  for (int i = 0; i < 16; i++) {
+  for (std::size_t i = 0; i < 16; i++) {
     int32_t i_zaid;
     double i_awr;
     file >> i_zaid;
@@ -152,20 +152,20 @@ void ACE::read_ascii(std::ifstream& file) {
   }
 
   // Parse NXS
-  for (int i = 0; i < 16; i++) {
+  for (std::size_t i = 0; i < 16; i++) {
     file >> nxs_[i];
   }
 
   // Parse JXS
-  for (int i = 0; i < 32; i++) {
+  for (std::size_t i = 0; i < 32; i++) {
     file >> jxs_[i];
   }
 
   // Parse XSS
-  xss_.resize(nxs_[0]);
+  xss_.resize(static_cast<std::size_t>(nxs_[0]));
   int i = 0;
   while (!file.eof() && i < nxs_[0]) {
-    file >> xss_[i];
+    file >> xss_[static_cast<std::size_t>(i)];
     i++;
   }
 
@@ -210,7 +210,7 @@ void ACE::read_binary(std::ifstream& file) {
   file.read(mat_.data(), 10);
 
   // Parse IZAW
-  for (int i = 0; i < 16; i++) {
+  for (std::size_t i = 0; i < 16; i++) {
     int32_t i_zaid;
     double i_awr;
 
@@ -220,12 +220,12 @@ void ACE::read_binary(std::ifstream& file) {
   }
 
   // Parse NXS
-  for (int i = 0; i < 16; i++) {
+  for (std::size_t i = 0; i < 16; i++) {
     file.read(reinterpret_cast<char*>(&nxs_[i]), sizeof(int32_t));
   }
 
   // Parse JXS
-  for (int i = 0; i < 32; i++) {
+  for (std::size_t i = 0; i < 32; i++) {
     file.read(reinterpret_cast<char*>(&jxs_[i]), sizeof(int32_t));
   }
 
@@ -233,7 +233,7 @@ void ACE::read_binary(std::ifstream& file) {
   file.ignore(4);
 
   // Parse XSS
-  xss_.resize(nxs_[0]);
+  xss_.resize(static_cast<std::size_t>(nxs_[0]));
   uint32_t rlen;
   std::size_t i = 0;
   while (!file.eof() && i < xss_.size()) {
@@ -326,19 +326,27 @@ void ACE::save_binary(std::string& fname) {
 
 std::vector<std::pair<int32_t, double>> ACE::izaw(std::size_t i,
                                                   std::size_t len) const {
-  return {izaw_.begin() + i, izaw_.begin() + i + len};
+  return {izaw_.begin() + static_cast<std::ptrdiff_t>(i),
+          izaw_.begin() + static_cast<std::ptrdiff_t>(i) +
+              static_cast<std::ptrdiff_t>(len)};
 }
 
 std::vector<int32_t> ACE::nxs(std::size_t i, std::size_t len) const {
-  return {nxs_.begin() + i, nxs_.begin() + i + len};
+  return {nxs_.begin() + static_cast<std::ptrdiff_t>(i),
+          nxs_.begin() + static_cast<std::ptrdiff_t>(i) +
+              static_cast<std::ptrdiff_t>(len)};
 }
 
 std::vector<int32_t> ACE::jxs(std::size_t i, std::size_t len) const {
-  return {jxs_.begin() + i, jxs_.begin() + i + len};
+  return {jxs_.begin() + static_cast<std::ptrdiff_t>(i),
+          jxs_.begin() + static_cast<std::ptrdiff_t>(i) +
+              static_cast<std::ptrdiff_t>(len)};
 }
 
 std::vector<double> ACE::xss(std::size_t i, std::size_t len) const {
-  return {xss_.begin() + i, xss_.begin() + i + len};
+  return {xss_.begin() + static_cast<std::ptrdiff_t>(i),
+          xss_.begin() + static_cast<std::ptrdiff_t>(i) +
+              static_cast<std::ptrdiff_t>(len)};
 }
 
 const double* ACE::xss_data() const { return xss_.data(); }
