@@ -53,7 +53,7 @@ AngleDistribution::AngleDistribution(const ACE& ace, int locb)
 
   if (locb > 0) {
     // Set index
-    std::size_t i = ace.AND() + locb - 1;
+    std::size_t i = static_cast<std::size_t>(ace.AND() + locb - 1);
 
     // Get number of energies
     uint32_t NE = ace.xss<uint32_t>(i);
@@ -70,7 +70,7 @@ AngleDistribution::AngleDistribution(const ACE& ace, int locb)
     // Get each table
     for (uint32_t j = 0; j < NE; j++) {
       int l = ace.xss<int>(i + 1 + NE + j);
-      uint32_t loc = ace.AND() + std::abs(l) - 1;
+      uint32_t loc = static_cast<uint32_t>(ace.AND() + std::abs(l) - 1);
 
       try {
         if (l > 0) {
@@ -123,7 +123,7 @@ double AngleDistribution::sample_angle(
   E_it--;
 
   // Get index of low energy
-  std::size_t l = std::distance(energy_grid_.begin(), E_it);
+  std::size_t l = static_cast<std::size_t>(std::distance(energy_grid_.begin(), E_it));
   double f = (E_in - energy_grid_[l]) / (energy_grid_[l + 1] - energy_grid_[l]);
 
   double mu = 0;
@@ -147,7 +147,7 @@ double AngleDistribution::pdf(double E_in, double mu) const {
   E_it--;
 
   // Get index of low energy
-  std::size_t l = std::distance(energy_grid_.begin(), E_it);
+  std::size_t l = static_cast<std::size_t>(std::distance(energy_grid_.begin(), E_it));
   double f = (E_in - energy_grid_[l]) / (energy_grid_[l + 1] - energy_grid_[l]);
 
   return (1. - f) * laws_[l]->pdf(mu) + f * laws_[l + 1]->pdf(mu);

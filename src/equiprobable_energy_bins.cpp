@@ -104,7 +104,7 @@ double EquiprobableEnergyBins::sample_energy(
     return sample_bins(rng(), rng(), bin_sets_.back());
   }
 
-  std::size_t l = std::distance(incoming_energy_.begin(), in_E_it);
+  std::size_t l = static_cast<std::size_t>(std::distance(incoming_energy_.begin(), in_E_it));
   l--;
 
   double f = (E_in - incoming_energy_[l]) /
@@ -128,7 +128,7 @@ std::optional<double> EquiprobableEnergyBins::pdf(double E_in,
     return pdf_bins(E_out, bin_sets_.back());
   }
 
-  std::size_t l = std::distance(incoming_energy_.begin(), in_E_it);
+  std::size_t l = static_cast<std::size_t>(std::distance(incoming_energy_.begin(), in_E_it));
   l--;
 
   double f = (E_in - incoming_energy_[l]) /

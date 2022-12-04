@@ -54,21 +54,21 @@ ReactionBase::ReactionBase(const ACE& ace, std::size_t indx)
       yield_(nullptr),
       neutron_distribution_(nullptr) {
   // Get MT, Q, and AWR
-  mt_ = ace.xss<uint32_t>(ace.MTR() + indx);
-  q_ = ace.xss(ace.LQR() + indx);
+  mt_ = ace.xss<uint32_t>(static_cast<std::size_t>(ace.MTR()) + indx);
+  q_ = ace.xss(static_cast<std::size_t>(ace.LQR()) + indx);
   awr_ = ace.awr();
 
   // Determine the frame of reference for the outgoing distributions
   Frame frame_ = Frame::Lab;
-  if (ace.xss(ace.TYR() + indx) < 0.) frame_ = Frame::CM;
+  if (ace.xss(static_cast<std::size_t>(ace.TYR()) + indx) < 0.) frame_ = Frame::CM;
 
   // Get the yield for the reaction
-  double yld = std::abs(ace.xss(ace.TYR() + indx));
+  double yld = std::abs(ace.xss(static_cast<std::size_t>(ace.TYR()) + indx));
   try {
     if (yld < 100.)
       yield_ = std::make_shared<Constant>(yld);
     else {
-      std::size_t i = ace.DLW() + static_cast<uint32_t>(yld) - 101;
+      std::size_t i = static_cast<std::size_t>(ace.DLW()) + static_cast<std::size_t>(yld) - 101;
       uint32_t NR = ace.xss<uint32_t>(i);
       uint32_t NE = ace.xss<uint32_t>(i + 1 + 2 * NR);
       std::vector<double> energy = ace.xss(i + 2 + 2 * NR, NE);
@@ -162,7 +162,7 @@ void ReactionBase::load_neutron_distributions(
     std::vector<std::shared_ptr<AngleEnergy>>& distributions,
     std::vector<std::shared_ptr<Tabulated1D>>& probabilities) {
   // Get angle distribution location
-  int locb = ace.xss<int>(ace.LAND() + indx + 1);
+  int locb = ace.xss<int>(static_cast<std::size_t>(ace.LAND()) + indx + 1);
 
   std::shared_ptr<AngleDistribution> angle(nullptr);
 
@@ -180,8 +180,8 @@ void ReactionBase::load_neutron_distributions(
   }
 
   // Get energy distribution location
-  uint32_t locc = ace.xss<uint32_t>(ace.LDLW() + indx);
-  std::size_t i = ace.DLW() + locc - 1;
+  uint32_t locc = ace.xss<uint32_t>(static_cast<std::size_t>(ace.LDLW()) + indx);
+  std::size_t i = static_cast<std::size_t>(ace.DLW()) + locc - 1;
 
   // Location of next law (set any non-zero initial value)
   uint32_t lnw = 1;
@@ -191,7 +191,7 @@ void ReactionBase::load_neutron_distributions(
     // Get law info and location
     int law = ace.xss<int>(i + 1);
     uint32_t idat = ace.xss<uint32_t>(i + 2);
-    std::size_t j = ace.DLW() + idat - 1;
+    std::size_t j = static_cast<std::size_t>(ace.DLW()) + idat - 1;
 
     // Get probability for law
     std::shared_ptr<Tabulated1D> probability(nullptr);
@@ -276,7 +276,7 @@ void ReactionBase::load_neutron_distributions(
     probabilities.push_back(probability);
 
     // Get i for next distribution (if there is one)
-    i = ace.DLW() + lnw - 1;
+    i = static_cast<std::size_t>(ace.DLW()) + lnw - 1;
   }  // while lnw != 0
 }
 

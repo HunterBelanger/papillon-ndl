@@ -32,7 +32,7 @@ EnergyGrid::EnergyGrid(const ACE& ace, uint32_t NBINS)
       u_min(),
       du(),
       urr_start_energy_() {
-  energy_values_ = ace.xss(ace.ESZ(), ace.nxs(2));
+  energy_values_ = ace.xss(static_cast<std::size_t>(ace.ESZ()), static_cast<std::size_t>(ace.nxs(2)));
 
   // Check if there are URR tables.
   if (ace.jxs(22) != 0) {
@@ -95,10 +95,7 @@ void EnergyGrid::hash_energy_grid(uint32_t NBINS) {
   for (std::size_t b = 1; b < NBINS + 1; b++) {
     E *= std::exp(du);
 
-    i = std::distance(
-            energy_values_.begin(),
-            std::lower_bound(energy_values_.begin(), energy_values_.end(), E)) -
-        1;
+    i = static_cast<std::size_t>(std::distance(energy_values_.begin(), std::lower_bound(energy_values_.begin(), energy_values_.end(), E)) - 1);
 
     bin_pointers_.push_back(static_cast<uint32_t>(i));
   }

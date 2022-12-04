@@ -90,7 +90,7 @@ EnergyAngleTable::EnergyAngleTable(const ACE& ace, std::size_t i,
   std::vector<int32_t> locs = ace.xss<int32_t>(i + 2 + NP + NP + NP, NP);
   for (std::size_t j = 0; j < locs.size(); j++) {
     int32_t loc = locs[j];
-    std::size_t l = JED + std::abs(loc) - 1;
+    std::size_t l = JED + static_cast<std::size_t>(std::abs(loc)) - 1;
     try {
       angles_.emplace_back(ace, l);
     } catch (PNDLException& error) {

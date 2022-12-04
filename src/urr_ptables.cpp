@@ -63,18 +63,18 @@ URRPTables::URRPTables(const ACE& ace, const CrossSection& total,
   }
 
   // Read numbers and flags
-  uint32_t Nenergy = ace.xss<uint32_t>(ace.LUNR());
-  uint32_t Nptables = ace.xss<uint32_t>(ace.LUNR() + 1);
-  interp_ = ace.xss<Interpolation>(ace.LUNR() + 2);
-  int32_t inelastic_flag = ace.xss<int32_t>(ace.LUNR() + 3);
-  int32_t absorption_flag = ace.xss<int32_t>(ace.LUNR() + 4);
-  int32_t factors_flag = ace.xss<int32_t>(ace.LUNR() + 5);
+  uint32_t Nenergy = ace.xss<uint32_t>(static_cast<std::size_t>(ace.LUNR()));
+  uint32_t Nptables = ace.xss<uint32_t>(static_cast<std::size_t>(ace.LUNR()) + 1);
+  interp_ = ace.xss<Interpolation>(static_cast<std::size_t>(ace.LUNR()) + 2);
+  int32_t inelastic_flag = ace.xss<int32_t>(static_cast<std::size_t>(ace.LUNR()) + 3);
+  int32_t absorption_flag = ace.xss<int32_t>(static_cast<std::size_t>(ace.LUNR()) + 4);
+  int32_t factors_flag = ace.xss<int32_t>(static_cast<std::size_t>(ace.LUNR()) + 5);
 
   // Read energy grid
-  *energy_ = ace.xss(ace.LUNR() + 6, Nenergy);
+  *energy_ = ace.xss(static_cast<std::size_t>(ace.LUNR()) + 6, Nenergy);
 
   // Read all PTables for each energy
-  std::size_t indx = ace.LUNR() + 6 + Nenergy;
+  std::size_t indx = static_cast<std::size_t>(ace.LUNR()) + 6 + Nenergy;
   PTable empty_ptable;
   for (std::size_t ie = 0; ie < Nenergy; ie++) {
     ptables_->push_back(empty_ptable);

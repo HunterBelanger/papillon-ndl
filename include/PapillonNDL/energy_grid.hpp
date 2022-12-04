@@ -121,9 +121,7 @@ class EnergyGrid : public std::enable_shared_from_this<EnergyGrid> {
     uint32_t low_indx = bin_pointers_[bin];
     uint32_t hi_indx = bin_pointers_[bin + 1] + 1;
 
-    std::size_t ind = std::lower_bound(energy_values_.begin() + low_indx,
-                                       energy_values_.begin() + hi_indx, E) -
-                      energy_values_.begin() - 1;
+    std::size_t ind = static_cast<std::size_t>(std::lower_bound(energy_values_.begin() + low_indx, energy_values_.begin() + hi_indx, E) - energy_values_.begin() - 1);
 
     return ind;
   }

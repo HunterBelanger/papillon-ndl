@@ -44,10 +44,10 @@ SerpentLibrary::SerpentLibrary(const std::string& fname) : NDLibrary(fname) {
   // First, read the entire file into a string
   std::ifstream xsdir_file(xsdir_fname);
   xsdir_file.seekg(0, std::ios::end);
-  std::size_t xsdir_file_size = xsdir_file.tellg();
+  std::size_t xsdir_file_size = static_cast<std::size_t>(xsdir_file.tellg());
   std::string xsdir_buffer(xsdir_file_size, ' ');
   xsdir_file.seekg(0);
-  xsdir_file.read(&xsdir_buffer[0], xsdir_file_size);
+  xsdir_file.read(&xsdir_buffer[0], static_cast<std::streamsize>(xsdir_file_size));
   std::stringstream xsdir_stream(xsdir_buffer);
 
   // Read the xsdir line by line

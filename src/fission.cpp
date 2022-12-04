@@ -61,20 +61,19 @@ Fission::Fission(const ACE& ace, std::shared_ptr<EnergyGrid> energy_grid)
 
       // If prompt and or total neutrons are given
       if (ace.jxs(1) > 0) {
-        if (ace.xss(ace.NU()) > 0.) {
+        if (ace.xss(static_cast<std::size_t>(ace.NU())) > 0.) {
           // Either prompt or total given, but not both
           if (ace.jxs(23) > 0) {
             // Prompt is provided, as delayed is present
-            prompt = read_nu(ace, ace.NU());
+            prompt = read_nu(ace, static_cast<std::size_t>(ace.NU()));
           } else {
             // No delayed, so this must be total
-            total = read_nu(ace, ace.NU());
+            total = read_nu(ace, static_cast<std::size_t>(ace.NU()));
           }
         } else {
           // Both prompt and total given
-          uint32_t KNU_prmpt = ace.NU() + 1;
-          uint32_t KNU_tot =
-              ace.NU() + std::abs(ace.xss<int32_t>(ace.NU())) + 1;
+          uint32_t KNU_prmpt = static_cast<uint32_t>(ace.NU() + 1);
+          uint32_t KNU_tot = static_cast<uint32_t>(ace.NU() + std::abs(ace.xss<int32_t>(static_cast<std::size_t>(ace.NU()))) + 1);
 
           total = read_nu(ace, KNU_tot);
           prompt = read_nu(ace, KNU_prmpt);
@@ -83,7 +82,7 @@ Fission::Fission(const ACE& ace, std::shared_ptr<EnergyGrid> energy_grid)
 
       // Read delayed nu if given
       if (ace.DNU() > 0) {
-        delayed = read_nu(ace, ace.DNU());
+        delayed = read_nu(ace, static_cast<std::size_t>(ace.DNU()));
       }
 
       // First we make nu_total_
@@ -123,9 +122,9 @@ Fission::Fission(const ACE& ace, std::shared_ptr<EnergyGrid> energy_grid)
     // Read all delayed family data
     try {
       if (ace.BDD() > 0) {
-        uint32_t NGRPS = ace.nxs(7);
+        uint32_t NGRPS = static_cast<uint32_t>(ace.nxs(7));
         std::size_t g = 1;
-        std::size_t i = ace.BDD();
+        std::size_t i = static_cast<std::size_t>(ace.BDD());
         while (g <= NGRPS) {
           delayed_families_.push_back(DelayedFamily(ace, i, g));
           uint32_t NR = ace.xss<uint32_t>(i + 1);
@@ -142,10 +141,10 @@ Fission::Fission(const ACE& ace, std::shared_ptr<EnergyGrid> energy_grid)
 
     // Read all fission reactions
     try {
-      uint32_t NMT = ace.nxs(3);
+      uint32_t NMT = static_cast<uint32_t>(ace.nxs(3));
       mt_list_.reserve(5);
       for (uint32_t indx = 0; indx < NMT; indx++) {
-        uint32_t MT = ace.xss<uint32_t>(ace.MTR() + indx);
+        uint32_t MT = ace.xss<uint32_t>(static_cast<std::size_t>(ace.MTR()) + indx);
         if (MT == 18) {
           mt18_ = std::make_shared<STReaction>(ace, indx, energy_grid);
           mt_list_.push_back(18);
@@ -209,10 +208,10 @@ Fission::Fission(const ACE& ace, std::shared_ptr<EnergyGrid> energy_grid,
   } else {
     // Read all fission reactions
     try {
-      uint32_t NMT = ace.nxs(3);
+      uint32_t NMT = static_cast<uint32_t>(ace.nxs(3));
       mt_list_.reserve(5);
       for (uint32_t indx = 0; indx < NMT; indx++) {
-        uint32_t MT = ace.xss<uint32_t>(ace.MTR() + indx);
+        uint32_t MT = ace.xss<uint32_t>(static_cast<std::size_t>(ace.MTR()) + indx);
         if (MT == 18) {
           mt18_ = std::make_shared<STReaction>(ace, indx, energy_grid,
                                                *fission.mt18_);

@@ -47,7 +47,7 @@ DiscreteCosinesEnergies::DiscreteCosinesEnergies(const ACE& ace)
   }
 
   // Read incident energy grid
-  int32_t S = ace.jxs(0) - 1;
+  std::size_t S = static_cast<std::size_t>(ace.jxs(0) - 1);
   uint32_t Ne = ace.xss<uint32_t>(S);  // Number of grid points
   incoming_energy_ = ace.xss(S + 1, Ne);
 
@@ -70,7 +70,7 @@ DiscreteCosinesEnergies::DiscreteCosinesEnergies(const ACE& ace)
   Nmu = static_cast<uint32_t>(ace.nxs(2)) + 1;
 
   // Get the starting index for the distribution data
-  int32_t i = ace.jxs(2) - 1;
+  std::size_t i = static_cast<std::size_t>(ace.jxs(2) - 1);
 
   // Go through all incident energies
   for (std::size_t ie = 0; ie < Ne; ie++) {
@@ -92,8 +92,7 @@ DiscreteCosinesEnergies::DiscreteCosinesEnergies(const ACE& ace)
       // Check mu grid
       for (std::size_t j = 0; j < Nmu; j++) {
         if (mu[j] < -1. || mu[j] > 1.) {
-          std::string mssg = "Invalid cosine value found at index " +
-                             std::to_string(i + j) + ".";
+          std::string mssg = "Invalid cosine value found at index " + std::to_string(static_cast<std::size_t>(i) + j) + ".";
           throw PNDLException(mssg);
         }
       }
@@ -147,7 +146,7 @@ AngleEnergyPacket DiscreteCosinesEnergies::sample_angle_energy(
     return {outgoing_energies_.back()[j].cosines[k],
             outgoing_energies_.back()[j].energy};
   }
-  std::size_t i = std::distance(incoming_energy_.begin(), Eit) - 1;
+  std::size_t i = static_cast<std::size_t>(std::distance(incoming_energy_.begin(), Eit) - 1);
   double f = (E_in - incoming_energy_[i]) /
              (incoming_energy_[i + 1] - incoming_energy_[i]);
 
