@@ -149,8 +149,7 @@ class KalbachTable {
 
     for (std::size_t i = 0; i < pdf_.size() - 1; i++) {
       if (interp_ == Interpolation::Histogram) {
-        pdf_out +=
-            mu_p(A_[i], R_[i]) * pdf_[i] * (energy_[i + 1] - energy_[i]);
+        pdf_out += mu_p(A_[i], R_[i]) * pdf_[i] * (energy_[i + 1] - energy_[i]);
       } else {
         pdf_out += 0.5 * (energy_[i + 1] - energy_[i]) *
                    (mu_p(A_[i], R_[i]) * pdf_[i] +
