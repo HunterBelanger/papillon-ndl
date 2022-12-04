@@ -48,7 +48,8 @@ TabularEnergyAngle::TabularEnergyAngle(const ACE& ace, std::size_t i,
 
   // Read outgoing energy tables
   for (uint32_t j = 0; j < NE; j++) {
-    uint32_t loc = static_cast<uint32_t>(ace.DLW()) + ace.xss<uint32_t>(i + 2 + 2 * NR + NE + j) - 1;
+    uint32_t loc = static_cast<uint32_t>(ace.DLW()) +
+                   ace.xss<uint32_t>(i + 2 + 2 * NR + NE + j) - 1;
     try {
       tables_.emplace_back(ace, loc, JED);
     } catch (PNDLException& error) {
@@ -94,7 +95,8 @@ AngleEnergyPacket TabularEnergyAngle::sample_angle_energy(
     l = incoming_energy_.size() - 2;
     f = 1.;
   } else {
-    l = static_cast<std::size_t>(std::distance(incoming_energy_.begin(), in_E_it) - 1);
+    l = static_cast<std::size_t>(
+        std::distance(incoming_energy_.begin(), in_E_it) - 1);
     f = (E_in - incoming_energy_[l]) /
         (incoming_energy_[l + 1] - incoming_energy_[l]);
   }
@@ -145,7 +147,8 @@ std::optional<double> TabularEnergyAngle::angle_pdf(double E_in,
     l = incoming_energy_.size() - 2;
     f = 1.;
   } else {
-    l = static_cast<std::size_t>(std::distance(incoming_energy_.begin(), in_E_it) - 1);
+    l = static_cast<std::size_t>(
+        std::distance(incoming_energy_.begin(), in_E_it) - 1);
     f = (E_in - incoming_energy_[l]) /
         (incoming_energy_[l + 1] - incoming_energy_[l]);
   }
@@ -175,7 +178,8 @@ std::optional<double> TabularEnergyAngle::pdf(double E_in, double mu,
     l = incoming_energy_.size() - 2;
     f = 1.;
   } else {
-    l = static_cast<std::size_t>(std::distance(incoming_energy_.begin(), in_E_it) - 1);
+    l = static_cast<std::size_t>(
+        std::distance(incoming_energy_.begin(), in_E_it) - 1);
     f = (E_in - incoming_energy_[l]) /
         (incoming_energy_[l + 1] - incoming_energy_[l]);
   }

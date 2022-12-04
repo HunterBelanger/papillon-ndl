@@ -235,7 +235,8 @@ ContinuousEnergyDiscreteCosines::sample_with_unit_based_interpolation(
     l = incoming_energy_.size() - 2;
     f = 1.;
   } else {
-    l = static_cast<std::size_t>(std::distance(incoming_energy_.begin(), in_E_it) - 1);
+    l = static_cast<std::size_t>(
+        std::distance(incoming_energy_.begin(), in_E_it) - 1);
     f = (E_in - incoming_energy_[l]) /
         (incoming_energy_[l + 1] - incoming_energy_[l]);
   }
@@ -317,7 +318,8 @@ ContinuousEnergyDiscreteCosines::sample_without_unit_based_interpolation(
     l = incoming_energy_.size() - 2;
     f = 1.;
   } else {
-    l = static_cast<std::size_t>(std::distance(incoming_energy_.begin(), in_E_it) - 1);
+    l = static_cast<std::size_t>(
+        std::distance(incoming_energy_.begin(), in_E_it) - 1);
     f = (E_in - incoming_energy_[l]) /
         (incoming_energy_[l + 1] - incoming_energy_[l]);
   }

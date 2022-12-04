@@ -92,7 +92,9 @@ DiscreteCosinesEnergies::DiscreteCosinesEnergies(const ACE& ace)
       // Check mu grid
       for (std::size_t j = 0; j < Nmu; j++) {
         if (mu[j] < -1. || mu[j] > 1.) {
-          std::string mssg = "Invalid cosine value found at index " + std::to_string(static_cast<std::size_t>(i) + j) + ".";
+          std::string mssg = "Invalid cosine value found at index " +
+                             std::to_string(static_cast<std::size_t>(i) + j) +
+                             ".";
           throw PNDLException(mssg);
         }
       }
@@ -146,7 +148,8 @@ AngleEnergyPacket DiscreteCosinesEnergies::sample_angle_energy(
     return {outgoing_energies_.back()[j].cosines[k],
             outgoing_energies_.back()[j].energy};
   }
-  std::size_t i = static_cast<std::size_t>(std::distance(incoming_energy_.begin(), Eit) - 1);
+  std::size_t i = static_cast<std::size_t>(
+      std::distance(incoming_energy_.begin(), Eit) - 1);
   double f = (E_in - incoming_energy_[i]) /
              (incoming_energy_[i + 1] - incoming_energy_[i]);
 

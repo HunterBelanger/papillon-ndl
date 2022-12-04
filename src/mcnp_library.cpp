@@ -48,7 +48,8 @@ MCNPLibrary::MCNPLibrary(const std::string& fname) : NDLibrary(fname) {
   std::size_t xsdir_file_size = static_cast<std::size_t>(xsdir_file.tellg());
   std::string xsdir_buffer(xsdir_file_size, ' ');
   xsdir_file.seekg(0);
-  xsdir_file.read(&xsdir_buffer[0], static_cast<std::streamsize>(xsdir_file_size));
+  xsdir_file.read(&xsdir_buffer[0],
+                  static_cast<std::streamsize>(xsdir_file_size));
 
   //------------------------------------------------------------------
   // Now try to read the atomic weight ratios

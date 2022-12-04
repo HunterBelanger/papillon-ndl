@@ -35,8 +35,10 @@ Reaction<CrossSection>::Reaction(const ACE& ace, std::size_t indx,
                                  std::shared_ptr<EnergyGrid> egrid)
     : ReactionBase(ace, indx), xs_(nullptr) {
   try {
-    uint32_t loca = ace.xss<uint32_t>(static_cast<std::size_t>(ace.LSIG()) + indx);
-    xs_ = std::make_shared<CrossSection>(ace, static_cast<std::size_t>(ace.SIG()) + loca - 1, egrid);
+    uint32_t loca =
+        ace.xss<uint32_t>(static_cast<std::size_t>(ace.LSIG()) + indx);
+    xs_ = std::make_shared<CrossSection>(
+        ace, static_cast<std::size_t>(ace.SIG()) + loca - 1, egrid);
     threshold_ = xs_->energy(0);
   } catch (PNDLException& error) {
     std::string mssg = "Could not create cross section for MT = " +
@@ -58,8 +60,10 @@ Reaction<CrossSection>::Reaction(const ACE& ace, std::size_t indx,
 
   // Get XS from new ACE
   try {
-    uint32_t loca = ace.xss<uint32_t>(static_cast<std::size_t>(ace.LSIG()) + indx);
-    xs_ = std::make_shared<CrossSection>(ace, static_cast<std::size_t>(ace.SIG()) + loca - 1, egrid);
+    uint32_t loca =
+        ace.xss<uint32_t>(static_cast<std::size_t>(ace.LSIG()) + indx);
+    xs_ = std::make_shared<CrossSection>(
+        ace, static_cast<std::size_t>(ace.SIG()) + loca - 1, egrid);
     threshold_ = xs_->energy(0);
   } catch (PNDLException& error) {
     std::string mssg =

@@ -55,7 +55,8 @@ class STCoherentElastic : public STTSLReaction {
     if (E > bragg_edges_.front() && E < bragg_edges_.back()) {
       // Get index for lower bragg edge
       auto Eit = std::lower_bound(bragg_edges_.begin(), bragg_edges_.end(), E);
-      std::size_t l = static_cast<std::size_t>(std::distance(bragg_edges_.begin(), Eit) - 1);
+      std::size_t l = static_cast<std::size_t>(
+          std::distance(bragg_edges_.begin(), Eit) - 1);
       return structure_factor_sum_[l] / E;
     } else if (E < bragg_edges_.front()) {
       return 0.;
@@ -77,12 +78,16 @@ class STCoherentElastic : public STTSLReaction {
       // Get index for lower bragg edge
       auto Eit =
           std::lower_bound(bragg_edges_.begin(), bragg_edges_.end(), E_in);
-      std::size_t l = static_cast<std::size_t>(std::distance(bragg_edges_.begin(), Eit) - 1);
+      std::size_t l = static_cast<std::size_t>(
+          std::distance(bragg_edges_.begin(), Eit) - 1);
 
       // Sample which Bragg edge off of which we will scatter.
       double Prob = rng() * structure_factor_sum_[l];
-      auto Sit = std::lower_bound(structure_factor_sum_.begin(), structure_factor_sum_.begin() + static_cast<std::ptrdiff_t>(l), Prob);
-      std::size_t Si = static_cast<std::size_t>(std::distance(structure_factor_sum_.begin(), Sit));
+      auto Sit = std::lower_bound(
+          structure_factor_sum_.begin(),
+          structure_factor_sum_.begin() + static_cast<std::ptrdiff_t>(l), Prob);
+      std::size_t Si = static_cast<std::size_t>(
+          std::distance(structure_factor_sum_.begin(), Sit));
       double E_bragg = bragg_edges_[Si];
 
       // Calculate the cosine of the scattering angle.

@@ -50,11 +50,15 @@ STNeutron::STNeutron(const ACE& ace)
 
   // Number of energy points
   uint32_t NE = static_cast<uint32_t>(ace.nxs(2));
-  total_xs_ =
-    std::make_shared<CrossSection>(ace, static_cast<std::size_t>(ace.ESZ()) + NE, energy_grid_, false);
-  disappearance_xs_ = std::make_shared<CrossSection>(ace, static_cast<std::size_t>(ace.ESZ()) + 2 * NE, energy_grid_, false);
-  elastic_xs_ = std::make_shared<CrossSection>(ace, static_cast<std::size_t>(ace.ESZ()) + 3 * NE, energy_grid_, false);
-  heating_number_ = std::make_shared<CrossSection>(ace, static_cast<std::size_t>(ace.ESZ()) + 4 * NE, energy_grid_, false, true);
+  total_xs_ = std::make_shared<CrossSection>(
+      ace, static_cast<std::size_t>(ace.ESZ()) + NE, energy_grid_, false);
+  disappearance_xs_ = std::make_shared<CrossSection>(
+      ace, static_cast<std::size_t>(ace.ESZ()) + 2 * NE, energy_grid_, false);
+  elastic_xs_ = std::make_shared<CrossSection>(
+      ace, static_cast<std::size_t>(ace.ESZ()) + 3 * NE, energy_grid_, false);
+  heating_number_ = std::make_shared<CrossSection>(
+      ace, static_cast<std::size_t>(ace.ESZ()) + 4 * NE, energy_grid_, false,
+      true);
 
   // Get photon production XS if present
   if (ace.jxs(11) != 0) {
@@ -84,7 +88,9 @@ STNeutron::STNeutron(const ACE& ace)
   try {
     elastic_ = std::make_shared<Elastic>(
         std::make_shared<ElasticSVT>(),
-        AngleDistribution(ace, ace.xss<int>(static_cast<std::size_t>(ace.LAND()))), awr_, temperature_);
+        AngleDistribution(ace,
+                          ace.xss<int>(static_cast<std::size_t>(ace.LAND()))),
+        awr_, temperature_);
   } catch (PNDLException& err) {
     std::string mssg = "Could not create Elastic AngleEnergy distribution.";
     err.add_to_exception(mssg);
@@ -148,10 +154,15 @@ STNeutron::STNeutron(const ACE& ace, const STNeutron& nuclide)
 
   // Number of energy points
   uint32_t NE = static_cast<uint32_t>(ace.nxs(2));
-  total_xs_ = std::make_shared<CrossSection>(ace, static_cast<std::size_t>(ace.ESZ()) + NE, energy_grid_, false);
-  disappearance_xs_ = std::make_shared<CrossSection>(ace, static_cast<std::size_t>(ace.ESZ()) + 2 * NE, energy_grid_, false);
-  elastic_xs_ = std::make_shared<CrossSection>(ace, static_cast<std::size_t>(ace.ESZ()) + 3 * NE, energy_grid_, false);
-  heating_number_ = std::make_shared<CrossSection>(ace, static_cast<std::size_t>(ace.ESZ()) + 4 * NE, energy_grid_, false, true);
+  total_xs_ = std::make_shared<CrossSection>(
+      ace, static_cast<std::size_t>(ace.ESZ()) + NE, energy_grid_, false);
+  disappearance_xs_ = std::make_shared<CrossSection>(
+      ace, static_cast<std::size_t>(ace.ESZ()) + 2 * NE, energy_grid_, false);
+  elastic_xs_ = std::make_shared<CrossSection>(
+      ace, static_cast<std::size_t>(ace.ESZ()) + 3 * NE, energy_grid_, false);
+  heating_number_ = std::make_shared<CrossSection>(
+      ace, static_cast<std::size_t>(ace.ESZ()) + 4 * NE, energy_grid_, false,
+      true);
 
   // Get photon production XS if present
   if (ace.jxs(11) != 0) {
@@ -171,9 +182,9 @@ STNeutron::STNeutron(const ACE& ace, const STNeutron& nuclide)
     uint32_t MT = ace.xss<uint32_t>(static_cast<std::size_t>(ace.MTR()) + indx);
     if (MT != 18 && MT != 19 && MT != 20 && MT != 21 && MT != 38) {
       mt_list_.push_back(MT);
-      reactions_.emplace_back(
-          ace, indx, energy_grid_,
-          nuclide.reactions_[static_cast<std::size_t>(nuclide.reaction_indices_[MT])]);
+      reactions_.emplace_back(ace, indx, energy_grid_,
+                              nuclide.reactions_[static_cast<std::size_t>(
+                                  nuclide.reaction_indices_[MT])]);
       reaction_indices_[MT] = current_reaction_index;
       current_reaction_index++;
     }

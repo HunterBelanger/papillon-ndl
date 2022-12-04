@@ -73,7 +73,10 @@ Fission::Fission(const ACE& ace, std::shared_ptr<EnergyGrid> energy_grid)
         } else {
           // Both prompt and total given
           uint32_t KNU_prmpt = static_cast<uint32_t>(ace.NU() + 1);
-          uint32_t KNU_tot = static_cast<uint32_t>(ace.NU() + std::abs(ace.xss<int32_t>(static_cast<std::size_t>(ace.NU()))) + 1);
+          uint32_t KNU_tot = static_cast<uint32_t>(
+              ace.NU() +
+              std::abs(ace.xss<int32_t>(static_cast<std::size_t>(ace.NU()))) +
+              1);
 
           total = read_nu(ace, KNU_tot);
           prompt = read_nu(ace, KNU_prmpt);
@@ -144,7 +147,8 @@ Fission::Fission(const ACE& ace, std::shared_ptr<EnergyGrid> energy_grid)
       uint32_t NMT = static_cast<uint32_t>(ace.nxs(3));
       mt_list_.reserve(5);
       for (uint32_t indx = 0; indx < NMT; indx++) {
-        uint32_t MT = ace.xss<uint32_t>(static_cast<std::size_t>(ace.MTR()) + indx);
+        uint32_t MT =
+            ace.xss<uint32_t>(static_cast<std::size_t>(ace.MTR()) + indx);
         if (MT == 18) {
           mt18_ = std::make_shared<STReaction>(ace, indx, energy_grid);
           mt_list_.push_back(18);
@@ -211,7 +215,8 @@ Fission::Fission(const ACE& ace, std::shared_ptr<EnergyGrid> energy_grid,
       uint32_t NMT = static_cast<uint32_t>(ace.nxs(3));
       mt_list_.reserve(5);
       for (uint32_t indx = 0; indx < NMT; indx++) {
-        uint32_t MT = ace.xss<uint32_t>(static_cast<std::size_t>(ace.MTR()) + indx);
+        uint32_t MT =
+            ace.xss<uint32_t>(static_cast<std::size_t>(ace.MTR()) + indx);
         if (MT == 18) {
           mt18_ = std::make_shared<STReaction>(ace, indx, energy_grid,
                                                *fission.mt18_);

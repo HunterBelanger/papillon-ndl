@@ -61,7 +61,8 @@ DelayedFamily::DelayedFamily(const ACE& ace, std::size_t i, std::size_t g)
   }
 
   // Get energy distribution location
-  uint32_t locc = ace.xss<uint32_t>(static_cast<std::size_t>(ace.DNEDL()) + g - 1);
+  uint32_t locc =
+      ace.xss<uint32_t>(static_cast<std::size_t>(ace.DNEDL()) + g - 1);
   std::size_t l = static_cast<std::size_t>(ace.DNED()) + locc - 1;
 
   // TODO currently ignore extra distribuitons, only read first one

@@ -63,7 +63,8 @@ class KalbachTable {
 
   double sample_energy(double xi) const {
     auto cdf_it = std::lower_bound(cdf_.begin(), cdf_.end(), xi);
-    std::size_t l = static_cast<std::size_t>(std::distance(cdf_.begin(), cdf_it));
+    std::size_t l =
+        static_cast<std::size_t>(std::distance(cdf_.begin(), cdf_it));
     if (xi == *cdf_it) return energy_[l];
     l--;
 
@@ -97,7 +98,8 @@ class KalbachTable {
       return R_.back();
     else {
       auto E_it = std::lower_bound(energy_.begin(), energy_.end(), E);
-      std::size_t l = static_cast<std::size_t>(std::distance(energy_.begin(), E_it) - 1);
+      std::size_t l =
+          static_cast<std::size_t>(std::distance(energy_.begin(), E_it) - 1);
 
       if (interp_ == Interpolation::Histogram) {
         return Histogram::interpolate(E, energy_[l], R_[l], energy_[l + 1],
@@ -120,7 +122,8 @@ class KalbachTable {
       return A_.back();
     else {
       auto E_it = std::lower_bound(energy_.begin(), energy_.end(), E);
-      std::size_t l = static_cast<std::size_t>(std::distance(energy_.begin(), E_it) - 1);
+      std::size_t l =
+          static_cast<std::size_t>(std::distance(energy_.begin(), E_it) - 1);
 
       if (interp_ == Interpolation::Histogram) {
         return Histogram::interpolate(E, energy_[l], A_[l], energy_[l + 1],
@@ -176,7 +179,8 @@ class KalbachTable {
     } else if (E_it == energy_.begin() && E_out < energy_.front()) {
       return 0.;
     }
-    std::size_t l = static_cast<std::size_t>(std::distance(energy_.begin(), E_it));
+    std::size_t l =
+        static_cast<std::size_t>(std::distance(energy_.begin(), E_it));
     if (E_out != *E_it) l--;
 
     if (interp_ == Interpolation::Histogram) {

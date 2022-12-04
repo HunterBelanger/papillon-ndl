@@ -102,7 +102,8 @@ CrossSection::CrossSection(double xs, std::shared_ptr<EnergyGrid> E_grid)
 }
 
 std::vector<double> CrossSection::energy() const {
-  return {energy_grid_->grid().begin() + static_cast<std::ptrdiff_t>(index_), energy_grid_->grid().end()};
+  return {energy_grid_->grid().begin() + static_cast<std::ptrdiff_t>(index_),
+          energy_grid_->grid().end()};
 }
 
 }  // namespace pndl

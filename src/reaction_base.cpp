@@ -60,7 +60,8 @@ ReactionBase::ReactionBase(const ACE& ace, std::size_t indx)
 
   // Determine the frame of reference for the outgoing distributions
   Frame frame_ = Frame::Lab;
-  if (ace.xss(static_cast<std::size_t>(ace.TYR()) + indx) < 0.) frame_ = Frame::CM;
+  if (ace.xss(static_cast<std::size_t>(ace.TYR()) + indx) < 0.)
+    frame_ = Frame::CM;
 
   // Get the yield for the reaction
   double yld = std::abs(ace.xss(static_cast<std::size_t>(ace.TYR()) + indx));
@@ -68,7 +69,8 @@ ReactionBase::ReactionBase(const ACE& ace, std::size_t indx)
     if (yld < 100.)
       yield_ = std::make_shared<Constant>(yld);
     else {
-      std::size_t i = static_cast<std::size_t>(ace.DLW()) + static_cast<std::size_t>(yld) - 101;
+      std::size_t i = static_cast<std::size_t>(ace.DLW()) +
+                      static_cast<std::size_t>(yld) - 101;
       uint32_t NR = ace.xss<uint32_t>(i);
       uint32_t NE = ace.xss<uint32_t>(i + 1 + 2 * NR);
       std::vector<double> energy = ace.xss(i + 2 + 2 * NR, NE);
@@ -180,7 +182,8 @@ void ReactionBase::load_neutron_distributions(
   }
 
   // Get energy distribution location
-  uint32_t locc = ace.xss<uint32_t>(static_cast<std::size_t>(ace.LDLW()) + indx);
+  uint32_t locc =
+      ace.xss<uint32_t>(static_cast<std::size_t>(ace.LDLW()) + indx);
   std::size_t i = static_cast<std::size_t>(ace.DLW()) + locc - 1;
 
   // Location of next law (set any non-zero initial value)

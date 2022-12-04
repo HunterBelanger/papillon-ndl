@@ -123,7 +123,8 @@ double AngleDistribution::sample_angle(
   E_it--;
 
   // Get index of low energy
-  std::size_t l = static_cast<std::size_t>(std::distance(energy_grid_.begin(), E_it));
+  std::size_t l =
+      static_cast<std::size_t>(std::distance(energy_grid_.begin(), E_it));
   double f = (E_in - energy_grid_[l]) / (energy_grid_[l + 1] - energy_grid_[l]);
 
   double mu = 0;
@@ -147,7 +148,8 @@ double AngleDistribution::pdf(double E_in, double mu) const {
   E_it--;
 
   // Get index of low energy
-  std::size_t l = static_cast<std::size_t>(std::distance(energy_grid_.begin(), E_it));
+  std::size_t l =
+      static_cast<std::size_t>(std::distance(energy_grid_.begin(), E_it));
   double f = (E_in - energy_grid_[l]) / (energy_grid_[l + 1] - energy_grid_[l]);
 
   return (1. - f) * laws_[l]->pdf(mu) + f * laws_[l + 1]->pdf(mu);

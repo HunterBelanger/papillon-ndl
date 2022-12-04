@@ -326,19 +326,27 @@ void ACE::save_binary(std::string& fname) {
 
 std::vector<std::pair<int32_t, double>> ACE::izaw(std::size_t i,
                                                   std::size_t len) const {
-  return {izaw_.begin() + static_cast<std::ptrdiff_t>(i), izaw_.begin() + static_cast<std::ptrdiff_t>(i) + static_cast<std::ptrdiff_t>(len)};
+  return {izaw_.begin() + static_cast<std::ptrdiff_t>(i),
+          izaw_.begin() + static_cast<std::ptrdiff_t>(i) +
+              static_cast<std::ptrdiff_t>(len)};
 }
 
 std::vector<int32_t> ACE::nxs(std::size_t i, std::size_t len) const {
-  return {nxs_.begin() + static_cast<std::ptrdiff_t>(i), nxs_.begin() + static_cast<std::ptrdiff_t>(i) + static_cast<std::ptrdiff_t>(len)};
+  return {nxs_.begin() + static_cast<std::ptrdiff_t>(i),
+          nxs_.begin() + static_cast<std::ptrdiff_t>(i) +
+              static_cast<std::ptrdiff_t>(len)};
 }
 
 std::vector<int32_t> ACE::jxs(std::size_t i, std::size_t len) const {
-  return {jxs_.begin() + static_cast<std::ptrdiff_t>(i), jxs_.begin() + static_cast<std::ptrdiff_t>(i) + static_cast<std::ptrdiff_t>(len)};
+  return {jxs_.begin() + static_cast<std::ptrdiff_t>(i),
+          jxs_.begin() + static_cast<std::ptrdiff_t>(i) +
+              static_cast<std::ptrdiff_t>(len)};
 }
 
 std::vector<double> ACE::xss(std::size_t i, std::size_t len) const {
-  return {xss_.begin() + static_cast<std::ptrdiff_t>(i), xss_.begin() + static_cast<std::ptrdiff_t>(i) + static_cast<std::ptrdiff_t>(len)};
+  return {xss_.begin() + static_cast<std::ptrdiff_t>(i),
+          xss_.begin() + static_cast<std::ptrdiff_t>(i) +
+              static_cast<std::ptrdiff_t>(len)};
 }
 
 const double* ACE::xss_data() const { return xss_.data(); }

@@ -86,8 +86,8 @@ double GeneralEvaporation::sample_energy(
     double E_in, const std::function<double()>& rng) const {
   double T = (*temperature_)(E_in);
   double xi1 = rng();
-  std::size_t bin =
-    static_cast<std::size_t>(std::floor(static_cast<double>(bin_bounds_.size()) * xi1));
+  std::size_t bin = static_cast<std::size_t>(
+      std::floor(static_cast<double>(bin_bounds_.size()) * xi1));
   double xi2 = rng();
   double Chi =
       (bin_bounds_[bin + 1] - bin_bounds_[bin]) * xi2 + bin_bounds_[bin];
