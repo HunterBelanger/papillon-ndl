@@ -146,10 +146,10 @@ class PCTable {
   }
 
   double linear_interp(double xi, std::size_t l) const {
-    double m = (pdf_[l + 1] - pdf_[l]) / (values_[l + 1] - values_[l]);
-    return values_[l] +
-           (1. / m) * (std::sqrt(pdf_[l] * pdf_[l] + 2. * m * (xi - cdf_[l])) -
-                       pdf_[l]);
+    const double m = (pdf_[l + 1] - pdf_[l]) / (values_[l + 1] - values_[l]);
+    const double arg = pdf_[l] * pdf_[l] + 2. * m * (xi - cdf_[l]);
+
+    return values_[l] + (1. / m) * (std::sqrt(std::max(arg, 0.)) - pdf_[l]);
   }
 };
 
