@@ -32,7 +32,7 @@ namespace pndl {
 struct Vector {
   double x, y, z;
 
-  Vector(double x, double y, double z) : x(x), y(y), z(z) {}
+  Vector(double ix, double iy, double iz) : x(ix), y(iy), z(iz) {}
   Vector(const std::array<double, 3>& vals)
       : x(vals[0]), y(vals[1]), z(vals[2]) {}
 

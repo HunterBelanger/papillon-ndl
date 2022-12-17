@@ -33,7 +33,7 @@ STCoherentElastic::STCoherentElastic(const ACE& ace)
   int32_t elastic_mode = ace.nxs(4);
   if (elastic_mode == 4) {
     // Get index to Bragg edge and structure data
-    int32_t i = ace.jxs(3) - 1;
+    std::size_t i = static_cast<std::size_t>(ace.jxs(3) - 1);
     uint32_t Ne = ace.xss<uint32_t>(i);
     bragg_edges_ = ace.xss(i + 1, Ne);
     structure_factor_sum_ = ace.xss(i + 1 + Ne, Ne);

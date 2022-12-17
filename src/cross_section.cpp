@@ -31,7 +31,7 @@ CrossSection::CrossSection(const ACE& ace, std::size_t i,
                            std::shared_ptr<EnergyGrid> E_grid, bool get_index,
                            bool is_heating)
     : energy_grid_(E_grid), values_(nullptr), index_(0), single_value_(false) {
-  uint32_t NE = ace.nxs(2);
+  uint32_t NE = static_cast<uint32_t>(ace.nxs(2));
   if (get_index) {
     index_ = ace.xss<uint32_t>(i) - 1;
     i++;
@@ -102,7 +102,8 @@ CrossSection::CrossSection(double xs, std::shared_ptr<EnergyGrid> E_grid)
 }
 
 std::vector<double> CrossSection::energy() const {
-  return {energy_grid_->grid().begin() + index_, energy_grid_->grid().end()};
+  return {energy_grid_->grid().begin() + static_cast<std::ptrdiff_t>(index_),
+          energy_grid_->grid().end()};
 }
 
 }  // namespace pndl

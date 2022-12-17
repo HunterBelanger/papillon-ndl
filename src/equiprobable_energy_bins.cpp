@@ -104,7 +104,8 @@ double EquiprobableEnergyBins::sample_energy(
     return sample_bins(rng(), rng(), bin_sets_.back());
   }
 
-  std::size_t l = std::distance(incoming_energy_.begin(), in_E_it);
+  std::size_t l = static_cast<std::size_t>(
+      std::distance(incoming_energy_.begin(), in_E_it));
   l--;
 
   double f = (E_in - incoming_energy_[l]) /
@@ -128,7 +129,8 @@ std::optional<double> EquiprobableEnergyBins::pdf(double E_in,
     return pdf_bins(E_out, bin_sets_.back());
   }
 
-  std::size_t l = std::distance(incoming_energy_.begin(), in_E_it);
+  std::size_t l = static_cast<std::size_t>(
+      std::distance(incoming_energy_.begin(), in_E_it));
   l--;
 
   double f = (E_in - incoming_energy_[l]) /
@@ -140,7 +142,8 @@ std::optional<double> EquiprobableEnergyBins::pdf(double E_in,
 
 double EquiprobableEnergyBins::sample_bins(
     double xi1, double xi2, const std::vector<double>& bounds) const {
-  std::size_t bin = static_cast<std::size_t>(std::floor(bounds.size() * xi1));
+  std::size_t bin = static_cast<std::size_t>(
+      std::floor(static_cast<double>(bounds.size()) * xi1));
   return (bounds[bin + 1] - bounds[bin]) * xi2 + bounds[bin];
 }
 

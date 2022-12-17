@@ -71,7 +71,8 @@ class STIncoherentElasticACE : public STTSLReaction {
       i = incoming_energy_.size() - 2;
       f = 1.;
     } else {
-      i = std::distance(incoming_energy_.begin(), Eit) - 1;
+      i = static_cast<std::size_t>(
+          std::distance(incoming_energy_.begin(), Eit) - 1);
       f = (E_in - incoming_energy_[i]) /
           (incoming_energy_[i + 1] - incoming_energy_[i]);
     }

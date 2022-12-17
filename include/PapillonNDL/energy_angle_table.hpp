@@ -77,7 +77,8 @@ class EnergyAngleTable {
     double E_out, mu;
     double xi = rng();
     auto cdf_it = std::lower_bound(cdf_.begin(), cdf_.end(), xi);
-    std::size_t l = std::distance(cdf_.begin(), cdf_it) - 1;
+    std::size_t l =
+        static_cast<std::size_t>(std::distance(cdf_.begin(), cdf_it) - 1);
 
     // Must account for case where pdf_[l] = pdf_[l+1], which means  that
     // the slope is zero, and m=0. This results in nan for the linear alg.
@@ -135,7 +136,8 @@ class EnergyAngleTable {
     } else if (E_it == energy_.begin() && E_out < energy_.front()) {
       return 0.;
     }
-    std::size_t l = std::distance(energy_.begin(), E_it);
+    std::size_t l =
+        static_cast<std::size_t>(std::distance(energy_.begin(), E_it));
     if (E_out != *E_it) l--;
 
     if (interp_ == Interpolation::Histogram) {
@@ -210,11 +212,10 @@ class EnergyAngleTable {
   }
 
   double linear_interp_energy(double xi, std::size_t l) const {
-    double m = (pdf_[l + 1] - pdf_[l]) / (energy_[l + 1] - energy_[l]);
+    const double m = (pdf_[l + 1] - pdf_[l]) / (energy_[l + 1] - energy_[l]);
+    const double arg = pdf_[l] * pdf_[l] + 2. * m * (xi - cdf_[l]);
 
-    return energy_[l] +
-           (1. / m) * (std::sqrt(pdf_[l] * pdf_[l] + 2. * m * (xi - cdf_[l])) -
-                       pdf_[l]);
+    return energy_[l] + (1. / m) * (std::sqrt(std::max(arg, 0.)) - pdf_[l]);
   }
 };
 

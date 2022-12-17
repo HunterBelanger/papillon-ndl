@@ -183,7 +183,7 @@ class Tabulated1D : public Function1D {
       const auto hi_it = std::lower_bound(x_.begin(), x_.end(), x);
       const auto low_it = hi_it - 1;
 
-      std::size_t i = low_it - x_.begin();
+      std::size_t i = static_cast<std::size_t>(low_it - x_.begin());
 
       double x1 = *low_it;
       double x2 = *hi_it;
@@ -224,7 +224,7 @@ class Tabulated1D : public Function1D {
         auto hi_it = low_it;
         hi_it++;
 
-        std::size_t i = low_it - x_.begin();
+        std::size_t i = static_cast<std::size_t>(low_it - x_.begin());
 
         double x1 = *low_it;
         double x2 = *hi_it;

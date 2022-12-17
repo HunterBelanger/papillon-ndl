@@ -46,7 +46,7 @@ ContinuousEnergyDiscreteCosines::ContinuousEnergyDiscreteCosines(
   }
 
   // Read incident energy grid
-  int32_t S = ace.jxs(0) - 1;
+  std::size_t S = static_cast<std::size_t>(ace.jxs(0) - 1);
   uint32_t Ne = ace.xss<uint32_t>(S);  // Number of grid points
   incoming_energy_ = ace.xss(S + 1, Ne);
 
@@ -60,7 +60,7 @@ ContinuousEnergyDiscreteCosines::ContinuousEnergyDiscreteCosines(
   Nmu = static_cast<uint32_t>(ace.nxs(2)) - 1;
 
   // Get the starting index for the locators and sizes
-  uint32_t i = ace.jxs(2) - 1;
+  uint32_t i = static_cast<uint32_t>(ace.jxs(2) - 1);
   // Locators in xss for each incident energy
   std::vector<uint32_t> locs = ace.xss<uint32_t>(i, Ne);
   // Number of outgoing energies for each incident energy
@@ -235,7 +235,8 @@ ContinuousEnergyDiscreteCosines::sample_with_unit_based_interpolation(
     l = incoming_energy_.size() - 2;
     f = 1.;
   } else {
-    l = std::distance(incoming_energy_.begin(), in_E_it) - 1;
+    l = static_cast<std::size_t>(
+        std::distance(incoming_energy_.begin(), in_E_it) - 1);
     f = (E_in - incoming_energy_[l]) /
         (incoming_energy_[l + 1] - incoming_energy_[l]);
   }
@@ -317,7 +318,8 @@ ContinuousEnergyDiscreteCosines::sample_without_unit_based_interpolation(
     l = incoming_energy_.size() - 2;
     f = 1.;
   } else {
-    l = std::distance(incoming_energy_.begin(), in_E_it) - 1;
+    l = static_cast<std::size_t>(
+        std::distance(incoming_energy_.begin(), in_E_it) - 1);
     f = (E_in - incoming_energy_[l]) /
         (incoming_energy_[l + 1] - incoming_energy_[l]);
   }
@@ -383,7 +385,7 @@ double ContinuousEnergyDiscreteCosines::CEDCTable::sample_energy(
   } else if (cdf_it == cdf.end()) {
     l = energy.size() - 2;
   } else {
-    l = std::distance(cdf.begin(), cdf_it) - 1;
+    l = static_cast<std::size_t>(std::distance(cdf.begin(), cdf_it) - 1);
   }
 
   // Must account for case where pdf_[l] = pdf_[l+1], which means  that

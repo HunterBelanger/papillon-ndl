@@ -45,10 +45,11 @@ MCNPLibrary::MCNPLibrary(const std::string& fname) : NDLibrary(fname) {
   std::stringstream xsdir_stream;
   std::ifstream xsdir_file(xsdir_fname);
   xsdir_file.seekg(0, std::ios::end);
-  std::size_t xsdir_file_size = xsdir_file.tellg();
+  std::size_t xsdir_file_size = static_cast<std::size_t>(xsdir_file.tellg());
   std::string xsdir_buffer(xsdir_file_size, ' ');
   xsdir_file.seekg(0);
-  xsdir_file.read(&xsdir_buffer[0], xsdir_file_size);
+  xsdir_file.read(&xsdir_buffer[0],
+                  static_cast<std::streamsize>(xsdir_file_size));
 
   //------------------------------------------------------------------
   // Now try to read the atomic weight ratios
@@ -197,7 +198,7 @@ MCNPLibrary::MCNPLibrary(const std::string& fname) : NDLibrary(fname) {
 
     if (zaid_suffix == 'c') {
       // Continuous energy neutron data
-      uint32_t zaid_num = std::stoul(zaid_str);
+      uint32_t zaid_num = static_cast<uint32_t>(std::stoul(zaid_str));
       uint8_t Z = static_cast<uint8_t>(zaid_num / 1000);
       uint32_t A = zaid_num - (Z * 1000);
       ZAID zaid(Z, A);

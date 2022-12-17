@@ -61,8 +61,9 @@ DelayedFamily::DelayedFamily(const ACE& ace, std::size_t i, std::size_t g)
   }
 
   // Get energy distribution location
-  uint32_t locc = ace.xss<uint32_t>(ace.DNEDL() + g - 1);
-  std::size_t l = ace.DNED() + locc - 1;
+  uint32_t locc =
+      ace.xss<uint32_t>(static_cast<std::size_t>(ace.DNEDL()) + g - 1);
+  std::size_t l = static_cast<std::size_t>(ace.DNED()) + locc - 1;
 
   // TODO currently ignore extra distribuitons, only read first one
   // Write a warning for now
@@ -75,7 +76,7 @@ DelayedFamily::DelayedFamily(const ACE& ace, std::size_t i, std::size_t g)
 
   int law = ace.xss<int>(l + 1);
   uint32_t idat = ace.xss<uint32_t>(l + 2);
-  std::size_t j = ace.DNED() + idat - 1;
+  std::size_t j = static_cast<std::size_t>(ace.DNED()) + idat - 1;
 
   if (law == 1) {  // Equiprobable Energy Bins
     energy_ = std::make_shared<EquiprobableEnergyBins>(ace, j);

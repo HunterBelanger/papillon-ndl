@@ -63,7 +63,8 @@ class KalbachTable {
 
   double sample_energy(double xi) const {
     auto cdf_it = std::lower_bound(cdf_.begin(), cdf_.end(), xi);
-    std::size_t l = std::distance(cdf_.begin(), cdf_it);
+    std::size_t l =
+        static_cast<std::size_t>(std::distance(cdf_.begin(), cdf_it));
     if (xi == *cdf_it) return energy_[l];
     l--;
 
@@ -97,7 +98,8 @@ class KalbachTable {
       return R_.back();
     else {
       auto E_it = std::lower_bound(energy_.begin(), energy_.end(), E);
-      std::size_t l = std::distance(energy_.begin(), E_it) - 1;
+      std::size_t l =
+          static_cast<std::size_t>(std::distance(energy_.begin(), E_it) - 1);
 
       if (interp_ == Interpolation::Histogram) {
         return Histogram::interpolate(E, energy_[l], R_[l], energy_[l + 1],
@@ -120,7 +122,8 @@ class KalbachTable {
       return A_.back();
     else {
       auto E_it = std::lower_bound(energy_.begin(), energy_.end(), E);
-      std::size_t l = std::distance(energy_.begin(), E_it) - 1;
+      std::size_t l =
+          static_cast<std::size_t>(std::distance(energy_.begin(), E_it) - 1);
 
       if (interp_ == Interpolation::Histogram) {
         return Histogram::interpolate(E, energy_[l], A_[l], energy_[l + 1],
@@ -137,7 +140,7 @@ class KalbachTable {
    * @param mu Cosine of scattering angle.
    */
   double angle_pdf(double mu) const {
-    auto mu_p = [](double a, double r, double mu) {
+    auto mu_p = [mu](double a, double r) {
       return 0.5 * (a / std::sinh(a)) *
              (std::cosh(a * mu) + r * std::sinh(a * mu));
     };
@@ -146,12 +149,11 @@ class KalbachTable {
 
     for (std::size_t i = 0; i < pdf_.size() - 1; i++) {
       if (interp_ == Interpolation::Histogram) {
-        pdf_out +=
-            mu_p(A_[i], R_[i], mu) * pdf_[i] * (energy_[i + 1] - energy_[i]);
+        pdf_out += mu_p(A_[i], R_[i]) * pdf_[i] * (energy_[i + 1] - energy_[i]);
       } else {
         pdf_out += 0.5 * (energy_[i + 1] - energy_[i]) *
-                   (mu_p(A_[i], R_[i], mu) * pdf_[i] +
-                    mu_p(A_[i + 1], R_[i + 1], mu) * pdf_[i + 1]);
+                   (mu_p(A_[i], R_[i]) * pdf_[i] +
+                    mu_p(A_[i + 1], R_[i + 1]) * pdf_[i + 1]);
       }
     }
 
@@ -165,7 +167,7 @@ class KalbachTable {
    * @param E_out Exit energy.
    */
   double pdf(double mu, double E_out) const {
-    auto mu_p = [](double a, double r, double mu) {
+    auto mu_p = [mu](double a, double r) {
       return 0.5 * (a / std::sinh(a)) *
              (std::cosh(a * mu) + r * std::sinh(a * mu));
     };
@@ -176,19 +178,20 @@ class KalbachTable {
     } else if (E_it == energy_.begin() && E_out < energy_.front()) {
       return 0.;
     }
-    std::size_t l = std::distance(energy_.begin(), E_it);
+    std::size_t l =
+        static_cast<std::size_t>(std::distance(energy_.begin(), E_it));
     if (E_out != *E_it) l--;
 
     if (interp_ == Interpolation::Histogram) {
-      double mu_pdf = mu_p(A_[l], R_[l], mu);
+      double mu_pdf = mu_p(A_[l], R_[l]);
       double E_pdf = pdf_[l];
       return mu_pdf * E_pdf;
     } else {
       double f = (E_out - energy_[l]) / (energy_[l + 1] - energy_[l]);
       double out_pdf = 0;
 
-      out_pdf += f * mu_p(A_[l + 1], R_[l + 1], mu) * pdf_[l + 1];
-      out_pdf += (1. - f) * mu_p(A_[l], R_[l], mu) * pdf_[l];
+      out_pdf += f * mu_p(A_[l + 1], R_[l + 1]) * pdf_[l + 1];
+      out_pdf += (1. - f) * mu_p(A_[l], R_[l]) * pdf_[l];
 
       return out_pdf;
     }
@@ -247,10 +250,10 @@ class KalbachTable {
   }
 
   double linear_interp_energy(double xi, std::size_t l) const {
-    double m = (pdf_[l + 1] - pdf_[l]) / (energy_[l + 1] - energy_[l]);
-    return energy_[l] +
-           (1. / m) * (std::sqrt(pdf_[l] * pdf_[l] + 2. * m * (xi - cdf_[l])) -
-                       pdf_[l]);
+    const double m = (pdf_[l + 1] - pdf_[l]) / (energy_[l + 1] - energy_[l]);
+    const double arg = pdf_[l] * pdf_[l] + 2. * m * (xi - cdf_[l]);
+
+    return energy_[l] + (1. / m) * (std::sqrt(std::max(arg, 0.)) - pdf_[l]);
   }
 };
 
