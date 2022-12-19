@@ -62,7 +62,7 @@ static const std::string version =
 
 static const std::string usage =
   "Usage:\n"
-  "  panglos process [--pedantic] <fname> <mat> <temp>\n"
+  "  panglos process [--pedantic] <fname> <mat> <temp> <zaid> <comments> <acefname>\n"
   "  panglos temps <fname> <mat>\n"
   "  panglos (-h | --help)\n"
   "  panglos (-v | --version)\n\n"
@@ -108,6 +108,7 @@ int main(const int argc, const char** argv) {
   const int MAT = static_cast<int>(args["<mat>"].asLong());
   const bool get_temps = args["temps"].asBool();
   const bool pedantic = args["--pedantic"].asBool();
+  
 
   // Write run options
   Log::info("");
@@ -117,7 +118,7 @@ int main(const int argc, const char** argv) {
   Log::info("Released under the terms and conditions of the GPLv3.");
   Log::info("");
   Log::info("File Name:   {}", fname);
-  Log::info("MAT:         {}", MAT);
+  Log::info("MAT:         {}", MAT); 
 
   //=============================================================================
   // Check if we were asked to just list the temperatures
@@ -148,13 +149,29 @@ int main(const int argc, const char** argv) {
 
   //=============================================================================
   const double T = std::stod(args["<temp>"].asString());
+  std::string zaid = args["<zaid>"].asString();
+  std::string comments = args["<comments>"].asString();
+  std::string acefname = args["<acefname>"].asString();
+
   Log::info("Temperature: {}", T);
+  Log::info("ZAID:        {}", zaid);
+  Log::info("Comments:    {}", comments);
+  Log::info("ACE File:    {}", acefname);
   if (pedantic) {
     Log::info("Pedantic:    True");
   } else {
     Log::info("Pedantic:    False");
   }
   Log::info("");
+
+  if (zaid.size() < 10) {
+    while (zaid.size() < 10) {
+      zaid.insert(zaid.begin(), ' ');
+    }
+  } else if (zaid.size() > 10) {
+    zaid.resize(10, ' ');
+  }
+  comments.resize(70, ' ');
 
   // Read ENDF file, and get MF7
   tree::Tape<std::string> endf = tree::fromFile(fname);
@@ -189,7 +206,12 @@ int main(const int argc, const char** argv) {
   LinearizedIncoherentInelastic lii = linearize_ii(ii, Ti, pedantic);
 
   // Write data to ACE file
-  write_to_ace(lii, ie, ce, T);
+  Log::info("Writing ACE file.");
+  write_to_ace(lii, ie, ce, zaid, ii.awr(), T, comments, MAT, acefname);
+  Log::info("");
+
+  Log::info("TSL Processing Complete !");
+  Log::info("");
 
   return 0;
 }
