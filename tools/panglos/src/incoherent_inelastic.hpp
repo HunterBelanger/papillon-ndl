@@ -110,6 +110,11 @@ class IncoherentInelastic {
    */
   double bound_xs() const { return bound_xs_; }
 
+  /**
+   * @brief Returns the atomic weight ratio of the principal scatterer.
+   */
+  double awr() const { return awr_; }
+
  private:
   std::vector<std::unique_ptr<TabulatedSab>> sab_;
   std::vector<double> sab_temps_;

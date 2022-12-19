@@ -34,6 +34,25 @@
 
 struct LinearizedFunction {
   std::vector<double> x, y;
+
+  double operator()(const double& ix) const {
+    // Check if we are above or bellow min/max x
+    if (ix <= x.front()) return y.front();
+    else if (ix >= x.back()) return y.back();
+
+    // Get bounding x1 < x < x2
+    const auto hi_it = std::lower_bound(x.begin(), x.end(), ix);
+    const auto low_it = hi_it - 1;
+    std::size_t i = static_cast<std::size_t>(low_it - x.begin());
+
+    const double x1 = *low_it;
+    const double x2 = *hi_it;
+    const double y1 = y[i];
+    const double y2 = y[i + 1];
+
+    // Do interpolation and return the value
+    return ((y2 - y1)/(x2 - x1)) * (ix - x1) + y1;
+  }
 };
 
 inline LinearizedFunction linearize(const std::vector<double>& i_x,

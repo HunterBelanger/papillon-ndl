@@ -35,11 +35,17 @@
 
 #include <algorithm>
 #include <memory>
-
+#include <filesystem>
+#include <string>
 
 void write_to_ace(const LinearizedIncoherentInelastic& ii,
                   const std::unique_ptr<IncoherentElastic>& ie,
                   const std::unique_ptr<CoherentElastic>& ce,
-                  double T);
+                  const std::string& zaid,
+                  const double& awr,
+                  const double& T,
+                  const std::string& comments,
+                  const int& mat,
+                  const std::filesystem::path& fname);
 
 #endif

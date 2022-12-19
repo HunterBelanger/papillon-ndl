@@ -286,6 +286,7 @@ std::tuple<std::vector<double>, std::vector<double>, double> determine_initial_b
       c.pop_back();
     }
 
+    // Now add all positive beta points
     for (std::size_t ib = 0; ib < S.beta().size(); ib++) {
       const double beta = S.beta()[ib];
       if (beta > beta_min && beta < beta_max) {
@@ -294,7 +295,7 @@ std::tuple<std::vector<double>, std::vector<double>, double> determine_initial_b
         p.push_back(expS(beta));
 
         // Check if we are converged
-        if (std::abs(c.back() - ref_integral) < beta_integral_tol * c.back()) {
+        if (std::abs(c.back() - ref_integral) < beta_integral_tol * ref_integral) {
           return {b, p, c.back()};
         }
       }
@@ -308,7 +309,7 @@ std::tuple<std::vector<double>, std::vector<double>, double> determine_initial_b
         p.push_back(expS(beta));
 
         // Check if we are converged
-        if (std::abs(c.back() - ref_integral) < beta_integral_tol * c.back()) {
+        if (std::abs(c.back() - ref_integral) < beta_integral_tol * ref_integral) {
           return {b, p, c.back()};
         }
       }
@@ -386,13 +387,14 @@ LinearizedIncoherentInelastic linearize_ii(const IncoherentInelastic& ii,
 
   std::vector<double> xs_points(egrid_points.size(), 0.);
 #ifdef _OPENMP
-#pragma omp parallel for
+#pragma omp parallel for schedule(dynamic)
 #endif
   for (std::size_t i = 0; i < egrid_points.size(); i++) {
     xs_points[i] = xs(egrid_points[i]);
   }
 
-  LinearizedFunction iixs = linearize(egrid_points, xs_points, xs, 0.005);
+  //LinearizedFunction iixs = linearize(egrid_points, xs_points, xs, 0.005);
+  LinearizedFunction iixs{egrid_points, xs_points};
   out.egrid = iixs.x;
   out.xs = iixs.y;
   Log::info("Number of Energy Grid Points = {}", out.egrid.size());
@@ -402,9 +404,9 @@ LinearizedIncoherentInelastic linearize_ii(const IncoherentInelastic& ii,
   // For each incident energy, linearize the beta PDF and all alpha PDF
   out.beta.resize(out.egrid.size());
 #ifdef _OPENMP
-#pragma omp parallel for
+#pragma omp parallel for schedule(dynamic)
 #endif
-  for (std::size_t ie = 20; ie < out.egrid.size(); ie++) {
+  for (std::size_t ie = 0; ie < out.egrid.size(); ie++) {
     const double Ein = out.egrid[ie];
     linearize_beta(S, Ein, out.beta[ie], pedantic);
   }
