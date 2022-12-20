@@ -48,39 +48,33 @@ STThermalScatteringLaw::STThermalScatteringLaw(const ACE& ace,
     throw err;
   }
 
-  // Currently, there MAY be EITHER Coherent or Incoherent Elastic
-  // scattering. We need to check which and get the right one.
-  if (ace.jxs(3) != 0) {
-    // Check if we have coherent or incoherent
-    int32_t elastic_mode = ace.nxs(4);
-    if (elastic_mode == 4) {
-      // Coherent
-      try {
-        coherent_elastic_ = std::make_shared<STCoherentElastic>(ace);
-      } catch (PNDLException& err) {
-        std::string mssg =
-            "Could not construct Coherent Elastic scattering data.";
-        err.add_to_exception(mssg);
-        throw err;
-      }
-      has_coherent_elastic_ = true;
-      incoherent_elastic_ = std::make_shared<STIncoherentElasticACE>(ace);
-    } else {
-      // Incoherent
-      try {
-        incoherent_elastic_ = std::make_shared<STIncoherentElasticACE>(ace);
-      } catch (PNDLException& err) {
-        std::string mssg =
-            "Could not construct Incoherent Elastic scattering data.";
-        err.add_to_exception(mssg);
-        throw err;
-      }
-      has_incoherent_elastic_ = true;
-      coherent_elastic_ = std::make_shared<STCoherentElastic>(ace);
-    }
-  } else {
-    incoherent_elastic_ = std::make_shared<STIncoherentElasticACE>(ace);
+  // Read Coherent Elastic (if present)
+  try {
     coherent_elastic_ = std::make_shared<STCoherentElastic>(ace);
+  } catch (PNDLException& err) {
+    std::string mssg = "Could not construct Coherent Elastic scattering data.";
+    err.add_to_exception(mssg);
+    throw err;
+  }
+  has_coherent_elastic_ = coherent_elastic_->bragg_edges().size() > 0;
+
+  // Read Incoherent Elastic (if present)
+  try {
+    // Check the elastic mode, to see if this is a normal ACE file, or if
+    // it is a special ACE file made by Panglos
+    int32_t elastic_mode = ace.nxs(4);
+    if (elastic_mode == 0) {
+      incoherent_elastic_ = std::make_shared<STIncoherentElasticACE>(ace);
+      has_incoherent_elastic_ = false;
+    } else if (elastic_mode == 4 || elastic_mode == 5) {
+      incoherent_elastic_ = std::make_shared<STIncoherentElasticACE>(ace);
+      has_incoherent_elastic_ = true;
+    }
+  } catch (PNDLException& err) {
+    std::string mssg =
+        "Could not construct Incoherent Elastic scattering data.";
+    err.add_to_exception(mssg);
+    throw err;
   }
 }
 }  // namespace pndl
