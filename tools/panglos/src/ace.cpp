@@ -276,35 +276,28 @@ void write_to_ace(const LinearizedIncoherentInelastic& ii,
   // Note that in this version, nxs[1], nxs[2], and nxs[3] are NOT used. nxs[0]
   // holds the total lengths of the xss array, as is standard, and is set at the
   // end of this function.
-  nxs[4] = 6;
-
-  //=============================================================================
-  // TOTAL THERMAL SCATTERING XS
-  //-----------------------------------------------------------------------------
-  // First, we write the total thermal scattering xs to the xss, and record the
-  // number of energy points in nxs[5], and the start index in jxs[0] = 1. We use
-  // jxs[0] = 1, because we should use fortran indexing !!!
-  xss.reserve(2*txs.x.size());
-  for (const auto& E : txs.x) xss.push_back(E * EV_TO_MEV);
-  for (const auto& xs : txs.y) xss.push_back(xs);
-  nxs[5] = static_cast<int32_t>(txs.x.size());
-  jxs[0] = 1;
+  nxs[4] = 6; 
 
   //=============================================================================
   // Incoherent Inelastic
   //-----------------------------------------------------------------------------
-  // We now write the incoherent inelastic information, starting with the linearized
-  // cross section. The number of points in the energy grid is placed in nxs[6].
-  // The start index for incoherent inelastic is placed at jxs[1].
-  xss.reserve(xss.size() + 3*ii.egrid.size());
+  // We now write the incoherent inelastic information, starting with the
+  // linearized cross section. The start index for the incoherent inelastic xs is
+  // placed at jxs[0], like in the standard, and the beginning of the xs array in
+  // jxs[1]. For this continuous S(a,b) representation, we set nxs[6] = 3;
+  xss.reserve(xss.size() + 3*ii.egrid.size() + 1);
+  jxs[0] = static_cast<int32_t>(xss.size() + 1);
+  nxs[6] = 3;
+
+  xss.push_back(static_cast<double>(ii.egrid.size())); // First write number of points
+  for (const auto& E : ii.egrid) xss.push_back(E * EV_TO_MEV); // Now write energy grid
+
   jxs[1] = static_cast<int32_t>(xss.size() + 1);
-
-  for (const auto& E : ii.egrid) xss.push_back(E * EV_TO_MEV);
   for (const auto& xs : ii.xs) xss.push_back(xs);
-  nxs[6] = static_cast<int32_t>(ii.egrid.size());
 
-  // Starting index of the beta distribution pointers.
+  // Starting index of the beta distribution pointers., which we store in jxs[2].
   const std::size_t BptrsStart = xss.size();
+  jxs[2] = static_cast<int32_t>(BptrsStart + 1);
 
   // For each point in the energy grid, we add a "pointer" to the associated beta
   // distribution. We initialize these pointers to all be zero.
@@ -362,19 +355,24 @@ void write_to_ace(const LinearizedIncoherentInelastic& ii,
   //=============================================================================
   // Coherent Elastic
   //-----------------------------------------------------------------------------
-  // We place the number of Bragg edges in nxs[7]. If There are no Bragg Edges,
-  // then there is no coherent elastic data. If there is this data, the place the
-  // Bragg edges and then structure factor sums at jxs[2].
+  // If there is Coherent Elastic scattering, the locator goes in jxs[3], like in
+  // the standard format. If jxs[3] = 0, then there is no Coherent Elastic
+  // scattering
   if (ce) {
+    jxs[3] = static_cast<int32_t>(xss.size() + 1);
     const std::size_t NBE = ce->bragg_edges().size();
-    nxs[7] = static_cast<int32_t>(NBE);
-    jxs[2] = static_cast<int32_t>(xss.size());
 
     // Reserve the needed space for CE
-    xss.reserve(xss.size() + 2*NBE);
+    xss.reserve(xss.size() + 2*NBE + 1);
+
+    // First, write number of Bragg Edges
+    xss.push_back(static_cast<double>(NBE));
 
     // Write Bragg edges
     for (const auto& E : ce->bragg_edges()) xss.push_back(E * EV_TO_MEV);
+
+    // Save the index to the structure factor sums in jxs[4].
+    jxs[4] = static_cast<int32_t>(xss.size() + 1);
 
     // Get the structure factors for the desired temperature
     std::vector<double> S = ce->interpolate_structure_factors(T);
@@ -382,16 +380,18 @@ void write_to_ace(const LinearizedIncoherentInelastic& ii,
     // Write the structure factors
     for (const auto& s : S) xss.push_back(s * EV_TO_MEV);
   } else {
-    nxs[7] = 0;
-    jxs[2] = 0;
+    jxs[3] = 0;
+    jxs[4] = 0;
   }
   
   //=============================================================================
   // Incoherent Elastic
   //-----------------------------------------------------------------------------
-  // Place the starting index at jxs[3].
+  // Place the starting index for Incoherent Elastic at jxs[6]. This aligns with
+  // the mixed elastic mode in the new ACE format, but here, even if only
+  // Incoherent Elastic is present, the locator for this channel will be here.
   if (ie) {
-    jxs[3] = static_cast<int32_t>(xss.size());
+    jxs[6] = static_cast<int32_t>(xss.size() + 1);
 
     // We first write the bound xs, then the Debye-Waller integral for the
     // temperature of interest.
@@ -399,8 +399,20 @@ void write_to_ace(const LinearizedIncoherentInelastic& ii,
     xss.push_back(ie->bound_xs());
     xss.push_back(ie->W()(T));
   } else {
-    jxs[3] = 0;
+    jxs[6] = 0;
   }
+
+  //=============================================================================
+  // TOTAL THERMAL SCATTERING XS
+  //-----------------------------------------------------------------------------
+  // We now write the total thermal scattering xs to the xss, and record the
+  // number of energy points in nxs[8], and the start index in jxs[9]. Neither of
+  // these should be in use in the old or new ACE standard for TSLs.
+  nxs[8] = static_cast<int32_t>(txs.x.size());
+  jxs[9] = static_cast<int32_t>(xss.size() + 1);
+  xss.reserve(2*txs.x.size());
+  for (const auto& E : txs.x) xss.push_back(E * EV_TO_MEV);
+  for (const auto& xs : txs.y) xss.push_back(xs);
 
   // The total size of the xss goes into nxs[0]
   nxs[0] = static_cast<int32_t>(xss.size());
