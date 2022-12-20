@@ -31,7 +31,7 @@ STCoherentElastic::STCoherentElastic(const ACE& ace)
     : bragg_edges_(), structure_factor_sum_() {
   // Fist make sure ACE file does indeed give coherent elastic scattering
   int32_t elastic_mode = ace.nxs(4);
-  if (elastic_mode == 4) {
+  if (elastic_mode == 4 || elastic_mode == 5) {
     // Get index to Bragg edge and structure data
     std::size_t i = static_cast<std::size_t>(ace.jxs(3) - 1);
     uint32_t Ne = ace.xss<uint32_t>(i);
