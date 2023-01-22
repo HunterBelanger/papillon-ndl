@@ -124,10 +124,10 @@ endif()
 # If building the Python bindings
 if(PNDL_PYTHON)
   # Require download of Pybind11
-  message(STATUS "Downloading pybind11 v2.10.0")
+  message(STATUS "Downloading pybind11 v2.10.3")
   FetchContent_Declare(pybind11
     GIT_REPOSITORY https://github.com/pybind/pybind11
-    GIT_TAG        v2.10.0
+    GIT_TAG        v2.10.3
   )
   FetchContent_MakeAvailable(pybind11)
 
