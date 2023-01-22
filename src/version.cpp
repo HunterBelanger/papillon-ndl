@@ -25,7 +25,7 @@
 namespace pndl {
 const unsigned int VERSION_MAJOR = 0;
 const unsigned int VERSION_MINOR = 3;
-const unsigned int VERSION_PATCH = 0;
+const unsigned int VERSION_PATCH = 1;
 const bool VERSION_DEVELOPMENT = false;
-const char* VERSION_STRING = "0.3.0";
+const char* VERSION_STRING = "0.3.1";
 }  // namespace pndl

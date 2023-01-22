@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.11)
 
 project(PapillonNDL
-  VERSION "0.2.1"
+  VERSION "0.3.1"
   DESCRIPTION "Library to interact with ACE nuclear data files."
   LANGUAGES CXX
 )
