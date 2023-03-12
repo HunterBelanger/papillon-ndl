@@ -268,7 +268,7 @@ class URRPTables {
    */
   bool energy_in_range(double E) const {
     if (energy_->size() < 2) return false;
-    return (this->min_energy() < E) && (E < this->max_energy());
+    return (this->min_energy() <= E) && (E <= this->max_energy());
   }
 
   /**
