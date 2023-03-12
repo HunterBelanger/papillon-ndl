@@ -108,12 +108,22 @@ class URRPTables {
       return std::nullopt;
     }
 
+    if (E < energy_->front() || E > energy_->back()) {
+      return std::nullopt;
+    }
+
     // Find the energy index for sampling band
     std::size_t iE = 0;
     double f = 0.;
     auto Eit = std::lower_bound(energy_->begin(), energy_->end(), E);
-    if (Eit == energy_->begin() || Eit == energy_->end()) {
-      return std::nullopt;
+    if (E == *Eit) {
+      if (Eit == --energy_->end()) {
+        iE = static_cast<std::size_t>(std::distance(energy_->begin(), Eit) - 1);
+        f = 1.;
+      } else {
+        iE = static_cast<std::size_t>(std::distance(energy_->begin(), Eit));
+        f = 0.;
+      }
     } else {
       iE = static_cast<std::size_t>(std::distance(energy_->begin(), Eit) - 1);
 
