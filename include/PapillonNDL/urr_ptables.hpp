@@ -40,8 +40,6 @@
 #include <optional>
 #include <vector>
 
-#include "PapillonNDL/pndl_exception.hpp"
-
 namespace pndl {
 
 /**
