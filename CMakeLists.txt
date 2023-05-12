@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.11)
 
 project(PapillonNDL
-  VERSION "0.2.1"
+  VERSION "0.3.1"
   DESCRIPTION "Library to interact with ACE nuclear data files."
   LANGUAGES CXX
 )
@@ -123,10 +123,10 @@ endif()
 # If building the Python bindings
 if(PNDL_PYTHON)
   # Require download of Pybind11
-  message(STATUS "Downloading pybind11 v2.10.0")
+  message(STATUS "Downloading pybind11 v2.10.3")
   FetchContent_Declare(pybind11
     GIT_REPOSITORY https://github.com/pybind/pybind11
-    GIT_TAG        v2.10.0
+    GIT_TAG        v2.10.3
   )
   FetchContent_MakeAvailable(pybind11)
 

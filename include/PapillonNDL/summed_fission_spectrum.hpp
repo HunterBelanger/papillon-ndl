@@ -1,6 +1,6 @@
 /*
  * Papillon Nuclear Data Library
- * Copyright 2021-2022, Hunter Belanger
+ * Copyright 2021-2023, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -49,9 +49,9 @@ class SummedFissionSpectrum : public AngleEnergy {
  public:
   /**
    * @param mt19 Pointer to STReaction for first chance fission.
-   * @param mt20 Pointer to STReaction for first chance fission.
-   * @param mt21 Pointer to STReaction for first chance fission.
-   * @param mt38 Pointer to STReaction for first chance fission.
+   * @param mt20 Pointer to STReaction for second chance fission.
+   * @param mt21 Pointer to STReaction for third chance fission.
+   * @param mt38 Pointer to STReaction for fourth chance fission.
    */
   SummedFissionSpectrum(std::shared_ptr<STReaction> mt19,
                         std::shared_ptr<STReaction> mt20,
