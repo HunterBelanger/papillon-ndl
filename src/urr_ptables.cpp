@@ -168,14 +168,17 @@ URRPTables::URRPTables(const ACE& ace, const CrossSection& total,
 
     for (std::size_t ipt = 0; ipt < Nptables; ipt++) {
       ptables_->back().xs_bands[ipt].heating = ace.xss(indx + ipt);
-      if (ptables_->back().xs_bands[ipt].heating < 0.) {
+      // Currently don't check for negative heating numbers in the cross
+      // sections so for consistency, shouldn't check here. Leaving source
+      // here for future improvements to the customization of error checking.
+      /*if (ptables_->back().xs_bands[ipt].heating < 0.) {
         std::stringstream mssg;
         mssg << "Nevative heating number in xs band index " << ipt;
         mssg << " and incident energy " << (*energy_)[ie] << " MeV (index ";
         mssg << ie << "). Value of heating number is " << std::scientific
              << ptables_->back().xs_bands[ipt].heating << ".";
         throw PNDLException(mssg.str());
-      }
+      }*/
     }
     indx += Nptables;
   }
