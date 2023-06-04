@@ -1,6 +1,6 @@
 /*
  * Papillon Nuclear Data Library
- * Copyright 2021-2022, Hunter Belanger
+ * Copyright 2021-2023, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -27,9 +27,10 @@
  */
 
 #include "short_collision_time_sab.hpp"
-#include "gauss_kronrod.hpp"
 
 #include <cmath>
+
+#include "gauss_kronrod.hpp"
 
 double ShortCollisionTimeSab::operator()(double a, double b) const {
   b = std::abs(b);

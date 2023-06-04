@@ -1,6 +1,6 @@
 /*
  * Papillon Nuclear Data Library
- * Copyright 2021-2022, Hunter Belanger
+ * Copyright 2021-2023, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -28,24 +28,20 @@
  * @author Hunter Belanger
  */
 
-#include "incoherent_inelastic.hpp"
-#include "incoherent_elastic.hpp"
-#include "coherent_elastic.hpp"
-
-
 #include <algorithm>
-#include <memory>
 #include <filesystem>
+#include <memory>
 #include <string>
+
+#include "coherent_elastic.hpp"
+#include "incoherent_elastic.hpp"
+#include "incoherent_inelastic.hpp"
 
 void write_to_ace(const LinearizedIncoherentInelastic& ii,
                   const std::unique_ptr<IncoherentElastic>& ie,
                   const std::unique_ptr<CoherentElastic>& ce,
-                  const std::string& zaid,
-                  const double& awr,
-                  const double& T,
-                  const std::string& comments,
-                  const int& mat,
+                  const std::string& zaid, const double& awr, const double& T,
+                  const std::string& comments, const int& mat,
                   const std::filesystem::path& fname);
 
 #endif

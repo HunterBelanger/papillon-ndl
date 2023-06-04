@@ -1,6 +1,6 @@
 /*
  * Papillon Nuclear Data Library
- * Copyright 2021-2022, Hunter Belanger
+ * Copyright 2021-2023, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -28,49 +28,27 @@
  * @author Hunter Belanger
  */
 
+#include <ENDFtk/section/7.hpp>
+
 #include "interpolator.hpp"
 #include "sab.hpp"
 #include "short_collision_time_sab.hpp"
-
-#include <ENDFtk/section/7.hpp>
 using namespace njoy::ENDFtk;
-
-#include <ndarray.hpp>
 
 #include <vector>
 
 /**
- * @brief This class respresents a tabulated \f$S(\alpha,\beta)\f$ function, as
- *        is typically provided in File 7 Section 4 of ENDF evaulations.
+ * @brief This class respresents a tabulated \f$S(\alpha,\beta)\f$ function.
  **/
 class TabulatedSab : public Sab {
  public:
   /**
-   * @param TSL The TabulatedFunctions from ENDFtk, containing the tabulated
-   *        \f$S(\alpha,\beta)\f$.
-   * @param indx_T The index corresponding to temperature T, for the data in
-   *        the TSL.
    * @param T Temperature of the scattering law to be read, in K.
    * @param Teff Effective temperature for the Short Collision Time
    *        approximation, in K.
-   * @param LAT Flag indicating that the \f$\alpha\f$ and \f$\beta\f$ grids
-   *            are calculated at room temperature (when LAT = 1).
-   * @param LASYM Flag indicating that the scattering law is asymmetric in
-   *        \f$\beta\f$, and negative values are explicitly tabulated (when
-   *        LASYM = 1).
-   * @param LLN Flag indicating that \f$\ln(S)\f$ is stored in the tabulation,
-   *        instead of \f$S\f$ directly (when LLN = 1).
+   * @param A Atomic weight ratio of the primary scattering nuclide.
    **/
-  TabulatedSab(section::Type<7, 4>::TabulatedFunctions& TSL, std::size_t indx_T,
-               double T, double Teff, double A, int LAT, int LASYM, int LLN);
-
-  double operator()(double a, double b) const override final;
-
-  double integrate_alpha(double a_low, double a_hi,
-                         double b) const override final;
-
-  double integrate_exp_beta(double E, double b_low,
-                            double b_hi) const override final;
+  TabulatedSab(double T, double Teff, double A) : Sab(T, A), sct_(T, Teff, A) {}
 
   /**
    * @brief Returns a reference to the ShortCollisionTimeSab which is used for
@@ -91,38 +69,27 @@ class TabulatedSab : public Sab {
   const std::vector<double>& beta() const { return beta_; }
 
   /**
-   * @breif Returns a reference to the \f$\beta\f$ interpolation boundaries.
+   * @brief Returns a reference to the \f$\beta\f$ interpolation boundaries.
    */
   const std::vector<long>& beta_boundaries() const { return beta_bounds_; }
 
   /**
-   * @breif Returns a reference to the \f$\beta\f$ Interpolator instances.
+   * @brief Returns a reference to the \f$\beta\f$ Interpolator instances.
    */
-  const std::vector<Interpolator>& beta_interpolators() const { return beta_interps_; }
+  const std::vector<Interpolator>& beta_interpolators() const {
+    return beta_interps_;
+  }
 
   /**
    * @brief Returns a reference to the \f$\alpha\f$ grid.
    */
-  const std::vector<double>&alpha() const { return alpha_; }
+  const std::vector<double>& alpha() const { return alpha_; }
 
-  /**
-   * @breif Returns a reference to the \f$\alpha\f$ interpolation boundaries.
-   */
-  const std::vector<long>& alpha_boundaries() const { return alpha_bounds_; }
-
-  /**
-   * @breif Returns a reference to the \f$\alpha\f$ Interpolator instances.
-   */
-  const std::vector<Interpolator>& alpha_interpolators() const { return alpha_interps_; }
-
- private:
+ protected:
   std::vector<double> beta_;
   std::vector<long> beta_bounds_;
   std::vector<Interpolator> beta_interps_;
   std::vector<double> alpha_;
-  std::vector<long> alpha_bounds_;
-  std::vector<Interpolator> alpha_interps_;
-  NDArray<double> data_;
   ShortCollisionTimeSab sct_;
   bool symmetric_;
 };

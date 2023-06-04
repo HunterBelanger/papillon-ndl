@@ -1,6 +1,6 @@
 /*
  * Papillon Nuclear Data Library
- * Copyright 2021-2022, Hunter Belanger
+ * Copyright 2021-2023, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -29,10 +29,13 @@
  */
 
 constexpr double KB = 8.617333262E-5;  // Boltzmann Constant [eV / K]
-constexpr double EV_TO_MEV = 1.0E-6; // 10^(-6) MeV / eV = 1
+constexpr double EV_TO_MEV = 1.0E-6;   // 10^(-6) MeV / eV = 1
 constexpr double K_TO_MEV = KB * EV_TO_MEV;
 constexpr double TROOM = 0.0253 / KB;  // Room Temperature [K]
 constexpr double PI = 3.1415926535897932384626433832795028841971694;
 constexpr double SCT_CUTOFF = 1.921947727823849e-98;  // exp(-225)
+constexpr double MIN_ALPHA = 1.E-8;
+constexpr double BETA_INTEGRAL_TOL = 0.0001;
+constexpr double ALPHA_INTEGRAL_TOL = 0.001;
 
 #endif

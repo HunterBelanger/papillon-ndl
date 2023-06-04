@@ -1,6 +1,6 @@
 /*
  * Papillon Nuclear Data Library
- * Copyright 2021-2022, Hunter Belanger
+ * Copyright 2021-2023, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -32,7 +32,8 @@
 #include <stdexcept>
 #include <vector>
 
-inline double trapezoid(const std::vector<double>& x, const std::vector<double>& y) {
+inline double trapezoid(const std::vector<double>& x,
+                        const std::vector<double>& y) {
   // Do checks on vectors
   if (x.size() != y.size()) {
     throw std::runtime_error("x and y must have the same length.");
@@ -48,8 +49,8 @@ inline double trapezoid(const std::vector<double>& x, const std::vector<double>&
 
   double integral = 0;
 
-  for (std::size_t i = 0; i < x.size()-1; i++) {
-    integral += 0.5*(y[i] + y[i+1]) * (x[i+1] - x[i]);
+  for (std::size_t i = 0; i < x.size() - 1; i++) {
+    integral += 0.5 * (y[i] + y[i + 1]) * (x[i + 1] - x[i]);
   }
 
   return integral;

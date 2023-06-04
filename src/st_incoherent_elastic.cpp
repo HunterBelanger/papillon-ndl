@@ -21,33 +21,28 @@
  *
  * */
 #include <PapillonNDL/pndl_exception.hpp>
-#include <PapillonNDL/st_coherent_elastic.hpp>
-#include <cstdint>
-
-#include "constants.hpp"
+#include <PapillonNDL/st_incoherent_elastic.hpp>
+#include <string>
 
 namespace pndl {
 
-STCoherentElastic::STCoherentElastic(const ACE& ace)
-    : bragg_edges_(), structure_factor_sum_() {
-  // Fist make sure ACE file does indeed give coherent elastic scattering
-  int32_t elastic_mode = ace.nxs(4);
-  if (elastic_mode == 4 || elastic_mode == 5 ||
-      (elastic_mode == 6 && ace.jxs(3) != 0)) {
-    // Get index to Bragg edge and structure data
-    std::size_t i = static_cast<std::size_t>(ace.jxs(3) - 1);
-    uint32_t Ne = ace.xss<uint32_t>(i);
-    bragg_edges_ = ace.xss(i + 1, Ne);
-    structure_factor_sum_ = ace.xss(i + 1 + Ne, Ne);
+STIncoherentElastic::STIncoherentElastic(const ACE& ace) : xs_(-1.), W_(0.) {
+  const int32_t elastic_mode = ace.nxs(4);
+  if (elastic_mode == 3 || elastic_mode == 5) {
+    std::string mssg = "Cannot construct from ACE TSL file.";
+    throw PNDLException(mssg);
+  } else if (elastic_mode == 6 && ace.jxs(6) != 0) {
+    std::size_t i = static_cast<std::size_t>(ace.jxs(6) - 1);
+    xs_ = ace.xss(i);
+    W_ = ace.xss(i + 1);
 
-    // Make sure Bragg edges are all positive and sorted
-    if (!std::is_sorted(bragg_edges_.begin(), bragg_edges_.end())) {
-      std::string mssg = "Bragg edges are not sorted.";
+    if (xs_ <= 0.) {
+      std::string mssg = "Characteristic bound cross section is <= 0.";
       throw PNDLException(mssg);
     }
 
-    if (bragg_edges_.front() < 0.) {
-      std::string mssg = "Negative Bragg edges found.";
+    if (W_ <= 0.) {
+      std::string mssg = "Debye-Waller integral is <= 0.";
       throw PNDLException(mssg);
     }
   }

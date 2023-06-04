@@ -21,8 +21,11 @@
  *
  * */
 #include <PapillonNDL/st_coherent_elastic.hpp>
+#include <PapillonNDL/st_incoherent_elastic.hpp>
 #include <PapillonNDL/st_incoherent_elastic_ace.hpp>
 #include <PapillonNDL/st_thermal_scattering_law.hpp>
+
+#include "PapillonNDL/pndl_exception.hpp"
 
 namespace pndl {
 
@@ -66,9 +69,18 @@ STThermalScatteringLaw::STThermalScatteringLaw(const ACE& ace,
     if (elastic_mode == 0) {
       incoherent_elastic_ = std::make_shared<STIncoherentElasticACE>(ace);
       has_incoherent_elastic_ = false;
-    } else if (elastic_mode == 4 || elastic_mode == 5) {
+    } else if (elastic_mode == 3 || elastic_mode == 5) {
       incoherent_elastic_ = std::make_shared<STIncoherentElasticACE>(ace);
       has_incoherent_elastic_ = true;
+    } else if (elastic_mode == 6 && ace.jxs(6) != 0) {
+      incoherent_elastic_ = std::make_shared<STIncoherentElastic>(ace);
+      has_incoherent_elastic_ = true;
+    } else if (elastic_mode == 6) {
+      incoherent_elastic_ = std::make_shared<STIncoherentElastic>(ace);
+      has_incoherent_elastic_ = false;
+    } else {
+      std::string mssg = "Unrecognized elastic mode in TSL ACE.";
+      throw PNDLException(mssg);
     }
   } catch (PNDLException& err) {
     std::string mssg =

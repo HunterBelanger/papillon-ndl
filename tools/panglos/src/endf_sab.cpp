@@ -1,6 +1,6 @@
 /*
  * Papillon Nuclear Data Library
- * Copyright 2021-2022, Hunter Belanger
+ * Copyright 2021-2023, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -26,36 +26,29 @@
  * @author Hunter Belanger
  */
 
-#include "tabulated_sab.hpp"
-#include "constants.hpp"
-#include "gauss_kronrod.hpp"
-#include "interpolator.hpp"
-
+#include "endf_sab.hpp"
 
 #include <algorithm>
 #include <cmath>
 #include <exception>
+#include <range/v3/to_container.hpp>  // Allows us to use ranges::to<cont<type>>(range);
+#include <sstream>
 #include <stdexcept>
 
-
-#include <range/v3/to_container.hpp>  // Allows us to use ranges::to<cont<type>>(range);
+#include "constants.hpp"
+#include "gauss_kronrod.hpp"
+#include "interpolator.hpp"
 
 using ScatteringFunction =
     section::Type<7, 4>::TabulatedFunctions::ScatteringFunction;
 
-TabulatedSab::TabulatedSab(section::Type<7, 4>::TabulatedFunctions& TSL,
-                           std::size_t indx_T, double T, double Teff, double A,
-                           int LAT, int LASYM, int LLN)
-    : Sab(T, A),
-      beta_(),
-      beta_bounds_(),
-      beta_interps_(),
-      alpha_(),
-      alpha_bounds_(),
-      alpha_interps_(),
-      data_(),
-      sct_(T, Teff, A),
-      symmetric_(LASYM == 0) {
+ENDFSab::ENDFSab(section::Type<7, 4>::TabulatedFunctions& TSL,
+                 std::size_t indx_T, double T, double Teff, double A, int LAT,
+                 int LASYM, int LLN)
+    : TabulatedSab(T, Teff, A), alpha_bounds_(), alpha_interps_(), data_() {
+  // First, set symmetric_ in the TabulatedSab base class
+  symmetric_ = (LASYM == 0);
+
   // Get the grid of beta values
   beta_ = ranges::to<std::vector<double>>(TSL.betas());
 
@@ -142,7 +135,7 @@ TabulatedSab::TabulatedSab(section::Type<7, 4>::TabulatedFunctions& TSL,
   }
 }
 
-double TabulatedSab::operator()(double a, double b) const {
+double ENDFSab::operator()(double a, double b) const {
   const double orig_b = b;
   if (symmetric_ && b < 0.) {
     b = -b;
@@ -240,13 +233,21 @@ double TabulatedSab::operator()(double a, double b) const {
   const double S_bh =
       alpha_interp.interpolate(a, alpha_low, S_bh_al, alpha_hi, S_bh_ah);
   const double S = beta_interp.interpolate(b, beta_low, S_bl, beta_hi, S_bh);
+
+  if (std::isfinite(S) == false) {
+    std::stringstream mssg;
+    mssg.precision(15);
+    mssg << "Calculated S = " << S << " for a = " << a << ", b = " << orig_b
+         << ".\n";
+    throw std::runtime_error(mssg.str());
+  }
+
   return S;
 }
 
-double TabulatedSab::integrate_alpha(double a_low, double a_hi,
-                                     double b) const {
+double ENDFSab::integrate_alpha(double a_low, double a_hi, double b) const {
   if (a_low == a_hi) return 0.;
-  
+
   auto S = [&, b](double a) { return (*this)(a, b); };
 
   bool flipped = false;
@@ -268,12 +269,14 @@ double TabulatedSab::integrate_alpha(double a_low, double a_hi,
   alpha_bounds.emplace_back(a_hi);
 
   GaussKronrodQuadrature<21> GK;
-  //GaussKronrodQuadrature<15> GK;
+  // GaussKronrodQuadrature<15> GK;
   double integral = 0.;
 
   for (std::size_t i = 0; i < alpha_bounds.size() - 1; i++) {
-    integral += GK.integrate(S, alpha_bounds[i], alpha_bounds[i + 1], 1.49E-8, 10) .first;
-    //integral += GK.integrate(S, alpha_bounds[i], alpha_bounds[i+1]).first;
+    integral +=
+        GK.integrate(S, alpha_bounds[i], alpha_bounds[i + 1], 1.49E-8, 10)
+            .first;
+    // integral += GK.integrate(S, alpha_bounds[i], alpha_bounds[i+1]).first;
   }
 
   if (flipped) integral = -integral;
@@ -281,8 +284,7 @@ double TabulatedSab::integrate_alpha(double a_low, double a_hi,
   return integral;
 }
 
-double TabulatedSab::integrate_exp_beta(double E, double b_low,
-                                        double b_hi) const {
+double ENDFSab::integrate_exp_beta(double E, double b_low, double b_hi) const {
   if (b_low == b_hi) return 0.;
 
   auto expS = [&, E](double b) {
@@ -309,12 +311,14 @@ double TabulatedSab::integrate_exp_beta(double E, double b_low,
   beta_bounds.emplace_back(b_hi);
 
   GaussKronrodQuadrature<21> GK;
-  //GaussKronrodQuadrature<15> GK;
+  // GaussKronrodQuadrature<15> GK;
   double integral = 0.;
 
   for (std::size_t i = 0; i < beta_bounds.size() - 1; i++) {
-    integral += GK.integrate(expS, beta_bounds[i], beta_bounds[i + 1], 1.49E-8, 10) .first;
-    //integral += GK.integrate(expS, beta_bounds[i], beta_bounds[i+1]).first;
+    integral +=
+        GK.integrate(expS, beta_bounds[i], beta_bounds[i + 1], 1.49E-8, 10)
+            .first;
+    // integral += GK.integrate(expS, beta_bounds[i], beta_bounds[i+1]).first;
   }
 
   if (flipped) integral = -integral;

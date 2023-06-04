@@ -22,6 +22,7 @@
  * */
 #include <PapillonNDL/pndl_exception.hpp>
 #include <PapillonNDL/st_incoherent_elastic_ace.hpp>
+#include <string>
 
 namespace pndl {
 
@@ -89,8 +90,11 @@ STIncoherentElasticACE::STIncoherentElasticACE(const ACE& ace)
 
       cosines_.push_back(cosines_for_ie);
     }  // For all incoming energies
+  } else if (elastic_mode == 6 && ace.jxs(6) != 0) {
+    std::string mssg = "Cannot construct from Panglos ACE TSL file.";
+    throw PNDLException(mssg);
   } else {
-    // Make a zero xs incase a user try to get the XS
+    // Make a zero xs incase a user tries to get the XS
     std::vector<double> E(2, 0.);
     E[1] = 100.;
     std::vector<double> xs_vals(2, 0.);
