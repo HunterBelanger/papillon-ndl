@@ -1,6 +1,6 @@
 /*
  * Papillon Nuclear Data Library
- * Copyright 2021-2022, Hunter Belanger
+ * Copyright 2021-2023, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -147,10 +147,14 @@ class Sab {
    */
   double min_alpha(double E, double b) const {
     const double sqrt_num =
-        std::sqrt(E) - std::sqrt(std::fmax(E + b * KB * T_, 0.));
+        std::sqrt(E) - std::sqrt(std::max(E + b * KB * T_, 0.));
     const double num = sqrt_num * sqrt_num;
     const double denom = A_ * KB * T_;
-    return num / denom;
+    const double amin = num / denom;
+
+    if (amin < MIN_ALPHA) return MIN_ALPHA;
+
+    return amin;
   }
 
   /**
@@ -161,7 +165,7 @@ class Sab {
    */
   double max_alpha(double E, double b) const {
     const double sqrt_num =
-        std::sqrt(E) + std::sqrt(std::fmax(E + b * KB * T_, 0.));
+        std::sqrt(E) + std::sqrt(std::max(E + b * KB * T_, 0.));
     const double num = sqrt_num * sqrt_num;
     const double denom = A_ * KB * T_;
     return num / denom;

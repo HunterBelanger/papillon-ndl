@@ -1,6 +1,6 @@
 /*
  * Papillon Nuclear Data Library
- * Copyright 2021-2022, Hunter Belanger
+ * Copyright 2021-2023, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -26,13 +26,7 @@
  * @author Hunter Belanger
  */
 
-#include "coherent_elastic.hpp"
-#include "incoherent_elastic.hpp"
-#include "incoherent_inelastic.hpp"
-#include "linearize.hpp"
-#include "ace.hpp"
-
-
+#include <ENDFtk.hpp>
 #include <algorithm>
 #include <cstddef>
 #include <iomanip>
@@ -42,35 +36,41 @@
 #include <string>
 #include <variant>
 
-
-#include <ENDFtk.hpp>
+#include "ace.hpp"
+#include "coherent_elastic.hpp"
+#include "incoherent_elastic.hpp"
+#include "incoherent_inelastic.hpp"
+#include "linearize.hpp"
 using namespace njoy::ENDFtk;
 #include <Log.hpp>
 using namespace njoy;
-#include <boost/hana.hpp>  // Needed for the _c literal for constructing mt4
 #include <docopt.h>
+
+#include <boost/hana.hpp>  // Needed for the _c literal for constructing mt4
 
 #define VERSION_STRING "0.1.0"
 
 static const std::string version =
-  "Panglos : A Thermal Scattering Law Processor\n"
-  "Version " VERSION_STRING "\n\n"
+    "Panglos : A Thermal Scattering Law Processor\n"
+    "Version " VERSION_STRING
+    "\n\n"
 
-  "Copyright (C) 2022 Hunter Belanger.\n"
-  "Released under the terms and conditions of the GPLv3 license.\n"
-  "Written by Hunter Belanger.\n";
+    "Copyright (C) 2022 Hunter Belanger.\n"
+    "Released under the terms and conditions of the GPLv3 license.\n"
+    "Written by Hunter Belanger.\n";
 
 static const std::string usage =
-  "Usage:\n"
-  "  panglos process [--pedantic] <fname> <mat> <temp> <zaid> <comments> <acefname>\n"
-  "  panglos temps <fname> <mat>\n"
-  "  panglos (-h | --help)\n"
-  "  panglos (-v | --version)\n\n"
-  
-  "Options:\n"
-  "  -p --pedantic  Perform pedantic checks on distribution linearization\n"
-  "  -h --help      Show this help message\n"
-  "  -v --version   Show version number\n";
+    "Usage:\n"
+    "  panglos process [--pedantic] <fname> <temp> <zaid> <comments> "
+    "<acefname>\n"
+    "  panglos temps <fname>\n"
+    "  panglos (-h | --help)\n"
+    "  panglos (-v | --version)\n\n"
+
+    "Options:\n"
+    "  -p --pedantic  Perform pedantic checks on distribution linearization\n"
+    "  -h --help      Show this help message\n"
+    "  -v --version   Show version number\n";
 
 static const std::string help = version + '\n' + usage;
 
@@ -105,30 +105,34 @@ int main(const int argc, const char** argv) {
 
   // Read parameters
   const std::string fname = args["<fname>"].asString();
-  const int MAT = static_cast<int>(args["<mat>"].asLong());
   const bool get_temps = args["temps"].asBool();
   const bool pedantic = args["--pedantic"].asBool();
-  
+
+  // Read ENDF file, and get MF7
+  tree::Tape<std::string> endf = tree::fromFile(fname);
+
+  // Get the mat
+  const int MAT = endf.materialNumbers()[0];
+
+  // Get MF7
+  file::Type<7> mf7 = endf.material(MAT).front().file(7).parse<7>();
+
+  // First read incoherent inelastic, which must be present
+  section::Type<7, 4> mt4 = mf7.section(4_c);
 
   // Write run options
   Log::info("");
   Log::info("Panglos : A Thermal Scattering Law Processor");
   Log::info("-----------------------------------------------------------");
-  Log::info("Copyright (C) 2022 Hunter Belanger");
+  Log::info("Copyright (C) 2022-2023 Hunter Belanger");
   Log::info("Released under the terms and conditions of the GPLv3.");
   Log::info("");
   Log::info("File Name:   {}", fname);
-  Log::info("MAT:         {}", MAT); 
+  Log::info("MAT:         {}", MAT);
 
   //=============================================================================
   // Check if we were asked to just list the temperatures
   if (get_temps) {
-    // Read ENDF file, and get MF7
-    tree::Tape<std::string> endf = tree::fromFile(fname);
-    file::Type<7> mf7 = endf.material(MAT).front().file(7).parse<7>();
-
-    // First read incoherent inelastic, which must be present
-    section::Type<7, 4> mt4 = mf7.section(4_c);
     IncoherentInelastic ii(mt4);
 
     std::stringstream temps;
@@ -137,7 +141,7 @@ int main(const int argc, const char** argv) {
     for (std::size_t i = 0; i < NT; i++) {
       temps << std::fixed << std::setprecision(1);
       temps << ii.temperatures()[i];
-      if (i != NT-1) {
+      if (i != NT - 1) {
         temps << ", ";
       }
     }
@@ -173,12 +177,6 @@ int main(const int argc, const char** argv) {
   }
   comments.resize(70, ' ');
 
-  // Read ENDF file, and get MF7
-  tree::Tape<std::string> endf = tree::fromFile(fname);
-  file::Type<7> mf7 = endf.material(MAT).front().file(7).parse<7>();
-
-  // First read incoherent inelastic, which must be present
-  section::Type<7, 4> mt4 = mf7.section(4_c);
   IncoherentInelastic ii(mt4);
 
   // Check for our temperature
@@ -201,7 +199,7 @@ int main(const int argc, const char** argv) {
   std::unique_ptr<CoherentElastic> ce = nullptr;
   std::unique_ptr<IncoherentElastic> ie = nullptr;
   read_elastic(mf7, ce, ie);
-  
+
   // Linearize the Incoherent Inelastic xs and distribution
   LinearizedIncoherentInelastic lii = linearize_ii(ii, Ti, pedantic);
 

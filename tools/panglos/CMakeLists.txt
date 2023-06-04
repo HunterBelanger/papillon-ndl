@@ -46,7 +46,7 @@ FetchContent_MakeAvailable(
 add_executable(panglos src/main.cpp
                        src/short_collision_time_sab.cpp
                        src/free_gas_sab.cpp
-                       src/tabulated_sab.cpp
+                       src/endf_sab.cpp
                        src/incoherent_inelastic.cpp
                        src/incoherent_elastic.cpp
                        src/coherent_elastic.cpp

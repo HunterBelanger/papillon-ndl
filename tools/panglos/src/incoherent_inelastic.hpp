@@ -1,6 +1,6 @@
 /*
  * Papillon Nuclear Data Library
- * Copyright 2021-2022, Hunter Belanger
+ * Copyright 2021-2023, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -122,8 +122,6 @@ class IncoherentInelastic {
   double bound_xs_;
   double Emin_;
   double Emax_;
-
-  void setup_ii(const section::Type<7, 4>& mt4);
 };
 
 struct AlphaDistribution {
@@ -132,16 +130,15 @@ struct AlphaDistribution {
 
 struct BetaDistribution {
   std::vector<double> beta, pdf, cdf;
-  std::vector<AlphaDistribution> alpha;
+  std::vector<AlphaDistribution> alpha_dists;
 };
 
 struct LinearizedIncoherentInelastic {
   std::vector<double> egrid, xs;
-  std::vector<BetaDistribution> beta;
+  std::vector<BetaDistribution> beta_dists;
 };
 
 LinearizedIncoherentInelastic linearize_ii(const IncoherentInelastic& ii,
-                                           std::size_t Ti,
-                                           bool pedantic);
+                                           std::size_t Ti, bool pedantic);
 
 #endif

@@ -69,6 +69,16 @@ ContinuousEnergyDiscreteCosines
 
 .. doxygenclass:: pndl::ContinuousEnergyDiscreteCosines
 
+BetaAlphaTable
+-------------------------------
+
+.. doxygenclass:: pndl::BetaAlphaTable
+
+DirectSab
+-------------------------------
+
+.. doxygenclass:: pndl::DirectSab
+
 Absorption
 ----------
 

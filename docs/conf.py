@@ -37,7 +37,7 @@ subprocess.call('doxygen Doxyfile.in', shell=True)
 extensions = [
   'sphinx.ext.autodoc',
   'sphinx.ext.intersphinx',
-  'sphinx.ext.autosectionlabel',
+  #'sphinx.ext.autosectionlabel', # Commented out to remove duplicate label warnings
   'sphinx.ext.todo',
   'sphinx.ext.coverage',
   'sphinx.ext.mathjax',
@@ -57,7 +57,7 @@ templates_path = ['_templates']
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
-highlight_language = 'c++'
+#highlight_language = 'c++' # Commenting this out removes raw text block warnings in GPLv3 rst
 
 
 # -- Options for HTML output -------------------------------------------------

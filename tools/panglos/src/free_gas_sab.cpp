@@ -1,6 +1,6 @@
 /*
  * Papillon Nuclear Data Library
- * Copyright 2021-2022, Hunter Belanger
+ * Copyright 2021-2023, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -27,9 +27,10 @@
  */
 
 #include "free_gas_sab.hpp"
-#include "gauss_kronrod.hpp"
 
 #include <cmath>
+
+#include "gauss_kronrod.hpp"
 
 double FreeGasSab::operator()(double a, double b) const {
   const double numerator = std::exp(-((a - b) * (a - b) / (4. * a)) - 0.5 * b);

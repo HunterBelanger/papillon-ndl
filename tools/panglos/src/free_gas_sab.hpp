@@ -1,6 +1,6 @@
 /*
  * Papillon Nuclear Data Library
- * Copyright 2021-2022, Hunter Belanger
+ * Copyright 2021-2023, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -50,8 +50,7 @@ class FreeGasSab : public Sab {
    * @param T Actual temperature in K.
    * @param A Atomic weigh ratio of the isotope.
    **/
-  FreeGasSab(double T, double A)
-      : Sab(T, A) {}
+  FreeGasSab(double T, double A) : Sab(T, A) {}
 
   double operator()(double a, double b) const override final;
 

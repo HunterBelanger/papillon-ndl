@@ -1,6 +1,6 @@
 /*
  * Papillon Nuclear Data Library
- * Copyright 2021-2022, Hunter Belanger
+ * Copyright 2021-2023, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -37,8 +37,10 @@ struct LinearizedFunction {
 
   double operator()(const double& ix) const {
     // Check if we are above or bellow min/max x
-    if (ix <= x.front()) return y.front();
-    else if (ix >= x.back()) return y.back();
+    if (ix <= x.front())
+      return y.front();
+    else if (ix >= x.back())
+      return y.back();
 
     // Get bounding x1 < x < x2
     const auto hi_it = std::lower_bound(x.begin(), x.end(), ix);
@@ -51,7 +53,61 @@ struct LinearizedFunction {
     const double y2 = y[i + 1];
 
     // Do interpolation and return the value
-    return ((y2 - y1)/(x2 - x1)) * (ix - x1) + y1;
+    return ((y2 - y1) / (x2 - x1)) * (ix - x1) + y1;
+  }
+
+  double integrate(double xl, double xh) const {
+    bool flipped = false;
+    if (xl > xh) {
+      flipped = true;
+      double tmp = xl;
+      xl = xh;
+      xh = tmp;
+    }
+
+    double integral = 0.;
+
+    if (xl < x.front()) {
+      throw std::runtime_error("Lower integration limit bellow tabulated min.");
+    }
+
+    if (xh > x.back()) {
+      throw std::runtime_error("Upper integration limit above tabulated max.");
+    }
+
+    // Get bounding x1 < x < x2
+    const auto hi_it = std::lower_bound(x.begin(), x.end(), xl);
+    const auto low_it = hi_it - 1;
+    std::size_t i = static_cast<std::size_t>(low_it - x.begin());
+
+    bool integrate = true;
+    while (integrate) {
+      double x1 = x[i];
+      double x2 = x[i + 1];
+      double y1 = y[i];
+      double y2 = y[i + 1];
+
+      if (x1 < xl) {
+        y1 = ((y2 - y1) / (x2 - x1)) * (xl - x1) + y1;
+        x1 = xl;
+      }
+
+      if (xh <= x2) {
+        y2 = ((y2 - y1) / (x2 - x1)) * (xh - x1) + y1;
+        x2 = xh;
+        integrate = false;
+      }
+
+      integral += 0.5 * (y2 + y1) * (x2 - x1);
+
+      i++;
+    }
+
+    if (flipped) {
+      integral = -integral;
+    }
+
+    return integral;
   }
 };
 

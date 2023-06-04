@@ -61,6 +61,11 @@ STIncoherentElasticACE
 
 .. doxygenclass:: pndl::STIncoherentElasticACE
 
+STIncoherentElastic
+----------------------
+
+.. doxygenclass:: pndl::STIncoherentElastic
+
 STIncoherentInelastic
 ---------------------
 

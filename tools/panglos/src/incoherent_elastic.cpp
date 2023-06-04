@@ -1,6 +1,6 @@
 /*
  * Papillon Nuclear Data Library
- * Copyright 2021-2022, Hunter Belanger
+ * Copyright 2021-2023, Hunter Belanger
  *
  * hunter.belanger@gmail.com
  *
@@ -27,10 +27,11 @@
  */
 
 #include "incoherent_elastic.hpp"
-#include "constants.hpp"
-#include "interpolator.hpp"
 
 #include <Log.hpp>
+
+#include "constants.hpp"
+#include "interpolator.hpp"
 using namespace njoy;
 
 #include <cmath>
@@ -44,7 +45,6 @@ IncoherentElastic::IncoherentElastic(
     : W_(makeTab1(ie.boundaries(), ie.interpolants(), ie.temperatures(),
                   ie.debyeWallerValues())),
       bound_xs_(ie.boundCrossSection()) {
-
   // Write Information
   Log::info("Incoherent Elastic");
   Log::info("------------------");
