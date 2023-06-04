@@ -28,9 +28,11 @@
 
 #include <PapillonNDL/absorption.hpp>
 #include <PapillonNDL/angle_energy.hpp>
+#include <PapillonNDL/beta_alpha_table.hpp>
 #include <PapillonNDL/cm_distribution.hpp>
 #include <PapillonNDL/continuous_energy_discrete_cosines.hpp>
 #include <PapillonNDL/cross_section.hpp>
+#include <PapillonNDL/direct_sab.hpp>
 #include <PapillonNDL/discrete_cosines_energies.hpp>
 #include <PapillonNDL/elastic.hpp>
 #include <PapillonNDL/elastic_dbrc.hpp>
@@ -45,6 +47,7 @@
 #include <PapillonNDL/tabular_energy_angle.hpp>
 #include <PapillonNDL/uncorrelated.hpp>
 #include <array>
+#include <memory>
 #include <optional>
 
 namespace py = pybind11;
@@ -250,6 +253,35 @@ void init_ContinuousEnergyDiscreteCosines(py::module& m) {
            &ContinuousEnergyDiscreteCosines::unit_based_interpolation)
       .def("angle_pdf", &ContinuousEnergyDiscreteCosines::angle_pdf)
       .def("pdf", &ContinuousEnergyDiscreteCosines::pdf);
+}
+
+void init_DirectSab(py::module& m) {
+  py::class_<AlphaBetaPacket>(m, "AlphaBetaPacket")
+      .def_readwrite("alpha", &AlphaBetaPacket::alpha)
+      .def_readwrite("beta", &AlphaBetaPacket::beta);
+
+  py::class_<BetaAlphaTable>(m, "BetaAlphaTable")
+      .def(py::init<const std::vector<double>&, const std::vector<double>&,
+                    const std::vector<double>&, const std::vector<PCTable>&>())
+      .def("sample_alpha_beta", &BetaAlphaTable::sample_alpha_beta)
+      .def("min_beta", &BetaAlphaTable::min_beta)
+      .def("max_beta", &BetaAlphaTable::max_beta)
+      .def("beta", &BetaAlphaTable::beta)
+      .def("pdf", &BetaAlphaTable::pdf)
+      .def("cdf", &BetaAlphaTable::cdf)
+      .def("alpha_table", &BetaAlphaTable::alpha_table)
+      .def("size", &BetaAlphaTable::size);
+
+  py::class_<DirectSab, AngleEnergy, std::shared_ptr<DirectSab>>(m, "DirectSab")
+      .def(py::init<const ACE&>())
+      .def("sample_angle_energy", &DirectSab::sample_angle_energy)
+      .def("angle_pdf", &DirectSab::angle_pdf)
+      .def("pdf", &DirectSab::pdf)
+      .def("incoming_energy", &DirectSab::incoming_energy)
+      .def("table", &DirectSab::table)
+      .def("temperature", &DirectSab::temperature)
+      .def("awr", &DirectSab::awr)
+      .def("size", &DirectSab::size);
 }
 
 void init_MultipleDistribution(py::module& m) {
