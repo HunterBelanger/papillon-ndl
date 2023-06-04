@@ -72,6 +72,10 @@ class EnergyAngleTable {
                    const std::vector<PCTable>& angle_tables);
   ~EnergyAngleTable() = default;
 
+  /**
+   * @brief Samples an outgoing angle and energy.
+   * @param rng Random number generator function.
+   */
   AngleEnergyPacket sample_angle_energy(
       const std::function<double()>& rng) const {
     double E_out, mu;

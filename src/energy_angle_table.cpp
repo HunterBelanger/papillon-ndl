@@ -50,6 +50,12 @@ EnergyAngleTable::EnergyAngleTable(const ACE& ace, std::size_t i,
     throw PNDLException(mssg);
   }
 
+  if (energy_.front() < 0.) {
+    std::string mssg = "Negative energies in EnergyAngleTable at index of " +
+                       std::to_string(i) + " in XSS.";
+    throw PNDLException(mssg);
+  }
+
   if (!std::is_sorted(cdf_.begin(), cdf_.end())) {
     std::string mssg =
         "CDF is not sorted. Index of EnergyAngleTable in XSS block is " +
@@ -124,6 +130,11 @@ EnergyAngleTable::EnergyAngleTable(const std::vector<double>& outgoing_energy,
 
   if (!std::is_sorted(energy_.begin(), energy_.end())) {
     std::string mssg = "Energies are not sorted.";
+    throw PNDLException(mssg);
+  }
+
+  if (energy_.front() < 0.) {
+    std::string mssg = "Negative energies in EnergyAngleTable.";
     throw PNDLException(mssg);
   }
 
