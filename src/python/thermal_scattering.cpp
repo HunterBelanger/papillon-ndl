@@ -26,6 +26,7 @@
 #include <pybind11/stl.h>
 
 #include <PapillonNDL/st_coherent_elastic.hpp>
+#include <PapillonNDL/st_incoherent_elastic.hpp>
 #include <PapillonNDL/st_incoherent_elastic_ace.hpp>
 #include <PapillonNDL/st_incoherent_inelastic.hpp>
 #include <PapillonNDL/st_thermal_scattering_law.hpp>
@@ -82,7 +83,7 @@ void init_STCoherentElastic(py::module& m) {
 }
 
 void init_STInoherentElasticACE(py::module& m) {
-  py::class_<STIncoherentElasticACE, AngleEnergy,
+  py::class_<STIncoherentElasticACE, STTSLReaction,
              std::shared_ptr<STIncoherentElasticACE>>(m,
                                                       "STIncoherentElasticACE")
       .def(py::init<const ACE&>())
@@ -95,6 +96,17 @@ void init_STInoherentElasticACE(py::module& m) {
       .def("cosines", &STIncoherentElasticACE::cosines)
       .def("angle_pdf", &STIncoherentElasticACE::angle_pdf)
       .def("pdf", &STIncoherentElasticACE::pdf);
+}
+
+void init_STInoherentElastic(py::module& m) {
+  py::class_<STIncoherentElastic, STTSLReaction,
+             std::shared_ptr<STIncoherentElastic>>(m, "STIncoherentElastic")
+      .def(py::init<const ACE&>())
+      .def("xs", &STIncoherentElastic::xs)
+      .def("bound_xs", &STIncoherentElastic::bound_xs)
+      .def("W", &STIncoherentElastic::W)
+      .def("angle_pdf", &STIncoherentElastic::angle_pdf)
+      .def("pdf", &STIncoherentElastic::pdf);
 }
 
 void init_STIncoherentInelastic(py::module& m) {

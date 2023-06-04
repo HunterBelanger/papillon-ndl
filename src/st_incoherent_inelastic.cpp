@@ -21,6 +21,7 @@
  *
  * */
 #include <PapillonNDL/continuous_energy_discrete_cosines.hpp>
+#include <PapillonNDL/direct_sab.hpp>
 #include <PapillonNDL/discrete_cosines_energies.hpp>
 #include <PapillonNDL/pndl_exception.hpp>
 #include <PapillonNDL/st_incoherent_inelastic.hpp>
@@ -45,12 +46,14 @@ STIncoherentInelastic::STIncoherentInelastic(const ACE& ace,
 
   // Read the angle-energy distribution
   try {
-    int32_t nxs_7 = ace.nxs(6);
+    const int32_t nxs_7 = ace.nxs(6);
     if (nxs_7 == 0 || nxs_7 == 1) {
       angle_energy_ = std::make_shared<DiscreteCosinesEnergies>(ace);
     } else if (nxs_7 == 2) {
       angle_energy_ = std::make_shared<ContinuousEnergyDiscreteCosines>(
           ace, unit_based_interpolation);
+    } else if (nxs_7 == 3) {
+      angle_energy_ = std::make_shared<DirectSab>(ace);
     } else {
       std::string mssg =
           "Unknown distribution type. Make sure this is a valid thermal "
