@@ -1,0 +1,26 @@
+cff-version: 1.2.0
+title: Papillon Nuclear Data Library
+message: 'If you use this software, please cite it as below.'
+type: software
+authors:
+  - family-names: Belanger
+    given-names: Hunter
+    orcid: 'https://orcid.org/0000-0001-7601-8686'
+url: 'https://github.com/HunterBelanger/papillon-ndl'
+license: GPL-3.0-or-later
+doi: 10.5281/zenodo.7121174
+preferred-citation:
+  type: article
+  authors:
+    - family-names: Belanger
+      given-names: Hunter
+      orcid: 'https://orcid.org/0000-0001-7601-8686'
+  doi: 10.1051/epjn/2023006
+  journal: EPJ Nuclear Sciences & Technologies
+  title: >-
+    Papillon Nuclear Data Library – a free and open-source C++/Python library
+    for interacting with ACE files for continuous-energy neutron data
+  volume: 9
+  year: 2023
+  start: 1
+  end: 23
