@@ -25,8 +25,6 @@
 #include <PapillonNDL/st_incoherent_elastic_ace.hpp>
 #include <PapillonNDL/st_thermal_scattering_law.hpp>
 
-#include "PapillonNDL/pndl_exception.hpp"
-
 namespace pndl {
 
 STThermalScatteringLaw::STThermalScatteringLaw(const ACE& ace,
@@ -66,7 +64,7 @@ STThermalScatteringLaw::STThermalScatteringLaw(const ACE& ace,
     // Check the elastic mode, to see if this is a normal ACE file, or if
     // it is a special ACE file made by Panglos
     int32_t elastic_mode = ace.nxs(4);
-    if (elastic_mode == 0) {
+    if (elastic_mode == 0 || elastic_mode == 4) {
       incoherent_elastic_ = std::make_shared<STIncoherentElasticACE>(ace);
       has_incoherent_elastic_ = false;
     } else if (elastic_mode == 3 || elastic_mode == 5) {
