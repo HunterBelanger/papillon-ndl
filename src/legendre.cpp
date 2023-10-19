@@ -28,12 +28,60 @@
 
 #include <PapillonNDL/legendre.hpp>
 #include <PapillonNDL/pndl_exception.hpp>
-#include <cmath>
+
 #include <functional>
+#include <utility>
 
 #include "constants.hpp"
 
 namespace pndl {
+
+namespace detail {
+
+// This method for evaluating the Legendre polynomials is based on the
+// boost::math implementation. I start to recursively get orders after n >=5
+// however, instead of n >= 2.
+double legendre(unsigned n, double x) {
+  switch (n) {
+    case 0:
+      return 1.;
+      break;
+    case 1:
+      return x;
+      break;
+    case 2:
+      return 0.5 * (3. * x * x - 1.);
+      break;
+    case 3:
+      return 0.5 * (5. * x * x * x - 3. * x);
+      break;
+    case 4: {
+      const double x_2 = x * x;
+      return 0.125 * (35. * x_2 * x_2 - 30. * x_2 + 3.);
+      break;
+    }
+    default: {
+      // n >= 5, so start get getting p3 and p4
+      const double x_2 = x * x;
+      const double x_3 = x_2 * x;
+      const double x_4 = x_3 * x;
+      double p3 = 0.5 * (5. * x_3 - 3. * x);
+      double p4 = 0.125 * (35. * x_4 - 30. * x_2 + 3.);
+
+      // Iterate up to the desired Legendre order.
+      unsigned l = 4;
+      while (l < n) {
+        std::swap(p3, p4);
+        p4 = ((2. * l + 1.) * x * p3 - l * p4) / (l + 1.);
+        l++;
+      }
+      return p4;
+
+      break;
+    }
+  }
+}
+}  // namespace detail
 
 Legendre::Legendre() : a_({0.5}), pdf_max_(0.) {
   this->find_max();
@@ -62,8 +110,8 @@ Legendre::Legendre(const std::vector<double>& a) : a_(a), pdf_max_(0.) {
 double Legendre::pdf(double mu) const {
   double pdf = 0.;
 
-  for (std::size_t l = 0; l < a_.size(); l++) {
-    pdf += a_[l] * std::legendre(static_cast<unsigned int>(l), mu);
+  for (unsigned l = 0; l < a_.size(); l++) {
+    pdf += a_[l] * detail::legendre(l, mu);
   }
 
   return pdf;
