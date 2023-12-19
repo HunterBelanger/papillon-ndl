@@ -28,6 +28,7 @@
 #include <fstream>
 #include <regex>
 #include <sstream>
+#include <vector>
 
 #include "constants.hpp"
 
@@ -115,7 +116,6 @@ MCNPLibrary::MCNPLibrary(const std::string& fname) : NDLibrary(fname) {
                      xsdir_buffer.begin() + match.position());
   std::stringstream directory_stream(xsdir_buffer);
   std::string zaid_str;
-  std::string zaid_str_new;
   std::string awr_str;
   std::string fname_str;
   std::string access_str;
@@ -126,67 +126,34 @@ MCNPLibrary::MCNPLibrary(const std::string& fname) : NDLibrary(fname) {
   std::string num_entries_str;
   std::string temp_str;
   std::string ptable_str;
-  directory_stream >> zaid_str;  // Get rid of 'directory' in stream
-  bool get_zaid_str = true;
-  while (directory_stream.eof() == false) {
-    if (get_zaid_str) {
-      directory_stream >> zaid_str;
-    } else {
-      zaid_str = zaid_str_new;
+  std::vector<std::string> line_buffer;
+  std::string str, line;
+  std::getline(directory_stream, line); // Get rid of 'directory' in stream
+  while (directory_stream.eof() == false ) {
+    LINE_LOOP:
+    std::getline(directory_stream, line); // get one line
+    // remove leading, trailing and extra spaces in the line:
+    // by Evgeny Karpov in https://shorturl.at/biH35
+    line = std::regex_replace(line, std::regex("^ +| +$|( ) +"), "$1");
+    std::stringstream linestream(line);
+    //linestream.ignore();
+    while ( std::getline(linestream, str, ' ') ) { // split the line and store
+      if (str!="+" && line_buffer.size()<=11)      // each content if it's not
+        line_buffer.push_back(str);                // the continuation mark
+      else
+        goto LINE_LOOP;                            // goto the continued line
     }
-
-    directory_stream >> awr_str;
-    directory_stream >> fname_str;
-
-    directory_stream >> access_str;
-    if (access_str == "+") {
-      directory_stream >> access_str;
-    }
-
-    directory_stream >> ftype_str;
-    if (ftype_str == "+") {
-      directory_stream >> ftype_str;
-    }
-
-    directory_stream >> address_str;
-    if (address_str == "+") {
-      directory_stream >> address_str;
-    }
-
-    directory_stream >> tab_len_str;
-    if (tab_len_str == "+") {
-      directory_stream >> tab_len_str;
-    }
-
-    directory_stream >> record_len_str;
-    if (record_len_str == "+") {
-      directory_stream >> record_len_str;
-    }
-
-    directory_stream >> num_entries_str;
-    if (num_entries_str == "+") {
-      directory_stream >> num_entries_str;
-    }
-
-    directory_stream >> temp_str;
-    if (temp_str == "+") {
-      directory_stream >> temp_str;
-    }
-
-    directory_stream >> ptable_str;
-    if (ptable_str == "+") {
-      // The "ptable" keyword is on the next line. Go grab it.
-      directory_stream >> ptable_str;
-      get_zaid_str = true;
-    } else if (ptable_str == "ptable") {
-      // We just read "ptable" and it was on the main line
-      get_zaid_str = true;
-    } else {
-      // The next item wasn't "+" or "ptable", so we actually just read the next
-      // ZAID. Keep it for later.
-      zaid_str_new = ptable_str;
-      get_zaid_str = false;
-    }
+    zaid_str    = line_buffer[0];
+    awr_str     = line_buffer[1];
+    fname_str   = line_buffer[2];
+    access_str  = line_buffer[3];
+    ftype_str   = line_buffer[4];
+    address_str = line_buffer[5];
+    tab_len_str = line_buffer[6];
+    if (line_buffer.size()>7)  record_len_str = line_buffer[7];
+    if (line_buffer.size()>8) num_entries_str = line_buffer[8];
+    if (line_buffer.size()>9)        temp_str = line_buffer[9];
+    if (line_buffer.size()>10)     ptable_str = line_buffer[10];
 
     double temp = std::stod(temp_str) * MEV_TO_EV * EV_TO_K;
     std::filesystem::path ace_path = datapath / fname_str;
@@ -209,6 +176,8 @@ MCNPLibrary::MCNPLibrary(const std::string& fname) : NDLibrary(fname) {
       st_tsl_data_[zaid_str].tables.push_back({ace_path, ace_type, temp});
       st_tsl_data_[zaid_str].loaded_data.push_back(nullptr);
     }
+    // clear the vector and process the next entry
+    line_buffer.clear();
   }
 
   // Entire xsdir has been read. We should now sort the entries by
