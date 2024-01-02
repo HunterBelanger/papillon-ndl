@@ -114,6 +114,8 @@ MCNPLibrary::MCNPLibrary(const std::string& fname) : NDLibrary(fname) {
   }
   xsdir_buffer.erase(xsdir_buffer.begin(),
                      xsdir_buffer.begin() + match.position());
+  // concatenate a multi-line entry to a single line by removing "+\n"
+  xsdir_buffer = std::regex_replace(xsdir_buffer, std::regex(" \\+\\n"), " ");
   std::stringstream directory_stream(xsdir_buffer);
   std::string zaid_str;
   std::string awr_str;
@@ -130,19 +132,15 @@ MCNPLibrary::MCNPLibrary(const std::string& fname) : NDLibrary(fname) {
   std::string str, line;
   std::getline(directory_stream, line); // Get rid of 'directory' in stream
   while (directory_stream.eof() == false ) {
-    LINE_LOOP:
     std::getline(directory_stream, line); // get one line
     // remove leading, trailing and extra spaces in the line:
     // by Evgeny Karpov in https://shorturl.at/biH35
     line = std::regex_replace(line, std::regex("^ +| +$|( ) +"), "$1");
     std::stringstream linestream(line);
     //linestream.ignore();
-    while ( std::getline(linestream, str, ' ') ) { // split the line and store
-      if (str!="+" && line_buffer.size()<=11)      // each content if it's not
-        line_buffer.push_back(str);                // the continuation mark
-      else
-        goto LINE_LOOP;                            // goto the continued line
-    }
+    while ( std::getline(linestream, str, ' ') ) // split the line and store
+      if (line_buffer.size()<=11)                // each content upto 11th
+        line_buffer.push_back(str);              // in the vector 'line_buffer'
     zaid_str    = line_buffer[0];
     awr_str     = line_buffer[1];
     fname_str   = line_buffer[2];
