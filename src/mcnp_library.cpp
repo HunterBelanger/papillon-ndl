@@ -115,7 +115,8 @@ MCNPLibrary::MCNPLibrary(const std::string& fname) : NDLibrary(fname) {
   xsdir_buffer.erase(xsdir_buffer.begin(),
                      xsdir_buffer.begin() + match.position());
   // concatenate a multi-line entry to a single line by removing "+\n"
-  xsdir_buffer = std::regex_replace(xsdir_buffer, std::regex(" \\+\\n"), " ");
+  xsdir_buffer =
+      std::regex_replace(xsdir_buffer, std::regex(" \\+(\\s+)?\\n"), " ");
   std::stringstream directory_stream(xsdir_buffer);
   std::string zaid_str;
   std::string awr_str;
@@ -130,29 +131,41 @@ MCNPLibrary::MCNPLibrary(const std::string& fname) : NDLibrary(fname) {
   std::string ptable_str;
   std::vector<std::string> line_buffer;
   std::string str, line;
-  std::getline(directory_stream, line); // Get rid of 'directory' in stream
-  while (directory_stream.eof() == false ) {
-    std::getline(directory_stream, line); // get one line
+  std::getline(directory_stream, line);  // Get rid of 'directory' in stream
+  while (directory_stream.eof() == false) {
+    // Get one line
+    std::getline(directory_stream, line);
+
     // remove leading, trailing and extra spaces in the line:
     // by Evgeny Karpov in https://shorturl.at/biH35
     line = std::regex_replace(line, std::regex("^ +| +$|( ) +"), "$1");
+
+    // split the line and store each component in line_buffer
     std::stringstream linestream(line);
-    //linestream.ignore();
-    while ( std::getline(linestream, str, ' ') ) // split the line and store
-      if (line_buffer.size()<=11)                // each content upto 11th
-        line_buffer.push_back(str);              // in the vector 'line_buffer'
-    zaid_str    = line_buffer[0];
-    awr_str     = line_buffer[1];
-    fname_str   = line_buffer[2];
-    access_str  = line_buffer[3];
-    ftype_str   = line_buffer[4];
+    while (std::getline(linestream, str, ' ')) line_buffer.push_back(str);
+
+    // Make sure we have the correct number of entries
+    if (line_buffer.size() < 7 || line_buffer.size() > 11) {
+      std::stringstream mssg;
+      mssg << "Invalid entry in xsdir for \"" << line_buffer[0]
+           << "\". Entries must have 7-11 values.";
+      throw PNDLException(mssg.str());
+    }
+
+    // Grab all entry component strings from line_buffer
+    zaid_str = line_buffer[0];
+    awr_str = line_buffer[1];
+    fname_str = line_buffer[2];
+    access_str = line_buffer[3];
+    ftype_str = line_buffer[4];
     address_str = line_buffer[5];
     tab_len_str = line_buffer[6];
-    if (line_buffer.size()>7)  record_len_str = line_buffer[7];
-    if (line_buffer.size()>8) num_entries_str = line_buffer[8];
-    if (line_buffer.size()>9)        temp_str = line_buffer[9];
-    if (line_buffer.size()>10)     ptable_str = line_buffer[10];
+    if (line_buffer.size() > 7) record_len_str = line_buffer[7];
+    if (line_buffer.size() > 8) num_entries_str = line_buffer[8];
+    if (line_buffer.size() > 9) temp_str = line_buffer[9];
+    if (line_buffer.size() > 10) ptable_str = line_buffer[10];
 
+    // Convert entry components to needed data
     double temp = std::stod(temp_str) * MEV_TO_EV * EV_TO_K;
     std::filesystem::path ace_path = datapath / fname_str;
     const std::regex zaid_ext_regex("([.][\\w]{3,5})");
@@ -174,8 +187,13 @@ MCNPLibrary::MCNPLibrary(const std::string& fname) : NDLibrary(fname) {
       st_tsl_data_[zaid_str].tables.push_back({ace_path, ace_type, temp});
       st_tsl_data_[zaid_str].loaded_data.push_back(nullptr);
     }
-    // clear the vector and process the next entry
+
+    // clear the vector, empty strings, and process the next entry
     line_buffer.clear();
+    record_len_str.clear();
+    num_entries_str.clear();
+    temp_str.clear();
+    ptable_str.clear();
   }
 
   // Entire xsdir has been read. We should now sort the entries by
