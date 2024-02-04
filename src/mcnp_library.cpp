@@ -165,12 +165,23 @@ MCNPLibrary::MCNPLibrary(const std::string& fname) : NDLibrary(fname) {
     if (line_buffer.size() > 9) temp_str = line_buffer[9];
     if (line_buffer.size() > 10) ptable_str = line_buffer[10];
 
+    const char zaid_suffix = zaid_str.back();
+    if (zaid_suffix != 'c' && zaid_suffix != 't') {
+      // This isn't neutron data. Go to next entry
+      // clear the vector, empty strings
+      line_buffer.clear();
+      record_len_str.clear();
+      num_entries_str.clear();
+      temp_str.clear();
+      ptable_str.clear();
+      continue;
+    }
+
     // Convert entry components to needed data
     double temp = std::stod(temp_str) * MEV_TO_EV * EV_TO_K;
     std::filesystem::path ace_path = datapath / fname_str;
     const std::regex zaid_ext_regex("([.][\\w]{3,5})");
     ACE::Type ace_type = ACE::Type::ASCII;
-    const char zaid_suffix = zaid_str.back();
     if (ftype_str == "2") ace_type = ACE::Type::BINARY;
     zaid_str = std::regex_replace(zaid_str, zaid_ext_regex, "");
 
