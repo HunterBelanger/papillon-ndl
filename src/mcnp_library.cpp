@@ -28,6 +28,7 @@
 #include <fstream>
 #include <regex>
 #include <sstream>
+#include <vector>
 
 #include "constants.hpp"
 
@@ -113,9 +114,11 @@ MCNPLibrary::MCNPLibrary(const std::string& fname) : NDLibrary(fname) {
   }
   xsdir_buffer.erase(xsdir_buffer.begin(),
                      xsdir_buffer.begin() + match.position());
+  // concatenate a multi-line entry to a single line by removing "+\n"
+  xsdir_buffer =
+      std::regex_replace(xsdir_buffer, std::regex(" \\+(\\s+)?\\n"), " ");
   std::stringstream directory_stream(xsdir_buffer);
   std::string zaid_str;
-  std::string zaid_str_new;
   std::string awr_str;
   std::string fname_str;
   std::string access_str;
@@ -126,73 +129,63 @@ MCNPLibrary::MCNPLibrary(const std::string& fname) : NDLibrary(fname) {
   std::string num_entries_str;
   std::string temp_str;
   std::string ptable_str;
-  directory_stream >> zaid_str;  // Get rid of 'directory' in stream
-  bool get_zaid_str = true;
+  std::vector<std::string> line_buffer;
+  std::string str, line;
+  std::getline(directory_stream, line);  // Get rid of 'directory' in stream
   while (directory_stream.eof() == false) {
-    if (get_zaid_str) {
-      directory_stream >> zaid_str;
-    } else {
-      zaid_str = zaid_str_new;
+    // Get one line
+    std::getline(directory_stream, line);
+
+    // remove leading, trailing and extra spaces in the line:
+    // by Evgeny Karpov in https://shorturl.at/biH35
+    line = std::regex_replace(line, std::regex("^ +| +$|( ) +"), "$1");
+
+    // If the line is now empty, there were only white spaces.
+    // Try to read the next line if there are any.
+    if (line.empty()) continue;
+
+    // split the line and store each component in line_buffer
+    std::stringstream linestream(line);
+    while (std::getline(linestream, str, ' ')) line_buffer.push_back(str);
+
+    // Make sure we have the correct number of entries
+    if (line_buffer.size() < 7 || line_buffer.size() > 11) {
+      std::stringstream mssg;
+      mssg << "Invalid entry in xsdir for \"" << line_buffer[0]
+           << "\". Entries must have 7-11 values.";
+      throw PNDLException(mssg.str());
     }
 
-    directory_stream >> awr_str;
-    directory_stream >> fname_str;
+    // Grab all entry component strings from line_buffer
+    zaid_str = line_buffer[0];
+    awr_str = line_buffer[1];
+    fname_str = line_buffer[2];
+    access_str = line_buffer[3];
+    ftype_str = line_buffer[4];
+    address_str = line_buffer[5];
+    tab_len_str = line_buffer[6];
+    if (line_buffer.size() > 7) record_len_str = line_buffer[7];
+    if (line_buffer.size() > 8) num_entries_str = line_buffer[8];
+    if (line_buffer.size() > 9) temp_str = line_buffer[9];
+    if (line_buffer.size() > 10) ptable_str = line_buffer[10];
 
-    directory_stream >> access_str;
-    if (access_str == "+") {
-      directory_stream >> access_str;
+    const char zaid_suffix = zaid_str.back();
+    if (zaid_suffix != 'c' && zaid_suffix != 't') {
+      // This isn't neutron data. Go to next entry
+      // clear the vector, empty strings
+      line_buffer.clear();
+      record_len_str.clear();
+      num_entries_str.clear();
+      temp_str.clear();
+      ptable_str.clear();
+      continue;
     }
 
-    directory_stream >> ftype_str;
-    if (ftype_str == "+") {
-      directory_stream >> ftype_str;
-    }
-
-    directory_stream >> address_str;
-    if (address_str == "+") {
-      directory_stream >> address_str;
-    }
-
-    directory_stream >> tab_len_str;
-    if (tab_len_str == "+") {
-      directory_stream >> tab_len_str;
-    }
-
-    directory_stream >> record_len_str;
-    if (record_len_str == "+") {
-      directory_stream >> record_len_str;
-    }
-
-    directory_stream >> num_entries_str;
-    if (num_entries_str == "+") {
-      directory_stream >> num_entries_str;
-    }
-
-    directory_stream >> temp_str;
-    if (temp_str == "+") {
-      directory_stream >> temp_str;
-    }
-
-    directory_stream >> ptable_str;
-    if (ptable_str == "+") {
-      // The "ptable" keyword is on the next line. Go grab it.
-      directory_stream >> ptable_str;
-      get_zaid_str = true;
-    } else if (ptable_str == "ptable") {
-      // We just read "ptable" and it was on the main line
-      get_zaid_str = true;
-    } else {
-      // The next item wasn't "+" or "ptable", so we actually just read the next
-      // ZAID. Keep it for later.
-      zaid_str_new = ptable_str;
-      get_zaid_str = false;
-    }
-
+    // Convert entry components to needed data
     double temp = std::stod(temp_str) * MEV_TO_EV * EV_TO_K;
     std::filesystem::path ace_path = datapath / fname_str;
     const std::regex zaid_ext_regex("([.][\\w]{3,5})");
     ACE::Type ace_type = ACE::Type::ASCII;
-    const char zaid_suffix = zaid_str.back();
     if (ftype_str == "2") ace_type = ACE::Type::BINARY;
     zaid_str = std::regex_replace(zaid_str, zaid_ext_regex, "");
 
@@ -209,6 +202,13 @@ MCNPLibrary::MCNPLibrary(const std::string& fname) : NDLibrary(fname) {
       st_tsl_data_[zaid_str].tables.push_back({ace_path, ace_type, temp});
       st_tsl_data_[zaid_str].loaded_data.push_back(nullptr);
     }
+
+    // clear the vector, empty strings, and process the next entry
+    line_buffer.clear();
+    record_len_str.clear();
+    num_entries_str.clear();
+    temp_str.clear();
+    ptable_str.clear();
   }
 
   // Entire xsdir has been read. We should now sort the entries by
