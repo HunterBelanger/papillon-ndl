@@ -52,7 +52,7 @@ Tabulated1D linearize(const std::vector<double>& i_x,
   while (i < (x.size() - 1)) {
     // Get mid-point x value. If x[i] == x[i+1], this is a discontinuity, so we
     // continue.
-    if (x[i] == x[i + 1]) {
+    if (std::nextafter(x[i], x[i + 1]) == x[i + 1]) {
       i++;
       continue;
     }
