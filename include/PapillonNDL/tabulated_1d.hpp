@@ -95,6 +95,8 @@ class Tabulated1D : public Function1D {
     else if (x_hi <= min_x())
       x_hi = min_x();
 
+    if (x_low == x_hi) return 0.;
+
     // Get region which contains x_low
     auto region = regions_.begin();
     while (region->max_x() < x_low) region++;
@@ -211,6 +213,8 @@ class Tabulated1D : public Function1D {
         x_hi = max_x();
       else if (x_hi <= min_x())
         x_hi = min_x();
+
+      if (x_low == x_hi) return 0.;
 
       // Get iterator for lower bound of first interval
       auto low_it = std::lower_bound(x_.begin(), x_.end(), x_low);
