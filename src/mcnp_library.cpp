@@ -135,11 +135,14 @@ MCNPLibrary::MCNPLibrary(const std::string& fname) : NDLibrary(fname) {
   while (directory_stream.eof() == false) {
     // Get one line
     std::getline(directory_stream, line);
-    if (line=="") break;  // all the directory lines were already read
 
     // remove leading, trailing and extra spaces in the line:
     // by Evgeny Karpov in https://shorturl.at/biH35
     line = std::regex_replace(line, std::regex("^ +| +$|( ) +"), "$1");
+
+    // If the line is now empty, there were only white spaces.
+    // Try to read the next line if there are any.
+    if (line.empty()) continue;
 
     // split the line and store each component in line_buffer
     std::stringstream linestream(line);
