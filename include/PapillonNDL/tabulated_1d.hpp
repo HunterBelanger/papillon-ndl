@@ -30,9 +30,11 @@
 
 #include <PapillonNDL/function_1d.hpp>
 #include <PapillonNDL/interpolation.hpp>
+
+#include <gsl/gsl-lite.hpp>
+
 #include <algorithm>
 #include <cstdint>
-#include <span>
 #include <vector>
 
 namespace pndl {
@@ -171,8 +173,8 @@ class Tabulated1D : public Function1D {
  private:
   class InterpolationRange {
    public:
-    InterpolationRange(Interpolation interp, std::span<const double> x,
-                       std::span<const double> y);
+    InterpolationRange(Interpolation interp, gsl::span<const double> x,
+                       gsl::span<const double> y);
 
     // Methods required by Function1D
     double operator()(double x) const {
@@ -262,8 +264,8 @@ class Tabulated1D : public Function1D {
     double max_x() const { return x_.back(); }
 
    private:
-    std::span<const double> x_;
-    std::span<const double> y_;
+    gsl::span<const double> x_;
+    gsl::span<const double> y_;
     Interpolator interpolator_;
   };
 

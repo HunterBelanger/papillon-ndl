@@ -15,6 +15,14 @@ option(PNDL_PYTHON "Enable Python interface to PapillonNDL" ON)
 option(PNDL_INSTALL "Install the PapillonNDL library and header files" ON)
 option(PNDL_TESTS "Build PapillonNDL tests" OFF)
 
+message(STATUS "Downloading GSL v0.41.0")
+FetchContent_Declare(GSL
+  GIT_REPOSITORY https://github.com/gsl-lite/gsl-lite
+  GIT_TAG        v0.41.0
+)
+FetchContent_MakeAvailable(GSL)
+
+
 # List of source files for PapillonNDL
 set(PNDL_SOURCE_LIST src/element.cpp
                      src/tabulated_1d.cpp
@@ -89,14 +97,17 @@ endif()
 # Add alias to make more friendly with FetchConent
 add_library(PapillonNDL::PapillonNDL ALIAS PapillonNDL)
 
+# Link GSL for span
+target_link_libraries(PapillonNDL PUBLIC gsl::gsl-lite-v1)
+
 # Add public interface includes directory
 target_include_directories(PapillonNDL PUBLIC 
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>
 )
 
-# Require C++20 standard
-target_compile_features(PapillonNDL PUBLIC cxx_std_20)
+# Require C++17 standard
+target_compile_features(PapillonNDL PUBLIC cxx_std_17)
 
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC") # Comile options for Windows

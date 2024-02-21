@@ -62,10 +62,8 @@ Tabulated1D::Tabulated1D(const std::vector<uint32_t>& NBT,
     try {
       regions_.push_back(
           InterpolationRange(interpolation_[i],
-                             {x_.begin() + static_cast<std::ptrdiff_t>(low),
-                              x_.begin() + static_cast<std::ptrdiff_t>(hi)},
-                             {y_.begin() + static_cast<std::ptrdiff_t>(low),
-                              y_.begin() + static_cast<std::ptrdiff_t>(hi)}));
+                             gsl::span<const double>(&x_[0] + low, &x_[0] + hi),
+                             gsl::span<const double>(&y_[0] + low, &y_[0] + hi)));
     } catch (PNDLException& error) {
       std::string mssg = "The i = " + std::to_string(i) +
                          " InterpolationRange could not be constructed when "
@@ -106,8 +104,8 @@ Tabulated1D::Tabulated1D(Interpolation interp, const std::vector<double>& x,
   try {
     regions_.push_back(InterpolationRange(
         interpolation_[0],
-        {x_.begin(), x_.begin() + static_cast<std::ptrdiff_t>(hi)},
-        {y_.begin(), y_.begin() + static_cast<std::ptrdiff_t>(hi)}));
+        gsl::span<const double>(&x_[0], &x_[0] + hi),
+        gsl::span<const double>(&y_[0], &y_[0] + hi)));
   } catch (PNDLException& error) {
     std::string mssg =
         "The InterpolationRange could not be constructed when building "
@@ -138,8 +136,8 @@ void Tabulated1D::linearize(double tolerance) {
 }
 
 Tabulated1D::InterpolationRange::InterpolationRange(Interpolation interp,
-                                                    std::span<const double> x,
-                                                    std::span<const double> y)
+                                                    gsl::span<const double> x,
+                                                    gsl::span<const double> y)
     : x_(x), y_(y), interpolator_(interp) {
   if (x_.size() != y_.size()) {
     std::string mssg = "x and y have different sizes. x.size() = " +
