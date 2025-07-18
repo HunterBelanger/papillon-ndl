@@ -77,7 +77,19 @@ class EnergyAngleTable {
     double E_out, mu;
     double xi = rng();
     auto cdf_it = std::lower_bound(cdf_.begin(), cdf_.end(), xi);
-    std::size_t l =
+
+    // Must check for case where xi = 0, or an exact tabulated CDF value
+    if (xi == *cdf_it) {
+      const std::size_t l =
+          static_cast<std::size_t>(std::distance(cdf_.begin(), cdf_it));
+      E_out = energy_[l];
+      mu = angles_[l].sample_value(rng());
+      return {mu, E_out};
+    }
+
+    // We did not exactly land on a tabulated CDF value, so the index l refers
+    // to the lower bounding CDF value.
+    const std::size_t l =
         static_cast<std::size_t>(std::distance(cdf_.begin(), cdf_it) - 1);
 
     // Must account for case where pdf_[l] = pdf_[l+1], which means  that
