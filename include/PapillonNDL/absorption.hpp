@@ -30,7 +30,7 @@
 
 #include <PapillonNDL/angle_energy.hpp>
 #include <PapillonNDL/pndl_exception.hpp>
-#include <cstddef>
+#include <cstdint>
 #include <optional>
 
 namespace pndl {
